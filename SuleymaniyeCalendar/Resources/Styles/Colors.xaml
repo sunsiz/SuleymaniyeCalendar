@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Existing keys kept -->
+    <Color x:Key="Primary">#512BD4</Color>
+    <Color x:Key="Secondary">#DFD8F7</Color>
+    <Color x:Key="Tertiary">#2B0B98</Color>
+    <Color x:Key="White">White</Color>
+    <Color x:Key="Black">Black</Color>
+    <Color x:Key="Gray100">#E1E1E1</Color>
+    <Color x:Key="Gray200">#C8C8C8</Color>
+    <Color x:Key="Gray300">#ACACAC</Color>
+    <Color x:Key="Gray400">#919191</Color>
+    <Color x:Key="Gray500">#6E6E6E</Color>
+    <Color x:Key="Gray600">#404040</Color>
+    <Color x:Key="Gray900">#212121</Color>
+    <Color x:Key="Gray950">#141414</Color>
+
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}" />
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}" />
+    <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}" />
+    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}" />
+    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}" />
+    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}" />
+    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}" />
+    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}" />
+    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}" />
+    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}" />
+    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}" />
+    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}" />
+    <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}" />
+
+    <Color x:Key="Yellow100Accent">#F7B548</Color>
+    <Color x:Key="Yellow200Accent">#FFD590</Color>
+    <Color x:Key="Yellow300Accent">#FFE5B9</Color>
+    <Color x:Key="Cyan100Accent">#28C2D1</Color>
+    <Color x:Key="Cyan200Accent">#7BDDEF</Color>
+    <Color x:Key="Cyan300Accent">#C3F2F4</Color>
+    <Color x:Key="Blue100Accent">#3E8EED</Color>
+    <Color x:Key="Blue200Accent">#72ACF1</Color>
+    <Color x:Key="Blue300Accent">#A7CBF6</Color>
+
+    <!-- Brand palette -->
+    <Color x:Key="AppBackgroundColor">#EFEBE9</Color>
+    <Color x:Key="AppBackgroundColorDark">#121212</Color>
+    <Color x:Key="PrimaryColor">#5c3021</Color>
+    <Color x:Key="PrimaryLightColor">#8c5a49</Color>
+    <Color x:Key="PrimaryDarkColor">#310900</Color>
+    <Color x:Key="PrimaryTextColor">#000000</Color>
+    <Color x:Key="PrimaryAccent50Color">#ffe5d6</Color>
+    <Color x:Key="PrimaryAccent100Color">#e5c3b5</Color>
+    <Color x:Key="PrimaryAccent400Color">#8e5e4b</Color>
+    <Color x:Key="PrimaryAccent600Color">#6c3b2a</Color>
+    <Color x:Key="PrimaryAccent800Color">#4d241a</Color>
+    <Color x:Key="PrimaryAccent900Color">#3d1710</Color>
+    <Color x:Key="SecondaryColor">#214d5c</Color>
+    <Color x:Key="TertiaryDarkColor">#007e36</Color>
+
+    <!-- Dark elevations -->
+    <Color x:Key="DarkElevation2dp">#212121</Color>
+    <Color x:Key="DarkElevation8dp">#2D2D2D</Color>
+    <Color x:Key="DarkElevation12dp">#323232</Color>
+    <Color x:Key="DarkElevation16dp">#353535</Color>
+    <Color x:Key="DarkElevation24dp">#373737</Color>
+
+    <Color x:Key="OnPrimaryColor">#000000</Color>
+    <Color x:Key="OnSecondaryColor">#000000</Color>
+    <Color x:Key="TransparentColor">Transparent</Color>
+
+    <!-- Status colors for prayer list -->
+    <Color x:Key="PastTimeBackgroundColor">#D2B48C</Color>
+    <Color x:Key="PastTimeBackgroundColorDark">#222222</Color>
+    <Color x:Key="CurrentTimeBackgroundColor">#F5DEB3</Color>
+    <Color x:Key="CurrentTimeBackgroundColorDark">#626262</Color>
+    <Color x:Key="FutureTimeBackgroundColor">#FFF8DC</Color>
+    <Color x:Key="FutureTimeBackgroundColorDark">#424242</Color>
+    <Color x:Key="TimeTextColor">#A0522D</Color>
+    <Color x:Key="TimeTextColorDark">#F5F5DC</Color>
+
+    <Color x:Key="CityBackgroundColor">#14828C</Color>
+    <Color x:Key="CityBackgroundColorDark">#002532</Color>
+    <Color x:Key="MonthlyButtonBackgroundColor">#003A40</Color>
+    <Color x:Key="MonthlyButtonBackgroundColorDark">#003A40</Color>
+    <Color x:Key="CardBackgroundColor">#FFFFF0</Color>
+    <Color x:Key="CardBackgroundColorDark">#B2B2A8</Color>
+    <Color x:Key="ButtonTextColor">#F5F5F5</Color>
+    <Color x:Key="ButtonTextColorDark">#F5F5DC</Color>
+
+    <!-- Tab bar -->
+    <Color x:Key="TabBarBackgroundColorDark">#353535</Color>
+    <Color x:Key="TabBarBgColor">#7B4B3A</Color>
+    <Color x:Key="TabBarSelectedColor">#FFFFFF</Color>
+    <Color x:Key="TabBarUnselectedColor">#E6D7CF</Color>
+
+    <!-- Surfaces and outlines (for modern cards) -->
+    <Color x:Key="SurfaceColor">#F6F1EE</Color>
+    <Color x:Key="SurfaceColorDark">#1B1B1B</Color>
+    <Color x:Key="SurfaceVariantColor">#EFE4DF</Color>
+    <Color x:Key="SurfaceVariantColorDark">#2A2A2A</Color>
+    <Color x:Key="OnSurfaceColor">#2E1F19</Color>
+    <Color x:Key="OnSurfaceColorDark">#EBE0DB</Color>
+    <Color x:Key="OutlineColor">#DCC8BE</Color>
+    <Color x:Key="OutlineColorDark">#3D3D3D</Color>
+</ResourceDictionary>

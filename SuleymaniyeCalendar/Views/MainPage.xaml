@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SuleymaniyeCalendar.Views.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
+    xmlns:models="clr-namespace:SuleymaniyeCalendar.Models"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
+    Title="{Binding Title}"
+    x:DataType="viewModels:MainViewModel">
+
+    <Shell.TitleView>
+        <StackLayout Margin="10" x:DataType="viewModels:MainViewModel" HeightRequest="40" Orientation="Horizontal">
+            <Label AutomationProperties.IsInAccessibleTree="True"
+                   FontAttributes="Bold"
+                   FontSize="20"
+                   HorizontalOptions="StartAndExpand"
+                   Style="{StaticResource LabelSectionHeader}"
+                   Text="{localization:Translate PageTitle}"
+                   VerticalTextAlignment="Start" />
+            <Image Margin="10,0,20,0"
+                   AutomationProperties.IsInAccessibleTree="True"
+                   SemanticProperties.Description="{localization:Translate UygulamaAyarlari}">
+                <Image.Source>
+                    <FontImageSource FontAutoScalingEnabled="True" FontFamily="FontAwesomeSolid" Glyph="&#xf013;" Size="26" />
+                </Image.Source>
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SettingsCommand}" NumberOfTapsRequired="1" />
+                </Image.GestureRecognizers>
+            </Image>
+            <Image Margin="10,0,20,0"
+                   AutomationProperties.IsInAccessibleTree="True"
+                   SemanticProperties.Description="{localization:Translate Yenile}">
+                <Image.Source>
+                    <FontImageSource FontFamily="FontAwesomeSolid" Glyph="&#xf2f1;" Size="26" />
+                </Image.Source>
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding RefreshLocationCommand}" NumberOfTapsRequired="1" />
+                </Image.GestureRecognizers>
+            </Image>
+        </StackLayout>
+    </Shell.TitleView>
+
+    <Grid Padding="10,3" ColumnDefinitions="*" RowDefinitions="*"
+          HorizontalOptions="CenterAndExpand">
+        <CollectionView ItemsSource="{Binding Prayers}"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        VerticalScrollBarVisibility="Never">
+            <CollectionView.Header>
+                <StackLayout>
+                    <Border Margin="3,7"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource CityBackgroundColor}, Dark={StaticResource CityBackgroundColorDark}}"
+                            HorizontalOptions="Center"
+                            IsEnabled="{Binding IsNotBusy}"
+                            Style="{StaticResource RoundButton}">
+                        <Label Margin="5,0"
+                               Padding="9"
+                               x:DataType="viewModels:MainViewModel"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               SemanticProperties.Description="{localization:Translate Sehir}"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               Style="{DynamicResource LabelStyle}"
+                               TextColor="{StaticResource CardBackgroundColor}"
+                               VerticalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span FontFamily="FontAwesomeSolid" FontSize="20" Text="&#xf3c5; " />
+                                    <Span Text="{Binding City}" TextTransform="Uppercase" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToMapCommand}" NumberOfTapsRequired="1" />
+                        </Border.GestureRecognizers>
+                    </Border>
+                </StackLayout>
+            </CollectionView.Header>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Prayer">
+                    <Border Margin="9,3" HorizontalOptions="Fill" Style="{StaticResource Card}">
+                        <Border.Triggers>
+                            <DataTrigger Binding="{Binding State}" TargetType="Border" Value="Passed">
+                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PastTimeBackgroundColor}, Dark={StaticResource PastTimeBackgroundColorDark}}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding State}" TargetType="Border" Value="Happening">
+                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource CurrentTimeBackgroundColor}, Dark={StaticResource CurrentTimeBackgroundColorDark}}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding State}" TargetType="Border" Value="Waiting">
+                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource FutureTimeBackgroundColor}, Dark={StaticResource FutureTimeBackgroundColorDark}}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="5" RowDefinitions="*">
+                            <Label Grid.Row="0" Grid.Column="0" Padding="7,0,0,0"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   FontAttributes="Bold"
+                                   HorizontalOptions="StartAndExpand"
+                                   Style="{DynamicResource LabelStyle}"
+                                   Text="{Binding Name}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent600Color}, Dark={StaticResource TimeTextColorDark}}"
+                                   VerticalTextAlignment="Center" />
+
+                            <Label Grid.Row="0" Grid.Column="1"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   FontAttributes="Bold"
+                                   Style="{DynamicResource LabelStyle}"
+                                   Text="{Binding Time}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent600Color}, Dark={StaticResource TimeTextColorDark}}"
+                                   VerticalOptions="Start" />
+
+                            <Label Grid.Row="0" Grid.Column="2" Margin="2,2,7,2"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   FontAttributes="Bold"
+                                   FontFamily="FontAwesomeSolid"
+                                   FontSize="22"
+                                   HorizontalOptions="End"
+                                   Text="&#xe7f6;"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent600Color}, Dark={StaticResource TimeTextColorDark}}">
+                                <Label.Triggers>
+                                    <DataTrigger Binding="{Binding Enabled}" TargetType="Label" Value="False">
+                                        <Setter Property="Text" Value="&#xf1f6;" />
+                                        <Setter Property="SemanticProperties.Description" Value="{localization:Translate DevreDisi}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Enabled}" TargetType="Label" Value="True">
+                                        <Setter Property="Text" Value="&#xf0f3;" />
+                                        <Setter Property="SemanticProperties.Description" Value="{localization:Translate Etkin}" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
+
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:MainViewModel}}, Path=PrayerSelectedCommand}"
+                                                      CommandParameter="{Binding .}"
+                                                      NumberOfTapsRequired="1" />
+                            </Grid.GestureRecognizers>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+            <CollectionView.Footer>
+                <StackLayout Orientation="Vertical">
+                    <Border Margin="3,7"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource MonthlyButtonBackgroundColor}, Dark={StaticResource MonthlyButtonBackgroundColorDark}}"
+                            HorizontalOptions="Center"
+                            IsEnabled="{Binding IsNotBusy}"
+                            Style="{StaticResource RoundButton}">
+                        <Label Margin="9,0"
+                               Padding="9"
+                               x:DataType="viewModels:MainViewModel"
+                               Style="{DynamicResource LabelStyle}"
+                               Text="{localization:Translate AylikTakvim}"
+                               TextColor="{AppThemeBinding Light={StaticResource ButtonTextColor}, Dark={StaticResource ButtonTextColorDark}}" />
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer x:DataType="viewModels:MainViewModel" Command="{Binding GoToMonthCommand}" NumberOfTapsRequired="1" />
+                        </Border.GestureRecognizers>
+                    </Border>
+
+                    <Border Margin="9,5" Padding="9,14"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource CurrentTimeBackgroundColor}, Dark={StaticResource CurrentTimeBackgroundColorDark}}"
+                            Style="{StaticResource Card}">
+                        <Label AutomationProperties.IsInAccessibleTree="True"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               Style="{DynamicResource LabelStyle}"
+                               Text="{Binding RemainingTime}"
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent600Color}, Dark={StaticResource White}}"
+                               VerticalTextAlignment="Center" />
+                    </Border>
+                </StackLayout>
+            </CollectionView.Footer>
+        </CollectionView>
+
+        <ActivityIndicator AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"
+                           AbsoluteLayout.LayoutFlags="PositionProportional"
+                           HeightRequest="80"
+                           HorizontalOptions="Center"
+                           IsRunning="{Binding IsBusy}"
+                           IsVisible="{Binding IsBusy}"
+                           VerticalOptions="Center"
+                           Visual="Material"
+                           WidthRequest="80"
+                           Color="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource White}}" />
+    </Grid>
+</ContentPage>

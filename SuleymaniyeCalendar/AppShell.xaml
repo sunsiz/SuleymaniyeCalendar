@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="SuleymaniyeCalendar.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SuleymaniyeCalendar"
+    xmlns:views="clr-namespace:SuleymaniyeCalendar.Views"
+    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui">
+
+    <TabBar>
+        <ShellContent Title="{localization:Translate Takvim}" ContentTemplate="{DataTemplate views:MainPage}" >
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="&#xf073;" Size="Title" />
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent Title="{localization:Translate Kible}" ContentTemplate="{DataTemplate views:CompassPage}" >
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="&#xf66b;" Size="Title" />
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent Title="{localization:Translate Radyo}" ContentTemplate="{DataTemplate views:RadioPage}" >
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="&#xf8d7;" Size="Title" />
+            </ShellContent.Icon>
+        </ShellContent>
+        <ShellContent Title="{localization:Translate Hakkinda}" ContentTemplate="{DataTemplate views:AboutPage}" >
+            <ShellContent.Icon>
+                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="&#xf66f;" Size="Title" />
+            </ShellContent.Icon>
+        </ShellContent>
+    </TabBar>
+
+</Shell>

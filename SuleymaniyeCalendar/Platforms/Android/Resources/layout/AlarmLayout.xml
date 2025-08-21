@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:minWidth="25px"
+	android:minHeight="25px"
+	android:layout_width="match_parent"
+	android:layout_height="fill_parent"
+	android:id="@+id/cardView1"
+	android:foregroundGravity="center_horizontal|center_vertical|fill"
+	android:layout_gravity="center_vertical|center|center_horizontal|fill"
+	android:outlineAmbientShadowColor="#ff3e2723"
+	android:outlineSpotShadowColor="#ff33691e"
+	android:outlineProvider="paddedBounds"
+	android:background="#fff9fbe7">
+    <LinearLayout
+        android:orientation="vertical"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/linearLayout"
+        android:gravity="center_horizontal|center_vertical|center"
+        android:background="#fffff8e1"
+        android:weightSum="8">
+        <ImageView
+            android:src="@drawable/vakiflogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView"
+            android:contentDescription="Süleymaniye Vakfı"
+            android:adjustViewBounds="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:scaleX="0.7"
+            android:scaleY="0.7"
+            android:maxHeight="256dp"
+            android:minHeight="128dp"
+            android:layout_weight="2" />
+        <TextView
+            android:text="Alarmi durdur"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView"
+            android:layout_weight="0.5" />
+        <TextView
+            android:text="Vakit"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewTime"
+            android:textColor="#ff3e2723"
+            android:textSize="45px"
+            android:layout_weight="0.4" />
+        <Button
+            android:text="Kapat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/stopButton"
+            android:background="#ff00e676"
+            android:textColor="#ff3e2723"
+            android:padding="18dp"
+            android:layout_marginLeft="18dp"
+            android:layout_marginRight="18dp"
+            android:textSize="38px"
+            android:shadowColor="#ffaeea00"
+            android:layout_weight="0.1"
+            android:layout_marginBottom="36dp" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

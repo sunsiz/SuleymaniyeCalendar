@@ -1,0 +1,557 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Aci" xml:space="preserve">
+    <value>角度</value>
+  </data>
+  <data name="Aksam" xml:space="preserve">
+    <value>昏礼</value>
+  </data>
+  <data name="Aksamincikmasnakalanvakit" xml:space="preserve">
+    <value>距昏礼结束剩余时间： </value>
+  </data>
+  <data name="AlarmHatasi" xml:space="preserve">
+    <value>闹钟响起时出现问题。细节</value>
+  </data>
+  <data name="Alarmi" xml:space="preserve">
+    <value>闹钟</value>
+  </data>
+  <data name="Alarmkurarkenhataolustu" xml:space="preserve">
+    <value>设置闹钟时出错</value>
+  </data>
+  <data name="AlarmSound" xml:space="preserve">
+    <value>闹钟铃声</value>
+  </data>
+  <data name="AlarmSwitch" xml:space="preserve">
+    <value>播放闹钟</value>
+  </data>
+  <data name="AylikTakvim" xml:space="preserve">
+    <value>月历</value>
+  </data>
+  <data name="AylikTakvimYenilendi" xml:space="preserve">
+    <value>成功更新月历</value>
+  </data>
+  <data name="BesDakikaOnceden" xml:space="preserve">
+    <value>提前5分钟</value>
+  </data>
+  <data name="BildiriDevreDisiBaslik" xml:space="preserve">
+    <value>通知设置已禁用</value>
+  </data>
+  <data name="BildiriDevreDisiIcerik" xml:space="preserve">
+    <value> 通知已被禁用。</value>
+  </data>
+  <data name="BildiriEtkinBaslik" xml:space="preserve">
+    <value>通知设置已启用</value>
+  </data>
+  <data name="BildiriEtkinIcerik" xml:space="preserve">
+    <value> 通知已启用。</value>
+  </data>
+  <data name="BildirimGosterSwitch" xml:space="preserve">
+    <value>显示通知</value>
+  </data>
+  <data name="BildirmeZamani" xml:space="preserve">
+    <value>提醒时间： </value>
+  </data>
+  <data name="Birsessecin" xml:space="preserve">
+    <value>选择闹钟铃声</value>
+  </data>
+  <data name="BoylamFormatsiz" xml:space="preserve">
+    <value>经度</value>
+  </data>
+  <data name="BugunkuNamazVakitleri" xml:space="preserve">
+    <value>今日礼拜时间</value>
+  </data>
+  <data name="CalarSaat" xml:space="preserve">
+    <value>闹钟</value>
+  </data>
+  <data name="CihazGPSDesteklemiyor" xml:space="preserve">
+    <value>您的设备不支持GPS</value>
+  </data>
+  <data name="CihazTitretmeyiDesteklemiyor" xml:space="preserve">
+    <value>您的设备不支持振动</value>
+  </data>
+  <data name="EnlemFormatsiz" xml:space="preserve">
+    <value>维度</value>
+  </data>
+  <data name="EtkinlestirSwitch" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="EtkinlestirSwitchAciklama" xml:space="preserve">
+    <value>为此礼拜时间启用闹钟、振动、通知功能</value>
+  </data>
+  <data name="EzanSesi" xml:space="preserve">
+    <value>宣礼（麦加）</value>
+  </data>
+  <data name="FecriKazibingirmesinekalanvakit" xml:space="preserve">
+    <value>距进入破晓（封斋时间）的剩余时间： </value>
+  </data>
+  <data name="FecriKazip" xml:space="preserve">
+    <value>破晓</value>
+  </data>
+  <data name="FecriSadik" xml:space="preserve">
+    <value>晨礼（黎明）</value>
+  </data>
+  <data name="FecriSadikakalanvakit" xml:space="preserve">
+    <value>距晨礼剩余的时间（封斋结束）： </value>
+  </data>
+  <data name="FitratinSesi" xml:space="preserve">
+    <value>Radio Fitrat （菲特拉电台） - 菲特拉之声</value>
+  </data>
+  <data name="FitratTV" xml:space="preserve">
+    <value>Fitrat TV （菲特拉电视台）</value>
+  </data>
+  <data name="FitratTVFacebook" xml:space="preserve">
+    <value>Fitrat TV （菲特拉电视台） Facebook 页面</value>
+  </data>
+  <data name="FitratTVTwitter" xml:space="preserve">
+    <value>Fitrat TV （菲特拉电视台） Twitter 页面</value>
+  </data>
+  <data name="FitratTVYoutube" xml:space="preserve">
+    <value>Fitrat TV （菲特拉电视台） Youtube 频道</value>
+  </data>
+  <data name="Hakkinda" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="HaritadaGoster" xml:space="preserve">
+    <value>在地图上显示位置</value>
+  </data>
+  <data name="HaritaHatasi" xml:space="preserve">
+    <value>打开地图时发生了一些故障。\n详细信息：</value>
+  </data>
+  <data name="Hatadetaylari" xml:space="preserve">
+    <value>错误详情：</value>
+  </data>
+  <data name="HorozOtusu" xml:space="preserve">
+    <value>公鸡打鸣</value>
+  </data>
+  <data name="IcerikYukleniyor" xml:space="preserve">
+    <value>内容载入中...</value>
+  </data>
+  <data name="Ikindi" xml:space="preserve">
+    <value>哺礼</value>
+  </data>
+  <data name="Ikindinincikmasinakalanvakit" xml:space="preserve">
+    <value>距哺礼结束剩余的时间： </value>
+  </data>
+  <data name="Kapat" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="Kaydet" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Kible" xml:space="preserve">
+    <value>朝拜</value>
+  </data>
+  <data name="KibleGostergesi" xml:space="preserve">
+    <value>克尔白（朝拜）指标</value>
+  </data>
+  <data name="KonumHatasi" xml:space="preserve">
+    <value>尝试获取设备位置时发生了一些故障</value>
+  </data>
+  <data name="KonumIzniBaslik" xml:space="preserve">
+    <value>无权访问设备位置</value>
+  </data>
+  <data name="KonumIzniIcerik" xml:space="preserve">
+    <value>为了使应用程序正常工作，您需要授予访问设备位置的权限！</value>
+  </data>
+  <data name="KonumKapali" xml:space="preserve">
+    <value>设备上未启用定位服务。 首先你需要开启定位服务！</value>
+  </data>
+  <data name="KonumKapaliBaslik" xml:space="preserve">
+    <value>定位服务关闭</value>
+  </data>
+  <data name="KonumYenileButton" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="KonumYenilendi" xml:space="preserve">
+    <value>已成功刷新设备位置和礼拜时间</value>
+  </data>
+  <data name="KusCiviltisi" xml:space="preserve">
+    <value>鸟鸣</value>
+  </data>
+  <data name="NamazVaktiAlmaHatasi" xml:space="preserve">
+    <value>从互联网获取礼拜时间时出错。</value>
+  </data>
+  <data name="Ogle" xml:space="preserve">
+    <value>晌礼</value>
+  </data>
+  <data name="Oglenincikmasinakalanvakit" xml:space="preserve">
+    <value>距晌礼结束剩余的时间： </value>
+  </data>
+  <data name="Ogleningirmesinekalanvakit" xml:space="preserve">
+    <value>距进入晌礼时间剩下的时间： </value>
+  </data>
+  <data name="OnBesDakikaOnceden" xml:space="preserve">
+    <value>提前15分钟</value>
+  </data>
+  <data name="PageTitle" xml:space="preserve">
+    <value>苏莱马尼亚日历</value>
+  </data>
+  <data name="Radyo" xml:space="preserve">
+    <value>收音机</value>
+  </data>
+  <data name="RadyoFitrat" xml:space="preserve">
+    <value>Radio Fitrat （菲特拉电台）</value>
+  </data>
+  <data name="RadyoFitratFaceBook" xml:space="preserve">
+    <value>Radio Fitrat （菲特拉电台） Facebook 页面</value>
+  </data>
+  <data name="RadyoFitratInstagram" xml:space="preserve">
+    <value>Radio Fitrat （菲特拉电台） Instagram 页面</value>
+  </data>
+  <data name="RadyoFitratTwitter" xml:space="preserve">
+    <value>Radio Fitrat （菲特拉电台） Twitter 页面</value>
+  </data>
+  <data name="RadyoIcinInternet" xml:space="preserve">
+    <value>播放广播需要互联网，请检查互联网是否已连接，或者您可以通过单击“网页”链接从网页收听。</value>
+  </data>
+  <data name="SabahSonu" xml:space="preserve">
+    <value>晨礼结束</value>
+  </data>
+  <data name="SabahSonunakalanvakit" xml:space="preserve">
+    <value>距晨礼结束剩余的时间： </value>
+  </data>
+  <data name="Sehir" xml:space="preserve">
+    <value>城市</value>
+  </data>
+  <data name="SesSecAciklama" xml:space="preserve">
+    <value>选择为此时间设置的闹钟铃声</value>
+  </data>
+  <data name="SesTesti" xml:space="preserve">
+    <value>测试闹铃</value>
+  </data>
+  <data name="SorunCikti" xml:space="preserve">
+    <value>遇到了一个问题</value>
+  </data>
+  <data name="SosyalMedyaBaglantisi" xml:space="preserve">
+    <value>我们的社交媒体链接</value>
+  </data>
+  <data name="SuleymaniyeVakfi" xml:space="preserve">
+    <value>苏莱马尼亚基金会</value>
+  </data>
+  <data name="SuleymaniyeVakfiFacebook" xml:space="preserve">
+    <value>苏莱曼尼亚基金会 Facebook 页面</value>
+  </data>
+  <data name="SuleymaniyeVakfiInstagram" xml:space="preserve">
+    <value>苏莱曼尼亚基金会 Instagram 页面</value>
+  </data>
+  <data name="SuleymaniyeVakfiTakvimi" xml:space="preserve">
+    <value>苏莱曼尼亚日历</value>
+  </data>
+  <data name="SuleymaniyeVakfiTwitter" xml:space="preserve">
+    <value>苏莱曼尼亚基金会 Twitter 页面</value>
+  </data>
+  <data name="Takvim" xml:space="preserve">
+    <value>日历</value>
+  </data>
+  <data name="TakvimIcinInternet" xml:space="preserve">
+    <value>为更新礼拜时间，您需要连接到互联网，打开 WiFi 或移动数据，然后单击“刷新”。</value>
+  </data>
+  <data name="TakvimIcinInternetBaslik" xml:space="preserve">
+    <value>需要互联网</value>
+  </data>
+  <data name="Tamam" xml:space="preserve">
+    <value>好的</value>
+  </data>
+  <data name="Tarih" xml:space="preserve">
+    <value>日期</value>
+  </data>
+  <data name="TestiDurdur" xml:space="preserve">
+    <value>停止测试</value>
+  </data>
+  <data name="TitremeyiDesteklemiyor" xml:space="preserve">
+    <value>您的设备不支持振动。</value>
+  </data>
+  <data name="TitresimSwitch" xml:space="preserve">
+    <value>振动</value>
+  </data>
+  <data name="Vakti" xml:space="preserve">
+    <value>时间： </value>
+  </data>
+  <data name="VaktiHatirlatmasi" xml:space="preserve">
+    <value>时间提醒</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="WebSayfa" xml:space="preserve">
+    <value> 网站</value>
+  </data>
+  <data name="Yatsi" xml:space="preserve">
+    <value>宵礼</value>
+  </data>
+  <data name="Yatsinincikmasinakalanvakit" xml:space="preserve">
+    <value>距宵礼结束剩余的时间： </value>
+  </data>
+  <data name="Yatsininciktigindangecenvakit" xml:space="preserve">
+    <value>从宵礼结束后经过的时间： </value>
+  </data>
+  <data name="YatsiSonu" xml:space="preserve">
+    <value>宵礼结束</value>
+  </data>
+  <data name="YayinAkisi" xml:space="preserve">
+    <value> 直播节目表</value>
+  </data>
+  <data name="Yenileniyor" xml:space="preserve">
+    <value>正在刷新</value>
+  </data>
+  <data name="YukseklikFormatsiz" xml:space="preserve">
+    <value>高度</value>
+  </data>
+  <data name="Zamaninda" xml:space="preserve">
+    <value>准时</value>
+  </data>
+  <data name="AciklamaLinkURL" xml:space="preserve">
+    <value>https://www.gulanjingzhidao.com/li-bai-yan-jiu</value>
+  </data>
+  <data name="AciklamaBas" xml:space="preserve">
+    <value>穆斯林是安拉给那些臣服于安拉并以他的方式忍受一切困难的人的名字。 他们是不屈不挠地实践宗教的人。
+“召人信仰真主，力行善功，并且说：「我确是穆斯林」的人，在言辞方面，有谁比他更优美呢？”（奉绥来特  41/33）
+此应用程序旨在提供安全快速的礼拜和禁食时间。 有关时间计算和禁食时间的更多详细信息，请点击此处" </value>
+  </data>
+  <data name="AciklamaLinkText" xml:space="preserve">
+    <value>礼拜研究</value>
+  </data>
+  <data name="AciklamaSon" xml:space="preserve">
+    <value> 文章。</value>
+  </data>
+  <data name="GotoSettings" xml:space="preserve">
+    <value>打开设置</value>
+  </data>
+  <data name="UygulamaDiliniSecin" xml:space="preserve">
+    <value>选择应用语言</value>
+  </data>
+  <data name="UygulamaDili" xml:space="preserve">
+    <value>应用语言</value>
+  </data>
+  <data name="UygulamaTema" xml:space="preserve">
+    <value>应用主题</value>
+  </data>
+  <data name="UygulamaTemasiniSecin" xml:space="preserve">
+    <value>选择应用主题</value>
+  </data>
+  <data name="KoyuTema" xml:space="preserve">
+    <value>夜间模式</value>
+  </data>
+  <data name="AcikTema" xml:space="preserve">
+    <value>浅色主题</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>英语</value>
+  </data>
+  <data name="Turkish" xml:space="preserve">
+    <value>土耳其语</value>
+  </data>
+  <data name="Chinese" xml:space="preserve">
+    <value>汉语</value>
+  </data>
+  <data name="Uyghur" xml:space="preserve">
+    <value>维吾尔语</value>
+  </data>
+  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
+    <value>您的设备不支持指南针</value>
+  </data>
+  <data name="AylikTakvimeErisemedi" xml:space="preserve">
+    <value>无法访问月历，请检查您的互联网是否可以访问并且定位服务是否处于活动状态！</value>
+  </data>
+  <data name="KaydetVeUygula" xml:space="preserve">
+    <value>保存并应用</value>
+  </data>
+  <data name="KalanSure" xml:space="preserve">
+    <value>剩余时间： </value>
+  </data>
+  <data name="AlarmSuresi" xml:space="preserve">
+    <value>闹钟时长： </value>
+  </data>
+  <data name="Dakika" xml:space="preserve">
+    <value> 分钟</value>
+  </data>
+  <data name="YaziBoyutu" xml:space="preserve">
+    <value>字体大小： </value>
+  </data>
+  <data name="BildirimKapatma" xml:space="preserve">
+    <value>启用粘性通知</value>
+  </data>
+  <data name="BildirimUyari" xml:space="preserve">
+    <value>建议您不要关闭此设置。 若您禁用，闹钟可能不会按时响起。 若您已启用，但闹钟仍未响铃，请检查应用程序设置并确保在“其他权限”部分中授予“在后台启动”权限，也在“省电模式”部分中确保选择“无限制”。现在，如果您想检查这些权限，请单击下面的按钮。</value>
+  </data>
+  <data name="KaydetVeKapat" xml:space="preserve">
+    <value>保存并关闭</value>
+  </data>
+  <data name="Arabic" xml:space="preserve">
+    <value>阿拉伯语</value>
+  </data>
+  <data name="Russian" xml:space="preserve">
+    <value>俄语</value>
+  </data>
+  <data name="Deutsch" xml:space="preserve">
+    <value>德语</value>
+  </data>
+  <data name="French" xml:space="preserve">
+    <value>法语</value>
+  </data>
+  <data name="Farsi" xml:space="preserve">
+    <value>波斯语</value>
+  </data>
+  <data name="Azerbaijani" xml:space="preserve">
+    <value>阿塞拜疆语</value>
+  </data>
+  <data name="Kyrgyz" xml:space="preserve">
+    <value>吉尔吉斯语</value>
+  </data>
+  <data name="Uzbek" xml:space="preserve">
+    <value>乌兹别克语</value>
+  </data>
+  <data name="DakikaOnceden" xml:space="preserve">
+    <value> 分钟提前</value>
+  </data>
+  <data name="AlarmTekrarlari" xml:space="preserve">
+    <value>闹钟铃声重复： </value>
+  </data>
+  <data name="Kere" xml:space="preserve">
+    <value> 次</value>
+  </data>
+  <data name="BildirimNamazVakitleri" xml:space="preserve">
+    <value>在通知中显示礼拜时间</value>
+  </data>
+  <data name="BildirimNamazVakitleriUyari" xml:space="preserve">
+    <value>注意：可能需要半分钟才能生效</value>
+  </data>
+  <data name="HepKonumYenile" xml:space="preserve">
+    <value>每次打开应用程序时刷新位置和礼拜时间</value>
+  </data>
+  <data name="UygulamaAyarlari" xml:space="preserve">
+	  <value>应用程序设置</value>
+  </data>
+  <data name="Yenile" xml:space="preserve">
+	  <value>刷新</value>
+  </data>
+  <data name="RadyoCal" xml:space="preserve">
+	  <value>播放或暂停收音机</value>
+  </data>
+  <data name="Etkin" xml:space="preserve">
+	  <value>已启用</value>
+  </data>
+  <data name="DevreDisi" xml:space="preserve">
+	  <value>已禁用</value>
+  </data>
+  <data name="AlarmlarPlanlaniyor" xml:space="preserve">
+    <value>正在安排闹钟，请稍候</value>
+  </data>
+</root>
