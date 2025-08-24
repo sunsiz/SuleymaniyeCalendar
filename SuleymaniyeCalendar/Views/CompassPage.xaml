@@ -1,5 +1,4 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-
 <ContentPage
     x:Class="SuleymaniyeCalendar.Views.CompassPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -31,9 +30,11 @@
     <ContentPage.Content>
         <Grid>
             <ScrollView>
-                <VerticalStackLayout Padding="12" Spacing="12">
+                <VerticalStackLayout Padding="12" Spacing="12"
+                                     BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
+                                                                       Dark={StaticResource AppBackgroundColorDark}}">
                     <!-- Compass -->
-                    <Grid Margin="0,8,0,0" HeightRequest="320">
+                    <Grid Margin="0,8,0,0" HeightRequest="360">
                         <Image x:Name="CompassImage"
                                Source="kompas.png"
                                Aspect="AspectFit"
@@ -42,7 +43,7 @@
                         <Image x:Name="ImageArrow"
                                Source="isaretci.png"
                                Aspect="AspectFit"
-                               Scale="0.55"
+                               Scale="0.72"
                                Rotation="{Binding Heading}"
                                HorizontalOptions="Center"
                                VerticalOptions="Center" />
@@ -52,14 +53,18 @@
                     <Border Style="{StaticResource Card}" Margin="8,4,8,16">
                         <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
                             <Label Grid.Row="0"
+                                   HorizontalTextAlignment="Center"
                                    Style="{StaticResource CardInfoLabel}"
-                                   Margin="0,0,0,2"
+                                   Margin="0,4,0,4"
                                    Text="{Binding LatitudeAltitude}" />
                             <Label Grid.Row="1"
+                                   HorizontalTextAlignment="Center"
                                    Style="{StaticResource CardInfoLabel}"
+                                   Margin="0,4,0,12"
                                    Text="{Binding DegreeLongitude}" />
                             <Button Grid.Row="2"
                                     Style="{StaticResource PrimaryButton}"
+                                    Margin="0,4,0,4"
                                     Text="{localization:Translate HaritadaGoster}"
                                     Command="{Binding GoToMapCommand}" />
                         </Grid>

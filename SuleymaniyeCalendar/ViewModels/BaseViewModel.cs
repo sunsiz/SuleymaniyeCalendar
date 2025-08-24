@@ -21,7 +21,16 @@ namespace SuleymaniyeCalendar.ViewModels
 		public bool IsNotBusy=>!IsBusy;
 
 		[ObservableProperty]private int _fontSize = Preferences.Get("FontSize", 14);
-		partial void OnFontSizeChanged(int value) => Preferences.Set("FontSize", value);
+		partial void OnFontSizeChanged(int value)
+		{
+			Preferences.Set("FontSize", value);
+			// Live update the shared font size resource so pages using {DynamicResource DefaultFontSize}
+			// pick up changes immediately while the settings slider moves.
+			if (Application.Current?.Resources != null && Application.Current.Resources.ContainsKey("DefaultFontSize"))
+			{
+				Application.Current.Resources["DefaultFontSize"] = (double)value;
+			}
+		}
 
 		public static void ShowToast(string message)
 		{

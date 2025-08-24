@@ -3,12 +3,12 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SuleymaniyeCalendar.Views.PrayerDetailPage"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
              xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:DataType="viewModels:PrayerDetailViewModel">
 
-<ScrollView VerticalScrollBarVisibility="Never">
+    <ScrollView VerticalScrollBarVisibility="Never">
         <Border Margin="{OnPlatform Android=9, iOS='9,10,9,9'}" Padding="18,14" HorizontalOptions="FillAndExpand" StrokeShape="RoundRectangle 5">
             <Border.Stroke>
                 <LinearGradientBrush EndPoint="1,0">
@@ -19,7 +19,9 @@
             <Border.Shadow>
                 <Shadow Brush="Coral" Offset="2,2" Radius="6" Opacity="0.1" />
             </Border.Shadow>
+
             <Grid x:DataType="viewModels:PrayerDetailViewModel" ColumnDefinitions="*, Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="3" Visual="Material">
+                <!-- Header -->
                 <Border Grid.Row="0" Grid.ColumnSpan="2" Margin="14,4" StrokeShape="RoundRectangle 9">
                     <Border.Stroke>
                         <LinearGradientBrush EndPoint="1,0">
@@ -31,7 +33,7 @@
                         <Shadow Brush="SaddleBrown" Offset="1,1" Radius="3" Opacity="0.2" />
                     </Border.Shadow>
                     <StackLayout Padding="14" HorizontalOptions="FillAndExpand" Orientation="Horizontal">
-                        <StackLayout.Background>                        
+                        <StackLayout.Background>
                             <LinearGradientBrush EndPoint="1,0">
                                 <GradientStop Color="{AppThemeBinding Light=Goldenrod, Dark={StaticResource PrimaryColor}}" Offset="0.1" />
                                 <GradientStop Color="{AppThemeBinding Light=Gold, Dark={StaticResource PrimaryAccent800Color}}" Offset="1.0" />
@@ -40,6 +42,8 @@
                         <Label HorizontalOptions="CenterAndExpand" FontAttributes="Bold" FontSize="22" TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent600Color}, Dark={StaticResource White}}" Visual="Material" Text="{Binding Title}" />
                     </StackLayout>
                 </Border>
+
+                <!-- Enable switch row -->
                 <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="4,4" VerticalOptions="Center" StrokeShape="RoundRectangle 9">
                     <Border.Stroke>
                         <LinearGradientBrush EndPoint="1,0">
@@ -57,12 +61,18 @@
                                 <GradientStop Color="{AppThemeBinding Light=PapayaWhip, Dark={StaticResource DarkElevation24dp}}" Offset="1.0" />
                             </LinearGradientBrush>
                         </StackLayout.Background>
+
                         <StackLayout HorizontalOptions="StartAndExpand" Orientation="Horizontal">
                             <Label Style="{DynamicResource LabelStyle}" HorizontalOptions="EndAndExpand" VerticalTextAlignment="Center" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material" Text="{localization:Translate Vakti}" />
                             <Label Style="{DynamicResource LabelStyle}" HorizontalOptions="StartAndExpand" VerticalTextAlignment="Center" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material" Text="{Binding Time}" />
                         </StackLayout>
+
                         <StackLayout HorizontalOptions="EndAndExpand" Orientation="Horizontal">
-                            <Switch WidthRequest="48" HeightRequest="48" Margin="{OnPlatform Android=0, iOS='0,19,0,0'}" HorizontalOptions="EndAndExpand" AutomationProperties.HelpText="{localization:Translate EtkinlestirSwitchAciklama}" AutomationProperties.IsInAccessibleTree="True" IsToggled="{Binding Enabled}" Visual="Material">
+                            <Switch WidthRequest="48" HeightRequest="48" Margin="{OnPlatform Android=0, iOS='0,19,0,0'}"
+                                    HorizontalOptions="EndAndExpand"
+                                    SemanticProperties.Description="{localization:Translate EtkinlestirSwitchAciklama}"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    IsToggled="{Binding Enabled}" Visual="Material">
                                 <Switch.Behaviors>
                                     <toolkit:EventToCommandBehavior EventName="Toggled" Command="{Binding EnabledSwitchToggledCommand}" CommandParameter="{Binding Enabled}" />
                                 </Switch.Behaviors>
@@ -71,6 +81,8 @@
                         </StackLayout>
                     </StackLayout>
                 </Border>
+
+                <!-- Options block -->
                 <Border Grid.Row="3" Grid.ColumnSpan="2" IsVisible="{Binding Enabled}" Margin="4,0" StrokeShape="RoundRectangle 9">
                     <Border.Stroke>
                         <LinearGradientBrush EndPoint="1,0">
@@ -81,6 +93,7 @@
                     <Border.Shadow>
                         <Shadow Brush="#000" Offset="2,2" Radius="3" Opacity="0.2" />
                     </Border.Shadow>
+
                     <StackLayout Padding="14,1" HorizontalOptions="FillAndExpand" Orientation="Vertical">
                         <StackLayout.Background>
                             <LinearGradientBrush EndPoint="1,0">
@@ -88,24 +101,36 @@
                                 <GradientStop Color="{AppThemeBinding Light=#EEE78E, Dark={StaticResource DarkElevation16dp}}" Offset="1.0" />
                             </LinearGradientBrush>
                         </StackLayout.Background>
+
                         <StackLayout HorizontalOptions="Fill" VerticalOptions="Center" Orientation="Horizontal">
-                            <Switch WidthRequest="48" HeightRequest="48" Margin="{OnPlatform Android=0, iOS='0,19,0,0'}" AutomationProperties.HelpText="{localization:Translate BildirimGosterSwitch}" AutomationProperties.IsInAccessibleTree="True" IsEnabled="{Binding Enabled}" IsToggled="{Binding Notification}">
+                            <Switch WidthRequest="48" HeightRequest="48" Margin="{OnPlatform Android=0, iOS='0,19,0,0'}"
+                                    SemanticProperties.Description="{localization:Translate BildirimGosterSwitch}"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    IsEnabled="{Binding Enabled}" IsToggled="{Binding Notification}">
                                 <Switch.Behaviors>
                                     <toolkit:EventToCommandBehavior EventName="Toggled" Command="{Binding NotificationCheckedChangedCommand}" CommandParameter="{Binding Notification}" />
                                 </Switch.Behaviors>
                             </Switch>
                             <Label Style="{DynamicResource LabelStyle}" HorizontalOptions="Start" VerticalTextAlignment="Center" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material" Text="{localization:Translate BildirimGosterSwitch}" />
                         </StackLayout>
+
                         <StackLayout IsVisible="{Binding IsNecessary}" HorizontalOptions="Fill" Orientation="Horizontal">
-                            <Switch WidthRequest="48" HeightRequest="48" Margin="{OnPlatform Android=0, iOS='0,19,0,0'}" VerticalOptions="Center" AutomationProperties.HelpText="{localization:Translate TitresimSwitch}" AutomationProperties.IsInAccessibleTree="True" IsEnabled="{Binding Enabled}" IsToggled="{Binding Vibration}" Visual="Material">
+                            <Switch WidthRequest="48" HeightRequest="48" Margin="{OnPlatform Android=0, iOS='0,19,0,0'}" VerticalOptions="Center"
+                                    SemanticProperties.Description="{localization:Translate TitresimSwitch}"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    IsEnabled="{Binding Enabled}" IsToggled="{Binding Vibration}" Visual="Material">
                                 <Switch.Behaviors>
                                     <toolkit:EventToCommandBehavior EventName="Toggled" Command="{Binding VibrationCheckedChangedCommand}" CommandParameter="{Binding Vibration}" />
                                 </Switch.Behaviors>
                             </Switch>
                             <Label Style="{DynamicResource LabelStyle}" HorizontalOptions="Start" VerticalTextAlignment="Center" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material" Text="{localization:Translate TitresimSwitch}" />
                         </StackLayout>
+
                         <StackLayout IsVisible="{Binding IsNecessary}" HorizontalOptions="Fill" Orientation="Horizontal">
-                            <Switch WidthRequest="48" HeightRequest="48" VerticalOptions="Center" AutomationProperties.HelpText="{localization:Translate AlarmSwitch}" AutomationProperties.IsInAccessibleTree="True" IsEnabled="{Binding Enabled}" IsToggled="{Binding Alarm}" Visual="Material">
+                            <Switch WidthRequest="48" HeightRequest="48" VerticalOptions="Center"
+                                    SemanticProperties.Description="{localization:Translate AlarmSwitch}"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    IsEnabled="{Binding Enabled}" IsToggled="{Binding Alarm}" Visual="Material">
                                 <Switch.Behaviors>
                                     <toolkit:EventToCommandBehavior EventName="Toggled" Command="{Binding AlarmCheckedChangedCommand}" CommandParameter="{Binding Alarm}" />
                                 </Switch.Behaviors>
@@ -114,6 +139,8 @@
                         </StackLayout>
                     </StackLayout>
                 </Border>
+
+                <!-- Notification time + preview -->
                 <Border Grid.Row="6" Grid.ColumnSpan="2" IsVisible="{Binding Enabled}" IsEnabled="{Binding Enabled}" Margin="4,0" StrokeShape="RoundRectangle 9">
                     <Border.Stroke>
                         <LinearGradientBrush EndPoint="1,0">
@@ -124,6 +151,7 @@
                     <Border.Shadow>
                         <Shadow Brush="#000" Offset="1,1" Radius="3" Opacity="0.2" />
                     </Border.Shadow>
+
                     <StackLayout Padding="14,9" HorizontalOptions="FillAndExpand">
                         <StackLayout.Background>
                             <LinearGradientBrush EndPoint="1,0">
@@ -131,6 +159,7 @@
                                 <GradientStop Color="{AppThemeBinding Light=#F8E9BE, Dark={StaticResource DarkElevation12dp}}" Offset="1.0" />
                             </LinearGradientBrush>
                         </StackLayout.Background>
+
                         <Label x:Name="LabelAlarmStartTime" Style="{DynamicResource LabelStyle}" HorizontalOptions="Start" HorizontalTextAlignment="End" TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent800Color}, Dark={StaticResource PrimaryAccent100Color}}" Visual="Material">
                             <Label.FormattedText>
                                 <FormattedString>
@@ -140,42 +169,41 @@
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
-                        <Slider HeightRequest="48" HorizontalOptions="FillAndExpand" AutomationProperties.IsInAccessibleTree="true" AutomationProperties.LabeledBy="LabelAlarmStartTime" Maximum="60" Minimum="0" Visual="Material" Value="{Binding NotificationTime}" />
-                        <!--<Label Style="{DynamicResource LabelStyle}" HorizontalOptions="Start" HorizontalTextAlignment="End" TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent800Color}, Dark={StaticResource PrimaryAccent100Color}}" Visual="Material" Text="{mex:LocString AlarmSound}" />-->
+
+                        <!-- Replaced deprecated LabeledBy with a descriptive semantic -->
+                        <Slider HeightRequest="48"
+                                HorizontalOptions="FillAndExpand"
+                                Maximum="60" Minimum="0"
+                                Value="{Binding NotificationTime}"
+                                MaximumTrackColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}"
+                                Visual="Material"
+                                AutomationProperties.IsInAccessibleTree="true"
+                                SemanticProperties.Description="{localization:Translate BildirmeZamani}" />
+
                         <StackLayout Orientation="Horizontal">
                             <Picker Title="{localization:Translate Birsessecin}" x:Name="Picker"
                                     Style="{DynamicResource PickerStyle}"
                                     HeightRequest="60"
-                                    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
-                                                                      Dark={StaticResource DarkElevation2dp}}"
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor}, Dark={StaticResource DarkElevation2dp}}"
                                     ItemDisplayBinding="{Binding Name}"
                                     SelectedItem="{Binding SelectedSound}"
-                                    TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor},
-                                                                Dark={StaticResource White}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}"
                                     ItemsSource="{Binding AvailableSounds}" />
-                            <!--<Button HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
-                                   AutomationProperties.HelpText="{mex:LocString AlarmSwitch}" Clicked="OnPlayPauseButtonClicked" Text="&#xf144;"
-                                   AutomationProperties.IsInAccessibleTree="True" FontAttributes="Bold" Style="{DynamicResource IconButtonStyle}">
-                                <Button.Triggers>
-                                    <DataTrigger BindingContext="{x:Reference Media}" Binding="{Binding CurrentState}" TargetType="Button" Value="{x:Static primitives:MediaElementState.Stopped}">
-                                        <Setter Property="Text" Value="&#xf144;" />
-                                    </DataTrigger>
-                                    <DataTrigger BindingContext="{x:Reference Media}" Binding="{Binding CurrentState}" TargetType="Button" Value="{x:Static primitives:MediaElementState.Playing}">
-                                        <Setter Property="Text" Value="&#xf28d;" />
-                                    </DataTrigger>
-                                </Button.Triggers>
-                            </Button>-->
-                            <Label Padding="0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
-                                    AutomationProperties.HelpText="{localization:Translate AlarmSwitch}"
-                                    AutomationProperties.IsInAccessibleTree="True" FontAttributes="Bold" FontFamily="FontAwesomeSolid" FontSize="45" Opacity="0.8"
-                                    TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor},
-                                                               Dark={StaticResource White}}">
+
+                            <Label Padding="0"
+                                   HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"
+                                   SemanticProperties.Description="{localization:Translate AlarmSwitch}"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   FontAttributes="Bold" FontFamily="FontAwesomeSolid" FontSize="45" Opacity="0.8"
+                                   TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}">
                                 <Label.Triggers>
                                     <DataTrigger Binding="{Binding IsPlaying}" TargetType="Label" Value="False">
                                         <Setter Property="Text" Value="&#xf144;" />
+                                        <Setter Property="SemanticProperties.Description" Value="{localization:Translate TestiDurdur}" />
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding IsPlaying}" TargetType="Label" Value="True">
                                         <Setter Property="Text" Value="&#xf28d;" />
+                                        <Setter Property="SemanticProperties.Description" Value="{localization:Translate TestiDurdur}" />
                                     </DataTrigger>
                                 </Label.Triggers>
                                 <Label.GestureRecognizers>
@@ -207,7 +235,11 @@
                 </toolkit:MediaElement>
 
                 <StackLayout Grid.Row="7" Grid.ColumnSpan="2" Margin="7" Padding="0" HorizontalOptions="Fill" Orientation="Horizontal">
-                    <Button Style="{DynamicResource ButtonStyle}" Padding="7" HorizontalOptions="FillAndExpand" BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryAccent400Color}, Dark={StaticResource SecondaryColor}}" Visual="Material" Command="{Binding GoBackCommand}" Text="{localization:Translate Kapat}" />
+                    <Button Style="{DynamicResource ButtonStyle}" Padding="7" HorizontalOptions="FillAndExpand"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryAccent400Color}, Dark={StaticResource SecondaryColor}}"
+                            Visual="Material"
+                            Command="{Binding GoBackCommand}"
+                            Text="{localization:Translate Kapat}" />
                 </StackLayout>
             </Grid>
         </Border>

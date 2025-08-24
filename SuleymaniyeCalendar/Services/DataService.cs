@@ -75,17 +75,24 @@ namespace SuleymaniyeCalendar.Services
 					Debug.WriteLine(ex.Message);
 				}
 			}
-
-			Task.Run(async () => { await PrepareMonthlyPrayerTimes().ConfigureAwait(false); });
-
 			return calendar;
 		}
 
 		public async Task<Calendar> PrepareMonthlyPrayerTimes()
 		{
 			var location = await GetCurrentLocationAsync(true).ConfigureAwait(false);
-			GetMonthlyPrayerTimes(location, true);
-			calendar = GetTakvimFromFile();
+			var monthly = GetMonthlyPrayerTimes(location, true);
+			if (monthly != null && monthly.Count > 0)
+			{
+				// Pick today's entry; fallback to closest
+				var today = monthly.FirstOrDefault(d => DateTime.Parse(d.Date) == DateTime.Today)
+						   ?? monthly.OrderBy(d => Math.Abs((DateTime.Parse(d.Date) - DateTime.Today).Days)).First();
+				calendar = today;
+			}
+			else
+			{
+				calendar = GetTakvimFromFile();
+			}
 			return calendar;
 		}
 
@@ -643,33 +650,25 @@ namespace SuleymaniyeCalendar.Services
 
 		public async Task<PermissionStatus> CheckAndRequestLocationPermission()
 		{
-			PermissionStatus status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
-			MainThread.BeginInvokeOnMainThread(async () =>
+			var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+			if (status == PermissionStatus.Granted)
+				return status;
+
+			if (Permissions.ShouldShowRationale<Permissions.LocationWhenInUse>())
 			{
-				if (status == PermissionStatus.Granted)
-					return;
+				Alert(AppResources.KonumIzniBaslik, AppResources.KonumIzniIcerik);
+			}
 
-				if (status == PermissionStatus.Denied && DeviceInfo.Platform == DevicePlatform.iOS)
-				{
-					// Prompt the user to turn on in settings
-					// On iOS once a permission has been denied it may not be requested again from the application
-					return;
-				}
-
-				if (Permissions.ShouldShowRationale<Permissions.LocationWhenInUse>())
-				{
-					// Prompt the user with additional information as to why the permission is needed
-					Alert(AppResources.KonumIzniBaslik, AppResources.KonumIzniIcerik);
-				}
-				status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
-				if (status == PermissionStatus.Denied)
-				{
-					var result = await Shell.Current.DisplayAlert(AppResources.KonumIzniBaslik, AppResources.KonumIzniIcerik,
-						AppResources.GotoSettings, AppResources.Kapat).ConfigureAwait(false);
-					if (result) AppInfo.ShowSettingsUI();
-					Debug.WriteLine("Permission Request result:", result);
-				}
-			});
+			status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+			if (status == PermissionStatus.Denied && DeviceInfo.Platform == DevicePlatform.iOS)
+			{
+				// On iOS once denied it may require manual settings
+				Alert(AppResources.KonumIzniBaslik, AppResources.KonumIzniIcerik);
+			}
+			else if (status == PermissionStatus.Denied)
+			{
+				MainThread.BeginInvokeOnMainThread(() => AppInfo.ShowSettingsUI());
+			}
 
 			return status;
 		}

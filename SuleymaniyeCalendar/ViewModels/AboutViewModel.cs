@@ -12,7 +12,8 @@ namespace SuleymaniyeCalendar.ViewModels
 {
 	public partial class AboutViewModel:BaseViewModel
 	{
-		[RelayCommand]public async void LinkButtonClicked(string url)
+		[RelayCommand]
+		public async Task LinkButtonClicked(string url)
 		{
 			await Launcher.OpenAsync(url).ConfigureAwait(false);
 			
@@ -28,7 +29,7 @@ namespace SuleymaniyeCalendar.ViewModels
 		}
 
 		[RelayCommand]
-		public async void Settings()
+		public async Task Settings()
 		{
 			IsBusy = true;
 			// This will push the SettingsPage onto the navigation stack

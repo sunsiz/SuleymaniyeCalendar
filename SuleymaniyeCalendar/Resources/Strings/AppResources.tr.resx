@@ -202,13 +202,10 @@
     <value>Fecr-i Kâzibin (Sahur başlaması)na kalan süre: </value>
   </data>
   <data name="FecriKazip" xml:space="preserve">
-    <value>Seher (Fecr-i Kâzip)</value>
+    <value>Seher Vakti</value>
   </data>
   <data name="FecriSadik" xml:space="preserve">
-    <value>Sabah (Fecr-i Sâdık) İmsak</value>
-  </data>
-  <data name="FecriSadikakalanvakit" xml:space="preserve">
-    <value>Fecr-i Sâdık (Sahur bitimi)ne kalan süre: </value>
+    <value>Sabah Namazı</value>
   </data>
   <data name="FitratinSesi" xml:space="preserve">
     <value>Radyo Fıtrat - Fıtrat'ın Sesi</value>
@@ -322,7 +319,7 @@
     <value>Radyo oynatmak için internet gerekli, lütfen internetin bağlı olduğunu kontrol edin, yada 'Web Sayfa' linkine tıklayarak web syfasından dinleyebilirsiniz.</value>
   </data>
   <data name="SabahSonu" xml:space="preserve">
-    <value>Sabah Sonu</value>
+    <value>Sabah Namazı Sonu</value>
   </data>
   <data name="SabahSonunakalanvakit" xml:space="preserve">
     <value>Sabah Sonu için kalan süre: </value>
@@ -553,5 +550,11 @@ Bu program, namaz ve oruç vakitlerine güvenli ve hızlı ulaşabilmeleri için
   </data>
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>Alarmlar planlanıyor, lütfen bekleyin</value>
+  </data>
+  <data name="FecriSadikakalanvakit" xml:space="preserve">
+    <value>Fecr-i Sâdık (Sahur bitimi)ne kalan süre: </value>
+  </data>
+  <data name="SistemTemasi" xml:space="preserve">
+    <value>Sistem teması</value>
   </data>
 </root>

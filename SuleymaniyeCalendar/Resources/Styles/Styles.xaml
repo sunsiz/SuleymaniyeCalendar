@@ -1,8 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
-<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls">
 
-    <!-- Base control styles (kept) -->
+    <!--  Base control styles (kept)  -->
     <Style TargetType="ActivityIndicator">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource White}}" />
     </Style>
@@ -26,7 +29,7 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryColor}}" />
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource White}}" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="14,10" />
         <Setter Property="MinimumHeightRequest" Value="44" />
@@ -134,6 +137,10 @@
         <Setter Property="BorderColor" Value="Transparent" />
         <Setter Property="BorderWidth" Value="0" />
         <Setter Property="CornerRadius" Value="0" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="HeightRequest" Value="44" />
+        <Setter Property="WidthRequest" Value="44" />
+        <Setter Property="Padding" Value="8" />
         <Setter Property="MinimumHeightRequest" Value="44" />
         <Setter Property="MinimumWidthRequest" Value="44" />
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -150,11 +157,20 @@
         </Setter>
     </Style>
 
+    <!-- RadioButton: ensure transparent background to avoid white boxes inside cards -->
+    <Style TargetType="RadioButton">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
+        <Setter Property="Padding" Value="8,6" />
+        <Setter Property="HorizontalOptions" Value="Start" />
+    </Style>
+
     <Style TargetType="Label">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+        <Setter Property="LineBreakMode" Value="WordWrap" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -168,6 +184,8 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
+
+    <!--  Base text styles merged into implicit styles above to avoid duplicates  -->
 
     <x:Double x:Key="DefaultFontSize">14</x:Double>
 
@@ -218,7 +236,7 @@
         </Setter>
     </Style>
 
-    <!-- Unified Card (modern) -->
+    <!--  Unified Card (modern)  -->
     <Style x:Key="Card" TargetType="Border">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceVariantColorDark}}" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}" />
@@ -228,12 +246,16 @@
         <Setter Property="HorizontalOptions" Value="FillAndExpand" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="#33000000" Offset="0,4" Radius="16" Opacity="0.8" />
+                <Shadow
+                    Brush="#33000000"
+                    Opacity="0.8"
+                    Radius="16"
+                    Offset="0,4" />
             </Setter.Value>
         </Setter>
     </Style>
 
-    <!-- Unified Round pill (city/month buttons) -->
+    <!--  Unified Round pill (city/month buttons)  -->
     <Style x:Key="RoundButton" TargetType="Border">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryAccent400Color}, Dark={StaticResource SecondaryColor}}" />
         <Setter Property="Stroke" Value="Transparent" />
@@ -243,13 +265,20 @@
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="#22000000" Offset="0,2" Radius="12" Opacity="0.6" />
+                <Shadow
+                    Brush="#22000000"
+                    Opacity="0.6"
+                    Radius="12"
+                    Offset="0,2" />
             </Setter.Value>
         </Setter>
     </Style>
 
-    <!-- CTA variants -->
-    <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+    <!--  CTA variants  -->
+    <Style
+        x:Key="PrimaryButton"
+        BasedOn="{StaticResource ButtonStyle}"
+        TargetType="Button">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryAccent400Color}, Dark={StaticResource SecondaryColor}}" />
         <Setter Property="TextColor" Value="{StaticResource PrimaryAccent50Color}" />
         <Setter Property="CornerRadius" Value="12" />
@@ -258,7 +287,10 @@
         <Setter Property="HorizontalOptions" Value="FillAndExpand" />
     </Style>
 
-    <Style x:Key="TonalButton" TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+    <Style
+        x:Key="TonalButton"
+        BasedOn="{StaticResource ButtonStyle}"
+        TargetType="Button">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceVariantColorDark}}" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryAccent800Color}, Dark={StaticResource PrimaryAccent50Color}}" />
         <Setter Property="CornerRadius" Value="12" />
@@ -266,8 +298,11 @@
         <Setter Property="HorizontalOptions" Value="FillAndExpand" />
     </Style>
 
-    <!-- Card info labels -->
-    <Style x:Key="CardInfoLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+    <!--  Card info labels  -->
+    <Style
+        x:Key="CardInfoLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource PrimaryAccent50Color}}" />
     </Style>
@@ -281,37 +316,39 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryTextColor}, Dark={StaticResource White}}" />
     </Style>
 
-    <!-- Page background consistent with app theme -->
+    <!--  Page background consistent with app theme  -->
     <Style ApplyToDerivedTypes="True" TargetType="Page">
         <Setter Property="Padding" Value="0" />
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AppBackgroundColor}, Dark={StaticResource AppBackgroundColorDark}}" />
+        <!--  iOS-specific safe area inset handling  -->
+        <Setter Property="ios:Page.UseSafeArea" Value="True" />
     </Style>
 
-    <!-- Shell/Tabbar -->
+    <!--  Shell/Tabbar  -->
     <Style ApplyToDerivedTypes="True" TargetType="Shell">
         <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Gray950}}" />
-        <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource PrimaryColor}, Default={StaticResource White}}" />
+    <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource PrimaryColor}, Default={StaticResource White}}" />
         <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" />
         <Setter Property="Shell.DisabledColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}" />
         <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray300}}" />
         <Setter Property="Shell.NavBarHasShadow" Value="False" />
-        <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource TabBarBgColor}" />
-        <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource TabBarSelectedColor}" />
-        <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource TabBarSelectedColor}" />
-        <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource TabBarUnselectedColor}" />
+    <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light={StaticResource TabBarBgColor}, Dark={StaticResource TabBarBackgroundColorDark}}" />
+    <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
+    <Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
+    <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light={StaticResource TabBarUnselectedColor}, Dark={StaticResource TabBarUnselectedColor}}" />
     </Style>
 
     <Style TargetType="TabBar">
-        <Setter Property="Shell.TabBarBackgroundColor" Value="{StaticResource TabBarBgColor}" />
-        <Setter Property="Shell.TabBarForegroundColor" Value="{StaticResource TabBarSelectedColor}" />
-        <Setter Property="Shell.TabBarTitleColor" Value="{StaticResource TabBarSelectedColor}" />
-        <Setter Property="Shell.TabBarUnselectedColor" Value="{StaticResource TabBarUnselectedColor}" />
+    <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light={StaticResource TabBarBgColor}, Dark={StaticResource TabBarBackgroundColorDark}}" />
+    <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
+    <Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
+    <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light={StaticResource TabBarUnselectedColor}, Dark={StaticResource TabBarUnselectedColor}}" />
     </Style>
 
     <Style TargetType="ShellItem">
-        <Setter Property="Shell.ForegroundColor" Value="{StaticResource TabBarSelectedColor}" />
-        <Setter Property="Shell.UnselectedColor" Value="{StaticResource TabBarUnselectedColor}" />
+    <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
+    <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Light={StaticResource TabBarUnselectedColor}, Dark={StaticResource TabBarUnselectedColor}}" />
     </Style>
 
-    <!-- The rest (NavigationPage, TabbedPage, Pickers, etc.) remain as in your file -->
+    <!--  The rest (NavigationPage, TabbedPage, Pickers, etc.) remain as in your file  -->
 </ResourceDictionary>

@@ -1034,6 +1034,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to System theme.
+        /// </summary>
+        internal static string SistemTemasi {
+            get {
+                return ResourceManager.GetString("SistemTemasi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to We Encountered a Problem.
         /// </summary>
         internal static string SorunCikti {

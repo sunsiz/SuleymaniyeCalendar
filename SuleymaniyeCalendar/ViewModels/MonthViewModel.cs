@@ -40,7 +40,7 @@ namespace SuleymaniyeCalendar.ViewModels
 		}
 
 		[RelayCommand]
-		private async void Refresh()
+		private async Task Refresh()
 		{
 			Location location;
 			//using (UserDialogs.Instance.Loading(AppResources.Yenileniyor))
@@ -56,7 +56,7 @@ namespace SuleymaniyeCalendar.ViewModels
 		}
 
 		[RelayCommand]
-		private async void GoBack()
+		private async Task GoBack()
 		{
 			await Shell.Current.GoToAsync("..").ConfigureAwait(false);
 		}

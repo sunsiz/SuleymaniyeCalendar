@@ -49,7 +49,7 @@ namespace SuleymaniyeCalendar.ViewModels
 		}
 
 		[RelayCommand]
-		private async void RefreshLocation()
+		private async Task RefreshLocation()
 		{
 				//using (UserDialogs.Instance.Loading(AppResources.Yenileniyor))
 				//{
@@ -67,7 +67,7 @@ namespace SuleymaniyeCalendar.ViewModels
 		}
 
 		[RelayCommand]
-		private async void GoToMap()
+		private async Task GoToMap()
 		{
 				try
 				{

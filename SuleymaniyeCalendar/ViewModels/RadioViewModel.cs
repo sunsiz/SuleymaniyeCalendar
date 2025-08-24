@@ -26,7 +26,7 @@ namespace SuleymaniyeCalendar.ViewModels
 		}
 
 		[RelayCommand]
-		private async void Play()
+		private async Task Play()
 		{
 			IsBusy = true;
 

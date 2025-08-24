@@ -24,5 +24,11 @@ public partial class MainPage : ContentPage
 		_resourceManager.CurrentCulture = new CultureInfo(Preferences.Get("SelectedLanguage", "en"));
 		_viewModel.OnAppearing();
 	}
+
+    protected override void OnDisappearing()
+    {
+        base.OnDisappearing();
+        _viewModel?.OnDisappearing();
+    }
 }
 

@@ -533,4 +533,7 @@ This application is designed to provide safe and fast access to prayer and fasti
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>Scheduling alarms, please wait</value>
   </data>
+  <data name="SistemTemasi" xml:space="preserve">
+    <value>System theme</value>
+  </data>
 </root>

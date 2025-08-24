@@ -554,4 +554,7 @@
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>正在安排闹钟，请稍候</value>
   </data>
+  <data name="SistemTemasi" xml:space="preserve">
+    <value>系统主题</value>
+  </data>
 </root>

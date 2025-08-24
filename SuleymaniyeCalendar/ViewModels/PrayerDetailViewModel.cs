@@ -122,7 +122,7 @@ namespace SuleymaniyeCalendar.ViewModels
 		}
 
 		[RelayCommand]
-		public async void TestButtonClicked()
+		public async Task TestButtonClicked()
 		{
 			if (!IsPlaying)
 			{
@@ -206,8 +206,11 @@ namespace SuleymaniyeCalendar.ViewModels
 				Vibration = Preferences.Get(PrayerId + "Vibration", true);
 				Alarm = Preferences.Get(PrayerId + "Alarm", false);
 				NotificationTime = Preferences.Get(PrayerId + "NotificationTime", 0);
-				string file = "alarm";
-				file = Preferences.Get(PrayerId + "AlarmSound", file);
+				// Ensure SelectedSound reflects saved choice or a default
+				var saved = Preferences.Get(PrayerId + "AlarmSound", "alarm");
+				SelectedSound = AvailableSounds?.FirstOrDefault(n => n.FileName == saved)
+								?? AvailableSounds?.FirstOrDefault(n => n.FileName == "alarm")
+								?? AvailableSounds?.FirstOrDefault();
 			}
 			catch (Exception ex)
 			{
@@ -227,10 +230,7 @@ namespace SuleymaniyeCalendar.ViewModels
 				new Sound(fileName: "beep2", name: AppResources.CalarSaat + " 3"),
 				new Sound(fileName: "beep3", name: AppResources.CalarSaat + " 4")
 			};
-			string file = "alarm";
-			file = Preferences.Get(PrayerId + "AlarmSound", file);
-
-			SelectedSound = AvailableSounds.FirstOrDefault(n => n.FileName == file);
+			// Selection will be set in LoadPrayer when PrayerId is known
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using Android.App;
 using Android.Content;
 using Android.Media;
+using Android.Content.Res; // for UiMode
 using Android.OS;
 using Android.Provider;
 using Android.Util;
@@ -34,11 +35,29 @@ namespace SuleymaniyeCalendar
 			var timeLabel = FindViewById<TextView>(Resource.Id.textViewTime);
 			FindViewById<Android.Widget.Button>(Resource.Id.stopButton)?.SetText(AppResources.Kapat, TextView.BufferType.Normal);
 			var layout = FindViewById<LinearLayout>(Resource.Id.linearLayout);
-			var lightColor = Android.Graphics.Color.ParseColor("#EFEBE9");
-			var darkColor = Android.Graphics.Color.ParseColor("#121212");
-			layout?.SetBackgroundColor(Models.Theme.Tema == 1 ? lightColor : darkColor);
-			label?.SetTextColor(Models.Theme.Tema == 1 ? darkColor : lightColor);
-			timeLabel?.SetTextColor(Models.Theme.Tema == 1 ? darkColor : lightColor);
+			var lightBg = Android.Graphics.Color.ParseColor("#EFEBE9"); // app light bg
+			var darkBg = Android.Graphics.Color.ParseColor("#121212");  // app dark bg
+			var lightFg = Android.Graphics.Color.ParseColor("#111111");
+			var darkFg = Android.Graphics.Color.ParseColor("#FFFFFF");
+
+			// Determine dark mode without referencing AppTheme enum:
+			// Theme.Tema => 0 = Dark, 1 = Light, 2 = System (follow OS)
+			bool isDark;
+			var savedTheme = Models.Theme.Tema;
+			if (savedTheme == 0) // Dark
+				isDark = true;
+			else if (savedTheme == 1) // Light
+				isDark = false;
+			else // System
+			{
+				var uiMode = Resources?.Configuration?.UiMode ?? 0;
+				isDark = (uiMode & UiMode.NightMask) == UiMode.NightYes;
+			}
+
+			layout?.SetBackgroundColor(isDark ? darkBg : lightBg);
+			label?.SetTextColor(isDark ? darkFg : lightFg);
+			timeLabel?.SetTextColor(isDark ? darkFg : lightFg);
+
 			_player ??= new MediaPlayer();
 			switch (name)
 			{

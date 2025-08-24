@@ -4,217 +4,101 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SuleymaniyeCalendar.Views.SettingsPage"
              xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
-             xmlns:behaviors="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+             xmlns:behaviors="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
+             x:DataType="viewModels:SettingsViewModel">
 
-<ContentPage.Content>
+    <ContentPage.Content>
         <ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="Fill" Orientation="Vertical">
-        <Border HorizontalOptions="FillAndExpand" Padding="8,4" Margin="9" StrokeShape="RoundRectangle 5">
-            <Border.Stroke>
-                <LinearGradientBrush EndPoint="1,0">
-                    <GradientStop Color="{AppThemeBinding Light=AliceBlue, Dark={StaticResource AppBackgroundColorDark}}" Offset="0.1" />
-                    <GradientStop Color="{AppThemeBinding Light=WhiteSmoke, Dark={StaticResource PrimaryColor}}" Offset="1.0" />
-                </LinearGradientBrush>
-            </Border.Stroke>
-            <Border.Shadow>
-                <Shadow Brush="Coral" Offset="1,1" Radius="6" Opacity="0.3" />
-            </Border.Shadow>
-        <StackLayout>
-            <Border Margin="4,4" VerticalOptions="Center" StrokeShape="RoundRectangle 9">
-                <Border.Stroke>
-                    <LinearGradientBrush EndPoint="1,0">
-                        <GradientStop Color="{AppThemeBinding Light=#FCE4AE, Dark={StaticResource DarkElevation16dp}}" Offset="0.1" />
-                        <GradientStop Color="{AppThemeBinding Light=#F8E9BE, Dark={StaticResource DarkElevation16dp}}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Stroke>
-                <Border.Shadow>
-                    <Shadow Brush="#000" Offset="2,2" Radius="3" Opacity="0.3" />
-                </Border.Shadow>
-                <StackLayout Padding="9,5">
-                    <StackLayout.Background>
-                        <LinearGradientBrush EndPoint="1,0">
-                            <GradientStop Color="{AppThemeBinding Light=#FCE4AE, Dark={StaticResource DarkElevation16dp}}" Offset="0.1" />
-                            <GradientStop Color="{AppThemeBinding Light=#F8E9BE, Dark={StaticResource DarkElevation16dp}}" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </StackLayout.Background>
-                            <Label HorizontalOptions="Start" Text="{localization:Translate UygulamaDili}" Style="{DynamicResource LabelStyle}" HorizontalTextAlignment="End" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material" />
-                            <Picker ItemsSource="{Binding SupportedLanguages}" Style="{DynamicResource PickerStyle}" ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding SelectedLanguage}" Title="{localization:Translate UygulamaDiliniSecin}" HorizontalOptions="Fill" />
-                            <Button Text="{localization:Translate KaydetVeUygula}" Command="{Binding ChangeLanguageCommand}" BackgroundColor="{AppThemeBinding Light={StaticResource CityBackgroundColor}, Dark={StaticResource CityBackgroundColorDark}}" Style="{DynamicResource ButtonStyle}" TextColor="{StaticResource CardBackgroundColor}" Visual="Material" Padding="7"/>
-                </StackLayout>
-            </Border>
-            <Border Margin="4" VerticalOptions="Center" StrokeShape="RoundRectangle 9">
-                <Border.Stroke>
-                    <LinearGradientBrush EndPoint="1,0">
-                        <GradientStop Color="{AppThemeBinding Light=Khaki, Dark={StaticResource DarkElevation12dp}}" Offset="0.1" />
-                        <GradientStop Color="{AppThemeBinding Light=#EEE78E, Dark={StaticResource DarkElevation12dp}}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Stroke>
-                <Border.Shadow>
-                    <Shadow Brush="#000" Offset="2,2" Radius="3" Opacity="0.3" />
-                </Border.Shadow>
-                <StackLayout Padding="9,5">
-                    <StackLayout.Background>
-                        <LinearGradientBrush EndPoint="1,0">
-                            <GradientStop Color="{AppThemeBinding Light=Khaki, Dark={StaticResource DarkElevation12dp}}" Offset="0.1" />
-                            <GradientStop Color="{AppThemeBinding Light=#EEE78E, Dark={StaticResource DarkElevation12dp}}" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </StackLayout.Background>
-                    <Label HorizontalOptions="Start" Text="{localization:Translate UygulamaTema}" Style="{DynamicResource LabelStyle}" HorizontalTextAlignment="End" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material" />
-                    <RadioButton Content="{localization:Translate AcikTema}" Value="1" x:Name="AcikTema" Style="{StaticResource RadioButtonStyle}" AutomationProperties.IsInAccessibleTree="True" AutomationProperties.HelpText="{localization:Translate AcikTema}">
-                        <RadioButton.Triggers>
-                            <DataTrigger TargetType="RadioButton" Binding="{Binding CurrentTheme}" Value="1">
-                                <Setter TargetName="AcikTema" Property="IsChecked" Value="True"/>
-                            </DataTrigger>
-                        </RadioButton.Triggers>
-                        <RadioButton.Behaviors>
-                            <behaviors:EventToCommandBehavior EventName="CheckedChanged" Command="{Binding RadioButtonCheckedChangedCommand}" CommandParameter="{x:Reference AcikTema}"/>
-                        </RadioButton.Behaviors>
-                    </RadioButton>
-                    <RadioButton Content="{localization:Translate KoyuTema}" Value="0" x:Name="KoyuTema" Style="{StaticResource RadioButtonStyle}" AutomationProperties.IsInAccessibleTree="True" AutomationProperties.HelpText="{localization:Translate KoyuTema}">
-                        <RadioButton.Triggers>
-                            <DataTrigger TargetType="RadioButton" Binding="{Binding CurrentTheme}" Value="0">
-                                <Setter TargetName="KoyuTema" Property="IsChecked" Value="True"/>
-                            </DataTrigger>
-                        </RadioButton.Triggers>
-                        <RadioButton.Behaviors>
-                            <behaviors:EventToCommandBehavior EventName="CheckedChanged" Command="{Binding RadioButtonCheckedChangedCommand}" CommandParameter="{x:Reference KoyuTema}"/>
-                        </RadioButton.Behaviors>
-                    </RadioButton>
-                </StackLayout>
-            </Border>
-            <Border Margin="4,4" VerticalOptions="Center" StrokeShape="RoundRectangle 9">
-                <Border.Stroke>
-                    <LinearGradientBrush EndPoint="1,0">
-                        <GradientStop Color="{AppThemeBinding Light=#FCE4AE, Dark={StaticResource DarkElevation16dp}}" Offset="0.1" />
-                        <GradientStop Color="{AppThemeBinding Light=#F8E9BE, Dark={StaticResource DarkElevation16dp}}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Stroke>
-                <Border.Shadow>
-                    <Shadow Brush="#000" Offset="2,2" Radius="3" Opacity="0.3" />
-                </Border.Shadow>
-                <StackLayout Padding="9,5">
-                    <StackLayout.Background>
-                        <LinearGradientBrush EndPoint="1,0">
-                            <GradientStop Color="{AppThemeBinding Light=#FCE4AE, Dark={StaticResource DarkElevation16dp}}" Offset="0.1" />
-                            <GradientStop Color="{AppThemeBinding Light=#F8E9BE, Dark={StaticResource DarkElevation16dp}}" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </StackLayout.Background>
-                    <Label HorizontalOptions="Start" Style="{DynamicResource LabelStyle}" HorizontalTextAlignment="End" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material" x:Name="LabelFontSize">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="{localization:Translate YaziBoyutu}" />
-                                <Span Text="{Binding FontSize}" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                            <Slider HorizontalOptions="FillAndExpand" HeightRequest="48" Maximum="24" Minimum="12" Value="{Binding FontSize}" MaximumTrackColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material" AutomationProperties.IsInAccessibleTree="true" AutomationProperties.LabeledBy="LabelFontSize"/>
-                </StackLayout>
-            </Border>
-            <Border Margin="4,4" VerticalOptions="Center" IsVisible="{Binding IsNecessary}" StrokeShape="RoundRectangle 9">
-                <Border.Stroke>
-                    <LinearGradientBrush EndPoint="1,0">
-                        <GradientStop Color="{AppThemeBinding Light=khaki, Dark={StaticResource DarkElevation12dp}}" Offset="0.1" />
-                        <GradientStop Color="{AppThemeBinding Light=#EEE78E, Dark={StaticResource DarkElevation12dp}}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Stroke>
-                <Border.Shadow>
-                    <Shadow Brush="#000" Offset="2,2" Radius="3" Opacity="0.3" />
-                </Border.Shadow>
-                <StackLayout Padding="9,5">
-                    <StackLayout.Background>
-                        <LinearGradientBrush EndPoint="1,0">
-                            <GradientStop Color="{AppThemeBinding Light=khaki, Dark={StaticResource DarkElevation12dp}}" Offset="0.1" />
-                            <GradientStop Color="{AppThemeBinding Light=#EEE78E, Dark={StaticResource DarkElevation12dp}}" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </StackLayout.Background>
-                    <Label HorizontalOptions="Start" Style="{DynamicResource LabelStyle}" HorizontalTextAlignment="End" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material" x:Name="LabelAlarmDuration">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="{localization:Translate AlarmSuresi}" />
-                                <Span Text="{Binding AlarmDuration}" />
-                                <Span Text="{localization:Translate Dakika}" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                            <Slider HorizontalOptions="FillAndExpand" HeightRequest="48" Maximum="30" Minimum="1" Value="{Binding AlarmDuration}" MaximumTrackColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material" AutomationProperties.IsInAccessibleTree="true" AutomationProperties.LabeledBy="LabelAlarmDuration"/>
-                </StackLayout>
-            </Border>
-            <Border Margin="4,4" VerticalOptions="Center" StrokeShape="RoundRectangle 9">
-                <Border.Stroke>
-                    <LinearGradientBrush EndPoint="1,0">
-                        <GradientStop Color="{AppThemeBinding Light=#FCE4AE, Dark={StaticResource DarkElevation16dp}}" Offset="0.1" />
-                        <GradientStop Color="{AppThemeBinding Light=#F8E9BE, Dark={StaticResource DarkElevation16dp}}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Stroke>
-                <Border.Shadow>
-                    <Shadow Brush="#000" Offset="2,2" Radius="3" Opacity="0.3" />
-                </Border.Shadow>
-                    <StackLayout Padding="9,5" HorizontalOptions="FillAndExpand" Orientation="Horizontal">
-                        <StackLayout.Background>
-                            <LinearGradientBrush EndPoint="1,0">
-                                <GradientStop Color="{AppThemeBinding Light=#FCE4AE, Dark={StaticResource DarkElevation16dp}}" Offset="0.1" />
-                                <GradientStop Color="{AppThemeBinding Light=#F8E9BE, Dark={StaticResource DarkElevation16dp}}" Offset="1.0" />
-                            </LinearGradientBrush>
-                        </StackLayout.Background>
-                        <Switch HorizontalOptions="Start" HeightRequest="48" WidthRequest="48" IsToggled="{Binding AlwaysRenewLocationEnabled}" Visual="Material" />
-                        <Label HorizontalOptions="StartAndExpand" Text="{localization:Translate HepKonumYenile}" Style="{DynamicResource LabelStyle}" HorizontalTextAlignment="Start" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material"/>
-                    </StackLayout>
-            </Border>
-            <Border Margin="4,4" VerticalOptions="Center" IsVisible="{OnPlatform Android=True, iOS=False}" StrokeShape="RoundRectangle 9">
-                <Border.Stroke>
-                    <LinearGradientBrush EndPoint="1,0">
-                        <GradientStop Color="{AppThemeBinding Light=Khaki, Dark={StaticResource DarkElevation12dp}}" Offset="0.1" />
-                        <GradientStop Color="{AppThemeBinding Light=#EEE78E, Dark={StaticResource DarkElevation12dp}}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Stroke>
-                <Border.Shadow>
-                    <Shadow Brush="#000" Offset="2,2" Radius="3" Opacity="0.3" />
-                </Border.Shadow>
-                <StackLayout Padding="9,5">
-                    <StackLayout.Background>
-                        <LinearGradientBrush EndPoint="1,0">
-                            <GradientStop Color="{AppThemeBinding Light=Khaki, Dark={StaticResource DarkElevation12dp}}" Offset="0.1" />
-                            <GradientStop Color="{AppThemeBinding Light=#EEE78E, Dark={StaticResource DarkElevation12dp}}" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </StackLayout.Background>
-                    <StackLayout HorizontalOptions="FillAndExpand" Orientation="Horizontal">
-                        <Switch HorizontalOptions="Start" HeightRequest="48" WidthRequest="48" IsToggled="{Binding NotificationPrayerTimesEnabled}" Visual="Material" />
-                        <Label HorizontalOptions="StartAndExpand" Text="{localization:Translate BildirimNamazVakitleri}" Style="{DynamicResource LabelStyle}" HorizontalTextAlignment="Start" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material"/>
-                    </StackLayout>
-                    <Label HorizontalOptions="StartAndExpand" Text="{localization:Translate BildirimNamazVakitleriUyari}" FontSize="Small" HorizontalTextAlignment="Start" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material"/>
-                </StackLayout>
-            </Border>
-            <Border Margin="4,4" VerticalOptions="Center" IsVisible="{OnPlatform Android=true, iOS=false}" StrokeShape="RoundRectangle 9">
-                <Border.Stroke>
-                    <LinearGradientBrush EndPoint="1,0">
-                        <GradientStop Color="{AppThemeBinding Light=#FCE4AE, Dark={StaticResource DarkElevation16dp}}" Offset="0.1" />
-                        <GradientStop Color="{AppThemeBinding Light=#F8E9BE, Dark={StaticResource DarkElevation16dp}}" Offset="1.0" />
-                    </LinearGradientBrush>
-                </Border.Stroke>
-                <Border.Shadow>
-                    <Shadow Brush="#000" Offset="2,2" Radius="3" Opacity="0.3" />
-                </Border.Shadow>
-                <StackLayout Padding="9,5">
-                    <StackLayout.Background>
-                        <LinearGradientBrush EndPoint="1,0">
-                            <GradientStop Color="{AppThemeBinding Light=#FCE4AE, Dark={StaticResource DarkElevation16dp}}" Offset="0.1" />
-                            <GradientStop Color="{AppThemeBinding Light=#F8E9BE, Dark={StaticResource DarkElevation16dp}}" Offset="1.0" />
-                        </LinearGradientBrush>
-                    </StackLayout.Background>
-                    <Label HorizontalOptions="StartAndExpand" Text="{localization:Translate BildirimKapatma}" Style="{DynamicResource LabelStyle}" HorizontalTextAlignment="Start" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" Visual="Material"/>
-                    <StackLayout HorizontalOptions="FillAndExpand" Orientation="Horizontal">
-                        <Switch HorizontalOptions="Start" HeightRequest="48" WidthRequest="48" IsToggled="{Binding ForegroundServiceEnabled}" Visual="Material" />
-                        <Label HorizontalOptions="End" Text="{localization:Translate EtkinlestirSwitch}" Style="{DynamicResource LabelStyle}" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" VerticalTextAlignment="Center" Visual="Material"/>
-                    </StackLayout>
-                    <Label HorizontalOptions="FillAndExpand" Text="{localization:Translate BildirimUyari}" FontSize="Small" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource White}}" VerticalTextAlignment="Center" Visual="Material"/>
-                            <Button HorizontalOptions="FillAndExpand" Text="{localization:Translate GotoSettings}" Command="{Binding GotoSettingsCommand}" Style="{DynamicResource ButtonStyle}"  BackgroundColor="{AppThemeBinding Light={StaticResource CityBackgroundColor}, Dark={StaticResource CityBackgroundColorDark}}" TextColor="{StaticResource CardBackgroundColor}" Padding="7" Visual="Material" />
-                </StackLayout>
-            </Border>
-            <StackLayout Orientation="Horizontal" HorizontalOptions="Fill" Padding="0" Margin="7">
-                <Button HorizontalOptions="FillAndExpand" Text="{localization:Translate KaydetVeKapat}" Command="{Binding GoBackCommand}" Style="{DynamicResource ButtonStyle}" BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryAccent400Color}, Dark={StaticResource SecondaryColor}}" Padding="7" Visual="Material" />
-            </StackLayout>
-        </StackLayout>
-            </Border>
-            </ScrollView>
+            <VerticalStackLayout Padding="12" Spacing="12">
+                <!-- Language -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{localization:Translate UygulamaDili}" Style="{StaticResource CardInfoLabel}" />
+                        <Picker ItemsSource="{Binding SupportedLanguages}"
+                                ItemDisplayBinding="{Binding Name}"
+                                SelectedItem="{Binding SelectedLanguage}"
+                                Title="{localization:Translate UygulamaDiliniSecin}"
+                                HorizontalOptions="Fill" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Theme -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{localization:Translate UygulamaTema}" Style="{StaticResource CardInfoLabel}" />
+                        <VerticalStackLayout Spacing="4">
+                            <RadioButton GroupName="ThemeGroup"
+                                         Content="{localization:Translate AcikTema}"
+                                         IsChecked="{Binding LightChecked}"
+                                         AutomationProperties.IsInAccessibleTree="True"
+                                         SemanticProperties.Description="{localization:Translate AcikTema}" />
+                            <RadioButton GroupName="ThemeGroup"
+                                         Content="{localization:Translate KoyuTema}"
+                                         IsChecked="{Binding DarkChecked}"
+                                         AutomationProperties.IsInAccessibleTree="True"
+                                         SemanticProperties.Description="{localization:Translate KoyuTema}" />
+                            <RadioButton GroupName="ThemeGroup"
+                                         Content="{localization:Translate SistemTemasi}"
+                                         IsChecked="{Binding SystemChecked}"
+                                         AutomationProperties.IsInAccessibleTree="True"
+                                         SemanticProperties.Description="{localization:Translate SistemTemasi}" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Font size -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label x:Name="LabelFontSize" Style="{StaticResource CardInfoLabel}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{localization:Translate YaziBoyutu}" />
+                                    <Span Text=" "/>
+                                    <Span Text="{Binding FontSize}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Slider HorizontalOptions="FillAndExpand" HeightRequest="48"
+                                Maximum="24" Minimum="12" Value="{Binding FontSize}"
+                                AutomationProperties.IsInAccessibleTree="true"
+                                SemanticProperties.Description="{localization:Translate YaziBoyutu}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Location refresh -->
+                <Border Style="{StaticResource Card}">
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto" ColumnSpacing="8">
+                        <Label Grid.Column="0" Text="{localization:Translate HepKonumYenile}" Style="{StaticResource LabelStyle}" VerticalTextAlignment="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding AlwaysRenewLocationEnabled}" />
+                    </Grid>
+                </Border>
+
+                <!-- Android only: notifications master toggle -->
+                <Border Style="{StaticResource Card}" IsVisible="{OnPlatform Android=True, iOS=False}">
+                    <VerticalStackLayout Spacing="6">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto" ColumnSpacing="8">
+                            <Label Grid.Column="0" Text="{localization:Translate BildirimNamazVakitleri}" Style="{StaticResource LabelStyle}" VerticalTextAlignment="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding NotificationPrayerTimesEnabled}" />
+                        </Grid>
+                        <Label Text="{localization:Translate BildirimNamazVakitleriUyari}" FontSize="Small" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Android only: sticky notifications and system settings link -->
+                <Border Style="{StaticResource Card}" IsVisible="{OnPlatform Android=true, iOS=false}">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="{localization:Translate BildirimKapatma}" Style="{StaticResource LabelStyle}" />
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto" ColumnSpacing="8">
+                            <Label Grid.Column="0" Text="{localization:Translate EtkinlestirSwitch}" VerticalTextAlignment="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding ForegroundServiceEnabled}" />
+                        </Grid>
+                        <Label Text="{localization:Translate BildirimUyari}" FontSize="Small" />
+                        <Button Text="{localization:Translate GotoSettings}" Command="{Binding GotoSettingsCommand}" Style="{DynamicResource TonalButton}" />
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
     </ContentPage.Content>
 
 </ContentPage>

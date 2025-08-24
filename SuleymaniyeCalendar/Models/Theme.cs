@@ -8,8 +8,8 @@ namespace SuleymaniyeCalendar.Models
 {
 	public class Theme
 	{
-		//0 is dark, 1 is light
-		private const int tema = 1;
+		// 0 = Dark, 1 = Light, 2 = System
+		private const int tema = 2;
 		public static int Tema
 		{
 			get => Preferences.Get(nameof(Tema), tema);

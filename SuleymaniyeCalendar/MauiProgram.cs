@@ -33,6 +33,8 @@ public static class MauiProgram
 		// DI registrations
 #if ANDROID
 		builder.Services.AddSingleton<IAlarmService, AlarmForegroundService>();
+#else
+		builder.Services.AddSingleton<IAlarmService, NullAlarmService>();
 #endif
 		builder.Services.AddSingleton<IAudioPreviewService, AudioPreviewService>();
 		builder.Services.AddSingleton<DataService>();
