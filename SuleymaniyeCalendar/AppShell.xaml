@@ -10,22 +10,22 @@
     <TabBar>
         <ShellContent Title="{localization:Translate Takvim}" ContentTemplate="{DataTemplate views:MainPage}" >
             <ShellContent.Icon>
-                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="&#xf073;" Size="Title" />
+                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf073;" Size="Title" />
             </ShellContent.Icon>
         </ShellContent>
         <ShellContent Title="{localization:Translate Kible}" ContentTemplate="{DataTemplate views:CompassPage}" >
             <ShellContent.Icon>
-                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="&#xf66b;" Size="Title" />
+                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf66b;" Size="Title" />
             </ShellContent.Icon>
         </ShellContent>
         <ShellContent Title="{localization:Translate Radyo}" ContentTemplate="{DataTemplate views:RadioPage}" >
             <ShellContent.Icon>
-                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="&#xf8d7;" Size="Title" />
+                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf8d7;" Size="Title" />
             </ShellContent.Icon>
         </ShellContent>
         <ShellContent Title="{localization:Translate Hakkinda}" ContentTemplate="{DataTemplate views:AboutPage}" >
             <ShellContent.Icon>
-                <FontImageSource FontFamily="FontAwesomeSolid" Glyph="&#xf66f;" Size="Title" />
+                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf66f;" Size="Title" />
             </ShellContent.Icon>
         </ShellContent>
     </TabBar>

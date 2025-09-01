@@ -1,15 +1,12 @@
-﻿using System.ComponentModel;
-using CommunityToolkit.Maui.Alerts;
+﻿using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Maui.Core;
 using SuleymaniyeCalendar.Resources.Strings;
-using System.Diagnostics;
-using Microsoft.Maui.Networking;
 
 namespace SuleymaniyeCalendar.ViewModels
 {
-	public partial class RadioViewModel : BaseViewModel, INotifyPropertyChanged
+	public partial class RadioViewModel : BaseViewModel
 	{
 		[ObservableProperty]
 		private bool _isPlaying;

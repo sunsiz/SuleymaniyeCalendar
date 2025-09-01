@@ -21,14 +21,39 @@ namespace SuleymaniyeCalendar.ViewModels
 		public bool IsNotBusy=>!IsBusy;
 
 		[ObservableProperty]private int _fontSize = Preferences.Get("FontSize", 14);
+		
+		public int HeaderFontSize => (int)(FontSize * 1.5);
+		public int SubheaderFontSize => (int)(FontSize * 1.25);
+		public int CaptionFontSize => (int)(FontSize * 0.875);
+		
 		partial void OnFontSizeChanged(int value)
 		{
+			// Clamp font size for better UX
+			var clampedValue = Math.Max(12, Math.Min(28, value));
+			if (clampedValue != value)
+			{
+				FontSize = clampedValue;
+				return;
+			}
+			
 			Preferences.Set("FontSize", value);
-			// Live update the shared font size resource so pages using {DynamicResource DefaultFontSize}
-			// pick up changes immediately while the settings slider moves.
-			if (Application.Current?.Resources != null && Application.Current.Resources.ContainsKey("DefaultFontSize"))
+			
+			// Notify dependent properties
+			OnPropertyChanged(nameof(HeaderFontSize));
+			OnPropertyChanged(nameof(SubheaderFontSize));
+			OnPropertyChanged(nameof(CaptionFontSize));
+			
+			// Calculate responsive scale factors
+			var baseSize = 14.0;
+			var scale = value / baseSize;
+			
+			if (Application.Current?.Resources != null)
 			{
 				Application.Current.Resources["DefaultFontSize"] = (double)value;
+				Application.Current.Resources["HeaderFontSize"] = value * 1.5;
+				Application.Current.Resources["SubheaderFontSize"] = value * 1.25;
+				Application.Current.Resources["CaptionFontSize"] = value * 0.875;
+				Application.Current.Resources["FontScale"] = scale;
 			}
 		}
 

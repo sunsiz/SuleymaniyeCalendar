@@ -4,51 +4,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="SuleymaniyeCalendar.Views.MonthPage"
              xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
-             xmlns:models="clr-namespace:SuleymaniyeCalendar.Models"
              xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
              Title="{Binding Title}" x:DataType="viewModels:MonthViewModel">
 
 <ContentPage.Content>
-        <ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Orientation="Both" Margin="{OnPlatform iOS='0,35,0,0', Default='0'}">
-            <Grid RowSpacing="2" HorizontalOptions="Fill" VerticalOptions="CenterAndExpand" RowDefinitions="*, 52" ColumnSpacing="2">
-                <!--  monthly time list structure  -->
-                <CollectionView Grid.Row="0" Grid.Column="0" VerticalScrollBarVisibility="Never" ItemsSource="{Binding MonthlyCalendar}" HorizontalOptions="Center">
-                    <CollectionView.Header>
-                        <Grid RowSpacing="0" ColumnSpacing="0" Margin="0" Padding="0" ColumnDefinitions="83,97,97,97,97,97,97,97,97" HeightRequest="80">
-                                <Label Grid.Row="0" Margin="2" Grid.Column="0" Style="{StaticResource MonthlyTitle}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontAttributes="Bold" Text="{localization:Translate Tarih}" />
-                                <Label Grid.Row="0" Margin="2" Grid.Column="1" Style="{StaticResource MonthlyTitle}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontAttributes="Bold" Text="{localization:Translate FecriKazip}" />
-                                <Label Grid.Row="0" Margin="2" Grid.Column="2" Style="{StaticResource MonthlyTitle}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontAttributes="Bold" Text="{localization:Translate FecriSadik}" />
-                                <Label Grid.Row="0" Margin="2" Grid.Column="3" Style="{StaticResource MonthlyTitle}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontAttributes="Bold" Text="{localization:Translate SabahSonu}" />
-                                <Label Grid.Row="0" Margin="2" Grid.Column="4" Style="{StaticResource MonthlyTitle}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontAttributes="Bold" Text="{localization:Translate Ogle}" />
-                                <Label Grid.Row="0" Margin="2" Grid.Column="5" Style="{StaticResource MonthlyTitle}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontAttributes="Bold" Text="{localization:Translate Ikindi}" />
-                                <Label Grid.Row="0" Margin="2" Grid.Column="6" Style="{StaticResource MonthlyTitle}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontAttributes="Bold" Text="{localization:Translate Aksam}" />
-                                <Label Grid.Row="0" Margin="2" Grid.Column="7" Style="{StaticResource MonthlyTitle}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontAttributes="Bold" Text="{localization:Translate Yatsi}" />
-                                <Label Grid.Row="0" Margin="2" Grid.Column="8" Style="{StaticResource MonthlyTitle}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" FontAttributes="Bold" Text="{localization:Translate YatsiSonu}" />
-                        </Grid>
-                    </CollectionView.Header>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:Calendar">
-                            <Grid RowSpacing="0" ColumnSpacing="0" Margin="0" Padding="0" ColumnDefinitions="Auto,97,97,97,97,97,97,97,97">
-                                <Label Grid.Column="0" Margin="2" Style="{StaticResource MonthlyLabel}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AutomationProperties.IsInAccessibleTree="True" BackgroundColor="{AppThemeBinding Light=Beige, Dark={StaticResource DarkElevation8dp}}" Text="{Binding Date}" Padding="2,0" />
-                                <Label Grid.Column="1" Margin="2" Style="{StaticResource MonthlyLabel}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AutomationProperties.IsInAccessibleTree="True" BackgroundColor="{AppThemeBinding Light=Cornsilk, Dark={StaticResource DarkElevation12dp}}" Text="{Binding FalseFajr}" />
-                                <Label Grid.Column="2" Margin="2" Style="{StaticResource MonthlyLabel}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AutomationProperties.IsInAccessibleTree="True" BackgroundColor="{AppThemeBinding Light=LightGoldenrodYellow, Dark={StaticResource DarkElevation16dp}}" Text="{Binding Fajr}" />
-                                <Label Grid.Column="3" Margin="2" Style="{StaticResource MonthlyLabel}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AutomationProperties.IsInAccessibleTree="True" BackgroundColor="{AppThemeBinding Light=Cornsilk, Dark={StaticResource DarkElevation24dp}}" Text="{Binding Sunrise}" />
-                                <Label Grid.Column="4" Margin="2" Style="{StaticResource MonthlyLabel}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AutomationProperties.IsInAccessibleTree="True" BackgroundColor="{AppThemeBinding Light=LightGoldenrodYellow, Dark={StaticResource DarkElevation16dp}}" Text="{Binding Dhuhr}" />
-                                <Label Grid.Column="5" Margin="2" Style="{StaticResource MonthlyLabel}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AutomationProperties.IsInAccessibleTree="True" BackgroundColor="{AppThemeBinding Light=Cornsilk, Dark={StaticResource DarkElevation12dp}}" Text="{Binding Asr}" />
-                                <Label Grid.Column="6" Margin="2" Style="{StaticResource MonthlyLabel}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AutomationProperties.IsInAccessibleTree="True" BackgroundColor="{AppThemeBinding Light=LightGoldenrodYellow, Dark={StaticResource DarkElevation8dp}}" Text="{Binding Maghrib}" />
-                                <Label Grid.Column="7" Margin="2" Style="{StaticResource MonthlyLabel}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AutomationProperties.IsInAccessibleTree="True" BackgroundColor="{AppThemeBinding Light=Cornsilk, Dark={StaticResource DarkElevation12dp}}" Text="{Binding Isha}" />
-                                <Label Grid.Column="8" Margin="2" Style="{StaticResource MonthlyLabel}" VerticalTextAlignment="Center" HorizontalTextAlignment="Center" AutomationProperties.IsInAccessibleTree="True" BackgroundColor="{AppThemeBinding Light=LightGoldenrodYellow, Dark={StaticResource DarkElevation16dp}}" Text="{Binding EndOfIsha}" />
-                                
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <StackLayout Grid.Row="1" HorizontalOptions="Center" VerticalOptions="Center" Orientation="Horizontal">
-                    <Button Text="{localization:Translate Kapat}" Command="{Binding GoBackCommand}" BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryAccent400Color}, Dark={StaticResource SecondaryColor}}" HeightRequest="48" Margin="15,2" WidthRequest="128" FontSize="14" Style="{StaticResource CustomButton}" />
-                    <Button Text="{localization:Translate KonumYenileButton}" Command="{Binding RefreshCommand}" BackgroundColor="{StaticResource TertiaryDarkColor}" HeightRequest="40" Margin="15,2" WidthRequest="128" FontSize="14" Style="{StaticResource CustomButton}" />
-                </StackLayout>
-            </Grid>
-        </ScrollView>
-    </ContentPage.Content>
+    <Grid RowDefinitions="*,Auto" Padding="16,8,16,16" RowSpacing="16">
+
+        <!-- Lightweight host; we will inject the heavy table after first frame -->
+        <ContentView x:Name="ListHost" Grid.Row="0" />
+
+        <!-- Loading Indicator -->
+        <Grid Grid.Row="0" IsVisible="{Binding IsBusy}" InputTransparent="True">
+            <Border Style="{StaticResource Card}" 
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center"
+                    Padding="40,24">
+                <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+                    <ActivityIndicator IsRunning="True"
+                                       Color="{StaticResource PrimaryColor}"
+                                       HeightRequest="48"
+                                       WidthRequest="48" />
+                    <Label Text="{localization:Translate IcerikYukleniyor}"
+                           Style="{StaticResource TitleMediumLabel}"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource PrimaryColor}" />
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+
+        <!-- Action Buttons -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="12">
+            <Button Grid.Column="0"
+                    Text="{localization:Translate Kapat}" 
+                    Command="{Binding GoBackCommand}" 
+                    Style="{StaticResource TonalButton}" />
+            <Button Grid.Column="1"
+                    Text="{localization:Translate KonumYenileButton}" 
+                    Command="{Binding RefreshCommand}" 
+                    Style="{StaticResource PrimaryButton}"
+                    IsEnabled="{Binding IsNotBusy}" />
+        </Grid>
+    </Grid>
+</ContentPage.Content>
 
 </ContentPage>

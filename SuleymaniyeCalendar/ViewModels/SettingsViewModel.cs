@@ -9,6 +9,10 @@ using System.Text;
 using System.Threading.Tasks;
 using LocalizationResourceManager.Maui;
 using SuleymaniyeCalendar.Models;
+#if ANDROID
+using Android.Content;
+using Android.OS;
+#endif
 
 namespace SuleymaniyeCalendar.ViewModels
 {
@@ -27,9 +31,57 @@ namespace SuleymaniyeCalendar.ViewModels
 		[ObservableProperty] private bool foregroundServiceEnabled;
 		private readonly ILocalizationResourceManager resourceManager;
 		//partial void OnAlarmDurationChanged(int value) { if (AlarmDuration != value) Preferences.Set("AlarmDuration", value); }
-		partial void OnAlwaysRenewLocationEnabledChanged(bool value) { if (AlwaysRenewLocationEnabled != value) Preferences.Set("AlwaysRenewLocationEnabled", value); }
-		partial void OnNotificationPrayerTimesEnabledChanged(bool value) { if (NotificationPrayerTimesEnabled != value) Preferences.Set("NotificationPrayerTimesEnabled", value); }
-		partial void OnForegroundServiceEnabledChanged(bool value) { if (ForegroundServiceEnabled != value) Preferences.Set("ForegroundServiceEnabled", value); }
+		partial void OnAlwaysRenewLocationEnabledChanged(bool value) { Preferences.Set("AlwaysRenewLocationEnabled", value); }
+
+        partial void OnNotificationPrayerTimesEnabledChanged(bool value)
+        {
+            Preferences.Set("NotificationPrayerTimesEnabled", value);
+
+#if ANDROID
+            // If the service is running, ask it to refresh the notification now
+            if (Preferences.Get("ForegroundServiceEnabled", true))
+            {
+                var ctx = Android.App.Application.Context;
+                var refreshIntent = new Intent(ctx, typeof(AlarmForegroundService))
+                    .SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    ctx.StartForegroundService(refreshIntent);
+                else
+                    ctx.StartService(refreshIntent);
+            }
+#endif
+        }
+
+        partial void OnForegroundServiceEnabledChanged(bool value)
+        {
+            Preferences.Set("ForegroundServiceEnabled", value);
+#if ANDROID
+			if (!value)
+			{
+				// Stop the foreground service if it's running
+                var ctx = Android.App.Application.Context;
+                var stopIntent = new Intent(ctx, typeof(AlarmForegroundService));
+                stopIntent.SetAction("SuleymaniyeTakvimi.action.STOP_SERVICE");
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    ctx.StartForegroundService(stopIntent);
+                else
+                    ctx.StartService(stopIntent);
+			}
+			else
+			{
+				// Start the foreground service
+                var ctx = Android.App.Application.Context;
+                var startIntent = new Intent(ctx, typeof(AlarmForegroundService));
+                startIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    ctx.StartForegroundService(startIntent);
+                else
+                    ctx.StartService(startIntent);
+            }
+#endif
+        }
 		// handled below (single definition)
 
 		public bool IsNecessary => !((DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 10) || DeviceInfo.Platform == DevicePlatform.iOS);
@@ -57,8 +109,12 @@ namespace SuleymaniyeCalendar.ViewModels
 		partial void OnSelectedLanguageChanged(Language value)
 		{
 			if (value is null) return;
-			resourceManager.CurrentCulture = CultureInfo.GetCultureInfo(value.CI);
+
+			var ci = CultureInfo.GetCultureInfo(value.CI);
+			resourceManager.CurrentCulture = ci;
+			AppResources.Culture = ci; // ensure resx-based strings update
 			Preferences.Set("SelectedLanguage", value.CI);
+
 			// keep current selection and labels fresh
 			Title = AppResources.UygulamaAyarlari;
 		}

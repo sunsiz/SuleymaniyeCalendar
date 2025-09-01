@@ -33,21 +33,21 @@ namespace SuleymaniyeCalendar
 
 		public void SetAlarm(DateTime date, TimeSpan triggerTimeSpan, int timeOffset, string name)
 		{
-			using (var alarmManager = (AlarmManager)Application.Context.GetSystemService(AlarmService))
+            using (var alarmManager = (AlarmManager)Application.Context.GetSystemService(AlarmService))
 			using (var calendar = Calendar.Instance)
 			{
 				var prayerTimeSpan = triggerTimeSpan;
 				triggerTimeSpan -= TimeSpan.FromMinutes(timeOffset);
 				//Log.Info("SetAlarm", $"Before Alarm set the Calendar time is {calendar.Time} for {name}");
 				calendar.Set(date.Year, date.Month-1, date.Day, triggerTimeSpan.Hours, triggerTimeSpan.Minutes, 0);
-				var activityIntent = new Intent(Application.Context, typeof(AlarmActivity));
-				activityIntent.PutExtra("name", name);
-				activityIntent.PutExtra("time", prayerTimeSpan.ToString());
-				activityIntent.AddFlags(ActivityFlags.ReceiverForeground);
-				var intent = new Intent(Application.Context, typeof(AlarmReceiver));
-				intent.PutExtra("name", name);
-				intent.PutExtra("time", prayerTimeSpan.ToString());
-				intent.AddFlags(ActivityFlags.IncludeStoppedPackages);
+				//var activityIntent = new Intent(Application.Context, typeof(AlarmActivity))
+				//	.PutExtra("name", name)
+				//	.PutExtra("time", prayerTimeSpan.ToString())
+				//	.AddFlags(ActivityFlags.ReceiverForeground);
+				var intent = new Intent(Application.Context, typeof(NotificationChannelManager))
+					.PutExtra("name", name)
+					.PutExtra("time", prayerTimeSpan.ToString())
+					.AddFlags(ActivityFlags.IncludeStoppedPackages);
 				intent.AddFlags(ActivityFlags.ReceiverForeground);
 				//without the different reuestCode there will be only one pending intent and it updates every schedule, so only one alarm will be active at the end.
 				var requestCode = name switch
@@ -65,14 +65,32 @@ namespace SuleymaniyeCalendar
 				var pendingIntentFlags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
 					? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
 					: PendingIntentFlags.UpdateCurrent;
-				var pendingActivityIntent = PendingIntent.GetActivity(Application.Context, requestCode, activityIntent, pendingIntentFlags);
-				var pendingIntent = PendingIntent.GetBroadcast(Application.Context, requestCode, intent, pendingIntentFlags);
-				//alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup,calendar.TimeInMillis,pendingActivityIntent);
-				//alarmManager.SetExact(AlarmType.RtcWakeup, calendar.TimeInMillis, pendingActivityIntent);
-				if (Build.VERSION.SdkInt <= BuildVersionCodes.P)
-					alarmManager?.SetAlarmClock(new AlarmManager.AlarmClockInfo(calendar.TimeInMillis, pendingActivityIntent), pendingActivityIntent);
+				//var pendingActivityIntent = PendingIntent.GetActivity(Application.Context, requestCode, activityIntent, pendingIntentFlags);
+				var broadcastIntent = new Intent(Application.Context, typeof(AlarmNotificationReceiver))
+					.PutExtra("name", name)
+					.PutExtra("time", prayerTimeSpan.ToString())
+					.AddFlags(ActivityFlags.IncludeStoppedPackages | ActivityFlags.ReceiverForeground);
+
+				var flags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
+					? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
+					: PendingIntentFlags.UpdateCurrent;
+
+				var pendingIntent = PendingIntent.GetBroadcast(Application.Context, requestCode, broadcastIntent, flags);
+
+				// Prefer AlarmClockInfo to improve reliability on Android 12+
+				if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
+				{
+					// Optional affordance to open MainActivity when tapping the system alarm affordance
+					var showIntent = PendingIntent.GetActivity(Application.Context, requestCode,
+						new Intent(Application.Context, typeof(MainActivity)), flags);
+
+					var info = new AlarmManager.AlarmClockInfo(calendar.TimeInMillis, showIntent);
+					alarmManager?.SetAlarmClock(info, pendingIntent);
+				}
 				else
+				{
 					alarmManager?.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, calendar.TimeInMillis, pendingIntent);
+				}
 				//else
 				//    alarmManager?.SetExact(AlarmType.RtcWakeup, calendar.TimeInMillis, pendingIntent);
 				System.Diagnostics.Debug.WriteLine("SetAlarm", $"Alarm set for {calendar.Time} for {name}");
@@ -82,13 +100,13 @@ namespace SuleymaniyeCalendar
 		public void CancelAlarm()
 		{
 			//Analytics.TrackEvent("CancelAlarm in the AlarmForegroundService Triggered: " + $" at {DateTime.Now}");
-			AlarmManager alarmManager = (AlarmManager)Application.Context.GetSystemService(Context.AlarmService);
-			Intent intent = new Intent(Application.Context, typeof(AlarmActivity));
-			var pendingIntentFlags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
-				? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
-				: PendingIntentFlags.UpdateCurrent;
-			PendingIntent pendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, intent, pendingIntentFlags);
-			alarmManager?.Cancel(pendingIntent);
+			//AlarmManager alarmManager = (AlarmManager)Application.Context.GetSystemService(Context.AlarmService);
+			//Intent intent = new Intent(Application.Context, typeof(AlarmActivity));
+			//var pendingIntentFlags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
+			//	? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
+			//	: PendingIntentFlags.UpdateCurrent;
+			//PendingIntent pendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, intent, pendingIntentFlags);
+			//alarmManager?.Cancel(pendingIntent);
 		}
 
 		public override void OnCreate()
@@ -96,7 +114,9 @@ namespace SuleymaniyeCalendar
 			base.OnCreate();
 			_handler = new Handler();
 			_notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
-			SetNotification();
+            // Ensure all alarm channels (with sounds) exist before any alarm fires
+            NotificationChannelManager.CreateAlarmNotificationChannels();
+            SetNotification();
 
 			if(Preferences.Get("ForegroundServiceEnabled",true))this.StartForeground(NOTIFICATION_ID, _notification);
 
@@ -121,13 +141,14 @@ namespace SuleymaniyeCalendar
 			});
 			_handler.PostDelayed(_runnable, DELAY_BETWEEN_MESSAGES);
 			_isStarted = true;
-			CancelAlarm();
+			//CancelAlarm();
 		}
+		
 
-		private void SetNotification()
+        private void SetNotification()
 		{
 			Notification.BigTextStyle textStyle = new Notification.BigTextStyle();
-			if (Preferences.Get("NotificationPrayerTimesEnabled", true))
+			if (Preferences.Get("NotificationPrayerTimesEnabled", false))
 			{
 				textStyle.BigText(GetTodaysPrayerTimes());
 				textStyle.SetSummaryText(AppResources.BugunkuNamazVakitleri);
@@ -190,7 +211,7 @@ namespace SuleymaniyeCalendar
 		{
 			var message = "";
 			var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-						?? new DataService(new NullAlarmService());
+						?? new DataService(this);
 			var calendar = data.calendar;
 			var currentTime = DateTime.Now.TimeOfDay;
 			try
@@ -237,7 +258,7 @@ namespace SuleymaniyeCalendar
 		{
 			var message = "";
 			var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-						?? new DataService(new NullAlarmService());
+						?? new DataService(this);
 			var calendar = data.calendar;
 			message += AppResources.FecriKazip + ": " + calendar.FalseFajr + "\n";
 			message += AppResources.FecriSadik + ": " + calendar.Fajr + "\n";
@@ -277,7 +298,7 @@ namespace SuleymaniyeCalendar
 						await Task.Delay(12000).ConfigureAwait(true);
 						System.Diagnostics.Debug.WriteLine("OnStartCommand: " + $"Starting Set Alarm at {DateTime.Now}");
 						var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-									?? new DataService(new NullAlarmService());
+									?? new DataService(this);
 						data.SetWeeklyAlarmsAsync();
 					});
 					startupWork.Start();
@@ -291,6 +312,12 @@ namespace SuleymaniyeCalendar
 				StopSelf(NOTIFICATION_ID);
 				_isStarted = false;
 			}
+            else if (intent.Action.Equals("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION"))
+            {
+                // Rebuild notification based on latest Preferences, and update immediately
+                SetNotification();
+                _notificationManager.Notify(NOTIFICATION_ID, _notification);
+            }
 
 			return StartCommandResult.Sticky;
 		}

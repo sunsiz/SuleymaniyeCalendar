@@ -536,4 +536,10 @@ This application is designed to provide safe and fast access to prayer and fasti
   <data name="SistemTemasi" xml:space="preserve">
     <value>System theme</value>
   </data>
+  <data name="KonumBilgileri" xml:space="preserve">
+    <value>Location information</value>
+  </data>
+  <data name="Adres" xml:space="preserve">
+    <value>Address</value>
+  </data>
 </root>

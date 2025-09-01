@@ -5,249 +5,152 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
-    Title="{Binding Title}"
-    x:DataType="viewModels:AboutViewModel">
+    x:DataType="viewModels:AboutViewModel"
+    Title="{Binding Title}">
 
     <ContentPage.Content>
         <ScrollView
-            HorizontalOptions="FillAndExpand"
+            HorizontalOptions="Fill"
             Orientation="Vertical"
             VerticalOptions="Fill">
-            <Grid
-                Padding="12"
-                ColumnDefinitions="*,*,*,*"
-                ColumnSpacing="12"
-                RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,*"
-                RowSpacing="12">
+            <VerticalStackLayout
+                Padding="16"
+                Spacing="20">
 
-                <!--  Intro text with link  -->
-                <Label
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="4"
-                    Padding="8,4"
-                    Style="{DynamicResource LabelStyle}"
-                    TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor},
-                                                Dark={StaticResource OnSurfaceColorDark}}"
-                    VerticalTextAlignment="Start">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="{localization:Translate AciklamaBas}" TextColor="{AppThemeBinding Light={StaticResource SecondaryColor}, Dark={StaticResource PrimaryAccent50Color}}" />
-                            <Span
-                                FontAttributes="Bold"
-                                Style="{DynamicResource SpanStyle}"
-                                Text="{localization:Translate AciklamaLinkText}"
-                                TextColor="DeepSkyBlue"
-                                TextDecorations="Underline">
-                                <Span.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding LinkButtonClickedCommand}" CommandParameter="{localization:Translate AciklamaLinkURL}" />
-                                </Span.GestureRecognizers>
-                            </Span>
-                            <Span Text="{localization:Translate AciklamaSon}" TextColor="{AppThemeBinding Light={StaticResource SecondaryColor}, Dark={StaticResource PrimaryAccent50Color}}" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
+                <!--  Hero Section with App Description  -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Style="{StaticResource HeadlineLargeLabel}"
+                               Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent200Color}}" />
+                        
+                        <Label TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
+                               Style="{StaticResource BodyLargeLabel}"
+                               HorizontalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{localization:Translate AciklamaBas}" />
+                                    <Span
+                                        FontAttributes="Bold"
+                                        Text="{localization:Translate AciklamaLinkText}"
+                                        TextColor="{AppThemeBinding Light={StaticResource InfoColor}, Dark={StaticResource InfoColorDark}}"
+                                        TextDecorations="Underline">
+                                        <Span.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding LinkButtonClickedCommand}" CommandParameter="{localization:Translate AciklamaLinkURL}" />
+                                        </Span.GestureRecognizers>
+                                    </Span>
+                                    <Span Text="{localization:Translate AciklamaSon}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
 
-                <!--  Social/icons  -->
-                <ImageButton
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    AutomationProperties.IsInAccessibleTree="True"
-                    Command="{Binding LinkButtonClickedCommand}"
-                    CommandParameter="https://www.suleymaniyevakfi.org/"
-                    HeightRequest="56"
-                    HorizontalOptions="CenterAndExpand"
-                    SemanticProperties.Description="{localization:Translate SuleymaniyeVakfi}"
-                    Source="app_logo.png">
-                    <ImageButton.Clip>
-                        <EllipseGeometry
-                            Center="44,28"
-                            RadiusX="50"
-                            RadiusY="50" />
-                    </ImageButton.Clip>
-                    <ImageButton.Shadow>
-                        <Shadow
-                            Brush="#33000000"
-                            Opacity="0.6"
-                            Radius="20"
-                            Offset="0,6" />
-                    </ImageButton.Shadow>
-                </ImageButton>
+                        <!-- Version Info -->
+                        <Label HorizontalTextAlignment="Center"
+                               Style="{StaticResource LabelLargeLabel}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding VersionNumber}" />
+                                    <Span Text="{localization:Translate Version}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                    </VerticalStackLayout>
+                </Border>
 
-                <ImageButton
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    AutomationProperties.IsInAccessibleTree="True"
-                    Command="{Binding LinkButtonClickedCommand}"
-                    CommandParameter="https://www.facebook.com/suleymaniyevakfi/"
-                    HeightRequest="56"
-                    HorizontalOptions="CenterAndExpand"
-                    SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiFacebook}"
-                    Source="facebook.png">
-                    <ImageButton.Clip>
-                        <EllipseGeometry
-                            Center="44,28"
-                            RadiusX="50"
-                            RadiusY="50" />
-                    </ImageButton.Clip>
-                    <ImageButton.Shadow>
-                        <Shadow
-                            Brush="#33000000"
-                            Opacity="0.6"
-                            Radius="20"
-                            Offset="0,6" />
-                    </ImageButton.Shadow>
-                </ImageButton>
+                <!--  Social Media Section  -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="16">
+                        <Label Text="{localization:Translate SosyalMedyaBaglantisi}"
+                               Style="{StaticResource TitleLargeLabel}"
+                               HorizontalTextAlignment="Center" />
+                               
+                        <Grid
+                            ColumnDefinitions="*,*,*,*"
+                            ColumnSpacing="16"
+                            RowDefinitions="Auto">
 
-                <ImageButton
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    AutomationProperties.IsInAccessibleTree="True"
-                    Command="{Binding LinkButtonClickedCommand}"
-                    CommandParameter="https://twitter.com/suleymaniye_vkf"
-                    HeightRequest="56"
-                    HorizontalOptions="CenterAndExpand"
-                    SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiTwitter}"
-                    Source="twitter.png">
-                    <ImageButton.Clip>
-                        <EllipseGeometry
-                            Center="44,28"
-                            RadiusX="50"
-                            RadiusY="50" />
-                    </ImageButton.Clip>
-                    <ImageButton.Shadow>
-                        <Shadow
-                            Brush="#33000000"
-                            Opacity="0.6"
-                            Radius="20"
-                            Offset="0,6" />
-                    </ImageButton.Shadow>
-                </ImageButton>
+                            <ImageButton
+                                Grid.Column="0"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://www.suleymaniyevakfi.org/"
+                                HeightRequest="56"
+                                WidthRequest="56"
+                                SemanticProperties.Description="{localization:Translate SuleymaniyeVakfi}"
+                                Source="app_logo.png" />
 
-                <ImageButton
-                    Grid.Row="1"
-                    Grid.Column="3"
-                    AutomationProperties.IsInAccessibleTree="True"
-                    Command="{Binding LinkButtonClickedCommand}"
-                    CommandParameter="https://www.instagram.com/suleymaniyevakfi"
-                    HeightRequest="56"
-                    HorizontalOptions="CenterAndExpand"
-                    SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiInstagram}"
-                    Source="instagram.png">
-                    <ImageButton.Clip>
-                        <EllipseGeometry
-                            Center="44,28"
-                            RadiusX="50"
-                            RadiusY="50" />
-                    </ImageButton.Clip>
-                    <ImageButton.Shadow>
-                        <Shadow
-                            Brush="#33000000"
-                            Opacity="0.6"
-                            Radius="20"
-                            Offset="0,6" />
-                    </ImageButton.Shadow>
-                </ImageButton>
+                            <ImageButton
+                                Grid.Column="1"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://www.facebook.com/suleymaniyevakfi/"
+                                HeightRequest="56"
+                                WidthRequest="56"
+                                SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiFacebook}"
+                                Source="facebook.png" />
 
-                <!--  Divider  -->
-                <BoxView
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="4"
-                    Margin="0,4"
-                    HeightRequest="1"
-                    Color="{AppThemeBinding Light={StaticResource OutlineColor},
-                                            Dark={StaticResource OutlineColorDark}}" />
+                            <ImageButton
+                                Grid.Column="2"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://twitter.com/suleymaniye_vkf"
+                                HeightRequest="56"
+                                WidthRequest="56"
+                                SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiTwitter}"
+                                Source="twitter.png" />
 
-                <!--  Version  -->
-                <Label
-                    Grid.Row="3"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="4"
-                    Margin="0,0,0,4"
-                    HorizontalTextAlignment="Center"
-                    Style="{DynamicResource LabelStyle}"
-                    TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
-                                                Dark={StaticResource PrimaryAccent50Color}}">
-                    <Label.FormattedText>
-                        <FormattedString>
-                            <Span Text="{localization:Translate SuleymaniyeVakfiTakvimi}" />
-                            <Span Text="{Binding VersionNumber}" />
-                            <Span Text="{localization:Translate Version}" />
-                        </FormattedString>
-                    </Label.FormattedText>
-                </Label>
+                            <ImageButton
+                                Grid.Column="3"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://www.instagram.com/suleymaniyevakfi"
+                                HeightRequest="56"
+                                WidthRequest="56"
+                                SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiInstagram}"
+                                Source="instagram.png" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
 
-                <!--  Divider  -->
-                <BoxView
-                    Grid.Row="4"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="4"
-                    Margin="0,4"
-                    HeightRequest="1"
-                    Color="{AppThemeBinding Light={StaticResource OutlineColor},
-                                            Dark={StaticResource OutlineColorDark}}" />
+                <!--  App Store Section  -->
+                <Border Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="16">
+                        <Label Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
+                               Style="{StaticResource TitleLargeLabel}"
+                               HorizontalTextAlignment="Center" />
+                               
+                        <Grid
+                            ColumnDefinitions="*,*"
+                            ColumnSpacing="16"
+                            HorizontalOptions="Center">
 
-                <!--  Store/icons  -->
-                <ImageButton
-                    Grid.Row="5"
-                    Grid.Column="1"
-                    AutomationProperties.IsInAccessibleTree="True"
-                    Command="{Binding LinkButtonClickedCommand}"
-                    CommandParameter="https://play.google.com/store/apps/details?id=org.suleymaniyevakfi"
-                    HeightRequest="56"
-                    HorizontalOptions="CenterAndExpand"
-                    SemanticProperties.Description="Google Play Store"
-                    Source="google_play.png">
-                    <ImageButton.Clip>
-                        <EllipseGeometry
-                            Center="44,28"
-                            RadiusX="50"
-                            RadiusY="50" />
-                    </ImageButton.Clip>
-                    <ImageButton.Shadow>
-                        <Shadow
-                            Brush="#33000000"
-                            Opacity="0.6"
-                            Radius="20"
-                            Offset="0,6" />
-                    </ImageButton.Shadow>
-                </ImageButton>
+                            <ImageButton
+                                Grid.Column="0"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://play.google.com/store/apps/details?id=org.suleymaniyevakfi"
+                                HeightRequest="56"
+                                WidthRequest="56"
+                                SemanticProperties.Description="Google Play Store"
+                                Source="google_play.png" />
 
-                <ImageButton
-                    Grid.Row="5"
-                    Grid.Column="2"
-                    AutomationProperties.IsInAccessibleTree="True"
-                    Command="{Binding LinkButtonClickedCommand}"
-                    CommandParameter="https://apps.apple.com/app/id688657265"
-                    HeightRequest="56"
-                    HorizontalOptions="CenterAndExpand"
-                    SemanticProperties.Description="Apple App Store"
-                    Source="app_store.png">
-                    <ImageButton.Clip>
-                        <EllipseGeometry
-                            Center="44,28"
-                            RadiusX="50"
-                            RadiusY="50" />
-                    </ImageButton.Clip>
-                    <ImageButton.Shadow>
-                        <Shadow
-                            Brush="#33000000"
-                            Opacity="0.6"
-                            Radius="20"
-                            Offset="0,6" />
-                    </ImageButton.Shadow>
-                </ImageButton>
+                            <ImageButton
+                                Grid.Column="1"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://apps.apple.com/app/id688657265"
+                                HeightRequest="56"
+                                WidthRequest="56"
+                                SemanticProperties.Description="Apple App Store"
+                                Source="app_store.png" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
 
-
-                <!--  Settings CTA (modern button)  -->
-                <Border
-                    Grid.Row="6"
-                    Grid.ColumnSpan="4"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariantColor},
-                                                      Dark={StaticResource SurfaceVariantColorDark}}"
-                    IsVisible="{Binding ShowButtons}"
-                    Style="{StaticResource Card}">
+                <!--  Action Section  -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding ShowButtons}">
                     <Button
                         Command="{Binding SettingsCommand}"
                         SemanticProperties.Description="{localization:Translate UygulamaAyarlari}"
@@ -255,7 +158,7 @@
                         Text="{localization:Translate UygulamaAyarlari}" />
                 </Border>
 
-            </Grid>
+            </VerticalStackLayout>
         </ScrollView>
     </ContentPage.Content>
 

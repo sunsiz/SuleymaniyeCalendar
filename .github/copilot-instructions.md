@@ -1,56 +1,94 @@
 # AI working guide for SuleymaniyeCalendar
 
-This is a .NET MAUI app (Android, iOS, Windows conditional) using CommunityToolkit.MVVM, MAUI Toolkit, and a localization resource manager with Shell navigation. Use these repo-specific practices.
+This is a .NET MAUI prayer times app (Android, iOS, Windows) using CommunityToolkit.MVVM, Shell navigation, and localization. Features Material Design 3 UI with dynamic typography and performance-optimized async patterns.
 
-## Big picture
-- MVVM: ViewModels under `ViewModels/` derive from `BaseViewModel`; Views in `Views/`; XAML Shell in `AppShell.xaml`.
-- DI and app wiring live in `MauiProgram.CreateMauiApp()`. Most types are registered as singletons and resolved via constructor injection.
-- Core logic hub: `Services/DataService.cs` (location, network, XML parsing, caching, alarms).
+## Big picture architecture
+- **MVVM pattern**: ViewModels inherit from `BaseViewModel` (ObservableObject), Views in `Views/`, Shell navigation in `AppShell.xaml`
+- **Central service**: `DataService` handles location, prayer time API calls, caching, and alarm scheduling
+- **DI container**: All types registered as singletons in `MauiProgram.CreateMauiApp()` with constructor injection
+- **Localization**: Uses `LocalizationResourceManager.Maui` with `AppResources.resx`, XAML binds via `{localization:Translate Key}`
+- **Prayer data flow**: API → XML cache → Calendar models → Prayer ViewModels → UI cards
 
-## DI + MVVM patterns
-- Attributes from CommunityToolkit.MVVM:
-  - `[ObservableProperty]` creates bindable properties and optional partial setters to persist `Preferences` (see `BaseViewModel`, `SettingsViewModel`).
-  - `[RelayCommand]` exposes commands (e.g., `MainViewModel.RefreshLocation`).
-- Register new Pages, ViewModels, and Services in `MauiProgram`; add Shell routes for navigable pages.
-- On non-Android, if you need alarms, register `NullAlarmService` behind `#else` for `IAlarmService`.
+## Key patterns unique to this codebase
 
-## Shell navigation
-- Tabs are declared in `AppShell.xaml`; extra routes registered in `AppShell.xaml.cs` via page class names (e.g., `nameof(SettingsPage)`).
-- Navigate with `Shell.Current.GoToAsync(nameof(Page), ...);` and pass parameters using a dictionary keyed by target VM property names.
-- XAML uses localization markup `{localization:Translate Key}` for titles and text.
+### 1. Culture-safe numeric conversion
+**Always use** `CultureInfo.InvariantCulture` for parsing coordinates/numbers from strings:
+```csharp
+Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat)
+```
+This prevents comma/dot locale issues in coordinate parsing.
 
-## DataService responsibilities (key behaviors)
-- Fetches prayer times from `http://servis.suleymaniyetakvimi.com/servis.asmx` (XML) and caches monthly data to `%LOCALAPPDATA%/monthlycalendar.xml`.
-- Networking gated by `Connectivity`. On no internet, uses cache when valid; otherwise returns `null` and shows toasts.
-- Location flow: checks/requests `Permissions.LocationWhenInUse`; WinUI treated as granted. Uses `Geolocation` and `Geocoding`.
-- Culture safety: numeric parsing uses `CultureInfo.InvariantCulture` to avoid comma/dot issues—preserve this for all numeric conversions.
-- Alarms: `SetWeeklyAlarmsAsync()` schedules up to 15 days via `IAlarmService` using user offsets from `Preferences` (e.g., `fajrNotificationTime`).
+### 2. Dynamic font scaling system
+Uses `DynamicResource` throughout for app-wide font scaling:
+```xaml
+<Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+<!-- NEVER use StaticResource for fonts -->
+```
+BaseViewModel manages font scale: `HeaderFontSize` (1.5x), `SubheaderFontSize` (1.25x), `DefaultFontSize` (1x)
 
-## Android alarm foreground service
-- `Platforms/Android/AlarmForegroundService.cs` implements `IAlarmService` using `AlarmManager`; distinct `PendingIntent` request codes per prayer/day.
-- Foreground notification updates every 30s with localized content; toggled by `Preferences["ForegroundServiceEnabled"]`.
-- Non-Android platforms rely on `NullAlarmService` if used.
+### 3. UI-first async loading pattern
+ViewModels show UI immediately, then load data async:
+```csharp
+public MonthViewModel(DataService dataService) {
+    MonthlyCalendar = new ObservableCollection<Calendar>();
+    _ = LoadMonthlyDataAsync(); // Fire-and-forget
+}
+```
+Always use `MainThread.InvokeOnMainThreadAsync()` for UI updates from background tasks.
 
-## Preferences and state
-- Location/time cache: `LastLatitude`, `LastLongitude`, `LastAltitude`, `LocationSaved`, `LastAlarmDate`.
-- Prayer times and toggles use ids: `<prayerId>` and `<prayerId>Enabled`, `<prayerId>NotificationTime` (e.g., `fajr`, `fajrEnabled`).
-- App options: `FontSize`, `AlwaysRenewLocationEnabled`, `NotificationPrayerTimesEnabled`, `ForegroundServiceEnabled`, `SelectedLanguage`.
-- Follow existing key names and minimal types when adding settings.
+### 4. Prayer state management
+Each prayer has temporal states (Past/Current/Future) calculated in `MainViewModel.CheckState()`:
+```csharp
+asr.State = CheckState(DateTime.Parse(_calendar.Asr), DateTime.Parse(_calendar.Maghrib));
+asr.UpdateVisualState(); // Updates colors/icons based on state
+```
 
-## Localization
-- Resource file: `Resources/Strings/AppResources.resx` with generated designer; use `AppResources.*` in C#.
-- In `SettingsViewModel`, `ILocalizationResourceManager` updates `CurrentCulture`; selection stored in `Preferences["SelectedLanguage"]`.
+### 5. Platform-specific service registration
+```csharp
+#if ANDROID
+    builder.Services.AddSingleton<IAlarmService, AlarmForegroundService>();
+#else
+    builder.Services.AddSingleton<IAlarmService, NullAlarmService>();
+#endif
+```
 
-## Build & run
-- Solution: `SuleymaniyeCalendar.sln`; project: `SuleymaniyeCalendar/SuleymaniyeCalendar.csproj`.
-- Target frameworks: `net9.0-android; net9.0-ios`; Windows adds `net9.0-windows10.0.26100.0` on Windows hosts.
-- Packages include `Microsoft.Maui.Controls 9.0.100`, `CommunityToolkit.Maui`, `CommunityToolkit.Mvvm`, `LocalizationResourceManager.Maui`.
-- Use VS or `dotnet` to deploy. Delete `%LOCALAPPDATA%/monthlycalendar.xml` to force a fresh monthly fetch.
-- Optional Tizen workload installer: `workload-install.ps1` (not required unless targeting Tizen).
+## DataService responsibilities (the system hub)
+- **Prayer times**: Fetches from `http://servis.suleymaniyetakvimi.com/servis.asmx` (XML), caches to `%LOCALAPPDATA%/monthlycalendar.xml`
+- **Location**: Handles permissions, GPS, geocoding with robust fallbacks
+- **Alarms**: Schedules up to 15 days via `IAlarmService` using user notification offsets
+- **Network resilience**: Uses cached data when offline, shows appropriate toasts
 
-## When adding/changing features
-- Use DI; don’t new-up services inside ViewModels. Register in `MauiProgram` and add Shell route when needed.
-- Keep parsing/formatting culture-safe; keep UI interactions on the main thread (`MainThread.BeginInvokeOnMainThread`).
-- Keep Android-specific code under `#if ANDROID`; don’t leak platform types into shared code.
+## Navigation patterns
+- Tab navigation declared in `AppShell.xaml`, extra routes registered in `AppShell.xaml.cs`
+- Navigation: `await Shell.Current.GoToAsync(nameof(Page))` 
+- Parameter passing: `new Dictionary<string, object> { { "PropertyName", value } }`
+- Back navigation: `await Shell.Current.GoToAsync("..")`
 
-Quick pointers: `MauiProgram.cs`, `AppShell.xaml/_.cs`, `Services/DataService.cs`, `ViewModels/MainViewModel.cs`, `ViewModels/SettingsViewModel.cs`, `Platforms/Android/AlarmForegroundService.cs`.
+## Material Design 3 card system
+```xaml
+<Border Style="{StaticResource Card}">            <!-- Standard card -->
+<Border Style="{StaticResource CurrentPrayerCard}"> <!-- Enhanced emphasis -->
+```
+Cards use `SurfaceVariantColor` backgrounds, `OutlineColor` borders, automatic light/dark theming.
+
+## Preferences storage patterns
+- Prayer toggles: `{prayerId}Enabled` (e.g., "fajrEnabled")
+- Notification timing: `{prayerId}NotificationTime` 
+- Location cache: `LastLatitude`, `LastLongitude`, `LastAltitude`
+- App settings: `FontSize`, `SelectedLanguage`, `ForegroundServiceEnabled`
+
+## Build & debug commands
+```bash
+dotnet build                     # Build solution
+dotnet run --framework net9.0-android  # Run on Android
+```
+- Delete `%LOCALAPPDATA%/monthlycalendar.xml` to force fresh prayer time fetch
+- Use VS Code or VS for debugging with hot reload
+
+## Common gotchas
+- Android 10+ disables alarm flags in constructor (legacy workaround)
+- WinUI location permissions treated as always granted
+- Compass disposal requires explicit cleanup in `CompassViewModel.Dispose()`
+- FontAwesome icons use Unicode glyphs: `FontFamily="{StaticResource IconFontFamily}"`
+
+Quick file pointers: `MauiProgram.cs` (DI), `DataService.cs` (core logic), `BaseViewModel.cs` (MVVM foundation), `AppShell.xaml` (navigation), `Resources/Styles/` (Material Design 3 theming).

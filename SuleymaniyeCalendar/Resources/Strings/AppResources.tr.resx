@@ -557,4 +557,10 @@ Bu program, namaz ve oruç vakitlerine güvenli ve hızlı ulaşabilmeleri için
   <data name="SistemTemasi" xml:space="preserve">
     <value>Sistem teması</value>
   </data>
+  <data name="KonumBilgileri" xml:space="preserve">
+    <value>Konum bilgileri</value>
+  </data>
+  <data name="Adres" xml:space="preserve">
+    <value>Adres</value>
+  </data>
 </root>

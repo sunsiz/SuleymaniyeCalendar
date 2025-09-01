@@ -556,4 +556,10 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="SistemTemasi" xml:space="preserve">
     <value>Thème système</value>
   </data>
+  <data name="KonumBilgileri" xml:space="preserve">
+    <value>Informations de localisation</value>
+  </data>
+  <data name="Adres" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
 </root>

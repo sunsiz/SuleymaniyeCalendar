@@ -557,4 +557,10 @@
   <data name="SistemTemasi" xml:space="preserve">
     <value>Cистемная тема</value>
   </data>
+  <data name="KonumBilgileri" xml:space="preserve">
+    <value>Информация о местоположении</value>
+  </data>
+  <data name="Adres" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
 </root>

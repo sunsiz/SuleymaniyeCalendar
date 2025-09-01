@@ -17,42 +17,103 @@ namespace SuleymaniyeCalendar.ViewModels
 		private DataService _data;
 
 		[ObservableProperty] public ObservableCollection<Calendar> monthlyCalendar;
+		
+		public bool HasData => MonthlyCalendar?.Count > 0;
+		
 		public MonthViewModel(DataService dataService)
 		{
-			IsBusy = true;
 			Title = AppResources.AylikTakvim;
 			_data = dataService;
-			var place = _data.calendar;
-			var location = new Location()
-				{ Latitude = place.Latitude, Longitude = place.Longitude, Altitude = place.Altitude };
-			if (location.Latitude != 0.0 && location.Longitude != 0.0)
+			MonthlyCalendar = new ObservableCollection<Calendar>();
+			IsBusy = true;
+		}
+
+		public async Task InitializeAsync()
+		{
+			if (MonthlyCalendar?.Count > 0)
 			{
-				monthlyCalendar = _data.GetMonthlyPrayerTimes(location, false);
-				if (monthlyCalendar == null)
+				IsBusy = false;
+				return;
+			}
+				
+			await LoadMonthlyDataAsync().ConfigureAwait(false);
+		}
+
+		private async Task LoadMonthlyDataAsync()
+		{
+			try
+			{
+				var place = _data.calendar;
+				var location = new Location()
+					{ Latitude = place.Latitude, Longitude = place.Longitude, Altitude = place.Altitude };
+				
+				if (location.Latitude != 0.0 && location.Longitude != 0.0)
 				{
-					Alert(AppResources.TakvimIcinInternet, AppResources.TakvimIcinInternetBaslik);
-					return;
+					var monthlyData = await Task.Run(() => _data.GetMonthlyPrayerTimes(location, false)).ConfigureAwait(false);
+					
+					if (monthlyData == null)
+					{
+						await MainThread.InvokeOnMainThreadAsync(() => 
+						{
+							Alert(AppResources.TakvimIcinInternet, AppResources.TakvimIcinInternetBaslik);
+						});
+						return;
+					}
+					
+					await MainThread.InvokeOnMainThreadAsync(() => 
+					{
+						MonthlyCalendar = new ObservableCollection<Calendar>(monthlyData);
+						OnPropertyChanged(nameof(HasData));
+					});
+				}
+				else
+				{
+					await MainThread.InvokeOnMainThreadAsync(() => 
+					{
+						ShowToast(AppResources.KonumIzniIcerik);
+					});
 				}
 			}
-			else
-				ShowToast(AppResources.KonumIzniIcerik);
-			IsBusy = false;
+			finally
+			{
+				IsBusy = false;
+			}
 		}
 
 		[RelayCommand]
 		private async Task Refresh()
 		{
-			Location location;
-			//using (UserDialogs.Instance.Loading(AppResources.Yenileniyor))
-			//{
-			//var data = new DataService();
-			location = await _data.GetCurrentLocationAsync(true).ConfigureAwait(false);
-			if (location != null && location.Latitude != 0 && location.Longitude != 0)
-				MonthlyCalendar = _data.GetMonthlyPrayerTimes(location, true);
-			if (MonthlyCalendar == null)
-				Alert(AppResources.TakvimIcinInternet, AppResources.TakvimIcinInternetBaslik);
-			else ShowToast(AppResources.AylikTakvimYenilendi);
-			//}
+			IsBusy = true;
+			
+			try
+			{
+				Location location = await _data.GetCurrentLocationAsync(true).ConfigureAwait(false);
+				if (location != null && location.Latitude != 0 && location.Longitude != 0)
+				{
+					var monthlyData = await Task.Run(() => _data.GetMonthlyPrayerTimes(location, true)).ConfigureAwait(false);
+					
+					if (monthlyData == null)
+					{
+						await MainThread.InvokeOnMainThreadAsync(() => 
+						{
+							Alert(AppResources.TakvimIcinInternet, AppResources.TakvimIcinInternetBaslik);
+						});
+					}
+					else
+					{
+						await MainThread.InvokeOnMainThreadAsync(() => 
+						{
+							MonthlyCalendar = new ObservableCollection<Calendar>(monthlyData);
+							OnPropertyChanged(nameof(HasData));
+							ShowToast(AppResources.AylikTakvimYenilendi);
+						});
+					}
+				}
+			}
+			finally
+			{
+				IsBusy = false;
+			}
 		}
 
 		[RelayCommand]

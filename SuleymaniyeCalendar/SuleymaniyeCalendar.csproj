@@ -8,7 +8,7 @@
 	<ImplicitUsings>enable</ImplicitUsings>
 	<MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
 	<ApplicationTitle>SuleymaniyeCalendar</ApplicationTitle>
-	<ApplicationId>com.companyname.suleymaniyecalendar</ApplicationId>
+	<ApplicationId>org.suleymaniyevakfi</ApplicationId>
 	<ApplicationIdGuid>84aea3eb-9551-460b-94e3-1c0a87aa8e61</ApplicationIdGuid>
 	<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 	<ApplicationVersion>1</ApplicationVersion>
@@ -28,7 +28,10 @@
 	<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#EFEBE9" BaseSize="256,256" />
 	<MauiImage Include="Resources\Images\*" />
 	<MauiImage Update="Resources\Images\dotnet_bot.svg" BaseSize="168,208" />
-	<MauiFont Include="Resources\Fonts\*" />
+	<!-- Ensure FontAwesome is packaged and alias available in XAML -->
+	<MauiFont Include="Resources\Fonts\FontAwesome6FreeSolid.otf" Alias="FontAwesomeSolid" />
+	<MauiFont Include="Resources\Fonts\OpenSans-Regular.ttf" Alias="OpenSansRegular" />
+	<!-- Fonts are registered via ConfigureFonts in MauiProgram.cs -->
 	<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +50,9 @@
 	</ItemGroup>
   <ItemGroup>
 	  <MauiXaml Update="Views\AboutPage.xaml" Generator="MSBuild:Compile" />
+	  <MauiXaml Update="Views\MonthTableView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\PrayerDetailPage.xaml" Generator="MSBuild:Compile" />
 	  <MauiXaml Update="Views\CompassPage.xaml" Generator="MSBuild:Compile" />
 	  <MauiXaml Update="Views\MonthPage.xaml" Generator="MSBuild:Compile" />
@@ -65,10 +71,10 @@
 	<Folder Include="Platforms\Android\Resources\raw\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Resources\Strings\AppResources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>AppResources.resx</DependentUpon>
-    </Compile>
+	<Compile Update="Resources\Strings\AppResources.Designer.cs">
+	  <DesignTime>True</DesignTime>
+	  <AutoGen>True</AutoGen>
+	  <DependentUpon>AppResources.resx</DependentUpon>
+	</Compile>
   </ItemGroup>
 </Project>

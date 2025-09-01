@@ -555,4 +555,10 @@
   <data name="SistemTemasi" xml:space="preserve">
     <value>Sistem temasi</value>
   </data>
+  <data name="KonumBilgileri" xml:space="preserve">
+    <value>Məkan məlumatı</value>
+  </data>
+  <data name="Adres" xml:space="preserve">
+    <value>Ünvan</value>
+  </data>
 </root>

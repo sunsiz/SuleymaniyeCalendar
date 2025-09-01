@@ -557,4 +557,10 @@
   <data name="SistemTemasi" xml:space="preserve">
     <value>سىستېما ئۇسلۇبى</value>
   </data>
+  <data name="KonumBilgileri" xml:space="preserve">
+    <value>ئورۇن ئۇچۇرلىرى</value>
+  </data>
+  <data name="Adres" xml:space="preserve">
+    <value>ئادرېس</value>
+  </data>
 </root>

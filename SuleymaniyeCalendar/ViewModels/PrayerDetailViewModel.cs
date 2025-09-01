@@ -4,13 +4,15 @@ using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Resources.Strings;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
+using SuleymaniyeCalendar.Services;
 
 namespace SuleymaniyeCalendar.ViewModels
 {
 	[QueryProperty(nameof(PrayerId), nameof(PrayerId))]
 	public partial class PrayerDetailViewModel : BaseViewModel
 	{
+		private readonly IAudioPreviewService _audioPreview;
+		private readonly DataService _dataService;
 		[ObservableProperty] private string _time;
 		[ObservableProperty] private bool _enabled;
 		[ObservableProperty] private bool _vibration;
@@ -21,11 +23,13 @@ namespace SuleymaniyeCalendar.ViewModels
 		[ObservableProperty] private string _prayerId;
 		[ObservableProperty] private int _notificationTime;
 		[ObservableProperty] private bool _isPlaying;
-		[ObservableProperty] private string _previewSource;
 		public bool IsNecessary => !((DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 10) || DeviceInfo.Platform == DevicePlatform.iOS);
+		public bool ShowAdvancedOptions => Enabled && IsNecessary;
 
-		public PrayerDetailViewModel()
+		public PrayerDetailViewModel(IAudioPreviewService audioPreview, DataService dataService)
 		{
+			_audioPreview = audioPreview;
+			_dataService = dataService;
 			Title = AppResources.PageTitle;
 			LoadSounds();
 			IsPlaying = false;
@@ -40,122 +44,112 @@ namespace SuleymaniyeCalendar.ViewModels
 				Debug.WriteLine("Value Set for -> " + PrayerId + "Enabled: " +
 								Preferences.Get(PrayerId + "Enabled", value));
 				Enabled = value;
-				if (value)
-				{
-					Preferences.Set(PrayerId + "Notification", Preferences.Get(PrayerId + "Notification", true));
-					Preferences.Set(PrayerId + "Vibration", Preferences.Get(PrayerId + "Vibration", false));
-					Preferences.Set(PrayerId + "Alarm", Preferences.Get(PrayerId + "Alarm", false));
-				}
+				OnPropertyChanged(nameof(ShowAdvancedOptions));
+				//if (value)
+				//{
+				//	Preferences.Set(PrayerId + "Notification", Preferences.Get(PrayerId + "Notification", true));
+				//	Preferences.Set(PrayerId + "Vibration", Preferences.Get(PrayerId + "Vibration", false));
+				//	Preferences.Set(PrayerId + "Alarm", Preferences.Get(PrayerId + "Alarm", false));
+				//}
+
+				// No messaging: Main page will refresh on OnAppearing
 			}
 		}
 
 		[RelayCommand]
 		public void GoBack()
 		{
+                    IsBusy = true;
 			MainThread.BeginInvokeOnMainThread(async () =>
 			{
 				try
-				{
+                {
 					if (PrayerId != null && SelectedSound != null)
 						Preferences.Set(PrayerId + "AlarmSound", SelectedSound.FileName);
+					// Ensure preview is stopped when leaving
+					await _audioPreview.StopAsync().ConfigureAwait(false);
+					IsPlaying = false;
 					await Task.Delay(1000);
-				}
+                    await _dataService.SetWeeklyAlarmsAsync();
+                }
 				catch (Exception ex)
 				{
 					Alert("Test", ex.Message);
 				}
 			});
 			Shell.Current.GoToAsync("..");
-		}
+            IsBusy = false;
+        }
+
+		//[RelayCommand]
+		//public void NotificationCheckedChanged(bool value)
+		//{
+		//	if (!IsBusy)
+		//	{
+		//		Preferences.Set(PrayerId + "Notification", value);
+		//		Debug.WriteLine("Value Set for -> " + PrayerId + "Notification: " +
+		//						Preferences.Get(PrayerId + "Notification", value));
+		//		Notification = value;
+		//	}
+		//}
+
+		//[RelayCommand]
+		//public void VibrationCheckedChanged(bool value)
+		//{
+		//	if (!IsBusy)
+		//	{
+		//		Preferences.Set(PrayerId + "Vibration", value);
+		//		Debug.WriteLine("Value Set for -> " + PrayerId + "Vibration: " +
+		//						Preferences.Get(PrayerId + "Vibration", value));
+		//		Vibration = value;
+		//		if (value)
+		//		{
+		//			try
+		//			{
+		//				Microsoft.Maui.Devices.Vibration.Default.Vibrate();
+		//				var duration = TimeSpan.FromSeconds(1);
+		//				Microsoft.Maui.Devices.Vibration.Default.Vibrate(duration);
+		//			}
+		//			catch (FeatureNotSupportedException ex)
+		//			{
+		//				Alert(AppResources.TitremeyiDesteklemiyor + ex.Message, AppResources.CihazTitretmeyiDesteklemiyor);
+		//			}
+		//			catch (Exception ex)
+		//			{
+		//				Alert(ex.Message, AppResources.SorunCikti);
+		//			}
+		//		}
+		//	}
+		//}
+
+		//[RelayCommand]
+		//public void AlarmCheckedChanged(bool value)
+		//{
+		//	if (!IsBusy)
+		//	{
+		//		Preferences.Set(PrayerId + "Alarm", value);
+		//		Debug.WriteLine("Value Setted for -> " + PrayerId + "Alarm: " +
+		//						Preferences.Get(PrayerId + "Alarm", value));
+		//		Alarm = value;
+		//	}
+		//}
 
 		[RelayCommand]
-		public void NotificationCheckedChanged(bool value)
-		{
-			if (!IsBusy)
-			{
-				Preferences.Set(PrayerId + "Notification", value);
-				Debug.WriteLine("Value Set for -> " + PrayerId + "Notification: " +
-								Preferences.Get(PrayerId + "Notification", value));
-				Notification = value;
-			}
-		}
-
-		[RelayCommand]
-		public void VibrationCheckedChanged(bool value)
-		{
-			if (!IsBusy)
-			{
-				Preferences.Set(PrayerId + "Vibration", value);
-				Debug.WriteLine("Value Set for -> " + PrayerId + "Vibration: " +
-								Preferences.Get(PrayerId + "Vibration", value));
-				Vibration = value;
-				if (value)
-				{
-					try
-					{
-						Microsoft.Maui.Devices.Vibration.Default.Vibrate();
-						var duration = TimeSpan.FromSeconds(1);
-						Microsoft.Maui.Devices.Vibration.Default.Vibrate(duration);
-					}
-					catch (FeatureNotSupportedException ex)
-					{
-						Alert(AppResources.TitremeyiDesteklemiyor + ex.Message, AppResources.CihazTitretmeyiDesteklemiyor);
-					}
-					catch (Exception ex)
-					{
-						Alert(ex.Message, AppResources.SorunCikti);
-					}
-				}
-			}
-		}
-
-		[RelayCommand]
-		public void AlarmCheckedChanged(bool value)
-		{
-			if (!IsBusy)
-			{
-				Preferences.Set(PrayerId + "Alarm", value);
-				Debug.WriteLine("Value Setted for -> " + PrayerId + "Alarm: " +
-								Preferences.Get(PrayerId + "Alarm", value));
-				Alarm = value;
-			}
-		}
-
-		[RelayCommand]
-		public async Task TestButtonClicked()
+	public async Task TestButtonClicked()
 		{
 			if (!IsPlaying)
 			{
-				var src = await GetPreviewFilePathAsync(SelectedSound?.FileName + ".mp3").ConfigureAwait(false);
-				MainThread.BeginInvokeOnMainThread(() =>
+				var fileKey = SelectedSound?.FileName;
+				if (!string.IsNullOrWhiteSpace(fileKey))
 				{
-					PreviewSource = src;
-					IsPlaying = !string.IsNullOrEmpty(PreviewSource);
-				});
+		            await _audioPreview.PlayAsync(fileKey, loop: true).ConfigureAwait(false);
+		            MainThread.BeginInvokeOnMainThread(() => IsPlaying = _audioPreview.IsPlaying);
+				}
 			}
 			else
 			{
-				IsPlaying = false;
-				PreviewSource = null;
-			}
-		}
-
-		private static async Task<string> GetPreviewFilePathAsync(string fileName)
-		{
-			if (string.IsNullOrWhiteSpace(fileName)) return null;
-			try
-			{
-				using var stream = await FileSystem.OpenAppPackageFileAsync(fileName).ConfigureAwait(false);
-				var cache = FileSystem.CacheDirectory;
-				var dest = Path.Combine(cache, fileName);
-				using var output = File.Create(dest);
-				await stream.CopyToAsync(output).ConfigureAwait(false);
-				return dest;
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Preview copy failed: {ex.Message}");
-				return null;
+				await _audioPreview.StopAsync().ConfigureAwait(false);
+				MainThread.BeginInvokeOnMainThread(() => IsPlaying = false);
 			}
 		}
 
@@ -167,6 +161,23 @@ namespace SuleymaniyeCalendar.ViewModels
 			PrayerId = value;
 			LoadPrayer();
 			IsBusy = false;
+		}
+
+		partial void OnEnabledChanged(bool value)
+		{
+			// Persist toggle immediately and adjust related defaults
+			try
+			{
+				Preferences.Set(PrayerId + "Enabled", value);
+				//if (value)
+				//{
+				//	Preferences.Set(PrayerId + "Notification", Preferences.Get(PrayerId + "Notification", true));
+				//	Preferences.Set(PrayerId + "Vibration", Preferences.Get(PrayerId + "Vibration", false));
+				//	Preferences.Set(PrayerId + "Alarm", Preferences.Get(PrayerId + "Alarm", false));
+				//}
+			}
+			catch { /* no-op */ }
+			OnPropertyChanged(nameof(ShowAdvancedOptions));
 		}
 
 		private void LoadPrayer()
@@ -201,16 +212,19 @@ namespace SuleymaniyeCalendar.ViewModels
 						break;
 				}
 				Time = Preferences.Get(PrayerId, "");
-				Enabled = Preferences.Get(PrayerId + "Enabled", true);
-				Notification = Preferences.Get(PrayerId + "Notification", true);
-				Vibration = Preferences.Get(PrayerId + "Vibration", true);
-				Alarm = Preferences.Get(PrayerId + "Alarm", false);
+				Enabled = Preferences.Get(PrayerId + "Enabled", false);
+				//Notification = Preferences.Get(PrayerId + "Notification", true);
+				//Vibration = Preferences.Get(PrayerId + "Vibration", true);
+				//Alarm = Preferences.Get(PrayerId + "Alarm", false);
 				NotificationTime = Preferences.Get(PrayerId + "NotificationTime", 0);
+				OnPropertyChanged(nameof(ShowAdvancedOptions));
 				// Ensure SelectedSound reflects saved choice or a default
-				var saved = Preferences.Get(PrayerId + "AlarmSound", "alarm");
+				var saved = Preferences.Get(PrayerId + "AlarmSound", "kus");
 				SelectedSound = AvailableSounds?.FirstOrDefault(n => n.FileName == saved)
-								?? AvailableSounds?.FirstOrDefault(n => n.FileName == "alarm")
+								?? AvailableSounds?.FirstOrDefault(n => n.FileName == "kus")
 								?? AvailableSounds?.FirstOrDefault();
+
+				// no-op: messaging will be sent explicitly on toggle
 			}
 			catch (Exception ex)
 			{

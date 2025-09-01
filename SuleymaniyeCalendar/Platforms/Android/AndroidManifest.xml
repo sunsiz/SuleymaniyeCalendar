@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.suleymaniyevakfi">
-	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:networkSecurityConfig="@xml/network_security_config" android:supportsRtl="true" android:label="Suleymaniye Calendar"></application>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.suleymaniyevakfi" android:versionCode="4">
+	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:networkSecurityConfig="@xml/network_security_config" android:supportsRtl="true" android:label="Suleymaniye Calendar">
+		<receiver android:name=".BootReceiver" android:exported="false">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
+			</intent-filter>
+		</receiver>
+	</application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -12,5 +18,7 @@
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 	<uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
-	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />--&gt;
-	<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" /><uses-permission android:name="android.permission.POST_NOTIFICATIONS" /></manifest>
+	<uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
+	<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+	<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+</manifest>

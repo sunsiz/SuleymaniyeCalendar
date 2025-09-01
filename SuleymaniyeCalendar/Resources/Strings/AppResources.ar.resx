@@ -556,4 +556,10 @@
   <data name="SistemTemasi" xml:space="preserve">
     <value>مظهر النظام</value>
   </data>
+  <data name="KonumBilgileri" xml:space="preserve">
+    <value>معلومات الموقع</value>
+  </data>
+  <data name="Adres" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
 </root>

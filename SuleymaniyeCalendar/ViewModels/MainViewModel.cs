@@ -17,14 +17,20 @@ using Microsoft.Maui.ApplicationModel;
 
 namespace SuleymaniyeCalendar.ViewModels
 {
-    public partial class MainViewModel:BaseViewModel
+    public partial class MainViewModel : BaseViewModel
     {
         private Calendar _calendar;
         private DataService _data;
-    private Task _startupRefreshTask;
-    private Task _weeklyAlarmsTask;
+        private Task _startupRefreshTask;
+        private Task _weeklyAlarmsTask;
 
-        //private bool _permissionRequested;
+        // Throttle refreshes to avoid duplicate work during navigation churn
+        private DateTimeOffset _lastUiRefresh = DateTimeOffset.MinValue;
+        private static readonly TimeSpan UiRefreshThrottle = TimeSpan.FromSeconds(2);
+
+        // Single-flight guard for UI refresh
+        private int _refreshing; // 0 = idle, 1 = running
+
         [ObservableProperty] public ObservableCollection<Prayer> _prayers;
 
         [ObservableProperty] public string _remainingTime;
@@ -33,9 +39,16 @@ namespace SuleymaniyeCalendar.ViewModels
         private IDispatcherTimer _ticker;
         private EventHandler _tickHandler;
 
-    // Dedicated flag for pull-to-refresh to avoid coupling with IsBusy
-    [ObservableProperty]
-    private bool isRefreshing;
+        // Dedicated flag for pull-to-refresh to avoid coupling with IsBusy
+        [ObservableProperty]
+        private bool isRefreshing;
+
+        // Bind CollectionView.SelectedItem to this
+        [ObservableProperty]
+        private Prayer _selectedPrayer;
+
+        // Prevent double navigation/reentrancy on fast taps/selection churn
+        private bool _isNavigating;
 
         public MainViewModel(DataService dataService)
         {
@@ -58,24 +71,32 @@ namespace SuleymaniyeCalendar.ViewModels
             Prayers = new ObservableCollection<Prayer>();
             _data = dataService;
             _calendar = _data.calendar;
+
+            // Lightweight initial population; deeper refresh is coalesced in OnAppearing
             LoadPrayers();
-            GetCity();
+
+            // Fire and forget non-UI work
+            _ = Task.Run(() => GetCity());
+
             if (!Preferences.Get("LocationSaved", false))
                 CheckLocationInfo(3000);
+
             if (Preferences.Get("AlwaysRenewLocationEnabled", false))
                 _startupRefreshTask = RefreshLocationCommand.ExecuteAsync(null);
+
             var lastAlarmDateStr = Preferences.Get("LastAlarmDate", "Empty");
             if (lastAlarmDateStr != "Empty")
             {
                 if ((DateTime.Parse(lastAlarmDateStr) - DateTime.Today).Days > 4)
                     _weeklyAlarmsTask = _data.SetWeeklyAlarmsAsync();
             }
-            //Console.WriteLine("CurrentCulture is {0}.", CultureInfo.CurrentCulture.Name);
             Debug.WriteLine("TimeStamp-ItemsViewModel-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+
+            // Icon/UI refresh is handled by OnAppearing -> RefreshUiAsync()
         }
 
-    [RelayCommand]
-    public async Task GoToMap()
+        [RelayCommand]
+        public async Task GoToMap()
         {
             try
             {
@@ -86,70 +107,121 @@ namespace SuleymaniyeCalendar.ViewModels
             }
             catch (Exception ex)
             {
-                //UserDialogs.Instance.Toast(AppResources.HaritaHatasi + ex.Message);
                 ShowToast(AppResources.HaritaHatasi + ex.Message);
             }
         }
 
-    [RelayCommand]
+        [RelayCommand]
         public async Task RefreshLocation()
         {
             if (IsRefreshing || IsBusy)
                 return;
+
             IsRefreshing = true;
             IsBusy = true;
-            //using (UserDialogs.Instance.Loading(AppResources.Yenileniyor))
-            //{
-                _calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
-                await _data.SetWeeklyAlarmsAsync().ConfigureAwait(false);
-            //}
-            MainThread.BeginInvokeOnMainThread(() =>
-            {
-                GetCity();
-                LoadPrayers();
-            });
+
+            _calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
+            await _data.SetWeeklyAlarmsAsync().ConfigureAwait(false);
+
+            // Coalesced UI update after background work
+            await RefreshUiAsync(force: true).ConfigureAwait(false);
+
             IsBusy = false;
             IsRefreshing = false;
         }
-        
-        [RelayCommand]
-    private async Task PrayerSelected(Prayer prayer)
-        {
-            if (prayer == null)
-                return;
 
-            // This will push the ItemDetailPage onto the navigation stack
-            //await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.PrayerTimeId)}={prayerTime.Id}").ConfigureAwait(false);
-            await Shell.Current.GoToAsync(nameof(PrayerDetailPage), true, new Dictionary<string, object> { { nameof(PrayerDetailViewModel.PrayerId), prayer.Id } }).ConfigureAwait(false);
+        // Changed: parameterless; uses SelectedPrayer (bound from XAML)
+        [RelayCommand]
+        private async Task PrayerSelected()
+        {
+            var prayer = SelectedPrayer;
+            if (prayer is null || _isNavigating) return;
+
+            try
+            {
+                _isNavigating = true;
+
+                await Shell.Current.GoToAsync(
+                    nameof(PrayerDetailPage),
+                    true,
+                    new Dictionary<string, object> { { nameof(PrayerDetailViewModel.PrayerId), prayer.Id } }
+                ).ConfigureAwait(false);
+            }
+            finally
+            {
+                // Clear selection so same item can be tapped again; do it on UI thread
+                MainThread.BeginInvokeOnMainThread(() => SelectedPrayer = null);
+                _isNavigating = false;
+            }
         }
 
         [RelayCommand]
-    private async Task GoToMonth()
+        private async Task GoToMonth()
         {
-            IsBusy = true;
-            // This will push the MonthPage onto the navigation stack
-            //await Shell.Current.GoToAsync($"{nameof(MonthPage)}").ConfigureAwait(false);
-            await Shell.Current.GoToAsync(nameof(MonthPage)).ConfigureAwait(false);
-            IsBusy = false;
+            if (_isNavigating) return;
+            _isNavigating = true;
+            try
+            {
+                await Shell.Current.GoToAsync(nameof(MonthPage), animate: false).ConfigureAwait(false);
+            }
+            finally
+            {
+                _isNavigating = false;
+            }
         }
 
-    [RelayCommand]
-    private async Task Settings()
+        [RelayCommand]
+        private async Task Settings()
         {
             IsBusy = true;
-            // This will push the SettingsPage onto the navigation stack
             await Shell.Current.GoToAsync($"{nameof(SettingsPage)}").ConfigureAwait(false);
             IsBusy = false;
+        }
+
+        [RelayCommand]
+        private void TogglePrayerEnabled(Prayer prayer)
+        {
+            if (prayer == null) return;
+
+            try
+            {
+                prayer.Enabled = !prayer.Enabled;
+                Preferences.Set(prayer.Id + "Enabled", prayer.Enabled);
+
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        await _data.SetWeeklyAlarmsAsync().ConfigureAwait(false);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Error updating alarms: {ex.Message}");
+                    }
+                });
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error toggling prayer: {ex.Message}");
+            }
         }
 
         private async void GetCity()
         {
             try
             {
-                //Without the Convert.ToDouble conversion it confuses the ',' and '.' when UI culture changed. like latitude=50.674367348783 become latitude= 50674367348783 then throw exception.
-                var placemark = await Geocoding.Default.GetPlacemarksAsync(Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat)).ConfigureAwait(false);
-                if (placemark != null)
-                    City = placemark.FirstOrDefault()?.AdminArea ?? placemark.FirstOrDefault()?.CountryName;
+                var placemark = await Geocoding.Default
+                    .GetPlacemarksAsync(
+                        Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat),
+                        Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat))
+                    .ConfigureAwait(false);
+
+                var city = placemark?.FirstOrDefault()?.AdminArea ?? placemark?.FirstOrDefault()?.CountryName;
+
+                if (!string.IsNullOrWhiteSpace(city))
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() => City = city);
+                }
             }
             catch (Exception exception)
             {
@@ -166,7 +238,8 @@ namespace SuleymaniyeCalendar.ViewModels
             if (_initialLocationChecked)
                 return;
             var isLocationEnabled = _data.CheckAndRequestLocationPermission();
-        if (isLocationEnabled.Result!=PermissionStatus.Granted) return;
+            if (isLocationEnabled.Result != PermissionStatus.Granted) return;
+
             _ = Task.Run(async () =>
             {
                 if (!_data.HaveInternet()) return;
@@ -180,16 +253,13 @@ namespace SuleymaniyeCalendar.ViewModels
                     var location = await _data.GetCurrentLocationAsync(false).ConfigureAwait(false);
                     if (location != null && location.Latitude != 0 && location.Longitude != 0)
                         _data.GetMonthlyPrayerTimes(location, false);
-                    // No recursive RefreshLocation call; update UI directly below
                 }
-                
+
                 await _data.SetWeeklyAlarmsAsync().ConfigureAwait(false);
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    GetCity();
-                    LoadPrayers();
-                });
-                //GetCity();
+
+                // Coalesced UI update
+                await RefreshUiAsync(force: true).ConfigureAwait(false);
+
                 _initialLocationChecked = true;
             });
         }
@@ -202,14 +272,79 @@ namespace SuleymaniyeCalendar.ViewModels
             try
             {
                 var list = new List<Prayer>();
-                var falseFajr = new Prayer() { Id = "falsefajr", Name = AppResources.FecriKazip, Time = _calendar.FalseFajr, Enabled = Preferences.Get("falsefajrEnabled", false), State = CheckState(DateTime.Parse(_calendar.FalseFajr), DateTime.Parse(_calendar.Fajr)) };
-                var fajr = new Prayer() { Id = "fajr", Name = AppResources.FecriSadik, Time = _calendar.Fajr, Enabled = Preferences.Get("fajrEnabled", false), State = CheckState(DateTime.Parse(_calendar.Fajr), DateTime.Parse(_calendar.Sunrise)) };
-                var sunRise = new Prayer() { Id = "sunrise", Name = AppResources.SabahSonu, Time = _calendar.Sunrise, Enabled = Preferences.Get("sunriseEnabled", false), State = CheckState(DateTime.Parse(_calendar.Sunrise), DateTime.Parse(_calendar.Dhuhr)) };
-                var dhuhr = new Prayer() { Id = "dhuhr", Name = AppResources.Ogle, Time = _calendar.Dhuhr, Enabled = Preferences.Get("dhuhrEnabled", false), State = CheckState(DateTime.Parse(_calendar.Dhuhr), DateTime.Parse(_calendar.Asr)) };
-                var asr = new Prayer() { Id = "asr", Name = AppResources.Ikindi, Time = _calendar.Asr, Enabled = Preferences.Get("asrEnabled", false), State = CheckState(DateTime.Parse(_calendar.Asr), DateTime.Parse(_calendar.Maghrib)) };
-                var maghrib = new Prayer() { Id = "maghrib", Name = AppResources.Aksam, Time = _calendar.Maghrib, Enabled = Preferences.Get("maghribEnabled", false), State = CheckState(DateTime.Parse(_calendar.Maghrib), DateTime.Parse(_calendar.Isha)) };
-                var isha = new Prayer() { Id = "isha", Name = AppResources.Yatsi, Time = _calendar.Isha, Enabled = Preferences.Get("ishaEnabled", false), State = CheckState(DateTime.Parse(_calendar.Isha), DateTime.Parse(_calendar.EndOfIsha)) };
-                var endOfIsha = new Prayer() { Id = "endofisha", Name = AppResources.YatsiSonu, Time = _calendar.EndOfIsha, Enabled = Preferences.Get("endofishaEnabled", false), State = CheckState(DateTime.Parse(_calendar.EndOfIsha), DateTime.Parse(_calendar.FalseFajr)) };
+
+                var falseFajr = new Prayer();
+                falseFajr.Id = "falsefajr";
+                falseFajr.Name = AppResources.FecriKazip;
+                falseFajr.Time = _calendar.FalseFajr;
+                falseFajr.Enabled = Preferences.Get("falsefajrEnabled", false);
+                falseFajr.State = CheckState(DateTime.Parse(_calendar.FalseFajr), DateTime.Parse(_calendar.Fajr));
+                falseFajr.StateDescription = GetStateDescription(falseFajr.State);
+                falseFajr.UpdateVisualState();
+
+                var fajr = new Prayer();
+                fajr.Id = "fajr";
+                fajr.Name = AppResources.FecriSadik;
+                fajr.Time = _calendar.Fajr;
+                fajr.Enabled = Preferences.Get("fajrEnabled", false);
+                fajr.State = CheckState(DateTime.Parse(_calendar.Fajr), DateTime.Parse(_calendar.Sunrise));
+                fajr.StateDescription = GetStateDescription(fajr.State);
+                fajr.UpdateVisualState();
+
+                var sunRise = new Prayer();
+                sunRise.Id = "sunrise";
+                sunRise.Name = AppResources.SabahSonu;
+                sunRise.Time = _calendar.Sunrise;
+                sunRise.Enabled = Preferences.Get("sunriseEnabled", false);
+                sunRise.State = CheckState(DateTime.Parse(_calendar.Sunrise), DateTime.Parse(_calendar.Dhuhr));
+                sunRise.StateDescription = GetStateDescription(sunRise.State);
+                sunRise.UpdateVisualState();
+
+                var dhuhr = new Prayer();
+                dhuhr.Id = "dhuhr";
+                dhuhr.Name = AppResources.Ogle;
+                dhuhr.Time = _calendar.Dhuhr;
+                dhuhr.Enabled = Preferences.Get("dhuhrEnabled", false);
+                dhuhr.State = CheckState(DateTime.Parse(_calendar.Dhuhr), DateTime.Parse(_calendar.Asr));
+                dhuhr.StateDescription = GetStateDescription(dhuhr.State);
+                dhuhr.UpdateVisualState();
+
+                var asr = new Prayer();
+                asr.Id = "asr";
+                asr.Name = AppResources.Ikindi;
+                asr.Time = _calendar.Asr;
+                asr.Enabled = Preferences.Get("asrEnabled", false);
+                asr.State = CheckState(DateTime.Parse(_calendar.Asr), DateTime.Parse(_calendar.Maghrib));
+                asr.StateDescription = GetStateDescription(asr.State);
+                asr.UpdateVisualState();
+
+                var maghrib = new Prayer();
+                maghrib.Id = "maghrib";
+                maghrib.Name = AppResources.Aksam;
+                maghrib.Time = _calendar.Maghrib;
+                maghrib.Enabled = Preferences.Get("maghribEnabled", false);
+                maghrib.State = CheckState(DateTime.Parse(_calendar.Maghrib), DateTime.Parse(_calendar.Isha));
+                maghrib.StateDescription = GetStateDescription(maghrib.State);
+                maghrib.UpdateVisualState();
+
+                var isha = new Prayer();
+                isha.Id = "isha";
+                isha.Name = AppResources.Yatsi;
+                isha.Time = _calendar.Isha;
+                isha.Enabled = Preferences.Get("ishaEnabled", false);
+                isha.State = CheckState(DateTime.Parse(_calendar.Isha), DateTime.Parse(_calendar.EndOfIsha));
+                isha.StateDescription = GetStateDescription(isha.State);
+                isha.UpdateVisualState();
+
+                var endOfIsha = new Prayer();
+                endOfIsha.Id = "endofisha";
+                endOfIsha.Name = AppResources.YatsiSonu;
+                endOfIsha.Time = _calendar.EndOfIsha;
+                endOfIsha.Enabled = Preferences.Get("endofishaEnabled", false);
+                endOfIsha.State = CheckState(DateTime.Parse(_calendar.EndOfIsha), DateTime.Parse(_calendar.FalseFajr));
+                endOfIsha.StateDescription = GetStateDescription(endOfIsha.State);
+                endOfIsha.UpdateVisualState();
+
                 list.Add(falseFajr);
                 list.Add(fajr);
                 list.Add(sunRise);
@@ -232,7 +367,17 @@ namespace SuleymaniyeCalendar.ViewModels
                 // Apply to UI atomically on main thread
                 MainThread.BeginInvokeOnMainThread(() =>
                 {
-                    Prayers = new ObservableCollection<Prayer>(list);
+                    if (Prayers == null)
+                    {
+                        Prayers = new ObservableCollection<Prayer>(list);
+                    }
+                    else
+                    {
+                        Prayers.Clear();
+                        foreach (var p in list)
+                            Prayers.Add(p);
+                    }
+                    Debug.WriteLine($"[MainViewModel] Refreshed prayers. Enabled flags: FF:{falseFajr.Enabled} F:{fajr.Enabled} SR:{sunRise.Enabled} D:{dhuhr.Enabled} A:{asr.Enabled} M:{maghrib.Enabled} I:{isha.Enabled} EI:{endOfIsha.Enabled}");
                     Debug.WriteLine("TimeStamp-MainViewModel-ExecuteLoadItemsCommand-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
                 });
             }
@@ -243,6 +388,7 @@ namespace SuleymaniyeCalendar.ViewModels
 
             return Prayers;
         }
+
         private string CheckState(DateTime current, DateTime next)
         {
             var state = "";
@@ -252,9 +398,25 @@ namespace SuleymaniyeCalendar.ViewModels
             return state;
         }
 
+        private string GetStateDescription(string state)
+        {
+            return state?.ToLower() switch
+            {
+                "happening" => "Current",
+                "passed" => "Passed",
+                "waiting" => "Upcoming",
+                _ => ""
+            };
+        }
+
         public void OnAppearing()
         {
-            LoadPrayers();
+            // Schedule refresh on the next loop so the first frame can render immediately
+            Application.Current?.Dispatcher.Dispatch(() =>
+            {
+                _ = RefreshUiAsync();
+            });
+
             if (_ticker == null)
             {
                 _ticker = Application.Current.Dispatcher.CreateTimer();
@@ -275,6 +437,33 @@ namespace SuleymaniyeCalendar.ViewModels
                 _tickHandler = null;
             }
         }
+
+        // Coalesced + throttled UI refresh
+        private async Task RefreshUiAsync(bool force = false)
+        {
+            var now = DateTimeOffset.UtcNow;
+            if (!force && now - _lastUiRefresh < UiRefreshThrottle)
+                return;
+
+            if (System.Threading.Interlocked.Exchange(ref _refreshing, 1) == 1)
+                return;
+
+            try
+            {
+                _lastUiRefresh = now;
+
+                // Don’t block first frame – yield once if we’re called during navigation
+                await Task.Yield();
+
+                LoadPrayers();
+                await MainThread.InvokeOnMainThreadAsync(() => GetCity());
+            }
+            finally
+            {
+                System.Threading.Volatile.Write(ref _refreshing, 0);
+            }
+        }
+
         private string GetRemainingTime()
         {
             var currentTime = DateTime.Now.TimeOfDay;
@@ -317,16 +506,11 @@ namespace SuleymaniyeCalendar.ViewModels
             return "";
         }
 
-        //partial void OnSelectedPrayerTimeChanged(PrayerTime value){OnPrayerTimeSelected(value);}
         private async Task GetPrayersAsync()
         {
-            //IsBusy = true;
-            //var data = new DataService();
-
             _calendar = await _data.GetPrayerTimesAsync(true).ConfigureAwait(false);
             if (_calendar.Latitude != 0)
             {
-                //Application.Current.Properties["takvim"] = Vakitler;
                 Preferences.Set("latitude", _calendar.Latitude);
                 Preferences.Set("longitude", _calendar.Longitude);
                 Preferences.Set("altitude", _calendar.Altitude);
@@ -341,12 +525,8 @@ namespace SuleymaniyeCalendar.ViewModels
                 Preferences.Set("isha", _calendar.Isha);
                 Preferences.Set("endofisha", _calendar.EndOfIsha);
                 Preferences.Set("date", _calendar.Date);
-                //await Application.Current.SavePropertiesAsync();
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    GetCity();
-                    LoadPrayers();
-                });
+
+                await RefreshUiAsync(force: true).ConfigureAwait(false);
             }
             else
             {

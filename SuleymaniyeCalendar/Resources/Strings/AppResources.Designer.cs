@@ -116,6 +116,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Address.
+        /// </summary>
+        internal static string Adres {
+            get {
+                return ResourceManager.GetString("Adres", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maghrib.
         /// </summary>
         internal static string Aksam {
@@ -769,6 +778,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         internal static string KibleGostergesi {
             get {
                 return ResourceManager.GetString("KibleGostergesi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Location information.
+        /// </summary>
+        internal static string KonumBilgileri {
+            get {
+                return ResourceManager.GetString("KonumBilgileri", resourceCulture);
             }
         }
         

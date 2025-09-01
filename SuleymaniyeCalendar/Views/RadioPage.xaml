@@ -31,7 +31,7 @@
                         <Label VerticalTextAlignment="Center" Style="{DynamicResource LabelStyle}">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="&#xf0ae; " FontFamily="FontAwesomeSolid"
+                                    <Span Text="&#xf0ae; " FontFamily="{StaticResource IconFontFamily}"
                                           TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource PrimaryAccent50Color}}"
                                           FontSize="20" />
                                     <Span Text="{localization:Translate YayinAkisi}"
@@ -44,7 +44,7 @@
                     <!-- Play / Pause control with accessible description -->
                     <Label Grid.Row="0" Grid.Column="1" Padding="0"
                            HorizontalOptions="Center" VerticalOptions="Center"
-                           FontAttributes="Bold" FontFamily="FontAwesomeSolid" FontSize="55" Opacity="0.8"
+                           FontAttributes="Bold" FontFamily="{StaticResource IconFontFamily}" FontSize="55" Opacity="0.8"
                            TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource PrimaryAccent50Color}}"
                            Text="&#xe038;"
                            AutomationProperties.IsInAccessibleTree="True"
@@ -68,7 +68,7 @@
                         <Label HorizontalTextAlignment="End" VerticalTextAlignment="Center" Style="{DynamicResource LabelStyle}">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="&#xf0ac; " FontFamily="FontAwesomeSolid"
+                                    <Span Text="&#xf0ac; " FontFamily="{StaticResource IconFontFamily}"
                                           TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource PrimaryAccent50Color}}"
                                           FontSize="20" />
                                     <Span Text="{localization:Translate WebSayfa}"

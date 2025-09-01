@@ -6,57 +6,91 @@ using SuleymaniyeCalendar.Services;
 using SuleymaniyeCalendar.ViewModels;
 using SuleymaniyeCalendar.Views;
 
+// Keep this if you use other handlers elsewhere
+using Microsoft.Maui.Handlers;
+
+#if ANDROID
+using Microsoft.Maui.Controls.Handlers.Items;     // CollectionViewHandler
+using AndroidX.RecyclerView.Widget;               // RecyclerView
+using AndroidX.Core.View;                         // ViewCompat.SetNestedScrollingEnabled
+using AndroidX.Core.Widget;                       // NestedScrollView
+#endif
+
 namespace SuleymaniyeCalendar;
 
 public static class MauiProgram
 {
-	public static MauiApp CreateMauiApp()
-	{
-		var builder = MauiApp.CreateBuilder();
-		builder
-			.UseMauiApp<App>()
-			// Initialize the .NET MAUI Community Toolkit by adding the below line of code
-			.UseMauiCommunityToolkit()
-			.UseMauiCommunityToolkitMediaElement()
-			.UseLocalizationResourceManager(settings =>
-			{
-				settings.AddResource(AppResources.ResourceManager);
-				settings.RestoreLatestCulture(true);
-			})
-			.ConfigureFonts(fonts =>
-			{
-				fonts.AddFont("FontAwesome6FreeSolid.otf", "FontAwesomeSolid");
-				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-			});
+            public static MauiApp CreateMauiApp()
+    {
+        var builder = MauiApp.CreateBuilder();
+        builder
+            .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
+            .UseMauiCommunityToolkitMediaElement()
+            .UseLocalizationResourceManager(settings =>
+            {
+                settings.AddResource(AppResources.ResourceManager);
+                settings.RestoreLatestCulture(true);
+            })
+            .ConfigureFonts(fonts =>
+            {
+                fonts.AddFont("FontAwesome6FreeSolid.otf", "FontAwesomeSolid");
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+            });
 
-		// DI registrations
 #if ANDROID
-		builder.Services.AddSingleton<IAlarmService, AlarmForegroundService>();
-#else
-		builder.Services.AddSingleton<IAlarmService, NullAlarmService>();
+        // Allow CollectionView (RecyclerView) to scroll vertically inside a horizontal ScrollView
+        CollectionViewHandler.Mapper.AppendToMapping("EnableNestedScrolling", (handler, view) =>
+        {
+            if (handler.PlatformView is RecyclerView rv)
+            {
+                rv.NestedScrollingEnabled = true;
+                ViewCompat.SetNestedScrollingEnabled(rv, true);
+            }
+        });
+
+        // Also ensure ScrollView participates in nested scrolling
+        ScrollViewHandler.Mapper.AppendToMapping("EnableNestedScrolling", (handler, view) =>
+        {
+            if (handler.PlatformView is NestedScrollView nsv)
+            {
+                nsv.NestedScrollingEnabled = true;
+                ViewCompat.SetNestedScrollingEnabled(nsv, true);
+                nsv.FillViewport = true; // improves child measurement in nested scenarios
+            }
+        });
 #endif
-		builder.Services.AddSingleton<IAudioPreviewService, AudioPreviewService>();
-		builder.Services.AddSingleton<DataService>();
-		builder.Services.AddSingleton<MainViewModel>();
-		builder.Services.AddSingleton<MainPage>();
-		builder.Services.AddSingleton<AboutViewModel>();
-		builder.Services.AddSingleton<AboutPage>();
-		builder.Services.AddSingleton<RadioViewModel>();
-		builder.Services.AddSingleton<RadioPage>();
-		builder.Services.AddSingleton<PrayerDetailViewModel>();
-		builder.Services.AddSingleton<PrayerDetailPage>();
-		builder.Services.AddSingleton<SettingsViewModel>();
-		builder.Services.AddSingleton<SettingsPage>();
-		builder.Services.AddSingleton<CompassViewModel>();
-		builder.Services.AddSingleton<CompassPage>();
-		builder.Services.AddSingleton<MonthViewModel>();
-		builder.Services.AddSingleton<MonthPage>();
+
+#if ANDROID
+        builder.Services.AddSingleton<IAlarmService, AlarmForegroundService>();
+#else
+        builder.Services.AddSingleton<IAlarmService, NullAlarmService>();
+#endif
+        builder.Services.AddSingleton<IAudioPreviewService, AudioPreviewService>();
+        builder.Services.AddSingleton<DataService>();
+
+        builder.Services.AddSingleton<MainViewModel>();
+        builder.Services.AddSingleton<MainPage>();
+        builder.Services.AddSingleton<AboutViewModel>();
+        builder.Services.AddSingleton<AboutPage>();
+        builder.Services.AddSingleton<RadioViewModel>();
+        builder.Services.AddSingleton<RadioPage>();
+        builder.Services.AddSingleton<PrayerDetailViewModel>();
+        builder.Services.AddSingleton<PrayerDetailPage>();
+        builder.Services.AddSingleton<SettingsViewModel>();
+        builder.Services.AddSingleton<SettingsPage>();
+        builder.Services.AddSingleton<CompassViewModel>();
+        builder.Services.AddSingleton<CompassPage>();
+
+        // Transient Month page/VM
+        builder.Services.AddTransient<MonthViewModel>();
+        builder.Services.AddTransient<MonthPage>();
 
 #if DEBUG
-		builder.Logging.AddDebug();
+        builder.Logging.AddDebug();
 #endif
 
-		return builder.Build();
-	}
+        return builder.Build();
+    }
 }

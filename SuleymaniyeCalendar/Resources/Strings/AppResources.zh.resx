@@ -557,4 +557,10 @@
   <data name="SistemTemasi" xml:space="preserve">
     <value>系统主题</value>
   </data>
+  <data name="KonumBilgileri" xml:space="preserve">
+    <value>位置信息</value>
+  </data>
+  <data name="Adres" xml:space="preserve">
+    <value>地址</value>
+  </data>
 </root>

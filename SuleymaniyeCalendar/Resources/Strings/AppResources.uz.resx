@@ -557,4 +557,10 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="SistemTemasi" xml:space="preserve">
     <value>Tizim mavzusi</value>
   </data>
+  <data name="KonumBilgileri" xml:space="preserve">
+    <value>Joylashuv ma'lumotlari</value>
+  </data>
+  <data name="Adres" xml:space="preserve">
+    <value>Manzil</value>
+  </data>
 </root>

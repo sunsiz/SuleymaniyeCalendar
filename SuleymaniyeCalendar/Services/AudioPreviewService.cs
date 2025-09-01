@@ -19,7 +19,7 @@ namespace SuleymaniyeCalendar.Services
 			}
 		}
 
-		public async Task PlayAsync(string fileNameWithoutExtension)
+	public async Task PlayAsync(string fileNameWithoutExtension, bool loop = true)
 		{
 			await StopAsync();
 #if ANDROID
@@ -31,7 +31,7 @@ namespace SuleymaniyeCalendar.Services
 					return;
 
 				_player = Android.Media.MediaPlayer.Create(context, resId);
-				_player.Looping = false;
+		_player.Looping = loop;
 				_player.Start();
 			}
 			catch { /* ignore */ }

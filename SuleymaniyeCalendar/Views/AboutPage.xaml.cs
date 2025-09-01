@@ -1,3 +1,6 @@
+using System.Globalization;
+using LocalizationResourceManager.Maui;
+using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.ViewModels;
 
 namespace SuleymaniyeCalendar.Views;
@@ -9,4 +12,11 @@ public partial class AboutPage : ContentPage
 		InitializeComponent();
 		BindingContext = viewModel;
 	}
+
+	protected override void OnAppearing()
+	{
+		base.OnAppearing();
+		Title = AppResources.SuleymaniyeVakfi;
+	}
+	
 }

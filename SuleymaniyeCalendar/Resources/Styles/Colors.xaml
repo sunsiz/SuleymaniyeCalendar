@@ -68,15 +68,45 @@
     <Color x:Key="OnSecondaryColor">#000000</Color>
     <Color x:Key="TransparentColor">Transparent</Color>
 
-    <!-- Status colors for prayer list -->
-    <Color x:Key="PastTimeBackgroundColor">#D2B48C</Color>
-    <Color x:Key="PastTimeBackgroundColorDark">#222222</Color>
-    <Color x:Key="CurrentTimeBackgroundColor">#F5DEB3</Color>
-    <Color x:Key="CurrentTimeBackgroundColorDark">#626262</Color>
-    <Color x:Key="FutureTimeBackgroundColor">#FFF8DC</Color>
-    <Color x:Key="FutureTimeBackgroundColorDark">#424242</Color>
-    <Color x:Key="TimeTextColor">#A0522D</Color>
+    <!-- Enhanced Status colors for prayer list with better contrast -->
+    <Color x:Key="PastTimeBackgroundColor">#F5E6D3</Color>
+    <Color x:Key="PastTimeBackgroundColorDark">#2D2D2D</Color>
+    <Color x:Key="CurrentTimeBackgroundColor">#E8F5E8</Color>
+    <Color x:Key="CurrentTimeBackgroundColorDark">#1E3A1E</Color>
+    <Color x:Key="FutureTimeBackgroundColor">#E3F2FD</Color>
+    <Color x:Key="FutureTimeBackgroundColorDark">#1A237E</Color>
+    <Color x:Key="TimeTextColor">#8D6E63</Color>
     <Color x:Key="TimeTextColorDark">#F5F5DC</Color>
+
+    <!-- Semantic colors consistent with primary brown palette -->
+    <Color x:Key="SuccessColor">#8C5A49</Color>
+    <Color x:Key="SuccessColorDark">#B07A6B</Color>
+    <Color x:Key="WarningColor">#D2691E</Color>
+    <Color x:Key="WarningColorDark">#DEB887</Color>
+    <Color x:Key="ErrorColor">#8B0000</Color>
+    <Color x:Key="ErrorColorDark">#CD5C5C</Color>
+    <Color x:Key="InfoColor">#6C3B2A</Color>
+    <Color x:Key="InfoColorDark">#8C5A49</Color>
+
+    <!-- Enhanced Prayer Time States -->
+    <Color x:Key="PrayerActiveBackgroundColor">#E8F5E8</Color>
+    <Color x:Key="PrayerActiveBackgroundColorDark">#1B3A1B</Color>
+    <Color x:Key="PrayerPastBackgroundColor">#F5F5F5</Color>
+    <Color x:Key="PrayerPastBackgroundColorDark">#2A2A2A</Color>
+    <Color x:Key="PrayerUpcomingBackgroundColor">#FFF3E0</Color>
+    <Color x:Key="PrayerUpcomingBackgroundColorDark">#3D2914</Color>
+    
+    <!-- Modern Interactive States -->
+    <Color x:Key="InteractiveHoverColor">#F0F0F0</Color>
+    <Color x:Key="InteractiveHoverColorDark">#404040</Color>
+    <Color x:Key="InteractivePressedColor">#E0E0E0</Color>
+    <Color x:Key="InteractivePressedColorDark">#505050</Color>
+    
+    <!-- Enhanced Focus and Accessibility - consistent with primary palette -->
+    <Color x:Key="FocusRingColor">#8C5A49</Color>
+    <Color x:Key="FocusRingColorDark">#B07A6B</Color>
+    <Color x:Key="HighContrastTextColor">#000000</Color>
+    <Color x:Key="HighContrastTextColorDark">#FFFFFF</Color>
 
     <Color x:Key="CityBackgroundColor">#14828C</Color>
     <Color x:Key="CityBackgroundColorDark">#002532</Color>

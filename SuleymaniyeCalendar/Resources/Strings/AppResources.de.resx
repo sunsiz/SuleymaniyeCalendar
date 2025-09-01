@@ -556,4 +556,10 @@ Diese Anwendung wurde entwickelt, um einen sicheren und schnellen Zugriff auf Ge
   <data name="SistemTemasi" xml:space="preserve">
     <value>Systemthema</value>
   </data>
+  <data name="KonumBilgileri" xml:space="preserve">
+    <value>Standortinformationen</value>
+  </data>
+  <data name="Adres" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
 </root>

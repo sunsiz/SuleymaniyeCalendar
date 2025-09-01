@@ -9,75 +9,192 @@
     x:DataType="viewModels:CompassViewModel">
 
     <Shell.TitleView>
-        <StackLayout Margin="10" HeightRequest="40" Orientation="Horizontal">
-            <Label Style="{StaticResource LabelSectionHeader}"
-                   Text="{localization:Translate KibleGostergesi}"
-                   HorizontalOptions="StartAndExpand"
-                   AutomationProperties.IsInAccessibleTree="True" />
-            <Image Margin="10,0,20,0"
-                   AutomationProperties.IsInAccessibleTree="True"
-                   SemanticProperties.Description="{localization:Translate Yenile}">
-                <Image.Source>
-                    <FontImageSource FontFamily="FontAwesomeSolid" Glyph="&#xf2f1;" Size="26" />
-                </Image.Source>
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding RefreshLocationCommand}" NumberOfTapsRequired="1" />
-                </Image.GestureRecognizers>
-            </Image>
-        </StackLayout>
+        <Grid
+            Padding="16,0"
+            ColumnDefinitions="*,Auto"
+            HeightRequest="40">
+            <Label
+                Grid.Column="0"
+                AutomationProperties.IsInAccessibleTree="True"
+                Style="{StaticResource LabelSectionHeader}"
+                Text="{localization:Translate KibleGostergesi}"
+                VerticalOptions="Center" />
+            <ImageButton
+                Grid.Column="1"
+                Command="{Binding RefreshLocationCommand}"
+                SemanticProperties.Description="{localization:Translate Yenile}"
+                Style="{StaticResource IconButtonStyle}">
+                <ImageButton.Source>
+                    <FontImageSource
+                        FontFamily="{StaticResource IconFontFamily}"
+                        Glyph="&#xf2f1;"
+                        Size="18" />
+                </ImageButton.Source>
+            </ImageButton>
+        </Grid>
     </Shell.TitleView>
 
     <ContentPage.Content>
         <Grid>
             <ScrollView>
-                <VerticalStackLayout Padding="12" Spacing="12"
-                                     BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
-                                                                       Dark={StaticResource AppBackgroundColorDark}}">
-                    <!-- Compass -->
-                    <Grid Margin="0,8,0,0" HeightRequest="360">
-                        <Image x:Name="CompassImage"
-                               Source="kompas.png"
-                               Aspect="AspectFit"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
-                        <Image x:Name="ImageArrow"
-                               Source="isaretci.png"
-                               Aspect="AspectFit"
-                               Scale="0.72"
-                               Rotation="{Binding Heading}"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center" />
-                    </Grid>
+                <VerticalStackLayout
+                    Padding="16"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
+                                                      Dark={StaticResource AppBackgroundColorDark}}"
+                    Spacing="20">
 
-                    <!-- Info card -->
-                    <Border Style="{StaticResource Card}" Margin="8,4,8,16">
-                        <Grid RowDefinitions="Auto,Auto,Auto" RowSpacing="8">
-                            <Label Grid.Row="0"
-                                   HorizontalTextAlignment="Center"
-                                   Style="{StaticResource CardInfoLabel}"
-                                   Margin="0,4,0,4"
-                                   Text="{Binding LatitudeAltitude}" />
-                            <Label Grid.Row="1"
-                                   HorizontalTextAlignment="Center"
-                                   Style="{StaticResource CardInfoLabel}"
-                                   Margin="0,4,0,12"
-                                   Text="{Binding DegreeLongitude}" />
-                            <Button Grid.Row="2"
-                                    Style="{StaticResource PrimaryButton}"
-                                    Margin="0,4,0,4"
-                                    Text="{localization:Translate HaritadaGoster}"
-                                    Command="{Binding GoToMapCommand}" />
-                        </Grid>
+                    <!--  Compass Section  -->
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="16">
+                            <Label
+                                HorizontalTextAlignment="Center"
+                                Style="{StaticResource TitleLargeLabel}"
+                                Text="{localization:Translate KibleGostergesi}" />
+
+                            <Grid HeightRequest="300" HorizontalOptions="Center">
+                                <Image
+                                    x:Name="CompassImage"
+                                    Aspect="AspectFit"
+                                    HorizontalOptions="Center"
+                                    Source="kompas.png"
+                                    VerticalOptions="Center" />
+                                <Image
+                                    x:Name="ImageArrow"
+                                    Aspect="AspectFit"
+                                    HorizontalOptions="Center"
+                                    Rotation="{Binding Heading}"
+                                    Scale="0.72"
+                                    Source="isaretci.png"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!--  Location Information  -->
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Spacing="16">
+                            <Label
+                                HorizontalTextAlignment="Center"
+                                Style="{StaticResource TitleLargeLabel}"
+                                Text="{localization:Translate KonumBilgileri}" />
+
+                            <!--  Coordinates Grid  -->
+                            <Grid
+                                ColumnDefinitions="*,*"
+                                ColumnSpacing="20"
+                                RowDefinitions="Auto,Auto,Auto"
+                                RowSpacing="16">
+                                <!--  Latitude  -->
+                                <VerticalStackLayout
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Spacing="6">
+                                    <Label
+                                        Style="{StaticResource LabelLargeLabel}"
+                                        Text="{localization:Translate EnlemFormatsiz}"
+                                        FontAttributes="Bold"
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                                    Dark={StaticResource PrimaryAccent200Color}}" />
+                                    <Label
+                                        Style="{StaticResource BodyLargeLabel}"
+                                        Text="{Binding Latitude, StringFormat='{}{0:F6}'}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                                                    Dark={StaticResource Gray300}}" />
+                                </VerticalStackLayout>
+
+                                <!--  Longitude  -->
+                                <VerticalStackLayout
+                                    Grid.Row="0"
+                                    Grid.Column="1"
+                                    Spacing="6">
+                                    <Label
+                                        Style="{StaticResource LabelLargeLabel}"
+                                        Text="{localization:Translate BoylamFormatsiz}"
+                                        FontAttributes="Bold"
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                                    Dark={StaticResource PrimaryAccent200Color}}" />
+                                    <Label
+                                        Style="{StaticResource BodyLargeLabel}"
+                                        Text="{Binding Longitude, StringFormat='{}{0:F6}'}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                                                    Dark={StaticResource Gray300}}" />
+                                </VerticalStackLayout>
+
+                                <!--  Altitude  -->
+                                <VerticalStackLayout
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Spacing="6">
+                                    <Label
+                                        Style="{StaticResource LabelLargeLabel}"
+                                        Text="{localization:Translate YukseklikFormatsiz}"
+                                        FontAttributes="Bold"
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                                    Dark={StaticResource PrimaryAccent200Color}}" />
+                                    <Label
+                                        Style="{StaticResource BodyLargeLabel}"
+                                        Text="{Binding Altitude, StringFormat='{}{0:N0} m'}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                                                    Dark={StaticResource Gray300}}" />
+                                </VerticalStackLayout>
+
+                                <!--  Heading  -->
+                                <VerticalStackLayout
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Spacing="6">
+                                    <Label
+                                        Style="{StaticResource LabelLargeLabel}"
+                                        Text="{localization:Translate Aci}"
+                                        FontAttributes="Bold"
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                                    Dark={StaticResource PrimaryAccent200Color}}" />
+                                    <Label
+                                        Style="{StaticResource BodyLargeLabel}"
+                                        Text="{Binding Heading, StringFormat='{}{0:F0}°'}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                                                    Dark={StaticResource Gray300}}" />
+                                </VerticalStackLayout>
+
+                                <!--  Address - spans both columns  -->
+                                <VerticalStackLayout 
+                                    Grid.Row="2"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    Spacing="8">
+                                    <Label
+                                        Style="{StaticResource LabelLargeLabel}"
+                                        Text="{localization:Translate Adres}"
+                                        FontAttributes="Bold"
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                                    Dark={StaticResource PrimaryAccent200Color}}" />
+                                    <Label
+                                        HorizontalTextAlignment="Center"
+                                        MaxLines="3"
+                                        Style="{StaticResource BodyLargeLabel}"
+                                        Text="{Binding Address}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                                                    Dark={StaticResource Gray300}}" />
+                                </VerticalStackLayout>
+                            </Grid>
+
+                            <!--  Action Button  -->
+                            <Button
+                                Command="{Binding GoToMapCommand}"
+                                Style="{StaticResource PrimaryButton}"
+                                Text="{localization:Translate HaritadaGoster}" />
+                        </VerticalStackLayout>
                     </Border>
                 </VerticalStackLayout>
             </ScrollView>
 
-            <!-- Busy overlay -->
-            <Grid IsVisible="{Binding IsBusy}" BackgroundColor="#80000000">
-                <ActivityIndicator IsRunning="True"
-                                   Color="{StaticResource PrimaryColor}"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center" />
+            <!--  Busy overlay  -->
+            <Grid BackgroundColor="#80000000" IsVisible="{Binding IsBusy}">
+                <ActivityIndicator
+                    HorizontalOptions="Center"
+                    IsRunning="True"
+                    VerticalOptions="Center"
+                    Color="{StaticResource PrimaryColor}" />
             </Grid>
         </Grid>
     </ContentPage.Content>

@@ -5,6 +5,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls">
 
+    <!--  Cross-platform FontAwesome family resolution via alias  -->
+    <x:String x:Key="IconFontFamily">FontAwesomeSolid</x:String>
+
+    <!--  Consistent Dynamic Font Size System  -->
+
     <!--  Base control styles (kept)  -->
     <Style TargetType="ActivityIndicator">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource White}}" />
@@ -26,7 +31,7 @@
     </Style>
 
     <Style TargetType="Button">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryColor}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource ButtonTextColor}, Dark={StaticResource ButtonTextColorDark}}" />
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource White}}" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
@@ -71,7 +76,7 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         <Setter Property="MinimumHeightRequest" Value="44" />
         <Setter Property="MinimumWidthRequest" Value="44" />
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -92,7 +97,7 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
         <Setter Property="MinimumHeightRequest" Value="44" />
         <Setter Property="MinimumWidthRequest" Value="44" />
@@ -114,7 +119,7 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
         <Setter Property="MinimumHeightRequest" Value="44" />
         <Setter Property="MinimumWidthRequest" Value="44" />
@@ -157,7 +162,7 @@
         </Setter>
     </Style>
 
-    <!-- RadioButton: ensure transparent background to avoid white boxes inside cards -->
+    <!--  RadioButton: ensure transparent background to avoid white boxes inside cards  -->
     <Style TargetType="RadioButton">
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource White}}" />
@@ -188,35 +193,41 @@
     <!--  Base text styles merged into implicit styles above to avoid duplicates  -->
 
     <x:Double x:Key="DefaultFontSize">14</x:Double>
+    <x:Double x:Key="CaptionFontSize">12</x:Double>
+    <x:Double x:Key="SubheaderFontSize">16</x:Double>
+    <x:Double x:Key="HeaderFontSize">18</x:Double>
 
     <Style x:Key="ButtonStyle" TargetType="Button">
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource ButtonTextColor}, Dark={StaticResource ButtonTextColorDark}}" />
     </Style>
 
     <Style x:Key="LabelStyle" TargetType="Label">
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+        <Setter Property="LineHeight" Value="1.43" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
         <Style.Triggers>
             <Trigger TargetType="Label" Property="IsEnabled" Value="False">
-                <Setter Property="TextColor" Value="Silver" />
+                <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
             </Trigger>
         </Style.Triggers>
-        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
     </Style>
 
     <Style x:Key="LabelSectionHeader" TargetType="Label">
-        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
         <Setter Property="TextColor" Value="{StaticResource White}" />
     </Style>
 
     <Style x:Key="IconStyle" TargetType="Label">
-        <Setter Property="FontFamily" Value="FontAwesomeSolid" />
-        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontFamily" Value="{StaticResource IconFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
         <Setter Property="Padding" Value="10,2" />
         <Setter Property="TextColor" Value="{StaticResource PrimaryAccent100Color}" />
     </Style>
 
     <Style x:Key="IconButtonStyle" TargetType="Button">
-        <Setter Property="FontFamily" Value="FontAwesomeSolid" />
-        <Setter Property="FontSize" Value="45" />
+        <Setter Property="FontFamily" Value="{StaticResource IconFontFamily}" />
+        <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="14,10" />
         <Setter Property="BackgroundColor" Value="Transparent" />
@@ -243,15 +254,57 @@
         <Setter Property="StrokeThickness" Value="1" />
         <Setter Property="StrokeShape" Value="RoundRectangle 16" />
         <Setter Property="Padding" Value="16,12" />
-        <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow
+                    Brush="#1A000000"
+                    Opacity="0.25"
+                    Radius="8"
+                    Offset="0,2" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Enhanced Card for current prayer with emphasis  -->
+    <Style x:Key="CurrentPrayerCard" TargetType="Border" BasedOn="{StaticResource Card}">
         <Setter Property="Shadow">
             <Setter.Value>
                 <Shadow
                     Brush="#33000000"
-                    Opacity="0.8"
-                    Radius="16"
+                    Opacity="0.4"
+                    Radius="12"
                     Offset="0,4" />
             </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Modern Image Button Style -->
+    <Style x:Key="ModernImageButton" TargetType="ImageButton">
+        <Setter Property="CornerRadius" Value="28" />
+        <Setter Property="Padding" Value="8" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceColor}, Dark={StaticResource SurfaceColorDark}}" />
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow
+                    Brush="#1A000000"
+                    Opacity="0.15"
+                    Radius="12"
+                    Offset="0,4" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <Setter Property="Scale" Value="0.95" />
+                            <Setter Property="Opacity" Value="0.7" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
         </Setter>
     </Style>
 
@@ -284,25 +337,22 @@
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="16,12" />
         <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
     </Style>
 
     <Style
         x:Key="TonalButton"
         BasedOn="{StaticResource ButtonStyle}"
         TargetType="Button">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceVariantColorDark}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceColor}, Dark={StaticResource SurfaceColorDark}}" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryAccent800Color}, Dark={StaticResource PrimaryAccent50Color}}" />
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="16,12" />
-        <Setter Property="HorizontalOptions" Value="FillAndExpand" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
     </Style>
 
     <!--  Card info labels  -->
-    <Style
-        x:Key="CardInfoLabel"
-        BasedOn="{StaticResource LabelStyle}"
-        TargetType="Label">
+    <Style x:Key="CardInfoLabel" BasedOn="{StaticResource LabelStyle}" TargetType="Label">
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource PrimaryAccent50Color}}" />
     </Style>
@@ -327,28 +377,115 @@
     <!--  Shell/Tabbar  -->
     <Style ApplyToDerivedTypes="True" TargetType="Shell">
         <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Gray950}}" />
-    <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource PrimaryColor}, Default={StaticResource White}}" />
+        <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource PrimaryColor}, Default={StaticResource White}}" />
         <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" />
         <Setter Property="Shell.DisabledColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}" />
         <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray300}}" />
         <Setter Property="Shell.NavBarHasShadow" Value="False" />
-    <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light={StaticResource TabBarBgColor}, Dark={StaticResource TabBarBackgroundColorDark}}" />
-    <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
-    <Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
-    <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light={StaticResource TabBarUnselectedColor}, Dark={StaticResource TabBarUnselectedColor}}" />
+        <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light={StaticResource TabBarBgColor}, Dark={StaticResource TabBarBackgroundColorDark}}" />
+        <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
+        <Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
+        <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light={StaticResource TabBarUnselectedColor}, Dark={StaticResource TabBarUnselectedColor}}" />
     </Style>
 
     <Style TargetType="TabBar">
-    <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light={StaticResource TabBarBgColor}, Dark={StaticResource TabBarBackgroundColorDark}}" />
-    <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
-    <Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
-    <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light={StaticResource TabBarUnselectedColor}, Dark={StaticResource TabBarUnselectedColor}}" />
+        <Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light={StaticResource TabBarBgColor}, Dark={StaticResource TabBarBackgroundColorDark}}" />
+        <Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
+        <Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
+        <Setter Property="Shell.TabBarUnselectedColor" Value="{AppThemeBinding Light={StaticResource TabBarUnselectedColor}, Dark={StaticResource TabBarUnselectedColor}}" />
     </Style>
 
     <Style TargetType="ShellItem">
-    <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
-    <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Light={StaticResource TabBarUnselectedColor}, Dark={StaticResource TabBarUnselectedColor}}" />
+        <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource TabBarSelectedColor}}" />
+        <Setter Property="Shell.UnselectedColor" Value="{AppThemeBinding Light={StaticResource TabBarUnselectedColor}, Dark={StaticResource TabBarUnselectedColor}}" />
     </Style>
 
     <!--  The rest (NavigationPage, TabbedPage, Pickers, etc.) remain as in your file  -->
+
+    <!-- Enhanced accessibility styles -->
+    <Style x:Key="AccessibleLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+        <Setter Property="AutomationProperties.IsInAccessibleTree" Value="True" />
+        <Setter Property="LineBreakMode" Value="WordWrap" />
+        <Setter Property="MaxLines" Value="12" />
+    </Style>
+
+    <Style x:Key="AccessibleButton" TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+        <Setter Property="MinimumHeightRequest" Value="48" />
+        <Setter Property="MinimumWidthRequest" Value="48" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="AutomationProperties.IsInAccessibleTree" Value="True" />
+    </Style>
+
+    <!-- High contrast mode support -->
+    <Style x:Key="HighContrastCard" TargetType="Border" BasedOn="{StaticResource Card}">
+        <Setter Property="StrokeThickness" Value="2" />
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
+    </Style>
+
+    <!--  Enhanced Typography System  -->
+    
+    <!-- Typography Scale -->
+    <x:Double x:Key="DisplayLarge">57</x:Double>
+    <x:Double x:Key="DisplayMedium">45</x:Double>
+    <x:Double x:Key="DisplaySmall">36</x:Double>
+    <x:Double x:Key="HeadlineLarge">32</x:Double>
+    <x:Double x:Key="HeadlineMedium">28</x:Double>
+    <x:Double x:Key="HeadlineSmall">24</x:Double>
+    <x:Double x:Key="TitleLarge">22</x:Double>
+    <x:Double x:Key="TitleMedium">16</x:Double>
+    <x:Double x:Key="TitleSmall">14</x:Double>
+    <x:Double x:Key="LabelLarge">14</x:Double>
+    <x:Double x:Key="LabelMedium">12</x:Double>
+    <x:Double x:Key="LabelSmall">11</x:Double>
+    <x:Double x:Key="BodyLarge">16</x:Double>
+    <x:Double x:Key="BodyMedium">14</x:Double>
+    <x:Double x:Key="BodySmall">12</x:Double>
+
+    <!-- Enhanced Label Styles -->
+    <Style x:Key="DisplayLargeLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+        <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
+        <Setter Property="FontAttributes" Value="None" />
+        <Setter Property="LineHeight" Value="1.12" />
+    </Style>
+    
+    <Style x:Key="HeadlineLargeLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+        <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
+        <Setter Property="FontAttributes" Value="None" />
+        <Setter Property="LineHeight" Value="1.25" />
+    </Style>
+    
+    <Style x:Key="HeadlineMediumLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+        <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
+        <Setter Property="FontAttributes" Value="None" />
+        <Setter Property="LineHeight" Value="1.29" />
+    </Style>
+    
+    <Style x:Key="TitleLargeLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+        <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="LineHeight" Value="1.27" />
+    </Style>
+    
+    <Style x:Key="TitleMediumLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+        <Setter Property="FontSize" Value="{DynamicResource SubheaderFontSize}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="LineHeight" Value="1.5" />
+    </Style>
+    
+    <Style x:Key="BodyLargeLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+        <Setter Property="LineHeight" Value="1.5" />
+    </Style>
+    
+    <Style x:Key="BodyMediumLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+        <Setter Property="LineHeight" Value="1.43" />
+    </Style>
+    
+    <Style x:Key="LabelLargeLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="LineHeight" Value="1.43" />
+    </Style>
+
 </ResourceDictionary>

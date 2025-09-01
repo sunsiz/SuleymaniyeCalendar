@@ -1,100 +1,171 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SuleymaniyeCalendar.Views.SettingsPage"
-             xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
-             xmlns:behaviors="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
-             x:DataType="viewModels:SettingsViewModel">
+<ContentPage
+    x:Class="SuleymaniyeCalendar.Views.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:behaviors="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
+    xmlns:models="clr-namespace:SuleymaniyeCalendar.Models"
+    xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
+    x:DataType="viewModels:SettingsViewModel">
 
     <ContentPage.Content>
-        <ScrollView HorizontalOptions="FillAndExpand" VerticalOptions="Fill" Orientation="Vertical">
-            <VerticalStackLayout Padding="12" Spacing="12">
-                <!-- Language -->
+        <ScrollView
+            HorizontalOptions="Fill"
+            Orientation="Vertical"
+            VerticalOptions="Fill">
+            <VerticalStackLayout Padding="18" Spacing="18">
+
+                <!--  Language Selection  -->
                 <Border Style="{StaticResource Card}">
-                    <VerticalStackLayout Spacing="8">
-                        <Label Text="{localization:Translate UygulamaDili}" Style="{StaticResource CardInfoLabel}" />
-                        <Picker ItemsSource="{Binding SupportedLanguages}"
-                                ItemDisplayBinding="{Binding Name}"
-                                SelectedItem="{Binding SelectedLanguage}"
-                                Title="{localization:Translate UygulamaDiliniSecin}"
-                                HorizontalOptions="Fill" />
+                    <VerticalStackLayout Spacing="12">
+                        <Label Style="{StaticResource TitleLargeLabel}" Text="{localization:Translate UygulamaDili}" />
+                        <Picker
+                            Title="{localization:Translate UygulamaDiliniSecin}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariantColor},
+                                                              Dark={StaticResource SurfaceVariantColorDark}}"
+                            FontSize="16"
+                            HorizontalOptions="Fill"
+                            ItemDisplayBinding="{Binding Name}"
+                            ItemsSource="{Binding SupportedLanguages}"
+                            SelectedItem="{Binding SelectedLanguage}" />
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Theme -->
+                <!--  Theme Selection  -->
                 <Border Style="{StaticResource Card}">
-                    <VerticalStackLayout Spacing="8">
-                        <Label Text="{localization:Translate UygulamaTema}" Style="{StaticResource CardInfoLabel}" />
-                        <VerticalStackLayout Spacing="4">
-                            <RadioButton GroupName="ThemeGroup"
-                                         Content="{localization:Translate AcikTema}"
-                                         IsChecked="{Binding LightChecked}"
-                                         AutomationProperties.IsInAccessibleTree="True"
-                                         SemanticProperties.Description="{localization:Translate AcikTema}" />
-                            <RadioButton GroupName="ThemeGroup"
-                                         Content="{localization:Translate KoyuTema}"
-                                         IsChecked="{Binding DarkChecked}"
-                                         AutomationProperties.IsInAccessibleTree="True"
-                                         SemanticProperties.Description="{localization:Translate KoyuTema}" />
-                            <RadioButton GroupName="ThemeGroup"
-                                         Content="{localization:Translate SistemTemasi}"
-                                         IsChecked="{Binding SystemChecked}"
-                                         AutomationProperties.IsInAccessibleTree="True"
-                                         SemanticProperties.Description="{localization:Translate SistemTemasi}" />
+                    <VerticalStackLayout Spacing="16">
+                        <Label Style="{StaticResource TitleLargeLabel}" Text="{localization:Translate UygulamaTema}" />
+
+                        <VerticalStackLayout Spacing="12">
+                            <RadioButton
+                                Content="{localization:Translate AcikTema}"
+                                FontSize="16"
+                                GroupName="ThemeGroup"
+                                IsChecked="{Binding LightChecked}" />
+                            <RadioButton
+                                Content="{localization:Translate KoyuTema}"
+                                FontSize="16"
+                                GroupName="ThemeGroup"
+                                IsChecked="{Binding DarkChecked}" />
+                            <RadioButton
+                                Content="{localization:Translate SistemTemasi}"
+                                FontSize="16"
+                                GroupName="ThemeGroup"
+                                IsChecked="{Binding SystemChecked}" />
                         </VerticalStackLayout>
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Font size -->
+                <!--  Font Size  -->
                 <Border Style="{StaticResource Card}">
-                    <VerticalStackLayout Spacing="8">
-                        <Label x:Name="LabelFontSize" Style="{StaticResource CardInfoLabel}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label FontAttributes="Bold" Style="{StaticResource TitleLargeLabel}">
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="{localization:Translate YaziBoyutu}" />
-                                    <Span Text=" "/>
                                     <Span Text="{Binding FontSize}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
-                        <Slider HorizontalOptions="FillAndExpand" HeightRequest="48"
-                                Maximum="24" Minimum="12" Value="{Binding FontSize}"
-                                AutomationProperties.IsInAccessibleTree="true"
-                                SemanticProperties.Description="{localization:Translate YaziBoyutu}" />
+                        <Slider
+                            AutomationProperties.IsInAccessibleTree="true"
+                            HeightRequest="48"
+                            HorizontalOptions="Fill"
+                            Maximum="24"
+                            MaximumTrackColor="{AppThemeBinding Light={StaticResource Gray300},
+                                                                Dark={StaticResource Gray600}}"
+                            Minimum="12"
+                            MinimumTrackColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                                Dark={StaticResource PrimaryAccent200Color}}"
+                            SemanticProperties.Description="{localization:Translate YaziBoyutu}"
+                            ThumbColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                         Dark={StaticResource PrimaryAccent200Color}}"
+                            Value="{Binding FontSize}" />
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Location refresh -->
+                <!--  Location Settings  -->
                 <Border Style="{StaticResource Card}">
-                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto" ColumnSpacing="8">
-                        <Label Grid.Column="0" Text="{localization:Translate HepKonumYenile}" Style="{StaticResource LabelStyle}" VerticalTextAlignment="Center" />
-                        <Switch Grid.Column="1" IsToggled="{Binding AlwaysRenewLocationEnabled}" />
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                            <Label
+                                FontAttributes="Bold"
+                                Style="{StaticResource TitleLargeLabel}"
+                                Text="{localization:Translate KonumYenileButton}" />
+                            <Label
+                                MaxLines="3"
+                                Style="{StaticResource BodyMediumLabel}"
+                                Text="{localization:Translate HepKonumYenile}"
+                                TextColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                            Dark={StaticResource Gray400}}" />
+                        </VerticalStackLayout>
+                        <Switch
+                            Grid.Column="1"
+                            IsToggled="{Binding AlwaysRenewLocationEnabled}"
+                            OnColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                      Dark={StaticResource PrimaryAccent200Color}}"
+                            VerticalOptions="Center" />
                     </Grid>
                 </Border>
 
-                <!-- Android only: notifications master toggle -->
-                <Border Style="{StaticResource Card}" IsVisible="{OnPlatform Android=True, iOS=False}">
-                    <VerticalStackLayout Spacing="6">
-                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto" ColumnSpacing="8">
-                            <Label Grid.Column="0" Text="{localization:Translate BildirimNamazVakitleri}" Style="{StaticResource LabelStyle}" VerticalTextAlignment="Center" />
-                            <Switch Grid.Column="1" IsToggled="{Binding NotificationPrayerTimesEnabled}" />
+                <!--  Android Notifications  -->
+                <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Style="{StaticResource TitleLargeLabel}" Text="{localization:Translate BildirimNamazVakitleri}" />
+
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="1">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label Style="{StaticResource BodyMediumLabel}" Text="{localization:Translate BildirimNamazVakitleri}" />
+                                <!--<Label Text="{localization:Translate BildirimNamazVakitleriUyari}"
+                                       Style="{StaticResource BodyMediumLabel}"
+                                       TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}"
+                                       MaxLines="2" />-->
+                            </VerticalStackLayout>
+                            <Switch
+                                Grid.Column="1"
+                                IsToggled="{Binding NotificationPrayerTimesEnabled}"
+                                OnColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                          Dark={StaticResource PrimaryAccent200Color}}"
+                                VerticalOptions="Center" />
                         </Grid>
-                        <Label Text="{localization:Translate BildirimNamazVakitleriUyari}" FontSize="Small" />
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Android only: sticky notifications and system settings link -->
-                <Border Style="{StaticResource Card}" IsVisible="{OnPlatform Android=true, iOS=false}">
-                    <VerticalStackLayout Spacing="8">
-                        <Label Text="{localization:Translate BildirimKapatma}" Style="{StaticResource LabelStyle}" />
-                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto" ColumnSpacing="8">
-                            <Label Grid.Column="0" Text="{localization:Translate EtkinlestirSwitch}" VerticalTextAlignment="Center" />
-                            <Switch Grid.Column="1" IsToggled="{Binding ForegroundServiceEnabled}" />
+                <!--  Android Foreground Service  -->
+                <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource Card}">
+                    <VerticalStackLayout Spacing="16">
+                        <!--<Label Style="{StaticResource TitleLargeLabel}" Text="{localization:Translate EtkinlestirSwitch}" />-->
+
+                        <Grid
+                            ColumnDefinitions="*,Auto"
+                            ColumnSpacing="16"
+                            RowDefinitions="Auto">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label
+                                    FontAttributes="Bold"
+                                    Style="{StaticResource TitleLargeLabel}"
+                                    Text="{localization:Translate BildirimKapatma}" />
+                                <Label
+                                    MaxLines="9"
+                                    Style="{StaticResource BodyMediumLabel}"
+                                    Text="{localization:Translate BildirimUyari}"
+                                    TextColor="{AppThemeBinding Light={StaticResource Gray600},
+                                                                Dark={StaticResource Gray400}}" />
+                            </VerticalStackLayout>
+                            <Switch
+                                Grid.Column="1"
+                                IsToggled="{Binding ForegroundServiceEnabled}"
+                                OnColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                          Dark={StaticResource PrimaryAccent200Color}}"
+                                VerticalOptions="Center" />
                         </Grid>
-                        <Label Text="{localization:Translate BildirimUyari}" FontSize="Small" />
-                        <Button Text="{localization:Translate GotoSettings}" Command="{Binding GotoSettingsCommand}" Style="{DynamicResource TonalButton}" />
+
+                        <Button
+                            Command="{Binding GotoSettingsCommand}"
+                            Style="{StaticResource TonalButton}"
+                            Text="{localization:Translate GotoSettings}" />
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>

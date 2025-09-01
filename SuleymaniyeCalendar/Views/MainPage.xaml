@@ -19,11 +19,11 @@
             Orientation="Horizontal">
             <Label
                 AutomationProperties.IsInAccessibleTree="True"
-                SemanticProperties.HeadingLevel="Level1"
-                SemanticProperties.Description="{localization:Translate Takvim}"
                 FontAttributes="Bold"
-                FontSize="20"
+                FontSize="{DynamicResource HeaderFontSize}"
                 HorizontalOptions="StartAndExpand"
+                SemanticProperties.Description="{localization:Translate Takvim}"
+                SemanticProperties.HeadingLevel="Level1"
                 Style="{StaticResource LabelSectionHeader}"
                 Text="{localization:Translate PageTitle}"
                 VerticalTextAlignment="Start" />
@@ -34,7 +34,7 @@
                 <Image.Source>
                     <FontImageSource
                         FontAutoScalingEnabled="True"
-                        FontFamily="FontAwesomeSolid"
+                        FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf013;"
                         Size="26" />
                 </Image.Source>
@@ -48,7 +48,7 @@
                 SemanticProperties.Description="{localization:Translate Yenile}">
                 <Image.Source>
                     <FontImageSource
-                        FontFamily="FontAwesomeSolid"
+                        FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
                         Size="26" />
                 </Image.Source>
@@ -60,24 +60,30 @@
     </Shell.TitleView>
 
     <ContentPage.Content>
-        <RefreshView IsRefreshing="{Binding IsRefreshing}"
-                     Command="{Binding RefreshLocationCommand}">
+        <RefreshView Command="{Binding RefreshLocationCommand}" IsRefreshing="{Binding IsRefreshing}">
             <Grid
-                Padding="10,3"
+                Padding="4,3"
                 ColumnDefinitions="*"
                 HorizontalOptions="CenterAndExpand"
                 RowDefinitions="*">
                 <CollectionView
+                    x:Name="PrayersView"
                     HorizontalOptions="Fill"
                     ItemsSource="{Binding Prayers}"
+                    SelectedItem="{Binding SelectedPrayer, Mode=TwoWay}"
+                    SelectionChangedCommand="{Binding PrayerSelectedCommand}"
+                    SelectionMode="Single"
                     VerticalOptions="Fill"
                     VerticalScrollBarVisibility="Never">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
+                    </CollectionView.ItemsLayout>
                     <CollectionView.Header>
                         <StackLayout>
                             <Border
                                 Margin="3,7"
                                 BackgroundColor="{AppThemeBinding Light={StaticResource CityBackgroundColor},
-                                                              Dark={StaticResource CityBackgroundColorDark}}"
+                                                                  Dark={StaticResource CityBackgroundColorDark}}"
                                 HorizontalOptions="Center"
                                 IsEnabled="{Binding IsNotBusy}"
                                 Style="{StaticResource RoundButton}">
@@ -89,14 +95,15 @@
                                     FontAttributes="Bold"
                                     HorizontalOptions="Center"
                                     SemanticProperties.Description="{localization:Translate Sehir}"
-                                    Style="{DynamicResource LabelStyle}"
-                                    TextColor="{StaticResource CardBackgroundColor}"
+                                    Style="{StaticResource BodyMediumLabel}"
+                                    TextColor="{AppThemeBinding Light={StaticResource ButtonTextColor},
+                                                                Dark={StaticResource ButtonTextColorDark}}"
                                     VerticalTextAlignment="Center">
                                     <Label.FormattedText>
                                         <FormattedString>
                                             <Span
-                                                FontFamily="FontAwesomeSolid"
-                                                FontSize="18"
+                                                FontFamily="{StaticResource IconFontFamily}"
+                                                FontSize="{DynamicResource SubheaderFontSize}"
                                                 Text="&#xf3c5; " />
                                             <Span Text="{Binding City}" TextTransform="Uppercase" />
                                         </FormattedString>
@@ -111,97 +118,94 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Prayer">
-                            <Border
-                                Margin="3,3"
-                                HorizontalOptions="Fill"
-                                Style="{StaticResource Card}">
-                                <Border.Triggers>
-                                    <DataTrigger
-                                        Binding="{Binding State}"
-                                        TargetType="Border"
-                                        Value="Passed">
-                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PastTimeBackgroundColor}, Dark={StaticResource PastTimeBackgroundColorDark}}" />
-                                    </DataTrigger>
-                                    <DataTrigger
-                                        Binding="{Binding State}"
-                                        TargetType="Border"
-                                        Value="Happening">
-                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource CurrentTimeBackgroundColor}, Dark={StaticResource CurrentTimeBackgroundColorDark}}" />
-                                    </DataTrigger>
-                                    <DataTrigger
-                                        Binding="{Binding State}"
-                                        TargetType="Border"
-                                        Value="Waiting">
-                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource FutureTimeBackgroundColor}, Dark={StaticResource FutureTimeBackgroundColorDark}}" />
-                                    </DataTrigger>
-                                </Border.Triggers>
+                            <ContentView Padding="4">
+                                <Border
+                                    Margin="0"
+                                    Padding="1"
+                                    Opacity="{Binding Opacity}"
+                                    Style="{StaticResource Card}">
+                                    <Border.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding IsPast}"
+                                            TargetType="Border"
+                                            Value="True">
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PastTimeBackgroundColor}, Dark={StaticResource PastTimeBackgroundColorDark}}" />
+                                        </DataTrigger>
+                                        <DataTrigger
+                                            Binding="{Binding IsActive}"
+                                            TargetType="Border"
+                                            Value="True">
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource CurrentTimeBackgroundColor}, Dark={StaticResource CurrentTimeBackgroundColorDark}}" />
+                                        </DataTrigger>
+                                        <DataTrigger
+                                            Binding="{Binding IsUpcoming}"
+                                            TargetType="Border"
+                                            Value="True">
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource FutureTimeBackgroundColor}, Dark={StaticResource FutureTimeBackgroundColorDark}}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Grid
+                                        Margin="0"
+                                        Padding="12,8"
+                                        ColumnDefinitions="*,Auto,Auto"
+                                        ColumnSpacing="12">
 
-                                <Grid
-                                    ColumnDefinitions="*,Auto,Auto"
-                                    ColumnSpacing="5"
-                                    RowDefinitions="*">
-                                    <Label
-                                        Grid.Row="0"
-                                        Grid.Column="0"
-                                        Padding="3,0,0,0"
-                                        AutomationProperties.IsInAccessibleTree="True"
-                                        FontAttributes="Bold"
-                                        HorizontalOptions="StartAndExpand"
-                                        Style="{DynamicResource LabelStyle}"
-                                        Text="{Binding Name}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent600Color},
-                                                                Dark={StaticResource TimeTextColorDark}}"
-                                        VerticalTextAlignment="Center" />
+                                        <!--  Prayer Name  -->
+                                        <Label
+                                            Grid.Column="0"
+                                            Style="{StaticResource TitleMediumLabel}"
+                                            Text="{Binding Name}"
+                                            TextColor="{AppThemeBinding Light={StaticResource Gray900},
+                                                                        Dark={StaticResource White}}"
+                                            VerticalOptions="Center" />
 
-                                    <Label
-                                        Grid.Row="0"
-                                        Grid.Column="1"
-                                        AutomationProperties.IsInAccessibleTree="True"
-                                        FontAttributes="Bold"
-                                        Style="{DynamicResource LabelStyle}"
-                                        Text="{Binding Time}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent600Color},
-                                                                Dark={StaticResource TimeTextColorDark}}"
-                                        VerticalOptions="Start" />
+                                        <!--  Time Display  -->
+                                        <Label
+                                            Grid.Column="1"
+                                            HorizontalTextAlignment="End"
+                                            Style="{StaticResource TitleLargeLabel}"
+                                            Text="{Binding Time}"
+                                            TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                                        Dark={StaticResource PrimaryDarkColor}}"
+                                            VerticalOptions="Center" />
 
-                                    <Label
-                                        Grid.Row="0"
-                                        Grid.Column="2"
-                                        Margin="2,2,3,2"
-                                        AutomationProperties.IsInAccessibleTree="True"
-                                        FontAttributes="Bold"
-                                        FontFamily="FontAwesomeSolid"
-                                        FontSize="22"
-                                        HorizontalOptions="End"
-                                        Text="&#xe7f6;"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent600Color},
-                                                                Dark={StaticResource TimeTextColorDark}}">
-                                        <Label.Triggers>
-                                            <DataTrigger
-                                                Binding="{Binding Enabled}"
-                                                TargetType="Label"
-                                                Value="False">
-                                                <Setter Property="Text" Value="&#xf1f6;" />
-                                                <Setter Property="SemanticProperties.Description" Value="{localization:Translate DevreDisi}" />
-                                            </DataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding Enabled}"
-                                                TargetType="Label"
-                                                Value="True">
-                                                <Setter Property="Text" Value="&#xf0f3;" />
-                                                <Setter Property="SemanticProperties.Description" Value="{localization:Translate Etkin}" />
-                                            </DataTrigger>
-                                        </Label.Triggers>
-                                    </Label>
-
-                                    <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer
-                                            Command="{Binding BindingContext.PrayerSelectedCommand, Source={x:Reference MainPageRoot}}"
-                                            CommandParameter="{Binding .}"
-                                            NumberOfTapsRequired="1" />
-                                    </Grid.GestureRecognizers>
-                                </Grid>
-                            </Border>
+                                        <!--  Notification Bell  -->
+                                        <Label
+                                            Grid.Column="2"
+                                            Margin="8,0,0,0"
+                                            AutomationProperties.IsInAccessibleTree="True"
+                                            FontFamily="FontAwesomeSolid"
+                                            FontSize="{DynamicResource HeaderFontSize}"
+                                            HorizontalOptions="Center"
+                                            Text="&#xe7f6;"
+                                            TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                                        Dark={StaticResource PrimaryDarkColor}}"
+                                            VerticalOptions="Center">
+                                            <Label.Triggers>
+                                                <DataTrigger
+                                                    Binding="{Binding Enabled}"
+                                                    TargetType="Label"
+                                                    Value="False">
+                                                    <Setter Property="Text" Value="&#xf1f6;" />
+                                                    <Setter Property="SemanticProperties.Description" Value="{localization:Translate DevreDisi}" />
+                                                    <Setter Property="Opacity" Value="0.8" />
+                                                </DataTrigger>
+                                                <DataTrigger
+                                                    Binding="{Binding Enabled}"
+                                                    TargetType="Label"
+                                                    Value="True">
+                                                    <Setter Property="Text" Value="&#xf0f3;" />
+                                                    <Setter Property="SemanticProperties.Description" Value="{localization:Translate Etkin}" />
+                                                    <Setter Property="Opacity" Value="1.0" />
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={x:Reference MainPageRoot}, Path=BindingContext.NavigateToPrayerDetailCommand}" CommandParameter="{Binding .}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                    </Grid>
+                                </Border>
+                            </ContentView>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
 
@@ -210,7 +214,7 @@
                             <Border
                                 Margin="3,7"
                                 BackgroundColor="{AppThemeBinding Light={StaticResource MonthlyButtonBackgroundColor},
-                                                              Dark={StaticResource MonthlyButtonBackgroundColorDark}}"
+                                                                  Dark={StaticResource MonthlyButtonBackgroundColorDark}}"
                                 HorizontalOptions="Center"
                                 IsEnabled="{Binding IsNotBusy}"
                                 Style="{StaticResource RoundButton}">
@@ -218,14 +222,14 @@
                                     Margin="9,0"
                                     Padding="9,3"
                                     x:DataType="viewModels:MainViewModel"
-                                    Style="{DynamicResource LabelStyle}"
+                                    Style="{StaticResource MonthlyLabel}"
                                     TextColor="{AppThemeBinding Light={StaticResource ButtonTextColor},
-                                                            Dark={StaticResource ButtonTextColorDark}}">
+                                                                Dark={StaticResource ButtonTextColorDark}}">
                                     <Label.FormattedText>
                                         <FormattedString>
                                             <Span
-                                                FontFamily="FontAwesomeSolid"
-                                                FontSize="18"
+                                                FontFamily="{StaticResource IconFontFamily}"
+                                                FontSize="{DynamicResource SubheaderFontSize}"
                                                 Text="&#xf073; " />
                                             <Span Text="{localization:Translate AylikTakvim}" />
                                         </FormattedString>
@@ -241,36 +245,24 @@
 
                             <Border
                                 Margin="9,5"
-                                Padding="9,14"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource CurrentTimeBackgroundColor},
-                                                              Dark={StaticResource CurrentTimeBackgroundColorDark}}"
+                                Padding="9,12"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Yellow200Accent},
+                                                                  Dark={StaticResource Gray800}}"
                                 Style="{StaticResource Card}">
                                 <Label
                                     AutomationProperties.IsInAccessibleTree="True"
                                     FontAttributes="Bold"
                                     HorizontalOptions="Center"
-                                    Style="{DynamicResource LabelStyle}"
+                                    Style="{StaticResource TitleMediumLabel}"
                                     Text="{Binding RemainingTime}"
                                     TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent600Color},
-                                                            Dark={StaticResource White}}"
+                                                                Dark={StaticResource White}}"
                                     VerticalTextAlignment="Center" />
                             </Border>
                         </StackLayout>
                     </CollectionView.Footer>
                 </CollectionView>
 
-                <ActivityIndicator
-                    AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"
-                    AbsoluteLayout.LayoutFlags="PositionProportional"
-                    HeightRequest="80"
-                    HorizontalOptions="Center"
-                    IsRunning="{Binding IsBusy}"
-                    IsVisible="{Binding IsBusy}"
-                    VerticalOptions="Center"
-                    Visual="Material"
-                    WidthRequest="80"
-                    Color="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                        Dark={StaticResource White}}" />
             </Grid>
         </RefreshView>
     </ContentPage.Content>
