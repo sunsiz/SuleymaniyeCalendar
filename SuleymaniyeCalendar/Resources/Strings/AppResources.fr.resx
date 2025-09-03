@@ -562,4 +562,13 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="Adres" xml:space="preserve">
     <value>Adresse</value>
   </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>Arrêt</value>
+  </data>
+  <data name="Oynat" xml:space="preserve">
+    <value>Lecture</value>
+  </data>
+  <data name="Paylas" xml:space="preserve">
+    <value>Partager</value>
+  </data>
 </root>

@@ -41,8 +41,27 @@ public class MainActivity : MauiAppCompatActivity
                     // Optional: guide user to settings
                     AppInfo.ShowSettingsUI();
                 }
+                else
+                {
+                    // Permission granted - refresh notification display if prayer notifications are enabled
+                    if (Preferences.Get("NotificationPrayerTimesEnabled", false) && Preferences.Get("ForegroundServiceEnabled", true))
+                    {
+                        RefreshForegroundServiceNotification();
+                    }
+                }
             }
         }
+    }
+
+    void RefreshForegroundServiceNotification()
+    {
+        var refreshIntent = new Intent(this, typeof(AlarmForegroundService));
+        refreshIntent.SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
+
+        if (OperatingSystem.IsAndroidVersionAtLeast(26))
+            StartForegroundService(refreshIntent);
+        else
+            StartService(refreshIntent);
     }
 
     void OpenServiceChannelSettings()
@@ -59,7 +78,7 @@ public class MainActivity : MauiAppCompatActivity
 
     void EnsureExactAlarmCapability()
     {
-        if (Build.VERSION.SdkInt >= BuildVersionCodes.S)
+        if (OperatingSystem.IsAndroidVersionAtLeast(31))
         {
             var am = (AlarmManager)GetSystemService(AlarmService);
             if (am != null && !am.CanScheduleExactAlarms())

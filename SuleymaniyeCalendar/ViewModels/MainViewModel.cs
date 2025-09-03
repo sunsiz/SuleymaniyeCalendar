@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Resources.Strings;
@@ -65,7 +66,7 @@ namespace SuleymaniyeCalendar.ViewModels
                 Preferences.Set("ishaAlarm", false);
                 Preferences.Set("endofishaAlarm", false);
             }
-            CultureInfo cultureInfo = new CultureInfo(Preferences.Get("SelectedLanguage", "en"));
+            CultureInfo cultureInfo = new CultureInfo(Preferences.Get("SelectedLanguage", "tr"));
             CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = cultureInfo;
             Title = AppResources.PageTitle;
             Prayers = new ObservableCollection<Prayer>();
@@ -125,6 +126,9 @@ namespace SuleymaniyeCalendar.ViewModels
 
             // Coalesced UI update after background work
             await RefreshUiAsync(force: true).ConfigureAwait(false);
+            
+            // Fire and forget non-UI work
+            _ = Task.Run(() => GetCity());
 
             IsBusy = false;
             IsRefreshing = false;
@@ -206,30 +210,51 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
-        private async void GetCity()
+        private async Task GetCityAsync()
         {
             try
             {
+                // Add timeout to prevent hanging
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                
                 var placemark = await Geocoding.Default
                     .GetPlacemarksAsync(
                         Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat),
                         Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat))
                     .ConfigureAwait(false);
 
-                var city = placemark?.FirstOrDefault()?.AdminArea ?? placemark?.FirstOrDefault()?.CountryName;
+                var city = placemark?.FirstOrDefault()?.Locality ?? 
+                          placemark?.FirstOrDefault()?.AdminArea ?? 
+                          placemark?.FirstOrDefault()?.SubAdminArea ?? 
+                          placemark?.FirstOrDefault()?.CountryName;
 
                 if (!string.IsNullOrWhiteSpace(city))
                 {
                     await MainThread.InvokeOnMainThreadAsync(() => City = city);
+                    Preferences.Set("sehir", city);
                 }
+            }
+            catch (OperationCanceledException)
+            {
+                Debug.WriteLine("GetCityAsync: Operation timed out after 5 seconds");
             }
             catch (Exception exception)
             {
-                Debug.WriteLine(exception);
+                Debug.WriteLine($"GetCityAsync error: {exception}");
             }
 
-            if (!string.IsNullOrEmpty(City)) Preferences.Set("sehir", City);
-            City ??= Preferences.Get("sehir", AppResources.Sehir);
+            // Fallback to cached city if geocoding failed
+            if (string.IsNullOrEmpty(City))
+            {
+                var cachedCity = Preferences.Get("sehir", AppResources.Sehir);
+                await MainThread.InvokeOnMainThreadAsync(() => City = cachedCity);
+            }
+        }
+
+        // Legacy method - keep for backward compatibility but make it non-blocking
+        private async void GetCity()
+        {
+            await GetCityAsync();
         }
 
         private bool _initialLocationChecked;
@@ -249,7 +274,8 @@ namespace SuleymaniyeCalendar.ViewModels
                 calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
                 if ((calendar.Altitude == 114.0 && calendar.Latitude == 41.0 && calendar.Longitude == 29.0) || (calendar.Altitude == 0 && calendar.Latitude == 0 && calendar.Longitude == 0))
                 {
-                    _calendar = await _data.GetPrayerTimesFastAsync().ConfigureAwait(false);
+                    // Default coordinates detected, need fresh location
+                    _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
                     var location = await _data.GetCurrentLocationAsync(false).ConfigureAwait(false);
                     if (location != null && location.Latitude != 0 && location.Longitude != 0)
                         _data.GetMonthlyPrayerTimes(location, false);
@@ -456,7 +482,9 @@ namespace SuleymaniyeCalendar.ViewModels
                 await Task.Yield();
 
                 LoadPrayers();
-                await MainThread.InvokeOnMainThreadAsync(() => GetCity());
+                
+                // Start city lookup in background without blocking UI
+                _ = Task.Run(async () => await GetCityAsync());
             }
             finally
             {
@@ -508,7 +536,8 @@ namespace SuleymaniyeCalendar.ViewModels
 
         private async Task GetPrayersAsync()
         {
-            _calendar = await _data.GetPrayerTimesAsync(true).ConfigureAwait(false);
+            // GetPrayersAsync is called when user needs fresh prayer times, so refresh location
+            _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
             if (_calendar.Latitude != 0)
             {
                 Preferences.Set("latitude", _calendar.Latitude);

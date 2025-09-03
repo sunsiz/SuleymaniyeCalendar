@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using System.Text.Json;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using SuleymaniyeCalendar.Models;
@@ -18,15 +19,18 @@ namespace SuleymaniyeCalendar.Services
 	public class DataService
 	{
 		private readonly IAlarmService _alarmService;
+		private readonly JsonApiService _jsonApiService;
 		public Calendar calendar;
 		private Calendar _location;
 		private ObservableCollection<Calendar> _monthlyCalendar;
 		public readonly string _fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "monthlycalendar.xml");
+		public readonly string _jsonFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "monthlycalendar.json");
 		private bool askedLocationPermission;
 
 		public DataService(IAlarmService alarmService)
 		{
 			_alarmService = alarmService;
+			_jsonApiService = new JsonApiService();
 			calendar = GetTakvimFromFile() ?? new Calendar()
 			{
 				Latitude = Preferences.Get("latitude", 41.0),
@@ -720,5 +724,266 @@ namespace SuleymaniyeCalendar.Services
 			}
 			return location;
 		}
+
+		#region Hybrid API Methods (New JSON + Old XML Fallback)
+
+		/// <summary>
+		/// Get monthly prayer times using hybrid approach: Try new JSON API first, fallback to old XML API
+		/// </summary>
+		public async Task<ObservableCollection<Calendar>> GetMonthlyPrayerTimesHybridAsync(Location location, bool forceRefresh = false)
+		{
+			Debug.WriteLine("Starting Hybrid Monthly Prayer Times request");
+
+			// Try cache first if not forcing refresh
+			if (!forceRefresh)
+			{
+				var cachedData = await TryGetMonthlyFromCacheAsync();
+				if (cachedData != null)
+				{
+					Debug.WriteLine("Hybrid: Returning cached data");
+					return cachedData;
+				}
+			}
+
+			if (!HaveInternet()) return null;
+
+			var currentMonth = DateTime.Now.Month;
+			var altitude = location.Altitude ?? 0;
+
+			// Strategy 1: Try new JSON API first
+			Debug.WriteLine("Hybrid: Trying new JSON API");
+			try
+			{
+				var jsonResult = await _jsonApiService.GetMonthlyPrayerTimesAsync(
+					location.Latitude, location.Longitude, currentMonth, altitude);
+				
+				if (jsonResult != null && jsonResult.Count > 0)
+				{
+					Debug.WriteLine($"Hybrid: JSON API success - {jsonResult.Count} days");
+					await SaveMonthlyToJsonCacheAsync(jsonResult);
+					_monthlyCalendar = jsonResult;
+					return jsonResult;
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Hybrid: JSON API failed - {ex.Message}");
+			}
+
+			// Strategy 2: Fallback to old XML API
+			Debug.WriteLine("Hybrid: Falling back to XML API");
+			try
+			{
+				var xmlResult = GetMonthlyPrayerTimes(location, forceRefresh);
+				if (xmlResult != null && xmlResult.Count > 0)
+				{
+					Debug.WriteLine($"Hybrid: XML API success - {xmlResult.Count} days");
+					return xmlResult;
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Hybrid: XML API failed - {ex.Message}");
+			}
+
+			Debug.WriteLine("Hybrid: Both APIs failed");
+			return null;
+		}
+
+		/// <summary>
+		/// Get daily prayer times using hybrid approach: Try new JSON API first, fallback to old XML API
+		/// </summary>
+		public async Task<Calendar> GetDailyPrayerTimesHybridAsync(Location location, DateTime? date = null)
+		{
+			if (!HaveInternet()) return null;
+
+			var targetDate = date ?? DateTime.Today;
+			var altitude = location.Altitude ?? 0;
+
+			// Strategy 1: Try new JSON API first
+			Debug.WriteLine("Hybrid Daily: Trying new JSON API");
+			try
+			{
+				var jsonResult = await _jsonApiService.GetDailyPrayerTimesAsync(
+					location.Latitude, location.Longitude, targetDate, altitude);
+				
+				if (jsonResult != null)
+				{
+					Debug.WriteLine("Hybrid Daily: JSON API success");
+					return jsonResult;
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Hybrid Daily: JSON API failed - {ex.Message}");
+			}
+
+			// Strategy 2: Fallback to old XML API
+			Debug.WriteLine("Hybrid Daily: Falling back to XML API");
+			try
+			{
+				var xmlResult = await GetPrayerTimesAsync(false);
+				if (xmlResult != null)
+				{
+					Debug.WriteLine("Hybrid Daily: XML API success");
+					return xmlResult;
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Hybrid Daily: XML API failed - {ex.Message}");
+			}
+
+			Debug.WriteLine("Hybrid Daily: Both APIs failed");
+			return null;
+		}
+
+		/// <summary>
+		/// Try to get monthly data from cache (both JSON and XML)
+		/// </summary>
+		private async Task<ObservableCollection<Calendar>> TryGetMonthlyFromCacheAsync()
+		{
+			// Try JSON cache first
+			if (File.Exists(_jsonFileName))
+			{
+				try
+				{
+					var jsonContent = await File.ReadAllTextAsync(_jsonFileName);
+					var cachedData = JsonSerializer.Deserialize<List<Calendar>>(jsonContent);
+					if (cachedData != null && cachedData.Count > 0)
+					{
+						var firstDate = DateTime.Parse(cachedData[0].Date);
+						var lastDate = DateTime.Parse(cachedData[cachedData.Count - 1].Date);
+						var daysFromStart = (DateTime.Today - firstDate).Days;
+						
+						if (daysFromStart >= 0 && daysFromStart < 21 && lastDate >= DateTime.Today)
+						{
+							Debug.WriteLine("Found valid JSON cache");
+							return new ObservableCollection<Calendar>(cachedData);
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Debug.WriteLine($"Error reading JSON cache: {ex.Message}");
+				}
+			}
+
+			// Fallback to XML cache
+			if (File.Exists(_fileName))
+			{
+				try
+				{
+					XDocument xmldoc = XDocument.Load(_fileName);
+					var calendarDays = ParseXmlList(xmldoc);
+					if (calendarDays != null && calendarDays.Count > 0)
+					{
+						var days = (DateTime.Today - DateTime.Parse(calendarDays[0].Date)).Days;
+						if (days is < 21 and >= 0)
+						{
+							Debug.WriteLine("Found valid XML cache");
+							return calendarDays;
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					Debug.WriteLine($"Error reading XML cache: {ex.Message}");
+				}
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Save monthly prayer times to JSON cache
+		/// </summary>
+		private async Task SaveMonthlyToJsonCacheAsync(ObservableCollection<Calendar> monthlyData)
+		{
+			try
+			{
+				var jsonContent = JsonSerializer.Serialize(monthlyData.ToList(), new JsonSerializerOptions 
+				{ 
+					WriteIndented = true 
+				});
+				await File.WriteAllTextAsync(_jsonFileName, jsonContent);
+				Debug.WriteLine("Saved monthly data to JSON cache");
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Error saving JSON cache: {ex.Message}");
+			}
+		}
+
+		/// <summary>
+		/// Test which API is faster/available
+		/// </summary>
+		public async Task<string> TestApiPerformanceAsync()
+		{
+			var tasks = new List<Task<(string api, bool success, long ms)>>();
+
+			// Test JSON API
+			tasks.Add(Task.Run(async () =>
+			{
+				var sw = System.Diagnostics.Stopwatch.StartNew();
+				try
+				{
+					var success = await _jsonApiService.TestConnectionAsync();
+					sw.Stop();
+					return ("JSON", success, sw.ElapsedMilliseconds);
+				}
+				catch
+				{
+					sw.Stop();
+					return ("JSON", false, sw.ElapsedMilliseconds);
+				}
+			}));
+
+			// Test XML API
+			tasks.Add(Task.Run(async () =>
+			{
+				var sw = System.Diagnostics.Stopwatch.StartNew();
+				try
+				{
+					var client = new HttpClient();
+					client.Timeout = TimeSpan.FromSeconds(10);
+					var response = await client.GetAsync("http://servis.suleymaniyetakvimi.com/servis.asmx");
+					sw.Stop();
+					return ("XML", response.IsSuccessStatusCode, sw.ElapsedMilliseconds);
+				}
+				catch
+				{
+					sw.Stop();
+					return ("XML", false, sw.ElapsedMilliseconds);
+				}
+			}));
+
+			var results = await Task.WhenAll(tasks);
+			var report = string.Join(", ", results.Select(r => $"{r.api}: {(r.success ? "OK" : "FAIL")} ({r.ms}ms)"));
+			Debug.WriteLine($"API Performance Test: {report}");
+			return report;
+		}
+
+		/// <summary>
+		/// Get today's prayer times using hybrid approach - used by MainViewModel
+		/// </summary>
+		public async Task<Calendar> GetPrayerTimesHybridAsync(bool refreshLocation = false)
+		{
+			var location = await GetCurrentLocationAsync(refreshLocation).ConfigureAwait(false);
+			if (location == null || location.Latitude == 0 || location.Longitude == 0)
+				return GetTakvimFromFile() ?? calendar;
+
+			return await GetDailyPrayerTimesHybridAsync(location);
+		}
+
+		/// <summary>
+		/// Get today's prayer times using hybrid approach - parameterless version for backward compatibility
+		/// </summary>
+		public async Task<Calendar> GetPrayerTimesHybridAsync()
+		{
+			return await GetPrayerTimesHybridAsync(false);
+		}
+
+		#endregion
 	}
 }

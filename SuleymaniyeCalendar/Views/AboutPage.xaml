@@ -6,7 +6,8 @@
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     x:DataType="viewModels:AboutViewModel"
-    Title="{Binding Title}">
+    Title="{Binding Title}"
+    FlowDirection="{DynamicResource FlowDirection}">
 
     <ContentPage.Content>
         <ScrollView
@@ -18,12 +19,12 @@
                 Spacing="20">
 
                 <!--  Hero Section with App Description  -->
-                <Border Style="{StaticResource Card}">
+                <Border Style="{StaticResource AnimatedPrayerCard}">
                     <VerticalStackLayout Spacing="12">
                         <Label Style="{StaticResource HeadlineLargeLabel}"
                                Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent200Color}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent100Color}}" />
                         
                         <Label TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
                                Style="{StaticResource BodyLargeLabel}"
@@ -60,7 +61,7 @@
                 </Border>
 
                 <!--  Social Media Section  -->
-                <Border Style="{StaticResource Card}">
+                <Border Style="{StaticResource AnimatedCard}">
                     <VerticalStackLayout Spacing="16">
                         <Label Text="{localization:Translate SosyalMedyaBaglantisi}"
                                Style="{StaticResource TitleLargeLabel}"
@@ -115,7 +116,7 @@
                 </Border>
 
                 <!--  App Store Section  -->
-                <Border Style="{StaticResource Card}">
+                <Border Style="{StaticResource SettingsCard}">
                     <VerticalStackLayout Spacing="16">
                         <Label Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
                                Style="{StaticResource TitleLargeLabel}"

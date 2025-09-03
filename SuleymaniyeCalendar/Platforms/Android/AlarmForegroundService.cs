@@ -12,13 +12,13 @@ namespace SuleymaniyeCalendar
 	[Service]
 	public class AlarmForegroundService : Service, IAlarmService
 	{
-		private NotificationManager _notificationManager;
+		internal NotificationManager _notificationManager;
 		private readonly int DELAY_BETWEEN_MESSAGES = 30000;
-		private readonly int NOTIFICATION_ID = 1993;
+		internal readonly int NOTIFICATION_ID = 1993;
 		private readonly string NOTIFICATION_CHANNEL_ID = "SuleymaniyeTakvimichannelId";
 		private readonly string channelName = AppResources.SuleymaniyeVakfiTakvimi;
 		private readonly string channelDescription = "The Suleymaniye Takvimi notification channel.";
-		private Notification _notification;
+		internal Notification _notification;
 		private bool _isStarted;
 		private Handler _handler;
 		private Action _runnable;
@@ -116,6 +116,7 @@ namespace SuleymaniyeCalendar
 			_notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
             // Ensure all alarm channels (with sounds) exist before any alarm fires
             NotificationChannelManager.CreateAlarmNotificationChannels();
+            
             SetNotification();
 
 			if(Preferences.Get("ForegroundServiceEnabled",true))this.StartForeground(NOTIFICATION_ID, _notification);
@@ -143,16 +144,25 @@ namespace SuleymaniyeCalendar
 			_isStarted = true;
 			//CancelAlarm();
 		}
+
+		public override void OnDestroy()
+		{
+			base.OnDestroy();
+		}
 		
 
-        private void SetNotification()
+        internal void SetNotification()
 		{
 			Notification.BigTextStyle textStyle = new Notification.BigTextStyle();
+			var notificationTitle = GetFormattedRemainingTime();
+			
 			if (Preferences.Get("NotificationPrayerTimesEnabled", false))
 			{
-				textStyle.BigText(GetTodaysPrayerTimes());
+				var prayerTimes = GetTodaysPrayerTimes();
+				textStyle.BigText(prayerTimes);
 				textStyle.SetSummaryText(AppResources.BugunkuNamazVakitleri);
 			}
+			
 			if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
 			{
 				var channelNameJava = new Java.Lang.String(channelName);
@@ -163,29 +173,32 @@ namespace SuleymaniyeCalendar
 					LockscreenVisibility = NotificationVisibility.Public
 				};
 				_notificationManager.CreateNotificationChannel(channel);
-				_notification = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
-					.SetContentTitle(GetFormattedRemainingTime())
+				
+				var builder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
+					.SetContentTitle(notificationTitle)
 					.SetStyle(textStyle)
 					.SetSmallIcon(Resource.Drawable.app_logo)
 					.SetContentIntent(BuildIntentToShowMainActivity())
 					.SetWhen(Java.Lang.JavaSystem.CurrentTimeMillis())
 					.SetShowWhen(true)
 					.SetOngoing(true)
-					.SetOnlyAlertOnce(true)
-					.Build();
+					.SetOnlyAlertOnce(true);
+				
+				_notification = builder.Build();
 			}
 			else
 			{
-				_notification = new Notification.Builder(this)
-					.SetContentTitle(GetFormattedRemainingTime())
+				var builder = new Notification.Builder(this)
+					.SetContentTitle(notificationTitle)
 					.SetStyle(textStyle)
 					.SetSmallIcon(Resource.Drawable.app_logo)
 					.SetContentIntent(BuildIntentToShowMainActivity())
 					.SetWhen(Java.Lang.JavaSystem.CurrentTimeMillis())
 					.SetShowWhen(true)
 					.SetOngoing(true)
-					.SetOnlyAlertOnce(true)
-					.Build();
+					.SetOnlyAlertOnce(true);
+				
+				_notification = builder.Build();
 			}
 		}
 
@@ -289,17 +302,27 @@ namespace SuleymaniyeCalendar
 				else
 				{
 					//Log.Info(TAG, "OnStartCommand: The service is starting.");
-					// Enlist this instance of the service as a foreground service
+					// Call StartForeground immediately to prevent ANR
 					this.StartForeground(NOTIFICATION_ID, _notification);
 					_handler.PostDelayed(_runnable, DELAY_BETWEEN_MESSAGES);
 					_isStarted = true;
+					
+					// Start alarm setup work in background (not blocking)
 					Task startupWork = new Task(async () =>
 					{
-						await Task.Delay(12000).ConfigureAwait(true);
-						System.Diagnostics.Debug.WriteLine("OnStartCommand: " + $"Starting Set Alarm at {DateTime.Now}");
-						var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-									?? new DataService(this);
-						data.SetWeeklyAlarmsAsync();
+						try
+						{
+							// Small delay to let the app finish startup
+							await Task.Delay(2000).ConfigureAwait(false);
+							System.Diagnostics.Debug.WriteLine("OnStartCommand: " + $"Starting Set Alarm at {DateTime.Now}");
+							var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
+										?? new DataService(this);
+							await data.SetWeeklyAlarmsAsync();
+						}
+						catch (Exception ex)
+						{
+							System.Diagnostics.Debug.WriteLine($"Error in alarm startup: {ex}");
+						}
 					});
 					startupWork.Start();
 					

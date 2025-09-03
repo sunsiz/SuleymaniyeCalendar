@@ -542,4 +542,13 @@ This application is designed to provide safe and fast access to prayer and fasti
   <data name="Adres" xml:space="preserve">
     <value>Address</value>
   </data>
+  <data name="Oynat" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Paylas" xml:space="preserve">
+    <value>Share</value>
+  </data>
 </root>

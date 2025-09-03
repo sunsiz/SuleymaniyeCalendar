@@ -562,4 +562,13 @@
   <data name="Adres" xml:space="preserve">
     <value>العنوان</value>
   </data>
+  <data name="Oynat" xml:space="preserve">
+    <value>تشغيل</value>
+  </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>إيقاف</value>
+  </data>
+  <data name="Paylas" xml:space="preserve">
+    <value>يشارك</value>
+  </data>
 </root>

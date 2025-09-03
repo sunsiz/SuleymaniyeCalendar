@@ -68,6 +68,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<IAlarmService, NullAlarmService>();
 #endif
         builder.Services.AddSingleton<IAudioPreviewService, AudioPreviewService>();
+        builder.Services.AddSingleton<IRadioService, RadioService>();
+        builder.Services.AddSingleton<IRtlService, RtlService>();
+        builder.Services.AddSingleton<JsonApiService>();
         builder.Services.AddSingleton<DataService>();
 
         builder.Services.AddSingleton<MainViewModel>();

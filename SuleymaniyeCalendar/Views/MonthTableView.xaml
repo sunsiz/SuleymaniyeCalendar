@@ -4,160 +4,161 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
-    xmlns:models="clr-namespace:SuleymaniyeCalendar.Models">
-    <!-- Horizontal scroll only; CollectionView handles vertical -->
-    <ScrollView Orientation="Horizontal"
-                HorizontalScrollBarVisibility="Always">
-        <VerticalStackLayout Spacing="1"
-                             WidthRequest="800"
-                             HorizontalOptions="Start"
-                             VerticalOptions="FillAndExpand">
-            <!-- Header -->
-            <Grid Padding="8"
-                  BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                    Dark={StaticResource PrimaryAccent800Color}}"
-                  ColumnDefinitions="80,90,90,90,90,90,90,90,90"
-                  ColumnSpacing="1"
-                  WidthRequest="800">
-                <Label
-                    Grid.Column="0"
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="{localization:Translate Tarih}"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
-                <Label
-                    Grid.Column="1"
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="{localization:Translate FecriKazip}"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
-                <Label
-                    Grid.Column="2"
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="{localization:Translate FecriSadik}"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
-                <Label
-                    Grid.Column="3"
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="{localization:Translate SabahSonu}"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
-                <Label
-                    Grid.Column="4"
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="{localization:Translate Ogle}"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
-                <Label
-                    Grid.Column="5"
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="{localization:Translate Ikindi}"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
-                <Label
-                    Grid.Column="6"
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="{localization:Translate Aksam}"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
-                <Label
-                    Grid.Column="7"
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="{localization:Translate Yatsi}"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
-                <Label
-                    Grid.Column="8"
-                    FontAttributes="Bold"
-                    HorizontalTextAlignment="Center"
-                    Text="{localization:Translate YatsiSonu}"
-                    TextColor="White"
-                    VerticalTextAlignment="Center" />
-            </Grid>
-
-            <!-- Rows -->
-            <CollectionView
-                ItemsSource="{Binding MonthlyCalendar}"
-                ItemsLayout="VerticalList"
-                ItemSizingStrategy="MeasureFirstItem"
-                SelectionMode="None"
-                VerticalOptions="FillAndExpand"
-                VerticalScrollBarVisibility="Always">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Calendar">
-                        <Grid Padding="2,4"
-                              BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariantColor},
-                                                                Dark={StaticResource SurfaceVariantColorDark}}"
-                              ColumnDefinitions="80,90,90,90,90,90,90,90,90"
-                              ColumnSpacing="1"
-                              WidthRequest="800">
-                            <Label
-                                Grid.Column="0"
-                                Padding="2"
-                                BackgroundColor="{StaticResource PrimaryAccent50Color}"
-                                FontAttributes="Bold"
-                                HorizontalTextAlignment="Center"
-                                Text="{Binding Date}"
-                                TextColor="{StaticResource PrimaryColor}"
-                                VerticalTextAlignment="Center" />
-                            <Label
-                                Grid.Column="1"
-                                HorizontalTextAlignment="Center"
-                                Text="{Binding FalseFajr}"
-                                VerticalTextAlignment="Center" />
-                            <Label
-                                Grid.Column="2"
-                                FontAttributes="Bold"
-                                HorizontalTextAlignment="Center"
-                                Text="{Binding Fajr}"
-                                VerticalTextAlignment="Center" />
-                            <Label
-                                Grid.Column="3"
-                                HorizontalTextAlignment="Center"
-                                Text="{Binding Sunrise}"
-                                VerticalTextAlignment="Center" />
-                            <Label
-                                Grid.Column="4"
-                                FontAttributes="Bold"
-                                HorizontalTextAlignment="Center"
-                                Text="{Binding Dhuhr}"
-                                VerticalTextAlignment="Center" />
-                            <Label
-                                Grid.Column="5"
-                                FontAttributes="Bold"
-                                HorizontalTextAlignment="Center"
-                                Text="{Binding Asr}"
-                                VerticalTextAlignment="Center" />
-                            <Label
-                                Grid.Column="6"
-                                FontAttributes="Bold"
-                                HorizontalTextAlignment="Center"
-                                Text="{Binding Maghrib}"
-                                VerticalTextAlignment="Center" />
-                            <Label
-                                Grid.Column="7"
-                                FontAttributes="Bold"
-                                HorizontalTextAlignment="Center"
-                                Text="{Binding Isha}"
-                                VerticalTextAlignment="Center" />
-                            <Label
-                                Grid.Column="8"
-                                HorizontalTextAlignment="Center"
-                                Text="{Binding EndOfIsha}"
-                                VerticalTextAlignment="Center" />
+    xmlns:models="clr-namespace:SuleymaniyeCalendar.Models"
+    FlowDirection="{DynamicResource FlowDirection}">
+    
+    <!-- Horizontal scroll containing the CollectionView for both directions -->
+    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Always">
+        <CollectionView
+            ItemsSource="{Binding MonthlyCalendar}"
+            ItemsLayout="VerticalList"
+            ItemSizingStrategy="MeasureFirstItem"
+            SelectionMode="None"
+            VerticalOptions="Fill"
+            VerticalScrollBarVisibility="Always"
+            WidthRequest="562">
+            
+            <!-- Header Template -->
+            <CollectionView.Header>
+                <Border BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                          Dark={StaticResource PrimaryAccent800Color}}"
+                        Stroke="Transparent"
+                        StrokeShape="RoundRectangle 8,8,0,0"
+                        Margin="0">
+                    <Grid Padding="4,3"
+                          ColumnDefinitions="80,60,60,60,60,60,60,60,62"
+                          ColumnSpacing="0"
+                          WidthRequest="562"
+                          MinimumHeightRequest="48">
+                        <Label Grid.Column="0" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                               Text="{localization:Translate Tarih}" TextColor="White" VerticalTextAlignment="Center" 
+                               FontSize="{DynamicResource CaptionFontSize}"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               SemanticProperties.Description="{localization:Translate Tarih}" />
+                        <Label Grid.Column="1" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                               Text="{localization:Translate FecriKazip}" TextColor="White" VerticalTextAlignment="Center"
+                               FontSize="{DynamicResource CaptionFontSize}"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               SemanticProperties.Description="{localization:Translate FecriKazip}" />
+                        <Label Grid.Column="2" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                               Text="{localization:Translate FecriSadik}" TextColor="White" VerticalTextAlignment="Center"
+                               FontSize="{DynamicResource CaptionFontSize}"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               SemanticProperties.Description="{localization:Translate FecriSadik}" />
+                        <Label Grid.Column="3" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                               Text="{localization:Translate SabahSonu}" TextColor="White" VerticalTextAlignment="Center"
+                               FontSize="{DynamicResource CaptionFontSize}"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               SemanticProperties.Description="{localization:Translate SabahSonu}" />
+                        <Label Grid.Column="4" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                               Text="{localization:Translate Ogle}" TextColor="White" VerticalTextAlignment="Center"
+                               FontSize="{DynamicResource CaptionFontSize}"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               SemanticProperties.Description="{localization:Translate Ogle}" />
+                        <Label Grid.Column="5" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                               Text="{localization:Translate Ikindi}" TextColor="White" VerticalTextAlignment="Center"
+                               FontSize="{DynamicResource CaptionFontSize}"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               SemanticProperties.Description="{localization:Translate Ikindi}" />
+                        <Label Grid.Column="6" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                               Text="{localization:Translate Aksam}" TextColor="White" VerticalTextAlignment="Center"
+                               FontSize="{DynamicResource CaptionFontSize}"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               SemanticProperties.Description="{localization:Translate Aksam}" />
+                        <Label Grid.Column="7" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                               Text="{localization:Translate Yatsi}" TextColor="White" VerticalTextAlignment="Center"
+                               FontSize="{DynamicResource CaptionFontSize}"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               SemanticProperties.Description="{localization:Translate Yatsi}" />
+                        <Label Grid.Column="8" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                               Text="{localization:Translate YatsiSonu}" TextColor="White" VerticalTextAlignment="Center"
+                               FontSize="{DynamicResource CaptionFontSize}"
+                               AutomationProperties.IsInAccessibleTree="True"
+                               SemanticProperties.Description="{localization:Translate YatsiSonu}" />
+                    </Grid>
+                </Border>
+            </CollectionView.Header>
+            
+            <!-- Data Template with Clean Table Design -->
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Calendar">
+                    <Border BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceColor}, Dark={StaticResource SurfaceColorDark}}"
+                            Stroke="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}"
+                            StrokeThickness="0.5"
+                            Margin="0">
+                        <Grid Padding="0"
+                              ColumnDefinitions="80,60,60,60,60,60,60,60,62"
+                              ColumnSpacing="0" RowSpacing="0"
+                              WidthRequest="562"
+                              MinimumHeightRequest="10">
+                            
+                            <!-- Date Column -->
+                            <Border Grid.Column="0" 
+                                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryAccent50Color}, Dark={StaticResource SurfaceVariantColorDark}}"
+                                    StrokeShape="RoundRectangle 4"
+                                    Stroke="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                    StrokeThickness="1" Margin="1"
+                                    Padding="0">
+                                <Label FontAttributes="Bold" HorizontalTextAlignment="Center"
+                                       Text="{Binding Date}" 
+                                       TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                       VerticalTextAlignment="Center" 
+                                       FontSize="{DynamicResource CaptionFontSize}"
+                                       AutomationProperties.IsInAccessibleTree="True"
+                                       SemanticProperties.Description="{Binding Date}" />
+                            </Border>
+                            <Label Grid.Column="1" HorizontalTextAlignment="Center"
+                                   Text="{Binding FalseFajr}" VerticalTextAlignment="Center" 
+                                   FontSize="{DynamicResource CaptionFontSize}"
+                                   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   SemanticProperties.Description="{Binding FalseFajr}" />
+                            <Label Grid.Column="2" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                                   Text="{Binding Fajr}" VerticalTextAlignment="Center" 
+                                   FontSize="{DynamicResource CaptionFontSize}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   SemanticProperties.Description="{Binding Fajr}" />
+                            <Label Grid.Column="3" HorizontalTextAlignment="Center"
+                                   Text="{Binding Sunrise}" VerticalTextAlignment="Center" 
+                                   FontSize="{DynamicResource CaptionFontSize}"
+                                   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   SemanticProperties.Description="{Binding Sunrise}" />
+                            <Label Grid.Column="4" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                                   Text="{Binding Dhuhr}" VerticalTextAlignment="Center" 
+                                   FontSize="{DynamicResource CaptionFontSize}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   SemanticProperties.Description="{Binding Dhuhr}" />
+                            <Label Grid.Column="5" HorizontalTextAlignment="Center"
+                                   Text="{Binding Asr}" VerticalTextAlignment="Center" 
+                                   FontSize="{DynamicResource CaptionFontSize}"
+                                   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   SemanticProperties.Description="{Binding Asr}" />
+                            <Label Grid.Column="6" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                                   Text="{Binding Maghrib}" VerticalTextAlignment="Center" 
+                                   FontSize="{DynamicResource CaptionFontSize}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   SemanticProperties.Description="{Binding Maghrib}" />
+                            <Label Grid.Column="7" HorizontalTextAlignment="Center"
+                                   Text="{Binding Isha}" VerticalTextAlignment="Center" 
+                                   FontSize="{DynamicResource CaptionFontSize}"
+                                   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   SemanticProperties.Description="{Binding Isha}" />
+                            <Label Grid.Column="8" FontAttributes="Bold" HorizontalTextAlignment="Center"
+                                   Text="{Binding EndOfIsha}" VerticalTextAlignment="Center" 
+                                   FontSize="{DynamicResource CaptionFontSize}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                   AutomationProperties.IsInAccessibleTree="True"
+                                   SemanticProperties.Description="{Binding EndOfIsha}" />
                         </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
     </ScrollView>
 </ContentView>

@@ -467,6 +467,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        internal static string Durdur {
+            get {
+                return ResourceManager.GetString("Durdur", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to English.
         /// </summary>
         internal static string English {
@@ -926,11 +935,29 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Play.
+        /// </summary>
+        internal static string Oynat {
+            get {
+                return ResourceManager.GetString("Oynat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Suleymaniye Calendar.
         /// </summary>
         internal static string PageTitle {
             get {
                 return ResourceManager.GetString("PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Share.
+        /// </summary>
+        internal static string Paylas {
+            get {
+                return ResourceManager.GetString("Paylas", resourceCulture);
             }
         }
         

@@ -562,4 +562,13 @@ Diese Anwendung wurde entwickelt, um einen sicheren und schnellen Zugriff auf Ge
   <data name="Adres" xml:space="preserve">
     <value>Adresse</value>
   </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>Stopp</value>
+  </data>
+  <data name="Oynat" xml:space="preserve">
+    <value>Wiedergabe</value>
+  </data>
+  <data name="Paylas" xml:space="preserve">
+    <value>Aktie</value>
+  </data>
 </root>

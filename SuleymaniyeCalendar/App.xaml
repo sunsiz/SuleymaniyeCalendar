@@ -9,6 +9,9 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Initialize FlowDirection - will be updated by RtlService -->
+            <x:Static x:Key="FlowDirection" Member="FlowDirection.LeftToRight" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

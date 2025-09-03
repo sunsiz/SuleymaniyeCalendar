@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LocalizationResourceManager.Maui;
 using SuleymaniyeCalendar.Models;
+using SuleymaniyeCalendar.Services;
 #if ANDROID
 using Android.Content;
 using Android.OS;
@@ -30,6 +31,7 @@ namespace SuleymaniyeCalendar.ViewModels
 		[ObservableProperty] private bool notificationPrayerTimesEnabled;
 		[ObservableProperty] private bool foregroundServiceEnabled;
 		private readonly ILocalizationResourceManager resourceManager;
+		private readonly IRtlService rtlService;
 		//partial void OnAlarmDurationChanged(int value) { if (AlarmDuration != value) Preferences.Set("AlarmDuration", value); }
 		partial void OnAlwaysRenewLocationEnabledChanged(bool value) { Preferences.Set("AlwaysRenewLocationEnabled", value); }
 
@@ -86,13 +88,18 @@ namespace SuleymaniyeCalendar.ViewModels
 
 		public bool IsNecessary => !((DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 10) || DeviceInfo.Platform == DevicePlatform.iOS);
 
-		public SettingsViewModel(ILocalizationResourceManager resourceManager)
+		public SettingsViewModel(ILocalizationResourceManager resourceManager, IRtlService rtlService)
 		{
 			IsBusy = true;
 			this.resourceManager = resourceManager;
+			this.rtlService = rtlService;
 			// Ensure resource manager reflects saved language before loading list/selection
 			var savedCi = Preferences.Get("SelectedLanguage", "tr");
 			this.resourceManager.CurrentCulture = CultureInfo.GetCultureInfo(savedCi);
+			
+			// Apply RTL for the saved language
+			rtlService.ApplyFlowDirection(savedCi);
+			
 			LoadLanguages(); // sets SelectedLanguage based on resourceManager culture
 			// Use saved theme (0=Dark,1=Light,2=System)
 			CurrentTheme = Theme.Tema;
@@ -115,8 +122,16 @@ namespace SuleymaniyeCalendar.ViewModels
 			AppResources.Culture = ci; // ensure resx-based strings update
 			Preferences.Set("SelectedLanguage", value.CI);
 
+			// Apply RTL layout direction for the selected language
+			rtlService.ApplyFlowDirection(value.CI);
+
 			// keep current selection and labels fresh
 			Title = AppResources.UygulamaAyarlari;
+
+#if ANDROID
+			// Update widget when language changes (affects RTL and text)
+			UpdateWidget();
+#endif
 		}
 
 		[RelayCommand]
@@ -174,6 +189,20 @@ namespace SuleymaniyeCalendar.ViewModels
 			Theme.Tema = themeValue;
 			CurrentTheme = themeValue;
 			Dark = themeValue == 0;
+			
+			// Save theme preference for widget
+			Preferences.Set("SelectedTheme", themeValue switch
+			{
+				0 => "Dark",
+				1 => "Light",
+				2 => "System",
+				_ => "System"
+			});
+
+#if ANDROID
+			// Update widget when theme changes
+			UpdateWidget();
+#endif
 		}
 
 		private static void SetUserAppTheme(int themeValue)
@@ -188,6 +217,24 @@ namespace SuleymaniyeCalendar.ViewModels
 				_ => AppTheme.Unspecified
 			};
 		}
+
+#if ANDROID
+		private void UpdateWidget()
+		{
+			try
+			{
+				var context = Platform.CurrentActivity ?? Android.App.Application.Context;
+				if (context != null)
+				{
+					context.StartService(new Android.Content.Intent(context, typeof(WidgetService)));
+				}
+			}
+			catch (System.Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"Error updating widget: {ex.Message}");
+			}
+		}
+#endif
 
 		[RelayCommand]
 		private void GotoSettings(){AppInfo.ShowSettingsUI();}

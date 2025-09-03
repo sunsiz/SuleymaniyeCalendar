@@ -561,4 +561,13 @@
   <data name="Adres" xml:space="preserve">
     <value>Ünvan</value>
   </data>
+  <data name="Oynat" xml:space="preserve">
+    <value>Oynat</value>
+  </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>Dur</value>
+  </data>
+  <data name="Paylas" xml:space="preserve">
+    <value>Paylaş</value>
+  </data>
 </root>

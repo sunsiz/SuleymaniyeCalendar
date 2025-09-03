@@ -5,40 +5,53 @@
              x:Class="SuleymaniyeCalendar.Views.MonthPage"
              xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
              xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
-             Title="{Binding Title}" x:DataType="viewModels:MonthViewModel">
+             Title="{Binding Title}" 
+             x:DataType="viewModels:MonthViewModel"
+             FlowDirection="{DynamicResource FlowDirection}">
 
 <ContentPage.Content>
-    <Grid RowDefinitions="*,Auto" Padding="16,8,16,16" RowSpacing="16">
+    <Grid RowDefinitions="*,Auto" Padding="4" RowSpacing="4">
 
-        <!-- Lightweight host; we will inject the heavy table after first frame -->
-        <ContentView x:Name="ListHost" Grid.Row="0" />
+        <!-- Main content area -->
+        <Grid Grid.Row="0">
+            <!-- Lightweight host; we will inject the heavy table after first frame -->
+            <ContentView x:Name="ListHost" />
 
-        <!-- Loading Indicator -->
-        <Grid Grid.Row="0" IsVisible="{Binding IsBusy}" InputTransparent="True">
-            <Border Style="{StaticResource Card}" 
-                    VerticalOptions="Center" 
-                    HorizontalOptions="Center"
-                    Padding="40,24">
-                <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
-                    <ActivityIndicator IsRunning="True"
-                                       Color="{StaticResource PrimaryColor}"
-                                       HeightRequest="48"
-                                       WidthRequest="48" />
-                    <Label Text="{localization:Translate IcerikYukleniyor}"
-                           Style="{StaticResource TitleMediumLabel}"
-                           HorizontalTextAlignment="Center"
-                           TextColor="{StaticResource PrimaryColor}" />
-                </VerticalStackLayout>
-            </Border>
+            <!-- Loading Indicator Overlay - shows above everything when loading -->
+            <Grid IsVisible="{Binding IsBusy}" 
+                  BackgroundColor="{AppThemeBinding Light=#80FFFFFF, Dark=#80000000}"
+                  InputTransparent="False">
+                <Border Style="{StaticResource Card}" 
+                        VerticalOptions="Center" 
+                        HorizontalOptions="Center"
+                        Padding="40,24"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceVariantColorDark}}">
+                    <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+                        <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                           Color="{StaticResource PrimaryColor}"
+                                           HeightRequest="48"
+                                           WidthRequest="48" />
+                        <Label Text="{localization:Translate IcerikYukleniyor}"
+                               Style="{StaticResource TitleMediumLabel}"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{StaticResource PrimaryColor}" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
         </Grid>
 
         <!-- Action Buttons -->
-        <Grid Grid.Row="1" ColumnDefinitions="*,*" ColumnSpacing="12">
+        <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="12">
             <Button Grid.Column="0"
                     Text="{localization:Translate Kapat}" 
                     Command="{Binding GoBackCommand}" 
-                    Style="{StaticResource TonalButton}" />
+                    Style="{StaticResource OutlineButton}" />
             <Button Grid.Column="1"
+                    IsVisible="{Binding ShowShare}"
+                    Text="{localization:Translate Paylas}" 
+                    Command="{Binding ShareCommand}" 
+                    Style="{StaticResource WarningButton}" />
+            <Button Grid.Column="2"
                     Text="{localization:Translate KonumYenileButton}" 
                     Command="{Binding RefreshCommand}" 
                     Style="{StaticResource PrimaryButton}"

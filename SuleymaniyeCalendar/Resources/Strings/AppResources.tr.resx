@@ -563,4 +563,13 @@ Bu program, namaz ve oruç vakitlerine güvenli ve hızlı ulaşabilmeleri için
   <data name="Adres" xml:space="preserve">
     <value>Adres</value>
   </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>Durdur</value>
+  </data>
+  <data name="Oynat" xml:space="preserve">
+    <value>Oynat</value>
+  </data>
+  <data name="Paylas" xml:space="preserve">
+    <value>Paylaş</value>
+  </data>
 </root>

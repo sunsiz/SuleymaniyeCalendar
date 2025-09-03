@@ -563,4 +563,13 @@
   <data name="Adres" xml:space="preserve">
     <value>Адрес</value>
   </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>Остановить</value>
+  </data>
+  <data name="Oynat" xml:space="preserve">
+    <value>Воспроизвести</value>
+  </data>
+  <data name="Paylas" xml:space="preserve">
+    <value>Делиться</value>
+  </data>
 </root>

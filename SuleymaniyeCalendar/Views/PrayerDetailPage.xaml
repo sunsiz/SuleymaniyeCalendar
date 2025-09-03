@@ -7,7 +7,8 @@
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
-    x:DataType="viewModels:PrayerDetailViewModel">
+    x:DataType="viewModels:PrayerDetailViewModel"
+    FlowDirection="{DynamicResource FlowDirection}">
 
     <ScrollView VerticalScrollBarVisibility="Never">
         <VerticalStackLayout
@@ -16,37 +17,52 @@
             Spacing="12">
             <!--  Title  -->
             <Border Style="{StaticResource Card}">
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="20"
-                    HorizontalTextAlignment="Center"
-                    Text="{Binding Title}" />
+                <VerticalStackLayout Spacing="8">
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="24"
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource HeadlineMediumLabel}"
+                        Text="{Binding Title}" />
+                    <BoxView
+                        HeightRequest="2"
+                        HorizontalOptions="Center"
+                        WidthRequest="60"
+                        Color="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                Dark={StaticResource PrimaryAccent100Color}}" />
+                </VerticalStackLayout>
             </Border>
 
             <!--  Time + Enable  -->
             <Border Style="{StaticResource Card}">
-                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+                <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="12">
                     <Label
                         Grid.Column="0"
-                        Style="{StaticResource LabelStyle}"
+                        Style="{StaticResource BodyLargeLabel}"
                         Text="{localization:Translate Vakti}"
                         VerticalTextAlignment="Center" />
                     <Label
                         Grid.Column="1"
                         FontAttributes="Bold"
-                        Style="{StaticResource LabelStyle}"
+                        FontSize="18"
+                        Style="{StaticResource TitleMediumLabel}"
                         Text="{Binding Time}"
                         VerticalTextAlignment="Center" />
                     <Label
                         Grid.Column="2"
-                        Style="{StaticResource LabelStyle}"
+                        Style="{StaticResource BodyLargeLabel}"
                         Text="{localization:Translate EtkinlestirSwitch}"
                         VerticalTextAlignment="Center" />
                     <Switch
                         Grid.Column="3"
+                        Margin="4"
                         AutomationProperties.IsInAccessibleTree="True"
                         IsToggled="{Binding Enabled}"
-                        SemanticProperties.Description="{localization:Translate EtkinlestirSwitchAciklama}" />
+                        OnColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                  Dark={StaticResource PrimaryAccent100Color}}"
+                        SemanticProperties.Description="{localization:Translate EtkinlestirSwitchAciklama}"
+                        ThumbColor="{AppThemeBinding Light={StaticResource White},
+                                                     Dark={StaticResource White}}" />
                 </Grid>
             </Border>
 
@@ -95,88 +111,134 @@
             </Border>-->
 
             <!--  Reminder time + sound  -->
-            <Border
-                IsEnabled="{Binding Enabled}"
-                IsVisible="{Binding Enabled}"
-                Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="10">
-                    <Label x:Name="LabelAlarmStartTime" Style="{StaticResource AccessibleLabel}">
-                        <Label.FormattedText>
-                            <FormattedString>
-                                <Span Text="{localization:Translate BildirmeZamani}" />
-                                <Span x:DataType="viewModels:PrayerDetailViewModel" Text="{Binding NotificationTime}" />
-                                <Span Text="{localization:Translate DakikaOnceden}" />
-                            </FormattedString>
-                        </Label.FormattedText>
-                    </Label>
-                    <Slider
-                        AutomationProperties.IsInAccessibleTree="true"
-                        HeightRequest="44"
-                        Maximum="60"
-                        Minimum="0"
-                        SemanticProperties.Description="{localization:Translate BildirmeZamani}"
-                        Value="{Binding NotificationTime}" />
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                        <Picker
-                            Title="{localization:Translate Birsessecin}"
-                            Grid.Column="0"
-                            ItemDisplayBinding="{Binding Name}"
-                            ItemsSource="{Binding AvailableSounds}"
-                            SelectedItem="{Binding SelectedSound}" />
-                        <Button
-                            Grid.Column="1"
-                            Padding="0"
-                            Style="{StaticResource IconButtonStyle}"
-                            AutomationProperties.IsInAccessibleTree="True"
-                            BackgroundColor="Transparent"
-                            Command="{Binding TestButtonClickedCommand}"
-                            HeightRequest="48"
-                            SemanticProperties.Description="{localization:Translate AlarmSwitch}"
-                            WidthRequest="48">
-                            <Button.Triggers>
-                                <DataTrigger
-                                    Binding="{Binding IsPlaying}"
-                                    TargetType="Button"
-                                    Value="False">
-                                    <Setter Property="ImageSource">
-                                        <Setter.Value>
-                                            <FontImageSource
-                                                FontFamily="{StaticResource IconFontFamily}"
-                                                Glyph="&#xf04b;"
-                                                Size="24" />
-                                        </Setter.Value>
-                                    </Setter>
-                                </DataTrigger>
-                                <DataTrigger
-                                    Binding="{Binding IsPlaying}"
-                                    TargetType="Button"
-                                    Value="True">
-                                    <Setter Property="ImageSource">
-                                        <Setter.Value>
-                                            <FontImageSource
-                                                FontFamily="{StaticResource IconFontFamily}"
-                                                Glyph="&#xf04d;"
-                                                Size="24" />
-                                        </Setter.Value>
-                                    </Setter>
-                                </DataTrigger>
-                            </Button.Triggers>
-                        </Button>
-                    </Grid>
+            <Border IsVisible="{Binding Enabled}" Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="16">
+                    <!--  Notification Time Section  -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label x:Name="LabelAlarmStartTime" Style="{StaticResource TitleMediumLabel}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{localization:Translate BildirmeZamani}" />
+                                    <Span Text=" " />
+                                    <Span FontAttributes="Bold" Text="{Binding NotificationTime}" />
+                                    <Span Text=" " />
+                                    <Span Text="{localization:Translate DakikaOnceden}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        <Slider
+                            AutomationProperties.IsInAccessibleTree="true"
+                            HeightRequest="44"
+                            HorizontalOptions="Fill"
+                            Maximum="60"
+                            MaximumTrackColor="{AppThemeBinding Light={StaticResource Gray400},
+                                                                Dark={StaticResource Gray400}}"
+                            Minimum="0"
+                            MinimumTrackColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                                Dark={StaticResource PrimaryAccent100Color}}"
+                            SemanticProperties.Description="{localization:Translate BildirmeZamani}"
+                            ThumbColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                         Dark={StaticResource PrimaryAccent100Color}}"
+                            Value="{Binding NotificationTime}" />
+                    </VerticalStackLayout>
+
+                    <!--  Sound Selection Section  -->
+                    <VerticalStackLayout Spacing="8">
+                        <Label Style="{StaticResource TitleMediumLabel}" Text="{localization:Translate Birsessecin}" />
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            <Border
+                                Grid.Column="0"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariantColor},
+                                                                  Dark={StaticResource SurfaceVariantColorDark}}"
+                                Stroke="{AppThemeBinding Light={StaticResource OutlineColor},
+                                                         Dark={StaticResource OutlineColorDark}}"
+                                StrokeShape="RoundRectangle 12"
+                                StrokeThickness="1">
+                                <Picker
+                                    Title="{localization:Translate Birsessecin}"
+                                    BackgroundColor="Transparent"
+                                    HorizontalOptions="Fill"
+                                    ItemDisplayBinding="{Binding Name}"
+                                    ItemsSource="{Binding AvailableSounds}"
+                                    SelectedItem="{Binding SelectedSound}"
+                                    TextColor="{AppThemeBinding Light={StaticResource Black},
+                                                                Dark={StaticResource White}}" />
+                            </Border>
+                            <Border
+                                Grid.Column="1"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                                  Dark={StaticResource PrimaryAccent100Color}}"
+                                HeightRequest="48"
+                                Stroke="Transparent"
+                                StrokeShape="RoundRectangle 12"
+                                WidthRequest="48">
+                                <Button
+                                    Padding="0"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    BackgroundColor="Transparent"
+                                    Command="{Binding TestButtonClickedCommand}"
+                                    HeightRequest="48"
+                                    SemanticProperties.Description="{localization:Translate AlarmSwitch}"
+                                    WidthRequest="48">
+                                    <Button.Triggers>
+                                        <DataTrigger
+                                            Binding="{Binding IsPlaying}"
+                                            TargetType="Button"
+                                            Value="False">
+                                            <Setter Property="ImageSource">
+                                                <Setter.Value>
+                                                    <FontImageSource
+                                                        FontFamily="{StaticResource IconFontFamily}"
+                                                        Glyph="&#xf04b;"
+                                                        Size="20"
+                                                        Color="{AppThemeBinding Light={StaticResource White},
+                                                                                Dark={StaticResource PrimaryColor}}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                        <DataTrigger
+                                            Binding="{Binding IsPlaying}"
+                                            TargetType="Button"
+                                            Value="True">
+                                            <Setter Property="ImageSource">
+                                                <Setter.Value>
+                                                    <FontImageSource
+                                                        FontFamily="{StaticResource IconFontFamily}"
+                                                        Glyph="&#xf04d;"
+                                                        Size="20"
+                                                        Color="{AppThemeBinding Light={StaticResource White},
+                                                                                Dark={StaticResource PrimaryColor}}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                            </Border>
+                        </Grid>
+                    </VerticalStackLayout>
                 </VerticalStackLayout>
             </Border>
 
             <!--  Close  -->
-            <Grid ColumnDefinitions="*">
-                <Button
+            <Grid Margin="0,8,0,0" ColumnDefinitions="*">
+                <Border
                     Grid.Column="0"
-                    Padding="7"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryAccent400Color},
-                                                      Dark={StaticResource SecondaryColor}}"
-                    Command="{Binding GoBackCommand}"
-                    HorizontalOptions="Fill"
-                    Style="{DynamicResource ButtonStyle}"
-                    Text="{localization:Translate Kapat}" />
+                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                      Dark={StaticResource PrimaryAccent100Color}}"
+                    HeightRequest="52"
+                    Stroke="Transparent"
+                    StrokeShape="RoundRectangle 16">
+                    <Button
+                        Padding="16,0"
+                        BackgroundColor="Transparent"
+                        Command="{Binding GoBackCommand}"
+                        FontAttributes="Bold"
+                        FontSize="16"
+                        HorizontalOptions="Fill"
+                        Text="{localization:Translate Kapat}"
+                        TextColor="{AppThemeBinding Light={StaticResource White},
+                                                    Dark={StaticResource PrimaryColor}}" />
+                </Border>
             </Grid>
         </VerticalStackLayout>
     </ScrollView>

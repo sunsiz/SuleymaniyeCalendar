@@ -563,4 +563,13 @@
   <data name="Adres" xml:space="preserve">
     <value>地址</value>
   </data>
+  <data name="Oynat" xml:space="preserve">
+    <value>播放</value>
+  </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Paylas" xml:space="preserve">
+    <value>分享</value>
+  </data>
 </root>

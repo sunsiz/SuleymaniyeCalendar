@@ -23,7 +23,7 @@ namespace SuleymaniyeCalendar.ViewModels
 		[ObservableProperty]private int _fontSize = Preferences.Get("FontSize", 14);
 		
 		public int HeaderFontSize => (int)(FontSize * 1.5);
-		public int SubheaderFontSize => (int)(FontSize * 1.25);
+		public int SubHeaderFontSize => (int)(FontSize * 1.25);
 		public int CaptionFontSize => (int)(FontSize * 0.875);
 		
 		partial void OnFontSizeChanged(int value)
@@ -40,7 +40,7 @@ namespace SuleymaniyeCalendar.ViewModels
 			
 			// Notify dependent properties
 			OnPropertyChanged(nameof(HeaderFontSize));
-			OnPropertyChanged(nameof(SubheaderFontSize));
+			OnPropertyChanged(nameof(SubHeaderFontSize));
 			OnPropertyChanged(nameof(CaptionFontSize));
 			
 			// Calculate responsive scale factors
@@ -51,8 +51,9 @@ namespace SuleymaniyeCalendar.ViewModels
 			{
 				Application.Current.Resources["DefaultFontSize"] = (double)value;
 				Application.Current.Resources["HeaderFontSize"] = value * 1.5;
-				Application.Current.Resources["SubheaderFontSize"] = value * 1.25;
-				Application.Current.Resources["CaptionFontSize"] = value * 0.875;
+				Application.Current.Resources["SubHeaderFontSize"] = value * 1.25;
+				Application.Current.Resources["CaptionFontSize"] = value * 0.925;
+                Application.Current.Resources["BodyFontSize"] = value * 0.875;
 				Application.Current.Resources["FontScale"] = scale;
 			}
 		}

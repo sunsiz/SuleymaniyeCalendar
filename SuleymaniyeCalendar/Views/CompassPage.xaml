@@ -6,7 +6,8 @@
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     Title="{Binding Title}"
-    x:DataType="viewModels:CompassViewModel">
+    x:DataType="viewModels:CompassViewModel"
+    FlowDirection="{DynamicResource FlowDirection}">
 
     <Shell.TitleView>
         <Grid
@@ -22,13 +23,13 @@
             <ImageButton
                 Grid.Column="1"
                 Command="{Binding RefreshLocationCommand}"
-                SemanticProperties.Description="{localization:Translate Yenile}"
-                Style="{StaticResource IconButtonStyle}">
+                SemanticProperties.Description="{localization:Translate Yenile}">
                 <ImageButton.Source>
                     <FontImageSource
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="18" />
+                        Size="18"
+                        Color="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent100Color}}" />
                 </ImageButton.Source>
             </ImageButton>
         </Grid>
@@ -38,10 +39,10 @@
         <Grid>
             <ScrollView>
                 <VerticalStackLayout
-                    Padding="16"
+                    Padding="16,12"
                     BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
                                                       Dark={StaticResource AppBackgroundColorDark}}"
-                    Spacing="20">
+                    Spacing="10">
 
                     <!--  Compass Section  -->
                     <Border Style="{StaticResource Card}">
@@ -90,15 +91,17 @@
                                     Grid.Column="0"
                                     Spacing="6">
                                     <Label
+                                        FontAttributes="Bold"
+                                        HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeLabel}"
                                         Text="{localization:Translate EnlemFormatsiz}"
-                                        FontAttributes="Bold"
                                         TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource PrimaryAccent200Color}}" />
+                                                                    Dark={StaticResource PrimaryAccent100Color}}" />
                                     <Label
+                                        HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeLabel}"
-                                        Text="{Binding Latitude, StringFormat='{}{0:F6}'}"
-                                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                        Text="{Binding Latitude, StringFormat='{0:F6}'}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray900},
                                                                     Dark={StaticResource Gray300}}" />
                                 </VerticalStackLayout>
 
@@ -108,15 +111,17 @@
                                     Grid.Column="1"
                                     Spacing="6">
                                     <Label
+                                        FontAttributes="Bold"
+                                        HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeLabel}"
                                         Text="{localization:Translate BoylamFormatsiz}"
-                                        FontAttributes="Bold"
                                         TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource PrimaryAccent200Color}}" />
+                                                                    Dark={StaticResource PrimaryAccent100Color}}" />
                                     <Label
+                                        HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeLabel}"
-                                        Text="{Binding Longitude, StringFormat='{}{0:F6}'}"
-                                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                        Text="{Binding Longitude, StringFormat='{0:F6}'}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray900},
                                                                     Dark={StaticResource Gray300}}" />
                                 </VerticalStackLayout>
 
@@ -126,15 +131,17 @@
                                     Grid.Column="0"
                                     Spacing="6">
                                     <Label
+                                        FontAttributes="Bold"
+                                        HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeLabel}"
                                         Text="{localization:Translate YukseklikFormatsiz}"
-                                        FontAttributes="Bold"
                                         TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource PrimaryAccent200Color}}" />
+                                                                    Dark={StaticResource PrimaryAccent100Color}}" />
                                     <Label
+                                        HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeLabel}"
-                                        Text="{Binding Altitude, StringFormat='{}{0:N0} m'}"
-                                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                        Text="{Binding Altitude, StringFormat='{0:N0} m'}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray900},
                                                                     Dark={StaticResource Gray300}}" />
                                 </VerticalStackLayout>
 
@@ -144,36 +151,38 @@
                                     Grid.Column="1"
                                     Spacing="6">
                                     <Label
+                                        FontAttributes="Bold"
+                                        HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeLabel}"
                                         Text="{localization:Translate Aci}"
-                                        FontAttributes="Bold"
                                         TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource PrimaryAccent200Color}}" />
+                                                                    Dark={StaticResource PrimaryAccent100Color}}" />
                                     <Label
+                                        HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeLabel}"
-                                        Text="{Binding Heading, StringFormat='{}{0:F0}°'}"
-                                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                        Text="{Binding Heading, StringFormat='{0:F0}°'}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray900},
                                                                     Dark={StaticResource Gray300}}" />
                                 </VerticalStackLayout>
 
                                 <!--  Address - spans both columns  -->
-                                <VerticalStackLayout 
+                                <VerticalStackLayout
                                     Grid.Row="2"
                                     Grid.Column="0"
                                     Grid.ColumnSpan="2"
                                     Spacing="8">
                                     <Label
-                                        Style="{StaticResource LabelLargeLabel}"
-                                        Text="{localization:Translate Adres}"
                                         FontAttributes="Bold"
+                                        HorizontalTextAlignment="Center"
+                                        Style="{StaticResource TitleMediumLabel}"
+                                        Text="{localization:Translate Adres}"
                                         TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource PrimaryAccent200Color}}" />
+                                                                    Dark={StaticResource PrimaryAccent100Color}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
-                                        MaxLines="3"
                                         Style="{StaticResource BodyLargeLabel}"
                                         Text="{Binding Address}"
-                                        TextColor="{AppThemeBinding Light={StaticResource Gray700},
+                                        TextColor="{AppThemeBinding Light={StaticResource Gray900},
                                                                     Dark={StaticResource Gray300}}" />
                                 </VerticalStackLayout>
                             </Grid>

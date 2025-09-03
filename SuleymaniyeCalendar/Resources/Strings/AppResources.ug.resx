@@ -563,4 +563,13 @@
   <data name="Adres" xml:space="preserve">
     <value>ئادرېس</value>
   </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>توختىتىش</value>
+  </data>
+  <data name="Oynat" xml:space="preserve">
+    <value>قويۇش</value>
+  </data>
+  <data name="Paylas" xml:space="preserve">
+    <value>ھەمبەھىرلەش</value>
+  </data>
 </root>

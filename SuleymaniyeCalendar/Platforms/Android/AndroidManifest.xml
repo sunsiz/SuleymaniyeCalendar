@@ -1,9 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.suleymaniyevakfi" android:versionCode="4">
-	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:networkSecurityConfig="@xml/network_security_config" android:supportsRtl="true" android:label="Suleymaniye Calendar">
+	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:networkSecurityConfig="@xml/network_security_config" android:supportsRtl="true" android:label="Suleymaniye Calendar" android:enableOnBackInvokedCallback="true">
 		<receiver android:name=".BootReceiver" android:exported="false">
 			<intent-filter>
 				<action android:name="android.intent.action.BOOT_COMPLETED" />
+			</intent-filter>
+		</receiver>
+		<receiver android:name=".RadioNotificationReceiver" android:exported="false">
+			<intent-filter>
+				<action android:name="RADIO_PAUSE_ACTION" />
 			</intent-filter>
 		</receiver>
 	</application>

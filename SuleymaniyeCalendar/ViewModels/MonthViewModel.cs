@@ -19,23 +19,29 @@ namespace SuleymaniyeCalendar.ViewModels
 		[ObservableProperty] public ObservableCollection<Calendar> monthlyCalendar;
 		
 		public bool HasData => MonthlyCalendar?.Count > 0;
-		
-		public MonthViewModel(DataService dataService)
+        public bool ShowShare => Preferences.Get("LastLatitude", 0.0) != 0.0 && Preferences.Get("LastLongitude", 0.0) != 0.0;
+
+        public MonthViewModel(DataService dataService)
 		{
 			Title = AppResources.AylikTakvim;
 			_data = dataService;
 			MonthlyCalendar = new ObservableCollection<Calendar>();
-			IsBusy = true;
+			IsBusy = false; // Start with false to show window immediately
 		}
 
 		public async Task InitializeAsync()
 		{
 			if (MonthlyCalendar?.Count > 0)
 			{
-				IsBusy = false;
-				return;
+				return; // Already loaded
 			}
-				
+
+			// Set busy state immediately when loading starts
+			await MainThread.InvokeOnMainThreadAsync(() => 
+			{
+				IsBusy = true;
+			});
+			
 			await LoadMonthlyDataAsync().ConfigureAwait(false);
 		}
 
@@ -49,7 +55,8 @@ namespace SuleymaniyeCalendar.ViewModels
 				
 				if (location.Latitude != 0.0 && location.Longitude != 0.0)
 				{
-					var monthlyData = await Task.Run(() => _data.GetMonthlyPrayerTimes(location, false)).ConfigureAwait(false);
+					// Use new hybrid API approach: JSON first, XML fallback
+					var monthlyData = await _data.GetMonthlyPrayerTimesHybridAsync(location, false).ConfigureAwait(false);
 					
 					if (monthlyData == null)
 					{
@@ -60,9 +67,17 @@ namespace SuleymaniyeCalendar.ViewModels
 						return;
 					}
 					
+					// Batch update for better performance
 					await MainThread.InvokeOnMainThreadAsync(() => 
 					{
-						MonthlyCalendar = new ObservableCollection<Calendar>(monthlyData);
+						MonthlyCalendar.Clear();
+						
+						// Add all items at once for better performance
+						foreach (var item in monthlyData)
+						{
+							MonthlyCalendar.Add(item);
+						}
+						
 						OnPropertyChanged(nameof(HasData));
 					});
 				}
@@ -76,7 +91,10 @@ namespace SuleymaniyeCalendar.ViewModels
 			}
 			finally
 			{
-				IsBusy = false;
+				await MainThread.InvokeOnMainThreadAsync(() => 
+				{
+					IsBusy = false;
+				});
 			}
 		}
 
@@ -90,7 +108,8 @@ namespace SuleymaniyeCalendar.ViewModels
 				Location location = await _data.GetCurrentLocationAsync(true).ConfigureAwait(false);
 				if (location != null && location.Latitude != 0 && location.Longitude != 0)
 				{
-					var monthlyData = await Task.Run(() => _data.GetMonthlyPrayerTimes(location, true)).ConfigureAwait(false);
+					// Use new hybrid API approach with force refresh
+					var monthlyData = await _data.GetMonthlyPrayerTimesHybridAsync(location, true).ConfigureAwait(false);
 					
 					if (monthlyData == null)
 					{
@@ -101,9 +120,17 @@ namespace SuleymaniyeCalendar.ViewModels
 					}
 					else
 					{
+						// Batch update for better performance
 						await MainThread.InvokeOnMainThreadAsync(() => 
 						{
-							MonthlyCalendar = new ObservableCollection<Calendar>(monthlyData);
+							MonthlyCalendar.Clear();
+							
+							// Add all items at once for better performance
+							foreach (var item in monthlyData)
+							{
+								MonthlyCalendar.Add(item);
+							}
+							
 							OnPropertyChanged(nameof(HasData));
 							ShowToast(AppResources.AylikTakvimYenilendi);
 						});
@@ -112,7 +139,10 @@ namespace SuleymaniyeCalendar.ViewModels
 			}
 			finally
 			{
-				IsBusy = false;
+				await MainThread.InvokeOnMainThreadAsync(() => 
+				{
+					IsBusy = false;
+				});
 			}
 		}
 
@@ -121,5 +151,15 @@ namespace SuleymaniyeCalendar.ViewModels
 		{
 			await Shell.Current.GoToAsync("..").ConfigureAwait(false);
 		}
+
+        [RelayCommand]
+        private async Task Share()
+        {
+            var latitude = Preferences.Get("LastLatitude", 0.0);
+            var longitude = Preferences.Get("LastLongitude", 0.0);
+            var url =
+                $"https://www.suleymaniyetakvimi.com/monthlyCalendar.html?latitude={latitude}&longitude={longitude}&monthId={DateTime.Today.Month}";
+            await Launcher.OpenAsync(url).ConfigureAwait(false);
+        }
 	}
 }

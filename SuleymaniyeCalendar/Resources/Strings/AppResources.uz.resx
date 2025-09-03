@@ -563,4 +563,13 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="Adres" xml:space="preserve">
     <value>Manzil</value>
   </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>Toʻxtatish</value>
+  </data>
+  <data name="Oynat" xml:space="preserve">
+    <value>Oʻynatish</value>
+  </data>
+  <data name="Paylas" xml:space="preserve">
+    <value>Baham ko'ring</value>
+  </data>
 </root>
