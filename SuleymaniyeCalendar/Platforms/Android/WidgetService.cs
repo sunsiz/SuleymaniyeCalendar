@@ -181,6 +181,9 @@ namespace SuleymaniyeCalendar
 				updateViews.SetTextColor(Resource.Id.widgetLastRefreshed, secondaryTextColor);
 				updateViews.SetTextColor(Resource.Id.widgetSehirAdi, textColor);
 				updateViews.SetTextColor(Resource.Id.widgetSehir, primaryColor);
+				
+				// FontAwesome refresh icon
+				updateViews.SetTextColor(Resource.Id.widgetRefreshIcon, primaryColor);
 			}
 			catch (System.Exception ex)
 			{

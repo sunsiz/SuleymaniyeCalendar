@@ -66,15 +66,18 @@
 					android:layout_marginRight="3dip"
 					android:layout_gravity="center_vertical|end"
 					android:textSize="14dp" />
-				<ImageView
+				<TextView
 					android:id="@+id/widgetRefreshIcon"
-					android:src="@drawable/refresh"
+					android:text="↻"
+					android:textColor="#5c3021"
 					android:layout_marginLeft="3dip"
 					android:layout_marginTop="5dip"
 					android:layout_gravity="center_vertical|end"
 					android:baselineAlignBottom="false"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
+					android:textSize="22dp"
+					android:textStyle="bold"
 					android:contentDescription="@string/refresh"
 					android:pointerIcon="hand"/>
 			</LinearLayout>

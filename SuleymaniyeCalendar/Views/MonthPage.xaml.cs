@@ -26,23 +26,26 @@ public partial class MonthPage : ContentPage
 
         if (!_tableBuilt)
         {
+            // Always create table immediately for instant UI
+            CreateTableImmediately();
+            
             // Check if we have data already (subsequent visits)
             if (_viewModel.HasData)
             {
-                // We have data, show table immediately
-                CreateAndShowTable();
+                // Data is already available, no need to load
+                return;
             }
             else
             {
-                // First time - start loading data, table will be created when loading completes
-                _ = LoadDataAndShowTable();
+                // First time - start delayed loading for smooth UX
+                _ = LoadDataWithDelay();
             }
         }
     }
 
-    private void CreateAndShowTable()
+    private void CreateTableImmediately()
     {
-        // This is only called when we have data ready
+        // Create table structure immediately, even if data is empty
         if (!_tableBuilt)
         {
             var table = new MonthTableView { BindingContext = BindingContext };
@@ -51,15 +54,9 @@ public partial class MonthPage : ContentPage
         }
     }
 
-    private async Task LoadDataAndShowTable()
+    private async Task LoadDataWithDelay()
     {
-        // Start loading data - this will automatically show the loading indicator via IsBusy
-        await _viewModel.InitializeAsync();
-        
-        // Only create and show table after data is fully loaded
-        if (_viewModel.HasData)
-        {
-            CreateAndShowTable();
-        }
+        // Use new delayed loading approach for better UX
+        await _viewModel.InitializeWithDelayAsync();
     }
 }

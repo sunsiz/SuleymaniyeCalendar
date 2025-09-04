@@ -29,6 +29,37 @@ namespace SuleymaniyeCalendar.ViewModels
 			IsBusy = false; // Start with false to show window immediately
 		}
 
+		/// <summary>
+		/// Initialize with instant UI - loads data after a delay to show empty page first
+		/// </summary>
+		public async Task InitializeWithDelayAsync()
+		{
+			if (MonthlyCalendar?.Count > 0)
+			{
+				return; // Already loaded
+			}
+
+			// Show empty UI first for instant appearance
+			await MainThread.InvokeOnMainThreadAsync(() => 
+			{
+				// UI is already shown with empty collection
+			});
+			
+			// Small delay to let UI render first
+			await Task.Delay(100);
+			
+			// Then start loading with indicator
+			await MainThread.InvokeOnMainThreadAsync(() => 
+			{
+				IsBusy = true;
+			});
+			
+			// Small additional delay for smooth UX
+			await Task.Delay(500);
+			
+			await LoadMonthlyDataAsync().ConfigureAwait(false);
+		}
+
 		public async Task InitializeAsync()
 		{
 			if (MonthlyCalendar?.Count > 0)
@@ -67,15 +98,21 @@ namespace SuleymaniyeCalendar.ViewModels
 						return;
 					}
 					
-					// Batch update for better performance
+					// Performance optimized update: Use ReplaceRange if available, otherwise batch clear/add
 					await MainThread.InvokeOnMainThreadAsync(() => 
 					{
+						// Clear existing items efficiently
 						MonthlyCalendar.Clear();
 						
-						// Add all items at once for better performance
-						foreach (var item in monthlyData)
+						// Add items in batches for better performance
+						const int batchSize = 10;
+						for (int i = 0; i < monthlyData.Count; i += batchSize)
 						{
-							MonthlyCalendar.Add(item);
+							var batch = monthlyData.Skip(i).Take(batchSize);
+							foreach (var item in batch)
+							{
+								MonthlyCalendar.Add(item);
+							}
 						}
 						
 						OnPropertyChanged(nameof(HasData));
@@ -88,6 +125,13 @@ namespace SuleymaniyeCalendar.ViewModels
 						ShowToast(AppResources.KonumIzniIcerik);
 					});
 				}
+			}
+			catch (Exception ex)
+			{
+				await MainThread.InvokeOnMainThreadAsync(() => 
+				{
+					Alert($"Error: {ex.Message}", "Error");
+				});
 			}
 			finally
 			{

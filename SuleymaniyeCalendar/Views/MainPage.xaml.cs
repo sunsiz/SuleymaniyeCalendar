@@ -24,19 +24,32 @@ public partial class MainPage : ContentPage
 	{
 		base.OnAppearing();
 
-		if (Application.Current != null)
-			Application.Current.Resources["DefaultFontSize"] = Preferences.Get("FontSize", 14);
+		// Optimize font loading - only update if actually changed
+		var currentFontSize = Application.Current?.Resources.TryGetValue("DefaultFontSize", out var existingSize) == true 
+			? Convert.ToDouble(existingSize) : 14.0;
+		var preferredFontSize = Preferences.Get("FontSize", 14);
+		
+		if (Math.Abs(currentFontSize - preferredFontSize) > 0.1)
+		{
+			if (Application.Current != null)
+				Application.Current.Resources["DefaultFontSize"] = preferredFontSize;
+		}
 
 		var selectedLanguage = Preferences.Get("SelectedLanguage", "tr");
-		var ci = new CultureInfo(selectedLanguage);
+		
+		// Optimize culture setting - only update if actually changed
+		if (CultureInfo.CurrentCulture.Name != selectedLanguage)
+		{
+			var ci = new CultureInfo(selectedLanguage);
 
-		// Update both systems: XAML translations and resx-backed C# strings
-		_resourceManager.CurrentCulture = ci;
-		AppResources.Culture = ci;
-		CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = ci;
+			// Update both systems: XAML translations and resx-backed C# strings
+			_resourceManager.CurrentCulture = ci;
+			AppResources.Culture = ci;
+			CultureInfo.CurrentCulture = CultureInfo.CurrentUICulture = ci;
 
-		// Apply RTL layout direction
-		_rtlService.ApplyFlowDirection(selectedLanguage);
+			// Apply RTL layout direction only if language changed
+			_rtlService.ApplyFlowDirection(selectedLanguage);
+		}
 
 		_viewModel.OnAppearing(); // single refresh path
 	}

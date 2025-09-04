@@ -24,8 +24,8 @@
                         <Label Style="{StaticResource TitleMediumLabel}" Text="{localization:Translate UygulamaDili}" />
                         <Picker
                             Title="{localization:Translate UygulamaDiliniSecin}"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariantColor},
-                                                              Dark={StaticResource SurfaceVariantColorDark}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceColor},
+                                                              Dark={StaticResource SurfaceColorDark}}"
                             HorizontalOptions="Fill"
                             ItemDisplayBinding="{Binding Name}"
                             ItemsSource="{Binding SupportedLanguages}"
