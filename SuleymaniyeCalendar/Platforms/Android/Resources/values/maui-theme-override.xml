@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- Override MAUI base theme parent away from MaterialComponents to avoid missing style refs
+       when building without explicit Material libs on net9 multi-target. -->
+  <style name="Maui.MainTheme.Base" parent="Theme.AppCompat.DayNight.NoActionBar" />
+</resources>
