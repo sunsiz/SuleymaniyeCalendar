@@ -1,10 +1,16 @@
 using Android.App;
 using Android.Content;
 using Android.OS;
+// NOTE: We add an explicit Name so the generated Java class matches the manifest entry
+// (org.suleymaniyevakfi.BootReceiver). Without this, Android tried to load
+// org.suleymaniyevakfi.BootReceiver but the actual marshalled type name differed,
+// resulting in ClassNotFoundException at boot/time change broadcasts.
 
 namespace SuleymaniyeCalendar;
 
-[BroadcastReceiver(Enabled = true, Exported = false)]
+[BroadcastReceiver(Enabled = true, Exported = true, Name = "org.suleymaniyevakfi.BootReceiver")]
+// We rely on intent-filters declared in AndroidManifest.xml; alternatively could add
+// [IntentFilter] attributes here.
 public class BootReceiver : BroadcastReceiver
 {
     public override void OnReceive(Context context, Intent intent)
@@ -18,8 +24,8 @@ public class BootReceiver : BroadcastReceiver
                            || action == Intent.ActionTimezoneChanged
                            || action == Intent.ActionMyPackageReplaced;
 
-        if (!shouldStart) return;
-        if (!Preferences.Get("ForegroundServiceEnabled", true)) return;
+    if (!shouldStart) return;
+    if (!Preferences.Get("ForegroundServiceEnabled", true)) return;
 
         var startIntent = new Intent(context, typeof(AlarmForegroundService))
             .SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
