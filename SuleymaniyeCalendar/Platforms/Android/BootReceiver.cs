@@ -9,8 +9,12 @@ using Android.OS;
 namespace SuleymaniyeCalendar;
 
 [BroadcastReceiver(Enabled = true, Exported = true, Name = "org.suleymaniyevakfi.BootReceiver")]
-// We rely on intent-filters declared in AndroidManifest.xml; alternatively could add
-// [IntentFilter] attributes here.
+[IntentFilter(new[] {
+    Intent.ActionBootCompleted,
+    Intent.ActionTimeChanged,
+    Intent.ActionTimezoneChanged,
+    Intent.ActionMyPackageReplaced })]
+// Intent filters moved from manifest to attribute to avoid duplicate merged entries.
 public class BootReceiver : BroadcastReceiver
 {
     public override void OnReceive(Context context, Intent intent)
