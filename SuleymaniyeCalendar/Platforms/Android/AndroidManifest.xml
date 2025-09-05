@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.suleymaniyevakfi" android:versionCode="4">
 	<application android:allowBackup="true" android:icon="@mipmap/appicon" android:networkSecurityConfig="@xml/network_security_config" android:supportsRtl="true" android:label="Suleymaniye Calendar" android:enableOnBackInvokedCallback="true">
-		<receiver android:name=".BootReceiver" android:exported="true" />
-		<receiver android:name=".RadioNotificationReceiver" android:exported="true" />
+		<!-- Removed BootReceiver & RadioNotificationReceiver manifest declarations; now defined via attributes -->
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
