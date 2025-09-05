@@ -4,7 +4,7 @@ using SuleymaniyeCalendar.Services;
 
 namespace SuleymaniyeCalendar.Platforms.Android
 {
-    [BroadcastReceiver(Enabled = true, Exported = true)]
+    [BroadcastReceiver(Enabled = true, Exported = true, Name = "org.suleymaniyevakfi.RadioNotificationReceiver")]
     [IntentFilter(new[] { "RADIO_PAUSE_ACTION" })]
     public class RadioNotificationReceiver : BroadcastReceiver
     {
