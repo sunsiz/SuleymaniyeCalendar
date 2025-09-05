@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Icu.Util;
 using Android.OS;
 using Android.Util;
+using AndroidX.Core.App;
 using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.Services;
 using Application = Android.App.Application;
@@ -23,6 +24,7 @@ namespace SuleymaniyeCalendar
 		private Handler _handler;
 		private Action _runnable;
 		private int _counter;
+		private DateTime _lastRescheduleAttemptUtc = DateTime.MinValue;
 		
 		public override IBinder OnBind(Intent intent)
 		{
@@ -77,20 +79,11 @@ namespace SuleymaniyeCalendar
 
 				var pendingIntent = PendingIntent.GetBroadcast(Application.Context, requestCode, broadcastIntent, flags);
 
-				// Prefer AlarmClockInfo to improve reliability on Android 12+
-				if (Build.VERSION.SdkInt >= BuildVersionCodes.Kitkat)
-				{
-					// Optional affordance to open MainActivity when tapping the system alarm affordance
-					var showIntent = PendingIntent.GetActivity(Application.Context, requestCode,
-						new Intent(Application.Context, typeof(MainActivity)), flags);
-
-					var info = new AlarmManager.AlarmClockInfo(calendar.TimeInMillis, showIntent);
-					alarmManager?.SetAlarmClock(info, pendingIntent);
-				}
-				else
-				{
-					alarmManager?.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, calendar.TimeInMillis, pendingIntent);
-				}
+				// Min SDK 26: Always use AlarmClockInfo for exact, doze-resilient delivery with system affordance.
+				var showIntent = PendingIntent.GetActivity(Application.Context, requestCode,
+					new Intent(Application.Context, typeof(MainActivity)), flags);
+				var info = new AlarmManager.AlarmClockInfo(calendar.TimeInMillis, showIntent);
+				alarmManager?.SetAlarmClock(info, pendingIntent);
 				//else
 				//    alarmManager?.SetExact(AlarmType.RtcWakeup, calendar.TimeInMillis, pendingIntent);
 				System.Diagnostics.Debug.WriteLine("SetAlarm", $"Alarm set for {calendar.Time} for {name}");
@@ -99,20 +92,77 @@ namespace SuleymaniyeCalendar
 
 		public void CancelAlarm()
 		{
-			//Analytics.TrackEvent("CancelAlarm in the AlarmForegroundService Triggered: " + $" at {DateTime.Now}");
-			//AlarmManager alarmManager = (AlarmManager)Application.Context.GetSystemService(Context.AlarmService);
-			//Intent intent = new Intent(Application.Context, typeof(AlarmActivity));
-			//var pendingIntentFlags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
-			//	? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
-			//	: PendingIntentFlags.UpdateCurrent;
-			//PendingIntent pendingIntent = PendingIntent.GetBroadcast(Application.Context, 0, intent, pendingIntentFlags);
-			//alarmManager?.Cancel(pendingIntent);
+			// Cancel all scheduled alarms created by SetAlarm (monthly exact alarms).
+			// Strategy:
+			// - We deterministically derive the requestCode for each prayer/day using the same scheme as SetAlarm.
+			// - Iterate a safe window around today (past few days + ~2 months ahead) and cancel matching PendingIntents.
+			// - Use FLAG_NO_CREATE to avoid creating new PendingIntents; if found, cancel via AlarmManager and PI.Cancel().
+			try
+			{
+				var alarmManager = (AlarmManager)Application.Context.GetSystemService(Context.AlarmService);
+				if (alarmManager is null)
+					return;
+
+				// Offsets mirror SetAlarm's switch mapping. We only need offsets; not the localized names.
+				// Keys are descriptive; values are offsets added to DayOfYear.
+				var offsets = new Dictionary<string, int>
+				{
+					{"FalseFajr", 1000},
+					{"Fajr", 2000},
+					{"Sunrise", 3000},
+					{"Dhuhr", 4000},
+					{"Asr", 5000},
+					{"Maghrib", 6000},
+					{"Isha", 7000},
+					{"EndOfIsha", 8000}
+				};
+
+				// Cover slight past and all future we schedule (30 days) with a buffer.
+				var start = DateTime.Today.AddDays(-2);
+				var end = DateTime.Today.AddDays(60);
+
+				// Flags to retrieve existing PendingIntents (don't create new ones)
+				var lookupFlags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
+					? PendingIntentFlags.NoCreate | PendingIntentFlags.Immutable
+					: PendingIntentFlags.NoCreate;
+
+				for (var dt = start; dt <= end; dt = dt.AddDays(1))
+				{
+					var dayOfYear = dt.DayOfYear;
+					foreach (var offset in offsets.Values)
+					{
+						var requestCode = dayOfYear + offset;
+						var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
+						var pi = PendingIntent.GetBroadcast(Application.Context, requestCode, intent, lookupFlags);
+						if (pi is not null)
+						{
+							try
+							{
+								alarmManager.Cancel(pi);
+								pi.Cancel();
+							}
+							catch (Exception ex)
+							{
+								System.Diagnostics.Debug.WriteLine($"CancelAlarm: Failed to cancel PI {requestCode}: {ex.Message}");
+							}
+						}
+					}
+				}
+
+				// Clear last scheduled date so auto-rescheduler in the service won't reschedule immediately.
+				Preferences.Set("LastAlarmDate", string.Empty);
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"CancelAlarm error: {ex.Message}");
+			}
 		}
 
 		public override void OnCreate()
 		{
 			base.OnCreate();
-			_handler = new Handler();
+			// Use main looper-bound Handler; default ctor is obsolete on modern Android
+			_handler = new Handler(Looper.MainLooper);
 			_notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
             // Ensure all alarm channels (with sounds) exist before any alarm fires
             NotificationChannelManager.CreateAlarmNotificationChannels();
@@ -139,6 +189,42 @@ namespace SuleymaniyeCalendar
 					System.Diagnostics.Debug.WriteLine($"An exception occured when starting widget service, details: {exception.Message}");
 				}
 				_counter = 0;
+
+				// Auto-reschedule monthly alarms when approaching the end of the current window.
+				// This keeps alarms reliable even if the app isn't opened for a long time.
+				try
+				{
+					var lastStr = Preferences.Get("LastAlarmDate", string.Empty);
+					if (!string.IsNullOrWhiteSpace(lastStr) && DateTime.TryParse(lastStr, out var last))
+					{
+						var nowUtc = DateTime.UtcNow;
+						// Avoid reattempting too frequently
+						if (nowUtc - _lastRescheduleAttemptUtc > TimeSpan.FromHours(6))
+						{
+							if (DateTime.Today >= last.AddDays(-3))
+							{
+								_lastRescheduleAttemptUtc = nowUtc;
+								Task.Run(async () =>
+								{
+									try
+									{
+										var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
+												?? new DataService(this);
+										await data.SetMonthlyAlarmsAsync();
+									}
+									catch (Exception ex)
+									{
+										System.Diagnostics.Debug.WriteLine($"Auto-reschedule error: {ex.Message}");
+									}
+								});
+							}
+						}
+					}
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine($"Reschedule check failed: {ex.Message}");
+				}
 			});
 			_handler.PostDelayed(_runnable, DELAY_BETWEEN_MESSAGES);
 			_isStarted = true;
@@ -188,17 +274,16 @@ namespace SuleymaniyeCalendar
 			}
 			else
 			{
-				var builder = new Notification.Builder(this)
+				var compat = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
 					.SetContentTitle(notificationTitle)
-					.SetStyle(textStyle)
+					.SetStyle(new NotificationCompat.BigTextStyle().BigText((Preferences.Get("NotificationPrayerTimesEnabled", false) ? GetTodaysPrayerTimes() : string.Empty)))
 					.SetSmallIcon(Resource.Drawable.app_logo)
 					.SetContentIntent(BuildIntentToShowMainActivity())
 					.SetWhen(Java.Lang.JavaSystem.CurrentTimeMillis())
 					.SetShowWhen(true)
 					.SetOngoing(true)
 					.SetOnlyAlertOnce(true);
-				
-				_notification = builder.Build();
+				_notification = compat.Build();
 			}
 		}
 
@@ -317,7 +402,7 @@ namespace SuleymaniyeCalendar
 							System.Diagnostics.Debug.WriteLine("OnStartCommand: " + $"Starting Set Alarm at {DateTime.Now}");
 							var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
 										?? new DataService(this);
-							await data.SetWeeklyAlarmsAsync();
+										await data.SetMonthlyAlarmsAsync();
 						}
 						catch (Exception ex)
 						{
@@ -331,7 +416,16 @@ namespace SuleymaniyeCalendar
 			else if (intent.Action.Equals("SuleymaniyeTakvimi.action.STOP_SERVICE"))
 			{
 				//Log.Info(TAG, "OnStartCommand: The service is stopping.");
-				StopForeground(true);
+				if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+				{
+					StopForeground(StopForegroundFlags.Remove);
+				}
+				else
+				{
+					#pragma warning disable CA1422
+					StopForeground(true);
+					#pragma warning restore CA1422
+				}
 				StopSelf(NOTIFICATION_ID);
 				_isStarted = false;
 			}

@@ -20,7 +20,7 @@
                 <VerticalStackLayout Spacing="8">
                     <Label
                         FontAttributes="Bold"
-                        FontSize="24"
+                        FontSize="{DynamicResource HeadlineLarge}"
                         HorizontalTextAlignment="Center"
                         Style="{StaticResource HeadlineMediumLabel}"
                         Text="{Binding Title}" />
@@ -44,7 +44,7 @@
                     <Label
                         Grid.Column="1"
                         FontAttributes="Bold"
-                        FontSize="18"
+                        FontSize="{DynamicResource SubHeaderFontSize}"
                         Style="{StaticResource TitleMediumLabel}"
                         Text="{Binding Time}"
                         VerticalTextAlignment="Center" />
@@ -190,7 +190,7 @@
                                                     <FontImageSource
                                                         FontFamily="{StaticResource IconFontFamily}"
                                                         Glyph="&#xf04b;"
-                                                        Size="20"
+                                                        Size="{DynamicResource IconSmallFontSize}"
                                                         Color="{AppThemeBinding Light={StaticResource White},
                                                                                 Dark={StaticResource PrimaryColor}}" />
                                                 </Setter.Value>
@@ -205,7 +205,7 @@
                                                     <FontImageSource
                                                         FontFamily="{StaticResource IconFontFamily}"
                                                         Glyph="&#xf04d;"
-                                                        Size="20"
+                                                        Size="{DynamicResource IconSmallFontSize}"
                                                         Color="{AppThemeBinding Light={StaticResource White},
                                                                                 Dark={StaticResource PrimaryColor}}" />
                                                 </Setter.Value>
@@ -233,7 +233,7 @@
                         BackgroundColor="Transparent"
                         Command="{Binding GoBackCommand}"
                         FontAttributes="Bold"
-                        FontSize="16"
+                        FontSize="{DynamicResource DefaultFontSize}"
                         HorizontalOptions="Fill"
                         Text="{localization:Translate Kapat}"
                         TextColor="{AppThemeBinding Light={StaticResource White},

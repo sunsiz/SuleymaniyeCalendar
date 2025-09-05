@@ -1,13 +1,14 @@
 # AI working guide for SuleymaniyeCalendar
 
-This is a .NET MAUI prayer times app (Android, iOS, Windows) using CommunityToolkit.MVVM, Shell navigation, and localization. Features Material Design 3 UI with dynamic typography and performance-optimized async patterns.
+This is a .NET MAUI prayer times app (Android, iOS, Windows) using CommunityToolkit.MVVM, Shell navigation, and localization. Features Material Design 3 UI with dynamic typography, performance-optimized async patterns, and comprehensive RTL support.
 
 ## Big picture architecture
 - **MVVM pattern**: ViewModels inherit from `BaseViewModel` (ObservableObject), Views in `Views/`, Shell navigation in `AppShell.xaml`
-- **Central service**: `DataService` handles location, prayer time API calls, caching, and alarm scheduling
+- **Hybrid API system**: `DataService` + `JsonApiService` with fallback: Try new JSON API first, fallback to legacy XML API
 - **DI container**: All types registered as singletons in `MauiProgram.CreateMauiApp()` with constructor injection
 - **Localization**: Uses `LocalizationResourceManager.Maui` with `AppResources.resx`, XAML binds via `{localization:Translate Key}`
-- **Prayer data flow**: API → XML cache → Calendar models → Prayer ViewModels → UI cards
+- **Prayer data flow**: JSON API → JSON cache → Calendar models → Prayer ViewModels → UI cards (with XML fallback)
+- **Performance layer**: `BackgroundDataPreloader` + `PerformanceService` for proactive caching and monitoring
 
 ## Key patterns unique to this codebase
 
@@ -26,15 +27,30 @@ Uses `DynamicResource` throughout for app-wide font scaling:
 ```
 BaseViewModel manages font scale: `HeaderFontSize` (1.5x), `SubheaderFontSize` (1.25x), `DefaultFontSize` (1x)
 
-### 3. UI-first async loading pattern
-ViewModels show UI immediately, then load data async:
+### 3. Delayed loading pattern for instant UI
+ViewModels show UI immediately, then load data with delays for smooth UX:
 ```csharp
-public MonthViewModel(DataService dataService) {
-    MonthlyCalendar = new ObservableCollection<Calendar>();
-    _ = LoadMonthlyDataAsync(); // Fire-and-forget
+public async Task InitializeWithDelayAsync() {
+    // Show empty UI first (100ms) → Loading indicator (500ms) → Background data load
+    await Task.Delay(100);
+    IsBusy = true;
+    await Task.Delay(500);
+    await LoadMonthlyDataAsync();
 }
 ```
 Always use `MainThread.InvokeOnMainThreadAsync()` for UI updates from background tasks.
+
+### 4. Hybrid API pattern (critical for reliability)
+All data fetching uses JSON-first with XML fallback:
+```csharp
+// Strategy 1: Try new JSON API
+var jsonResult = await _jsonApiService.GetMonthlyPrayerTimesAsync(lat, lng, month);
+if (jsonResult != null) return jsonResult;
+
+// Strategy 2: Fallback to legacy XML API  
+return GetMonthlyPrayerTimes(location, forceRefresh);
+```
+Use `GetMonthlyPrayerTimesHybridAsync()` and `GetDailyPrayerTimesHybridAsync()` methods.
 
 ### 4. Prayer state management
 Each prayer has temporal states (Past/Current/Future) calculated in `MainViewModel.CheckState()`:
@@ -43,20 +59,37 @@ asr.State = CheckState(DateTime.Parse(_calendar.Asr), DateTime.Parse(_calendar.M
 asr.UpdateVisualState(); // Updates colors/icons based on state
 ```
 
-### 5. Platform-specific service registration
+### 5. Comprehensive RTL support  
+All pages support right-to-left languages via `IRtlService`:
 ```csharp
-#if ANDROID
-    builder.Services.AddSingleton<IAlarmService, AlarmForegroundService>();
-#else
-    builder.Services.AddSingleton<IAlarmService, NullAlarmService>();
-#endif
+// XAML: FlowDirection binding for all layouts
+FlowDirection="{Binding FlowDirection}"
+
+// C#: Conditional resource updates
+if (_rtlService.IsRightToLeft) {
+    this.FlowDirection = FlowDirection.RightToLeft;
+}
 ```
+Widget layouts include RTL variants: `Widget.axml` and `WidgetRtl.axml`.
+
+### 6. Performance optimizations
+- **Batched collection updates**: Use 10-item batches for large collections
+- **Conditional font/culture**: Only update when changed to avoid overhead  
+- **Background preloading**: `BackgroundDataPreloader` caches data after app launch
+- **Safe type conversion**: Always use `Convert.ToDouble(value)` instead of casting
 
 ## DataService responsibilities (the system hub)
 - **Prayer times**: Fetches from `http://servis.suleymaniyetakvimi.com/servis.asmx` (XML), caches to `%LOCALAPPDATA%/monthlycalendar.xml`
+- **JSON API**: Primary data source via `JsonApiService` at `api.suleymaniyetakvimi.com` with local JSON caching
 - **Location**: Handles permissions, GPS, geocoding with robust fallbacks
 - **Alarms**: Schedules up to 15 days via `IAlarmService` using user notification offsets
 - **Network resilience**: Uses cached data when offline, shows appropriate toasts
+
+## JsonApiService integration
+- **Endpoint pattern**: `https://api.suleymaniyetakvimi.com/api/TimeCalculation/TimeCalculate[ByMonth]`
+- **Response models**: `JsonPrayerTimeResponse` (single day), `JsonMonthlyPrayerTimeResponse` (full month)
+- **Error handling**: Always check `IsSuccess` property before using `Data`
+- **Fallback strategy**: XML API used when JSON fails or returns null
 
 ## Navigation patterns
 - Tab navigation declared in `AppShell.xaml`, extra routes registered in `AppShell.xaml.cs`
@@ -68,8 +101,17 @@ asr.UpdateVisualState(); // Updates colors/icons based on state
 ```xaml
 <Border Style="{StaticResource Card}">            <!-- Standard card -->
 <Border Style="{StaticResource CurrentPrayerCard}"> <!-- Enhanced emphasis -->
+<Border Style="{StaticResource AnimatedPrayerCard}"> <!-- Prayer state animations -->
+<Border Style="{StaticResource SettingsCard}">      <!-- Settings with hover -->
+<Border Style="{StaticResource MediaCard}">         <!-- Radio/media controls -->
 ```
 Cards use `SurfaceVariantColor` backgrounds, `OutlineColor` borders, automatic light/dark theming.
+
+## Android widget system
+- **Theme awareness**: Automatically detects light/dark mode via `IsSystemDarkMode()`
+- **RTL support**: Dual layouts `Widget.axml` and `WidgetRtl.axml` with automatic selection
+- **Color management**: `ApplyThemeColors()` updates all widget elements including refresh icon
+- **Background updates**: `WidgetService` refreshes on theme/language changes without user action
 
 ## Preferences storage patterns
 - Prayer toggles: `{prayerId}Enabled` (e.g., "fajrEnabled")
@@ -90,5 +132,7 @@ dotnet run --framework net9.0-android  # Run on Android
 - WinUI location permissions treated as always granted
 - Compass disposal requires explicit cleanup in `CompassViewModel.Dispose()`
 - FontAwesome icons use Unicode glyphs: `FontFamily="{StaticResource IconFontFamily}"`
+- JSON deserialization: Check `JsonResponse.IsSuccess` before accessing `Data` property
+- Widget icons: Use Unicode symbols instead of FontAwesome for better compatibility
 
 Quick file pointers: `MauiProgram.cs` (DI), `DataService.cs` (core logic), `BaseViewModel.cs` (MVVM foundation), `AppShell.xaml` (navigation), `Resources/Styles/` (Material Design 3 theming).

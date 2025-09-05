@@ -15,21 +15,28 @@ using Microsoft.Maui.ApplicationModel;
 
 namespace SuleymaniyeCalendar.ViewModels
 {
-	public partial class CompassViewModel:BaseViewModel
+	public partial class CompassViewModel : BaseViewModel
 	{
-		
-		[ObservableProperty]private string _latitudeAltitude;
+		// AOT-safe explicit properties using SetProperty
+		private string latitudeAltitude;
+		public string LatitudeAltitude { get => latitudeAltitude; set => SetProperty(ref latitudeAltitude, value); }
 
-		[ObservableProperty]private string _address;
+		private string address;
+		public string Address { get => address; set => SetProperty(ref address, value); }
 
-		[ObservableProperty]private string _degreeLongitude;
+		private string degreeLongitude;
+		public string DegreeLongitude { get => degreeLongitude; set => SetProperty(ref degreeLongitude, value); }
 
-		[ObservableProperty]private double _heading;
+		private double heading;
+		public double Heading { get => heading; set => SetProperty(ref heading, value); }
 
 		// Expose raw numeric values so labels can be localized in XAML
-		[ObservableProperty] private double _latitude;
-		[ObservableProperty] private double _altitude;
-		[ObservableProperty] private double _longitude;
+		private double latitude;
+		public double Latitude { get => latitude; set => SetProperty(ref latitude, value); }
+		private double altitude;
+		public double Altitude { get => altitude; set => SetProperty(ref altitude, value); }
+		private double longitude;
+		public double Longitude { get => longitude; set => SetProperty(ref longitude, value); }
 		
 		private double _currentLatitude = 41.0;
 		private double _currentLongitude = 29.0;
@@ -62,6 +69,7 @@ namespace SuleymaniyeCalendar.ViewModels
 				//using (UserDialogs.Instance.Loading(AppResources.Yenileniyor))
 				//{
 			IsBusy = true;
+			// Explicit user action: force fresh GPS fix
 			var location = await _dataService.GetCurrentLocationAsync(true).ConfigureAwait(false);
 			if (location != null && location.Latitude != 0 && location.Longitude != 0)
 			{

@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using SuleymaniyeCalendar.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -14,11 +15,18 @@ namespace SuleymaniyeCalendar.Services
     {
         private readonly HttpClient _httpClient;
         private const string BaseUrl = "https://api.suleymaniyetakvimi.com/api/";
+        private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            AllowTrailingCommas = true
+        };
 
         public JsonApiService()
         {
-            _httpClient = new HttpClient();
-            _httpClient.Timeout = TimeSpan.FromSeconds(30);
+            _httpClient = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(30)
+            };
         }
 
         /// <summary>
@@ -35,23 +43,24 @@ namespace SuleymaniyeCalendar.Services
 
                 Debug.WriteLine($"JSON API Daily Request: {url}");
 
-                var response = await _httpClient.GetAsync(url);
+                var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+                var jsonContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
                 if (!response.IsSuccessStatusCode)
                 {
-                    Debug.WriteLine($"JSON API Daily failed with status: {response.StatusCode}");
+                    Debug.WriteLine($"JSON API Daily failed with status: {response.StatusCode}, body: {jsonContent}");
                     return null;
                 }
 
-                var jsonContent = await response.Content.ReadAsStringAsync();
-                var jsonResponse = JsonSerializer.Deserialize<JsonPrayerTimeResponse>(jsonContent);
-
-                if (jsonResponse?.IsSuccess == true && jsonResponse.Data != null)
+                var normalized = NormalizeJson(jsonContent);
+                var dto = JsonSerializer.Deserialize<TimeCalcDto>(normalized, _jsonOptions);
+                if (dto is null)
                 {
-                    return ConvertJsonDataToCalendar(jsonResponse.Data, altitude);
+                    Debug.WriteLine("JSON API Daily deserialization returned null. Body:" + jsonContent);
+                    return null;
                 }
 
-                Debug.WriteLine($"JSON API Daily response not successful: {jsonResponse?.Message}");
-                return null;
+                return ConvertJsonDataToCalendar(dto, altitude);
             }
             catch (Exception ex)
             {
@@ -74,33 +83,32 @@ namespace SuleymaniyeCalendar.Services
 
                 Debug.WriteLine($"JSON API Monthly Request: {url}");
 
-                var response = await _httpClient.GetAsync(url);
+                var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
+                var jsonContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
                 if (!response.IsSuccessStatusCode)
                 {
-                    Debug.WriteLine($"JSON API Monthly failed with status: {response.StatusCode}");
+                    Debug.WriteLine($"JSON API Monthly failed with status: {response.StatusCode}, body length: {jsonContent?.Length ?? 0}");
                     return null;
                 }
 
-                var jsonContent = await response.Content.ReadAsStringAsync();
-                var jsonResponse = JsonSerializer.Deserialize<JsonMonthlyPrayerTimeResponse>(jsonContent);
-
-                if (jsonResponse?.IsSuccess == true && jsonResponse.Data != null)
+                var normalized = NormalizeJson(jsonContent);
+                var dtoList = JsonSerializer.Deserialize<List<TimeCalcDto>>(normalized, _jsonOptions);
+                if (dtoList is null || dtoList.Count == 0)
                 {
-                    var result = new ObservableCollection<Calendar>();
-                    foreach (var item in jsonResponse.Data)
-                    {
-                        var calendar = ConvertJsonDataToCalendar(item, altitude);
-                        if (calendar != null)
-                        {
-                            result.Add(calendar);
-                        }
-                    }
-                    Debug.WriteLine($"JSON API Monthly returned {result.Count} days");
-                    return result;
+                    Debug.WriteLine("JSON API Monthly deserialization returned empty/null. Body length: " + (jsonContent?.Length ?? 0));
+                    return null;
                 }
 
-                Debug.WriteLine($"JSON API Monthly response not successful: {jsonResponse?.Message}");
-                return null;
+                var result = new ObservableCollection<Calendar>();
+                foreach (var dto in dtoList)
+                {
+                    var calendar = ConvertJsonDataToCalendar(dto, altitude);
+                    if (calendar != null)
+                        result.Add(calendar);
+                }
+                Debug.WriteLine($"JSON API Monthly returned {result.Count} days");
+                return result;
             }
             catch (Exception ex)
             {
@@ -112,26 +120,42 @@ namespace SuleymaniyeCalendar.Services
         /// <summary>
         /// Convert JSON API data to Calendar model
         /// </summary>
-        private Calendar ConvertJsonDataToCalendar(JsonPrayerTimeData data, double fallbackAltitude = 0)
+        private Calendar ConvertJsonDataToCalendar(TimeCalcDto data, double fallbackAltitude = 0)
         {
             try
             {
+                // dateTime comes as ISO format; convert to "dd/MM/yyyy" to align with existing XML model
+                string dateString;
+                if (DateTime.TryParse(data.DateTime, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var dt))
+                {
+                    dateString = dt.ToString("dd/MM/yyyy");
+                }
+                else
+                {
+                    // gracefully degrade by using the raw string
+                    dateString = data.DateTime?.Split('T')[0] ?? DateTime.Today.ToString("dd/MM/yyyy");
+                }
+
+                var altitude = data.Height != 0 ? data.Height : (data.Elevation != 0 ? data.Elevation : fallbackAltitude);
+                var timeZone = data.Gmt != 0 ? data.Gmt : ParseDoubleSafe(data.Timezone);
+                var dls = data.IsDaylightSaving || data.DaylightSavingTime == 1 ? 1 : 0;
+
                 return new Calendar
                 {
-                    Date = data.Date,
+                    Date = dateString,
                     Latitude = data.Latitude,
                     Longitude = data.Longitude,
-                    Altitude = data.Altitude == 0 ? fallbackAltitude : data.Altitude,
-                    TimeZone = data.TimeZone,
-                    DayLightSaving = data.DayLightSaving,
-                    FalseFajr = data.FalseFajr,
-                    Fajr = data.Fajr,
-                    Sunrise = data.Sunrise,
-                    Dhuhr = data.Dhuhr,
-                    Asr = data.Asr,
-                    Maghrib = data.Maghrib,
-                    Isha = data.Isha,
-                    EndOfIsha = data.EndOfIsha
+                    Altitude = altitude,
+                    TimeZone = timeZone,
+                    DayLightSaving = dls,
+                    FalseFajr = Coalesce(data.DawnTime, data.FalseFajr, data.Imsak),
+                    Fajr = Coalesce(data.FajrBeginTime, data.Fajr),
+                    Sunrise = Coalesce(data.FajrEndTime, data.Sunrise),
+                    Dhuhr = Coalesce(data.DuhrTime, data.Dhuhr),
+                    Asr = data.AsrTime,
+                    Maghrib = Coalesce(data.Magrib, data.Maghrib),
+                    Isha = Coalesce(data.IshaBeginTime, data.Isha),
+                    EndOfIsha = Coalesce(data.IshaEndTime, data.EndOfIsha)
                 };
             }
             catch (Exception ex)
@@ -148,10 +172,19 @@ namespace SuleymaniyeCalendar.Services
         {
             try
             {
-                var url = $"{BaseUrl}TimeCalculation/warmup";
-                var response = await _httpClient.GetAsync(url);
+                // Prefer the warmup endpoint if available; otherwise try a very light daily query
+                var warmupUrl = $"{BaseUrl}TimeCalculation/warmup";
+                var warmupResponse = await _httpClient.GetAsync(warmupUrl).ConfigureAwait(false);
+                if (warmupResponse.IsSuccessStatusCode)
+                {
+                    Debug.WriteLine("JSON API connectivity test: SUCCESS (warmup)");
+                    return true;
+                }
+
+                var testUrl = $"{BaseUrl}TimeCalculation/TimeCalculate?latitude=41&longitude=29&date={DateTime.Today:yyyy-MM-dd}";
+                var response = await _httpClient.GetAsync(testUrl).ConfigureAwait(false);
                 var isSuccess = response.IsSuccessStatusCode;
-                Debug.WriteLine($"JSON API connectivity test: {(isSuccess ? "SUCCESS" : "FAILED")}");
+                Debug.WriteLine($"JSON API connectivity test (fallback query): {(isSuccess ? "SUCCESS" : "FAILED")}");
                 return isSuccess;
             }
             catch (Exception ex)
@@ -164,6 +197,103 @@ namespace SuleymaniyeCalendar.Services
         public void Dispose()
         {
             _httpClient?.Dispose();
+        }
+
+        private static string NormalizeJson(string json)
+        {
+            // Some environments may return property names with different casing or synonyms.
+            // We can avoid brittle string.Replace by relying on case-insensitive options already enabled.
+            // This method is left for future targeted fixes if upstream schema varies unexpectedly.
+            return json;
+        }
+
+        private static string Coalesce(params string[] values)
+        {
+            foreach (var v in values)
+            {
+                if (!string.IsNullOrWhiteSpace(v)) return v;
+            }
+            return string.Empty;
+        }
+
+        private static double ParseDoubleSafe(string value)
+        {
+            if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var d))
+                return d;
+            return 0;
+        }
+
+        // DTO that matches the actual JSON payload from the API
+        private sealed class TimeCalcDto
+        {
+            [JsonPropertyName("latitude")]
+            public double Latitude { get; set; }
+
+            [JsonPropertyName("longitude")]
+            public double Longitude { get; set; }
+
+            [JsonPropertyName("height")]
+            public double Height { get; set; }
+
+            [JsonPropertyName("elevation")]
+            public double Elevation { get; set; }
+
+            [JsonPropertyName("timezone")]
+            public string Timezone { get; set; }
+
+            [JsonPropertyName("gmt")]
+            public double Gmt { get; set; }
+
+            [JsonPropertyName("daylightSavingTime")]
+            public double DaylightSavingTime { get; set; }
+
+            [JsonPropertyName("isDaylightSaving")]
+            public bool IsDaylightSaving { get; set; }
+
+            [JsonPropertyName("dateTime")]
+            public string DateTime { get; set; }
+
+            [JsonPropertyName("dawnTime")]
+            public string DawnTime { get; set; }
+
+            // Alternate/synonyms observed on some payloads
+            [JsonPropertyName("falseFajr")]
+            public string FalseFajr { get; set; }
+            [JsonPropertyName("imsak")]
+            public string Imsak { get; set; }
+
+            [JsonPropertyName("fajrBeginTime")]
+            public string FajrBeginTime { get; set; }
+            [JsonPropertyName("fajr")]
+            public string Fajr { get; set; }
+
+            [JsonPropertyName("fajrEndTime")]
+            public string FajrEndTime { get; set; }
+            [JsonPropertyName("sunrise")]
+            public string Sunrise { get; set; }
+
+            [JsonPropertyName("duhrTime")]
+            public string DuhrTime { get; set; }
+            [JsonPropertyName("dhuhr")]
+            public string Dhuhr { get; set; }
+
+            [JsonPropertyName("asrTime")]
+            public string AsrTime { get; set; }
+
+            [JsonPropertyName("magrib")]
+            public string Magrib { get; set; }
+            [JsonPropertyName("maghrib")]
+            public string Maghrib { get; set; }
+
+            [JsonPropertyName("ishaBeginTime")]
+            public string IshaBeginTime { get; set; }
+            [JsonPropertyName("isha")]
+            public string Isha { get; set; }
+
+            [JsonPropertyName("ishaEndTime")]
+            public string IshaEndTime { get; set; }
+            [JsonPropertyName("endOfIsha")]
+            public string EndOfIsha { get; set; }
         }
     }
 }

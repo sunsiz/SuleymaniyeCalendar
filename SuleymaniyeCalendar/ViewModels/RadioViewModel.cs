@@ -11,8 +11,8 @@ namespace SuleymaniyeCalendar.ViewModels
 	{
 		private readonly IRadioService _radioService;
 
-		[ObservableProperty]
-		private bool _isPlaying;
+		private bool isPlaying;
+		public bool IsPlaying { get => isPlaying; set => SetProperty(ref isPlaying, value); }
 
         public Command TapCommand => new Command<string>(async (url) => await Launcher.OpenAsync(url).ConfigureAwait(false));
 

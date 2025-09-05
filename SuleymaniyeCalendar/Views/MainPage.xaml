@@ -37,7 +37,7 @@
                         FontAutoScalingEnabled="True"
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf013;"
-                        Size="26" />
+                        Size="{DynamicResource IconLargeFontSize}" />
                 </Image.Source>
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding SettingsCommand}" NumberOfTapsRequired="1" />
@@ -51,7 +51,7 @@
                     <FontImageSource
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="26" />
+                        Size="{DynamicResource IconLargeFontSize}" />
                 </Image.Source>
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding RefreshLocationCommand}" NumberOfTapsRequired="1" />
@@ -119,9 +119,10 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Prayer">
-                            <ContentView Padding="4">
+                            <ContentView Padding="6,6,6,8">
+                                <!-- Outer container to allow shadow bleed beyond rounded corners -->
                                 <Border
-                                    Margin="0"
+                                    Margin="3"
                                     Padding="3"
                                     Opacity="{Binding Opacity}"
                                     Style="{StaticResource AnimatedPrayerCard}">
@@ -201,7 +202,9 @@
                                                 </DataTrigger>
                                             </Label.Triggers>
                                             <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding Source={x:Reference MainPageRoot}, Path=BindingContext.NavigateToPrayerDetailCommand}" CommandParameter="{Binding .}" />
+                                                <TapGestureRecognizer x:DataType="{x:Null}"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.PrayerSelectedCommand}"
+                                                    CommandParameter="{Binding .}" />
                                             </Label.GestureRecognizers>
                                         </Label>
                                     </Grid>
@@ -245,10 +248,10 @@
                             </Border>
 
                             <Border
-                                Margin="9,5"
-                                Padding="9,12"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource Yellow200Accent},
-                                                                  Dark={StaticResource Gray900}}"
+                                Margin="3"
+                                Padding="9"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceColor},
+                                                                  Dark={StaticResource DarkElevation8dp}}"
                                 Style="{StaticResource Card}">
                                 <Label
                                     AutomationProperties.IsInAccessibleTree="True"
@@ -256,14 +259,13 @@
                                     HorizontalTextAlignment="Center"
                                     Style="{StaticResource BodyLargeLabel}"
                                     Text="{Binding RemainingTime}"
-                                    TextColor="{AppThemeBinding Light={StaticResource PrimaryAccent900Color},
+                                    TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
                                                                 Dark={StaticResource White}}"
                                     VerticalTextAlignment="Center" />
                             </Border>
                         </StackLayout>
                     </CollectionView.Footer>
                 </CollectionView>
-
             </Grid>
         </RefreshView>
     </ContentPage.Content>

@@ -39,42 +39,17 @@ namespace SuleymaniyeCalendar
 			var language = Preferences.Get("SelectedLanguage", "tr");
 			try { AppResources.Culture = new CultureInfo(language); } catch { }
 			
-			// Configure locale and RTL support
-			Configuration configuration = new Configuration();
-			Locale newLocaleLanguage = new Locale(language);
+			// Configure locale in a modern way (minSdk 26): create a localized configuration/context
+			var configuration = new Configuration(context.Resources?.Configuration);
+			var newLocaleLanguage = new Locale(language);
 			if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
 			{
 				Locale.SetDefault(Locale.Category.Display, newLocaleLanguage);
 				configuration.SetLocale(newLocaleLanguage);
+				configuration.SetLayoutDirection(newLocaleLanguage);
 			}
-			else
-			{
-				Locale.Default = newLocaleLanguage;
-#pragma warning disable CS0618 // Type or member is obsolete
-				configuration.Locale = newLocaleLanguage;
-#pragma warning restore CS0618 // Type or member is obsolete
-			}
-
-			// Set layout direction for RTL languages
-			var rtlLanguages = new HashSet<string> { "ar", "fa", "he", "ug", "ps", "sd", "ku", "dv" };
-			if (rtlLanguages.Contains(language))
-			{
-				if (Build.VERSION.SdkInt >= BuildVersionCodes.JellyBeanMr1)
-				{
-					configuration.SetLayoutDirection(Locale.ForLanguageTag(language));
-				}
-			}
-			else
-			{
-				if (Build.VERSION.SdkInt >= BuildVersionCodes.JellyBeanMr1)
-				{
-					configuration.SetLayoutDirection(Locale.ForLanguageTag("en"));
-				}
-			}
-
-#pragma warning disable CS0618 // Type or member is obsolete
-			context.Resources?.UpdateConfiguration(configuration, context.Resources.DisplayMetrics);
-#pragma warning restore CS0618 // Type or member is obsolete
+			// Create a localizedContext if needed in the future (avoid deprecated UpdateConfiguration)
+			var localizedContext = context.CreateConfigurationContext(configuration);
 
 			// Detect theme preference
 			var selectedTheme = Preferences.Get("SelectedTheme", "System");
@@ -91,6 +66,8 @@ namespace SuleymaniyeCalendar
 			var calendar = dataService.calendar;
 
 			// Select appropriate layout based on theme and RTL
+			// Recreate RTL language set here (used only for layout selection)
+			var rtlLanguages = new HashSet<string> { "ar", "fa", "he", "ug", "ps", "sd", "ku", "dv" };
 			var layoutResource = GetWidgetLayout(isDarkMode, rtlLanguages.Contains(language));
 			var updateViews = new RemoteViews (context.PackageName, layoutResource);
 			
@@ -194,9 +171,7 @@ namespace SuleymaniyeCalendar
 		{
 			var intent = new Intent(context, typeof(AppWidget));
 			intent.SetAction(action);
-			var pendingIntentFlags = (Build.VERSION.SdkInt >= BuildVersionCodes.M)
-				? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
-				: PendingIntentFlags.UpdateCurrent;
+			var pendingIntentFlags = PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable;
 			return PendingIntent.GetBroadcast(context, 0, intent, pendingIntentFlags);
 		}
 	}

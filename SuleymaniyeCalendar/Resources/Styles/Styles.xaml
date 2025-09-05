@@ -34,7 +34,7 @@
 
     <Style TargetType="Button">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource ButtonTextColor}, Dark={StaticResource ButtonTextColorDark}}" />
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource White}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryDarkColor}}" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         <Setter Property="CornerRadius" Value="8" />
@@ -47,7 +47,7 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray500}, Dark={StaticResource Gray500}}" />
                             <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}" />
                         </VisualState.Setters>
                     </VisualState>
@@ -201,6 +201,11 @@
     <x:Double x:Key="CaptionFontSize">12</x:Double>
     <x:Double x:Key="SubHeaderFontSize">16</x:Double>
     <x:Double x:Key="HeaderFontSize">18</x:Double>
+    <!--  Icon sizes that scale with user setting (defaults align with FontSize=14)  -->
+    <x:Double x:Key="IconSmallFontSize">18</x:Double>
+    <x:Double x:Key="IconMediumFontSize">20</x:Double>
+    <x:Double x:Key="IconLargeFontSize">26</x:Double>
+    <x:Double x:Key="IconXLFontSize">50</x:Double>
 
     <Style x:Key="ButtonStyle" TargetType="Button">
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
@@ -254,7 +259,7 @@
 
     <!--  Unified Card (modern)  -->
     <Style x:Key="Card" TargetType="Border">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceVariantColorDark}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource CardBackgroundColor}, Dark={StaticResource CardBackgroundColorDark}}" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}" />
         <Setter Property="StrokeThickness" Value="1" />
         <Setter Property="StrokeShape" Value="RoundRectangle 16" />
@@ -263,16 +268,19 @@
         <Setter Property="Shadow">
             <Setter.Value>
                 <Shadow
-                    Brush="#1A000000"
-                    Opacity="0.25"
-                    Radius="8"
-                    Offset="0,2" />
+                    Brush="#20000000"
+                    Opacity="0.3"
+                    Radius="10"
+                    Offset="0,4" />
             </Setter.Value>
         </Setter>
     </Style>
 
     <!--  Enhanced Card for current prayer with emphasis  -->
-    <Style x:Key="CurrentPrayerCard" TargetType="Border" BasedOn="{StaticResource Card}">
+    <Style
+        x:Key="CurrentPrayerCard"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
         <Setter Property="Shadow">
             <Setter.Value>
                 <Shadow
@@ -284,7 +292,7 @@
         </Setter>
     </Style>
 
-    <!-- Modern Image Button Style -->
+    <!--  Modern Image Button Style  -->
     <Style x:Key="ModernImageButton" TargetType="ImageButton">
         <Setter Property="CornerRadius" Value="28" />
         <Setter Property="Padding" Value="8" />
@@ -315,7 +323,7 @@
 
     <!--  Unified Round pill (city/month buttons)  -->
     <Style x:Key="RoundButton" TargetType="Border">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryAccent400Color}, Dark={StaticResource SecondaryColor}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SecondaryColor}, Dark={StaticResource SecondaryColor}}" />
         <Setter Property="Stroke" Value="Transparent" />
         <Setter Property="StrokeThickness" Value="0" />
         <Setter Property="StrokeShape" Value="RoundRectangle 40" />
@@ -324,10 +332,10 @@
         <Setter Property="Shadow">
             <Setter.Value>
                 <Shadow
-                    Brush="#22000000"
-                    Opacity="0.6"
-                    Radius="12"
-                    Offset="0,2" />
+                    Brush="#33000000"
+                    Opacity="0.4"
+                    Radius="16"
+                    Offset="0,4" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -337,8 +345,8 @@
         x:Key="PrimaryButton"
         BasedOn="{StaticResource ButtonStyle}"
         TargetType="Button">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryAccent400Color}, Dark={StaticResource SecondaryColor}}" />
-        <Setter Property="TextColor" Value="{StaticResource PrimaryAccent50Color}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryDarkColor}}" />
+        <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}" />
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="16,12" />
         <Setter Property="FontAttributes" Value="Bold" />
@@ -350,7 +358,7 @@
         BasedOn="{StaticResource ButtonStyle}"
         TargetType="Button">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceColor}, Dark={StaticResource SurfaceColorDark}}" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryAccent800Color}, Dark={StaticResource PrimaryAccent50Color}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource PrimaryAccent100Color}}" />
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="16,12" />
         <Setter Property="HorizontalOptions" Value="Fill" />
@@ -360,8 +368,8 @@
         x:Key="InfoButton"
         BasedOn="{StaticResource ButtonStyle}"
         TargetType="Button">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource InfoColor}, Dark={StaticResource InfoColorDark}}" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryAccent50Color}, Dark={StaticResource PrimaryAccent50Color}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SecondaryColor}, Dark={StaticResource SecondaryColor}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource ButtonTextColor}, Dark={StaticResource ButtonTextColor}}" />
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="16,12" />
         <Setter Property="HorizontalOptions" Value="Fill" />
@@ -372,7 +380,7 @@
         BasedOn="{StaticResource ButtonStyle}"
         TargetType="Button">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource WarningColor}, Dark={StaticResource WarningColorDark}}" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryAccent50Color}, Dark={StaticResource PrimaryAccent50Color}}" />
+        <Setter Property="TextColor" Value="{StaticResource ButtonTextColor}" />
         <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="16,12" />
         <Setter Property="HorizontalOptions" Value="Fill" />
@@ -390,7 +398,10 @@
     </Style>
 
     <!--  Card info labels  -->
-    <Style x:Key="CardInfoLabel" BasedOn="{StaticResource LabelStyle}" TargetType="Label">
+    <Style
+        x:Key="CardInfoLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource PrimaryAccent50Color}}" />
     </Style>
@@ -440,30 +451,39 @@
 
     <!--  The rest (NavigationPage, TabbedPage, Pickers, etc.) remain as in your file  -->
 
-    <!-- Enhanced accessibility styles -->
-    <Style x:Key="AccessibleLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+    <!--  Enhanced accessibility styles  -->
+    <Style
+        x:Key="AccessibleLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
         <Setter Property="AutomationProperties.IsInAccessibleTree" Value="True" />
         <Setter Property="LineBreakMode" Value="WordWrap" />
         <Setter Property="MaxLines" Value="12" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource PrimaryAccent50Color}}" />
     </Style>
 
-    <Style x:Key="AccessibleButton" TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+    <Style
+        x:Key="AccessibleButton"
+        BasedOn="{StaticResource ButtonStyle}"
+        TargetType="Button">
         <Setter Property="MinimumHeightRequest" Value="48" />
         <Setter Property="MinimumWidthRequest" Value="48" />
         <Setter Property="Padding" Value="16,12" />
         <Setter Property="AutomationProperties.IsInAccessibleTree" Value="True" />
     </Style>
 
-    <!-- High contrast mode support -->
-    <Style x:Key="HighContrastCard" TargetType="Border" BasedOn="{StaticResource Card}">
+    <!--  High contrast mode support  -->
+    <Style
+        x:Key="HighContrastCard"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
         <Setter Property="StrokeThickness" Value="2" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Gray900}, Dark={StaticResource Gray100}}" />
     </Style>
 
     <!--  Enhanced Typography System  -->
-    
-    <!-- Typography Scale -->
+
+    <!--  Typography Scale  -->
     <x:Double x:Key="DisplayLarge">57</x:Double>
     <x:Double x:Key="DisplayMedium">45</x:Double>
     <x:Double x:Key="DisplaySmall">36</x:Double>
@@ -480,60 +500,87 @@
     <x:Double x:Key="BodyMedium">14</x:Double>
     <x:Double x:Key="BodySmall">12</x:Double>
 
-    <!-- Enhanced Label Styles -->
-    <Style x:Key="DisplayLargeLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+    <!--  Enhanced Label Styles  -->
+    <Style
+        x:Key="DisplayLargeLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
         <Setter Property="FontAttributes" Value="None" />
         <Setter Property="LineHeight" Value="1.12" />
     </Style>
-    
-    <Style x:Key="HeadlineLargeLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+
+    <Style
+        x:Key="HeadlineLargeLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
         <Setter Property="FontAttributes" Value="None" />
         <Setter Property="LineHeight" Value="1.25" />
     </Style>
-    
-    <Style x:Key="HeadlineMediumLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+
+    <Style
+        x:Key="HeadlineMediumLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
         <Setter Property="FontAttributes" Value="None" />
         <Setter Property="LineHeight" Value="1.29" />
     </Style>
-    
-    <Style x:Key="TitleLargeLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+
+    <Style
+        x:Key="TitleLargeLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="LineHeight" Value="1.27" />
     </Style>
-    
-    <Style x:Key="TitleMediumLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+
+    <Style
+        x:Key="TitleMediumLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource SubHeaderFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="LineHeight" Value="1.5" />
     </Style>
-    
-    <Style x:Key="BodyLargeLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
-        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
-        <Setter Property="FontAttributes" Value="Bold"/>
-        <Setter Property="LineHeight" Value="1.5" />
-    </Style>
-    
-    <Style x:Key="BodyMediumLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
-        <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}" />
-        <Setter Property="LineHeight" Value="1.23" />
-    </Style>
-    
-    <Style x:Key="LabelLargeLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+
+    <Style
+        x:Key="BodyLargeLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="LineHeight" Value="1.33" />
+        <Setter Property="LineHeight" Value="1.5" />
     </Style>
-    
-    <Style x:Key="BodyLabel" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+
+    <Style
+        x:Key="BodyMediumLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}" />
         <Setter Property="LineHeight" Value="1.23" />
     </Style>
 
-    <!-- Enhanced touch target styles for better accessibility -->
+    <Style
+        x:Key="LabelLargeLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
+        <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="LineHeight" Value="1.33" />
+    </Style>
+
+    <Style
+        x:Key="BodyLabel"
+        BasedOn="{StaticResource LabelStyle}"
+        TargetType="Label">
+        <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}" />
+        <Setter Property="LineHeight" Value="1.23" />
+    </Style>
+
+    <!--  Enhanced touch target styles for better accessibility  -->
     <Style x:Key="TouchTargetImageButton" TargetType="ImageButton">
         <Setter Property="MinimumHeightRequest" Value="48" />
         <Setter Property="MinimumWidthRequest" Value="48" />
@@ -563,7 +610,7 @@
         </Setter>
     </Style>
 
-    <!-- Enhanced switch style with animations -->
+    <!--  Enhanced switch style with animations  -->
     <Style x:Key="AccessibleSwitch" TargetType="Switch">
         <Setter Property="MinimumHeightRequest" Value="48" />
         <Setter Property="MinimumWidthRequest" Value="48" />
@@ -590,10 +637,13 @@
         </Setter>
     </Style>
 
-    <!-- Animated Card Styles for Different Contexts -->
-    
-    <!-- Standard Card with Hover Animation -->
-    <Style x:Key="AnimatedCard" TargetType="Border" BasedOn="{StaticResource Card}">
+    <!--  Animated Card Styles for Different Contexts  -->
+
+    <!--  Standard Card with Hover Animation  -->
+    <Style
+        x:Key="AnimatedCard"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -620,8 +670,11 @@
         </Setter>
     </Style>
 
-    <!-- Enhanced Prayer Card with State Animations -->
-    <Style x:Key="AnimatedPrayerCard" TargetType="Border" BasedOn="{StaticResource CurrentPrayerCard}">
+    <!--  Enhanced Prayer Card with State Animations  -->
+    <Style
+        x:Key="AnimatedPrayerCard"
+        BasedOn="{StaticResource CurrentPrayerCard}"
+        TargetType="Border">
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="PrayerStates">
@@ -629,16 +682,22 @@
                         <VisualState.Setters>
                             <Setter Property="Opacity" Value="0.7" />
                             <Setter Property="Scale" Value="0.98" />
+                            <!-- Remove shadow for past items to de-emphasize and avoid edge clipping -->
+                            <Setter Property="Shadow">
+                                <Shadow Brush="#00000000" Opacity="0" Radius="0" Offset="0,0" />
+                            </Setter>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Current">
                         <VisualState.Setters>
                             <Setter Property="Scale" Value="1.02" />
                             <Setter Property="Shadow">
-                                <Shadow Brush="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
-                                        Offset="0,4"
-                                        Radius="8"
-                                        Opacity="0.3" />
+                                <Shadow
+                                    Brush="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                            Dark={StaticResource PrimaryAccent50Color}}"
+                                    Opacity="0.3"
+                                    Radius="8"
+                                    Offset="0,4" />
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>
@@ -646,6 +705,10 @@
                         <VisualState.Setters>
                             <Setter Property="Scale" Value="1.0" />
                             <Setter Property="Opacity" Value="1.0" />
+                            <!-- Use a subtle, compact shadow to reduce clipping risk -->
+                            <Setter Property="Shadow">
+                                <Shadow Brush="#20000000" Opacity="0.18" Radius="6" Offset="0,2" />
+                            </Setter>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -661,8 +724,11 @@
         </Setter>
     </Style>
 
-    <!-- Settings Card with Subtle Differentiation -->
-    <Style x:Key="SettingsCard" TargetType="Border" BasedOn="{StaticResource Card}">
+    <!--  Settings Card with Subtle Differentiation  -->
+    <Style
+        x:Key="SettingsCard"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceColor}, Dark={StaticResource SurfaceColorDark}}" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}" />
         <Setter Property="StrokeThickness" Value="1" />
@@ -686,8 +752,11 @@
         </Setter>
     </Style>
 
-    <!-- List Item Card for Tables -->
-    <Style x:Key="ListItemCard" TargetType="Border" BasedOn="{StaticResource Card}">
+    <!--  List Item Card for Tables  -->
+    <Style
+        x:Key="ListItemCard"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceVariantColorDark}}" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}" />
         <Setter Property="StrokeThickness" Value="0.5" />
@@ -710,8 +779,11 @@
         </Setter>
     </Style>
 
-    <!-- Media Card for Radio/Audio -->
-    <Style x:Key="MediaCard" TargetType="Border" BasedOn="{StaticResource Card}">
+    <!--  Media Card for Radio/Audio  -->
+    <Style
+        x:Key="MediaCard"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryAccent50Color}, Dark={StaticResource DarkElevation8dp}}" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent400Color}}" />
         <Setter Property="StrokeThickness" Value="1" />
@@ -725,12 +797,14 @@
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="Scale" Value="1.02" />
+                            <Setter Property="Scale" Value="1.01" />
                             <Setter Property="Shadow">
-                                <Shadow Brush="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
-                                        Offset="0,2"
-                                        Radius="6"
-                                        Opacity="0.2" />
+                                <Shadow
+                                    Brush="{AppThemeBinding Light={StaticResource PrimaryColor},
+                                                            Dark={StaticResource PrimaryAccent50Color}}"
+                                    Opacity="0.22"
+                                    Radius="8"
+                                    Offset="0,2" />
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>

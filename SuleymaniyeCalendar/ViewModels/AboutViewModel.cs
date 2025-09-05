@@ -5,22 +5,42 @@ using SuleymaniyeCalendar.Views;
 
 namespace SuleymaniyeCalendar.ViewModels
 {
-	public partial class AboutViewModel:BaseViewModel
+	public partial class AboutViewModel : BaseViewModel
 	{
-		[RelayCommand]
-		public async Task LinkButtonClicked(string url)
+		private string versionNumber = string.Empty;
+
+		/// <summary>
+		/// Gets or sets the app version string displayed on the About page.
+		/// AOT-safe explicit property, avoids MVVMTK0045 in WinUI.
+		/// </summary>
+		public string VersionNumber
 		{
-			await Launcher.OpenAsync(url).ConfigureAwait(false);
-			
+			get => versionNumber;
+			set => SetProperty(ref versionNumber, value);
 		}
 
-		[ObservableProperty]private string _versionNumber;
-		public bool ShowButtons { get { if (DeviceInfo.Platform == DevicePlatform.iOS) { return IsVoiceOverRunning(); } else return false; } }
+		public bool ShowButtons
+		{
+			get
+			{
+				if (DeviceInfo.Platform == DevicePlatform.iOS)
+				{
+					return IsVoiceOverRunning();
+				}
+				else return false;
+			}
+		}
 
 		public AboutViewModel()
 		{
 			Title = AppResources.SuleymaniyeVakfi;
 			VersionNumber = " v" + AppInfo.VersionString + " ";
+		}
+
+		[RelayCommand]
+		public async Task LinkButtonClicked(string url)
+		{
+			await Launcher.OpenAsync(url).ConfigureAwait(false);
 		}
 
 		[RelayCommand]

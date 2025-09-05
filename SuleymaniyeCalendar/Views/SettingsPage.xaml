@@ -106,12 +106,12 @@
                     </Grid>
                 </Border>
 
-                <!--  Android Notifications  -->
-                <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource SettingsCard}">
+        <!--  Android Notifications  -->
+        <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource SettingsCard}">
                     <VerticalStackLayout Spacing="4">
                         <Label Style="{StaticResource TitleMediumLabel}" Text="{localization:Translate BildirimNamazVakitleri}" />
 
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="1">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="1" IsVisible="{Binding ShowNotificationPrayerOption}">
                             <VerticalStackLayout Grid.Column="0" Spacing="4">
                                 <Label Style="{StaticResource BodyMediumLabel}" Text="{localization:Translate BildirimNamazVakitleri}" />
                                 <!--<Label Text="{localization:Translate BildirimNamazVakitleriUyari}"

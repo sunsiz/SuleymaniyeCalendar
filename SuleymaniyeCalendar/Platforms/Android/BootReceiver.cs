@@ -9,15 +9,23 @@ public class BootReceiver : BroadcastReceiver
 {
     public override void OnReceive(Context context, Intent intent)
     {
-        if (intent?.Action == Intent.ActionBootCompleted &&
-            Preferences.Get("ForegroundServiceEnabled", true))
-        {
-            var startIntent = new Intent(context, typeof(AlarmForegroundService))
-                .SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                context.StartForegroundService(startIntent);
-            else
-                context.StartService(startIntent);
-        }
+        var action = intent?.Action;
+        if (action is null) return;
+
+        // Start foreground service to rehydrate notifications/alarms after system events
+        bool shouldStart = action == Intent.ActionBootCompleted
+                           || action == Intent.ActionTimeChanged
+                           || action == Intent.ActionTimezoneChanged
+                           || action == Intent.ActionMyPackageReplaced;
+
+        if (!shouldStart) return;
+        if (!Preferences.Get("ForegroundServiceEnabled", true)) return;
+
+        var startIntent = new Intent(context, typeof(AlarmForegroundService))
+            .SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
+        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            context.StartForegroundService(startIntent);
+        else
+            context.StartService(startIntent);
     }
 }

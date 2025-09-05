@@ -24,9 +24,7 @@ public class AlarmNotificationReceiver : BroadcastReceiver
 
         var nm = (NotificationManager)context.GetSystemService(Context.NotificationService);
 
-        var pkg = context.PackageName;
-        Android.Net.Uri UriOf(int resId) =>
-            Android.Net.Uri.Parse($"{Android.Content.ContentResolver.SchemeAndroidResource}://{pkg}/{resId}");
+    var pkg = context.PackageName;
 
         // Pick channel by user selection (same ids as before)
         var channelId = name switch

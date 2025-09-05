@@ -28,7 +28,7 @@
                     <FontImageSource
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="18"
+                        Size="{DynamicResource IconSmallFontSize}"
                         Color="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent100Color}}" />
                 </ImageButton.Source>
             </ImageButton>
@@ -198,7 +198,7 @@
             </ScrollView>
 
             <!--  Busy overlay  -->
-            <Grid BackgroundColor="#80000000" IsVisible="{Binding IsBusy}">
+            <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}" IsVisible="{Binding IsBusy}">
                 <ActivityIndicator
                     HorizontalOptions="Center"
                     IsRunning="True"

@@ -1,53 +1,86 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace SuleymaniyeCalendar.Models
 {
+	// AOT-safe observable model: use explicit properties with SetProperty instead of [ObservableProperty]
 	public partial class Prayer : ObservableObject
 	{
-		[ObservableProperty]
-		private string id;
+		private string id = string.Empty;
+		public string Id
+		{
+			get => id;
+			set => SetProperty(ref id, value);
+		}
 
-		[ObservableProperty]
-		private string name;
+		private string name = string.Empty;
+		public string Name
+		{
+			get => name;
+			set => SetProperty(ref name, value);
+		}
 
-		[ObservableProperty]
-		private string time;
+		private string time = string.Empty;
+		public string Time
+		{
+			get => time;
+			set => SetProperty(ref time, value);
+		}
 
-		[ObservableProperty]
-		private string state;
+		private string state = string.Empty;
+		public string State
+		{
+			get => state;
+			set => SetProperty(ref state, value);
+		}
 
-		[ObservableProperty]
 		private bool enabled;
+		public bool Enabled
+		{
+			get => enabled;
+			set => SetProperty(ref enabled, value);
+		}
 
 		// Enhanced visual state properties for better UI/UX
-		[ObservableProperty]
-		private string stateDescription;
+		private string stateDescription = string.Empty;
+		public string StateDescription
+		{
+			get => stateDescription;
+			set => SetProperty(ref stateDescription, value);
+		}
 
-		[ObservableProperty]
 		private bool isActive;
+		public bool IsActive
+		{
+			get => isActive;
+			set => SetProperty(ref isActive, value);
+		}
 
-		[ObservableProperty]
 		private bool isPast;
+		public bool IsPast
+		{
+			get => isPast;
+			set => SetProperty(ref isPast, value);
+		}
 
-		[ObservableProperty]
 		private bool isUpcoming;
+		public bool IsUpcoming
+		{
+			get => isUpcoming;
+			set => SetProperty(ref isUpcoming, value);
+		}
 
-		[ObservableProperty]
 		private double opacity = 1.0;
+		public double Opacity
+		{
+			get => opacity;
+			set => SetProperty(ref opacity, value);
+		}
 
 		// Default constructor
 		public Prayer()
 		{
-			Id = string.Empty;
-			Name = string.Empty;
-			Time = string.Empty;
-			State = string.Empty;
-			StateDescription = string.Empty;
+			// Defaults already set via field initializers
 		}
 
 		// Helper method to update visual state based on prayer timing
@@ -88,7 +121,7 @@ namespace SuleymaniyeCalendar.Models
 					IsPast = false;
 					IsUpcoming = false;
 					Opacity = 1.0;
-					StateDescription = "";
+					StateDescription = string.Empty;
 					break;
 			}
 		}

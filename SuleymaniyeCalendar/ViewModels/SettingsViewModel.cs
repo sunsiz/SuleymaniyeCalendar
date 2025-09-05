@@ -19,72 +19,186 @@ namespace SuleymaniyeCalendar.ViewModels
 {
 	public partial class SettingsViewModel : BaseViewModel
 	{
-		[ObservableProperty] private IList<Language> supportedLanguages = Enumerable.Empty<Language>().ToList();
-		[ObservableProperty] private Language selectedLanguage = new Language(AppResources.English, "en");
-		[ObservableProperty] private bool dark;
-		[ObservableProperty] private int currentTheme;
-		[ObservableProperty] private bool lightChecked;
-		[ObservableProperty] private bool darkChecked;
-		[ObservableProperty] private bool systemChecked;
-		[ObservableProperty] private int alarmDuration;
-		[ObservableProperty] private bool alwaysRenewLocationEnabled;
-		[ObservableProperty] private bool notificationPrayerTimesEnabled;
-		[ObservableProperty] private bool foregroundServiceEnabled;
+		private IList<Language> supportedLanguages = Enumerable.Empty<Language>().ToList();
+		public IList<Language> SupportedLanguages { get => supportedLanguages; set => SetProperty(ref supportedLanguages, value); }
+
+		private Language selectedLanguage = new Language(AppResources.English, "en");
+		public Language SelectedLanguage
+		{
+			get => selectedLanguage;
+			set
+			{
+				if (SetProperty(ref selectedLanguage, value))
+				{
+					if (value is not null)
+					{
+						var ci = CultureInfo.GetCultureInfo(value.CI);
+						resourceManager.CurrentCulture = ci;
+						AppResources.Culture = ci;
+						Preferences.Set("SelectedLanguage", value.CI);
+						rtlService.ApplyFlowDirection(value.CI);
+						Title = AppResources.UygulamaAyarlari;
+#if ANDROID
+						UpdateWidget();
+#endif
+					}
+				}
+			}
+		}
+
+		private bool dark;
+		public bool Dark { get => dark; set => SetProperty(ref dark, value); }
+
+		private int currentTheme;
+		public int CurrentTheme
+		{
+			get => currentTheme;
+			set
+			{
+				if (SetProperty(ref currentTheme, value))
+				{
+					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(value));
+				}
+			}
+		}
+
+		private bool lightChecked;
+		public bool LightChecked
+		{
+			get => lightChecked;
+			set
+			{
+				if (SetProperty(ref lightChecked, value) && value)
+				{
+					ApplyThemeInternal(1);
+					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(1));
+				}
+			}
+		}
+
+		private bool darkChecked;
+		public bool DarkChecked
+		{
+			get => darkChecked;
+			set
+			{
+				if (SetProperty(ref darkChecked, value) && value)
+				{
+					ApplyThemeInternal(0);
+					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(0));
+				}
+			}
+		}
+
+		private bool systemChecked;
+		public bool SystemChecked
+		{
+			get => systemChecked;
+			set
+			{
+				if (SetProperty(ref systemChecked, value) && value)
+				{
+					ApplyThemeInternal(2);
+					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(2));
+				}
+			}
+		}
+
+		//private int alarmDuration;
+		//public int AlarmDuration { get => alarmDuration; set => SetProperty(ref alarmDuration, value); }
+
+		private bool alwaysRenewLocationEnabled;
+		public bool AlwaysRenewLocationEnabled
+		{
+			get => alwaysRenewLocationEnabled;
+			set
+			{
+				if (SetProperty(ref alwaysRenewLocationEnabled, value))
+				{
+					Preferences.Set("AlwaysRenewLocationEnabled", value);
+				}
+			}
+		}
+
+		private bool notificationPrayerTimesEnabled;
+		public bool NotificationPrayerTimesEnabled
+		{
+			get => notificationPrayerTimesEnabled;
+			set
+			{
+				if (SetProperty(ref notificationPrayerTimesEnabled, value))
+				{
+					Preferences.Set("NotificationPrayerTimesEnabled", value);
+#if ANDROID
+					// If the service is running, ask it to refresh the notification now
+					if (Preferences.Get("ForegroundServiceEnabled", true))
+					{
+						var ctx = Android.App.Application.Context;
+						var refreshIntent = new Intent(ctx, typeof(AlarmForegroundService))
+							.SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
+						if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+							ctx.StartForegroundService(refreshIntent);
+						else
+							ctx.StartService(refreshIntent);
+					}
+#endif
+				}
+			}
+		}
+
+		// UI helper: Only show the notification content option when sticky notification (foreground service) is enabled on Android
+		public bool ShowNotificationPrayerOption
+		{
+			get => DeviceInfo.Platform == DevicePlatform.Android && ForegroundServiceEnabled;
+		}
+
+		private bool foregroundServiceEnabled;
+		public bool ForegroundServiceEnabled
+		{
+			get => foregroundServiceEnabled;
+			set
+			{
+				if (SetProperty(ref foregroundServiceEnabled, value))
+				{
+					Preferences.Set("ForegroundServiceEnabled", value);
+#if ANDROID
+					// When turning off the sticky notification, also disable showing prayer times in it and update UI visibility
+					if (!value)
+					{
+						NotificationPrayerTimesEnabled = false;
+						Preferences.Set("ForegroundServiceEnabled", value);
+					}
+#endif
+					OnPropertyChanged(nameof(ShowNotificationPrayerOption));
+#if ANDROID
+					var ctx = Android.App.Application.Context;
+					if (!value)
+					{
+						// Stop the foreground service if it's running
+						var stopIntent = new Intent(ctx, typeof(AlarmForegroundService));
+						stopIntent.SetAction("SuleymaniyeTakvimi.action.STOP_SERVICE");
+						if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+							ctx.StartForegroundService(stopIntent);
+						else
+							ctx.StartService(stopIntent);
+					}
+					else
+					{
+						// Start the foreground service
+						var startIntent = new Intent(ctx, typeof(AlarmForegroundService));
+						startIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
+						if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+							ctx.StartForegroundService(startIntent);
+						else
+							ctx.StartService(startIntent);
+					}
+#endif
+				}
+			}
+		}
 		private readonly ILocalizationResourceManager resourceManager;
 		private readonly IRtlService rtlService;
-		//partial void OnAlarmDurationChanged(int value) { if (AlarmDuration != value) Preferences.Set("AlarmDuration", value); }
-		partial void OnAlwaysRenewLocationEnabledChanged(bool value) { Preferences.Set("AlwaysRenewLocationEnabled", value); }
-
-        partial void OnNotificationPrayerTimesEnabledChanged(bool value)
-        {
-            Preferences.Set("NotificationPrayerTimesEnabled", value);
-
-#if ANDROID
-            // If the service is running, ask it to refresh the notification now
-            if (Preferences.Get("ForegroundServiceEnabled", true))
-            {
-                var ctx = Android.App.Application.Context;
-                var refreshIntent = new Intent(ctx, typeof(AlarmForegroundService))
-                    .SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    ctx.StartForegroundService(refreshIntent);
-                else
-                    ctx.StartService(refreshIntent);
-            }
-#endif
-        }
-
-        partial void OnForegroundServiceEnabledChanged(bool value)
-        {
-            Preferences.Set("ForegroundServiceEnabled", value);
-#if ANDROID
-			if (!value)
-			{
-				// Stop the foreground service if it's running
-                var ctx = Android.App.Application.Context;
-                var stopIntent = new Intent(ctx, typeof(AlarmForegroundService));
-                stopIntent.SetAction("SuleymaniyeTakvimi.action.STOP_SERVICE");
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    ctx.StartForegroundService(stopIntent);
-                else
-                    ctx.StartService(stopIntent);
-			}
-			else
-			{
-				// Start the foreground service
-                var ctx = Android.App.Application.Context;
-                var startIntent = new Intent(ctx, typeof(AlarmForegroundService));
-                startIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
-
-                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                    ctx.StartForegroundService(startIntent);
-                else
-                    ctx.StartService(startIntent);
-            }
-#endif
-        }
-		// handled below (single definition)
+		// Property change side-effects moved into property setters below for AOT safety
 
 		public bool IsNecessary => !((DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 10) || DeviceInfo.Platform == DevicePlatform.iOS);
 
@@ -113,26 +227,7 @@ namespace SuleymaniyeCalendar.ViewModels
 			AlwaysRenewLocationEnabled = Preferences.Get("AlwaysRenewLocationEnabled", false);
 			IsBusy = false;
 		}
-		partial void OnSelectedLanguageChanged(Language value)
-		{
-			if (value is null) return;
-
-			var ci = CultureInfo.GetCultureInfo(value.CI);
-			resourceManager.CurrentCulture = ci;
-			AppResources.Culture = ci; // ensure resx-based strings update
-			Preferences.Set("SelectedLanguage", value.CI);
-
-			// Apply RTL layout direction for the selected language
-			rtlService.ApplyFlowDirection(value.CI);
-
-			// keep current selection and labels fresh
-			Title = AppResources.UygulamaAyarlari;
-
-#if ANDROID
-			// Update widget when language changes (affects RTL and text)
-			UpdateWidget();
-#endif
-		}
+		// Property change side-effects are applied in SelectedLanguage setter
 
 		[RelayCommand]
 		private void RadioButtonCheckedChanged(object obj)
@@ -152,37 +247,13 @@ namespace SuleymaniyeCalendar.ViewModels
 			});
 		}
 
-		partial void OnCurrentThemeChanged(int value)
-		{
-			MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(value));
-		}
+		// CurrentTheme setter contains the UI theme application logic
 
-		partial void OnLightCheckedChanged(bool value)
-		{
-			if (value)
-			{
-				ApplyThemeInternal(1);
-				MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(1));
-			}
-		}
+		// Radio button check setters below trigger ApplyThemeInternal
 
-		partial void OnDarkCheckedChanged(bool value)
-		{
-			if (value)
-			{
-				ApplyThemeInternal(0);
-				MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(0));
-			}
-		}
+		// See property setters
 
-		partial void OnSystemCheckedChanged(bool value)
-		{
-			if (value)
-			{
-				ApplyThemeInternal(2);
-				MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(2));
-			}
-		}
+		// See property setters
 
 		private void ApplyThemeInternal(int themeValue)
 		{

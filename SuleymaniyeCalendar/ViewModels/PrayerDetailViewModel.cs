@@ -13,16 +13,26 @@ namespace SuleymaniyeCalendar.ViewModels
 	{
 		private readonly IAudioPreviewService _audioPreview;
 		private readonly DataService _dataService;
-		[ObservableProperty] private string _time;
-		[ObservableProperty] private bool _enabled;
-		[ObservableProperty] private bool _vibration;
-		[ObservableProperty] private bool _notification;
-		[ObservableProperty] private bool _alarm;
-		[ObservableProperty] private ObservableCollection<Sound> _availableSounds;
-		[ObservableProperty] private Sound _selectedSound;
-		[ObservableProperty] private string _prayerId;
-		[ObservableProperty] private int _notificationTime;
-		[ObservableProperty] private bool _isPlaying;
+		private string time;
+		public string Time { get => time; set => SetProperty(ref time, value); }
+		private bool enabled;
+		public bool Enabled { get => enabled; set { if (SetProperty(ref enabled, value)) { try { Preferences.Set(PrayerId + "Enabled", value); } catch { } OnPropertyChanged(nameof(ShowAdvancedOptions)); } } }
+		private bool vibration;
+		public bool Vibration { get => vibration; set => SetProperty(ref vibration, value); }
+		private bool notification;
+		public bool Notification { get => notification; set => SetProperty(ref notification, value); }
+		private bool alarm;
+		public bool Alarm { get => alarm; set => SetProperty(ref alarm, value); }
+		private ObservableCollection<Sound> availableSounds;
+		public ObservableCollection<Sound> AvailableSounds { get => availableSounds; set => SetProperty(ref availableSounds, value); }
+		private Sound selectedSound;
+		public Sound SelectedSound { get => selectedSound; set => SetProperty(ref selectedSound, value); }
+		private string prayerId;
+		public string PrayerId { get => prayerId; set { if (SetProperty(ref prayerId, value)) { IsBusy = true; LoadPrayer(); IsBusy = false; } } }
+		private int notificationTime;
+		public int NotificationTime { get => notificationTime; set { if (SetProperty(ref notificationTime, value)) Preferences.Set(PrayerId + "NotificationTime", value); } }
+		private bool isPlaying;
+		public bool IsPlaying { get => isPlaying; set => SetProperty(ref isPlaying, value); }
 		public bool IsNecessary => !((DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 10) || DeviceInfo.Platform == DevicePlatform.iOS);
 		public bool ShowAdvancedOptions => Enabled && IsNecessary;
 
@@ -70,7 +80,7 @@ namespace SuleymaniyeCalendar.ViewModels
 					await _audioPreview.StopAsync().ConfigureAwait(false);
 					IsPlaying = false;
 					await Task.Delay(1000);
-                    await _dataService.SetWeeklyAlarmsAsync();
+					await _dataService.SetMonthlyAlarmsAsync();
                 }
 				catch (Exception ex)
 				{
@@ -153,32 +163,7 @@ namespace SuleymaniyeCalendar.ViewModels
 			}
 		}
 
-		partial void OnNotificationTimeChanged(int value) { Preferences.Set(PrayerId + "NotificationTime", value); }
-
-		partial void OnPrayerIdChanged(string value)
-		{
-			IsBusy = true;
-			PrayerId = value;
-			LoadPrayer();
-			IsBusy = false;
-		}
-
-		partial void OnEnabledChanged(bool value)
-		{
-			// Persist toggle immediately and adjust related defaults
-			try
-			{
-				Preferences.Set(PrayerId + "Enabled", value);
-				//if (value)
-				//{
-				//	Preferences.Set(PrayerId + "Notification", Preferences.Get(PrayerId + "Notification", true));
-				//	Preferences.Set(PrayerId + "Vibration", Preferences.Get(PrayerId + "Vibration", false));
-				//	Preferences.Set(PrayerId + "Alarm", Preferences.Get(PrayerId + "Alarm", false));
-				//}
-			}
-			catch { /* no-op */ }
-			OnPropertyChanged(nameof(ShowAdvancedOptions));
-		}
+		// Partial property change hooks migrated into property setters
 
 		private void LoadPrayer()
 		{

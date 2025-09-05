@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -10,53 +6,68 @@ using SuleymaniyeCalendar.Resources.Strings;
 
 namespace SuleymaniyeCalendar.ViewModels
 {
-	public partial class BaseViewModel:ObservableObject
+	public partial class BaseViewModel : ObservableObject
 	{
-		[ObservableProperty] private string _title;
+		private string _title = string.Empty;
+		public string Title
+		{
+			get => _title;
+			set => SetProperty(ref _title, value);
+		}
 
-		[ObservableProperty]
-		[NotifyPropertyChangedFor(nameof(IsNotBusy))]
 		private bool _isBusy;
-	
-		public bool IsNotBusy=>!IsBusy;
+		public bool IsBusy
+		{
+			get => _isBusy;
+			set
+			{
+				if (SetProperty(ref _isBusy, value))
+				{
+					OnPropertyChanged(nameof(IsNotBusy));
+				}
+			}
+		}
 
-		[ObservableProperty]private int _fontSize = Preferences.Get("FontSize", 14);
-		
+		public bool IsNotBusy => !IsBusy;
+
+		private int _fontSize = Preferences.Get("FontSize", 14);
+		public int FontSize
+		{
+			get => _fontSize;
+			set
+			{
+				var clampedValue = Math.Max(12, Math.Min(28, value));
+				if (SetProperty(ref _fontSize, clampedValue))
+				{
+					Preferences.Set("FontSize", clampedValue);
+					OnPropertyChanged(nameof(HeaderFontSize));
+					OnPropertyChanged(nameof(SubHeaderFontSize));
+					OnPropertyChanged(nameof(CaptionFontSize));
+
+					var baseSize = 14.0;
+					var scale = clampedValue / baseSize;
+
+					if (Application.Current?.Resources != null)
+					{
+						Application.Current.Resources["DefaultFontSize"] = (double)clampedValue;
+						Application.Current.Resources["HeaderFontSize"] = clampedValue * 1.5;
+						Application.Current.Resources["SubHeaderFontSize"] = clampedValue * 1.25;
+						Application.Current.Resources["CaptionFontSize"] = clampedValue * 0.925;
+						Application.Current.Resources["BodyFontSize"] = clampedValue * 0.875;
+						Application.Current.Resources["FontScale"] = scale;
+						// Icons scale proportionally with text; keep a slight bias to avoid oversized icons
+						Application.Current.Resources["IconSmallFontSize"] = Math.Round(clampedValue * 1.1);
+						Application.Current.Resources["IconMediumFontSize"] = Math.Round(clampedValue * 1.25);
+						Application.Current.Resources["IconLargeFontSize"] = Math.Round(clampedValue * 1.6);
+						Application.Current.Resources["IconXLFontSize"] = Math.Round(clampedValue * 3.6);
+					}
+				}
+			}
+		}
+
 		public int HeaderFontSize => (int)(FontSize * 1.5);
 		public int SubHeaderFontSize => (int)(FontSize * 1.25);
 		public int CaptionFontSize => (int)(FontSize * 0.875);
-		
-		partial void OnFontSizeChanged(int value)
-		{
-			// Clamp font size for better UX
-			var clampedValue = Math.Max(12, Math.Min(28, value));
-			if (clampedValue != value)
-			{
-				FontSize = clampedValue;
-				return;
-			}
-			
-			Preferences.Set("FontSize", value);
-			
-			// Notify dependent properties
-			OnPropertyChanged(nameof(HeaderFontSize));
-			OnPropertyChanged(nameof(SubHeaderFontSize));
-			OnPropertyChanged(nameof(CaptionFontSize));
-			
-			// Calculate responsive scale factors
-			var baseSize = 14.0;
-			var scale = value / baseSize;
-			
-			if (Application.Current?.Resources != null)
-			{
-				Application.Current.Resources["DefaultFontSize"] = (double)value;
-				Application.Current.Resources["HeaderFontSize"] = value * 1.5;
-				Application.Current.Resources["SubHeaderFontSize"] = value * 1.25;
-				Application.Current.Resources["CaptionFontSize"] = value * 0.925;
-                Application.Current.Resources["BodyFontSize"] = value * 0.875;
-				Application.Current.Resources["FontScale"] = scale;
-			}
-		}
 
 		public static void ShowToast(string message)
 		{

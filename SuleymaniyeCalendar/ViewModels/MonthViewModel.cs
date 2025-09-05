@@ -12,11 +12,16 @@ using SuleymaniyeCalendar.Services;
 
 namespace SuleymaniyeCalendar.ViewModels
 {
-	public partial class MonthViewModel:BaseViewModel
+	public partial class MonthViewModel : BaseViewModel
 	{
 		private DataService _data;
 
-		[ObservableProperty] public ObservableCollection<Calendar> monthlyCalendar;
+		private ObservableCollection<Calendar> monthlyCalendar = new();
+		public ObservableCollection<Calendar> MonthlyCalendar
+		{
+			get => monthlyCalendar;
+			set => SetProperty(ref monthlyCalendar, value);
+		}
 		
 		public bool HasData => MonthlyCalendar?.Count > 0;
         public bool ShowShare => Preferences.Get("LastLatitude", 0.0) != 0.0 && Preferences.Get("LastLongitude", 0.0) != 0.0;
@@ -149,7 +154,8 @@ namespace SuleymaniyeCalendar.ViewModels
 			
 			try
 			{
-				Location location = await _data.GetCurrentLocationAsync(true).ConfigureAwait(false);
+				// Avoid permission prompt on first load; refresh only on user action
+				Location location = await _data.GetCurrentLocationAsync(false).ConfigureAwait(false);
 				if (location != null && location.Latitude != 0 && location.Longitude != 0)
 				{
 					// Use new hybrid API approach with force refresh

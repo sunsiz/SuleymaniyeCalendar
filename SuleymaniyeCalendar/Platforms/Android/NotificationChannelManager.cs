@@ -14,8 +14,7 @@ namespace SuleymaniyeCalendar
 	//[BroadcastReceiver(Enabled = true, Exported = false)]
 	public class NotificationChannelManager// : BroadcastReceiver
 	{
-		private static NotificationManager _notificationManager;
-		private static int _notificationId = 2025;
+	private static NotificationManager _notificationManager;
 		private static string _alarmBirdChannelId = "SuleymaniyeTakvimialarmbirdchannelId";
 		private static string _alarmRoosterChannelId = "SuleymaniyeTakvimialarmroosterchannelId";
 		private static string _alarmAdhanChannelId = "SuleymaniyeTakvimialarmadhanchannelId";

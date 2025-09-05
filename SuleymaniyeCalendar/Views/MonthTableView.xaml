@@ -5,11 +5,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
     xmlns:models="clr-namespace:SuleymaniyeCalendar.Models"
+       xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
+       x:DataType="viewModels:MonthViewModel"
     FlowDirection="{DynamicResource FlowDirection}">
     
     <!-- Horizontal scroll containing the CollectionView for both directions -->
     <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Always">
-        <CollectionView
+       <CollectionView
             ItemsSource="{Binding MonthlyCalendar}"
             ItemsLayout="VerticalList"
             ItemSizingStrategy="MeasureFirstItem"
@@ -24,7 +26,7 @@
                                                           Dark={StaticResource PrimaryAccent800Color}}"
                         Stroke="Transparent"
                         StrokeShape="RoundRectangle 8,8,0,0"
-                        Margin="0">
+                        Margin="0,0,0,0">
                     <Grid Padding="4,3"
                           ColumnDefinitions="80,60,60,60,60,60,60,60,62"
                           ColumnSpacing="0"
@@ -80,8 +82,8 @@
             </CollectionView.Header>
             
             <!-- Data Template with Clean Table Design -->
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Calendar">
+                     <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Calendar">
                     <Border BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceColor}, Dark={StaticResource SurfaceColorDark}}"
                             Stroke="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}"
                             StrokeThickness="0.5"

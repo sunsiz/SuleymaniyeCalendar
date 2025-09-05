@@ -19,7 +19,7 @@
 
             <!-- Loading Indicator Overlay - shows above everything when loading -->
             <Grid IsVisible="{Binding IsBusy}" 
-                  BackgroundColor="{AppThemeBinding Light=#80FFFFFF, Dark=#80000000}"
+                  BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}"
                   InputTransparent="False">
                 <Border Style="{StaticResource Card}" 
                         VerticalOptions="Center" 
