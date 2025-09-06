@@ -72,6 +72,11 @@ public static class MauiProgram
         builder.Services.AddSingleton<IRtlService, RtlService>();
         builder.Services.AddSingleton<JsonApiService>();
         builder.Services.AddSingleton<DataService>();
+        
+        // Enhanced services for better user experience  
+        builder.Services.AddSingleton<AccessibilityService>();
+        builder.Services.AddSingleton<PerformanceService>();
+        builder.Services.AddSingleton<BackgroundDataPreloader>();
 
         builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddSingleton<MainPage>();

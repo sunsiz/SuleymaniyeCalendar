@@ -15,41 +15,127 @@ namespace SuleymaniyeCalendar
 	[Service]
 	public class WidgetService : IntentService
 	{
+		private const string TAG = "WidgetService";
+		
 		[Obsolete]
 		public override void OnStart (Intent intent, int startId)
 		{
-			var updateViews = BuildUpdate (this);
-			var thisWidget = new ComponentName (this, Java.Lang.Class.FromType (typeof (AppWidget)).Name);
-			var manager = AppWidgetManager.GetInstance (this);
-			manager?.UpdateAppWidget (thisWidget, updateViews);
+			UpdateWidgetSafely(intent);
 		}
+		
 		public override IBinder OnBind(Intent intent) => null;
 
 		protected override void OnHandleIntent(Intent intent)
 		{
-			var updateViews = BuildUpdate (this);
-			var thisWidget = new ComponentName (this, Java.Lang.Class.FromType (typeof (AppWidget)).Name);
-			var manager = AppWidgetManager.GetInstance (this);
-			manager?.UpdateAppWidget (thisWidget, updateViews);
+			UpdateWidgetSafely(intent);
+		}
+
+		/// <summary>
+		/// Safe widget update with comprehensive error handling and performance optimization
+		/// </summary>
+		private void UpdateWidgetSafely(Intent intent)
+		{
+			try
+			{
+				var updateViews = BuildUpdate(this);
+				if (updateViews != null)
+				{
+					var thisWidget = new ComponentName(this, Java.Lang.Class.FromType(typeof(AppWidget)).Name);
+					var manager = AppWidgetManager.GetInstance(this);
+					manager?.UpdateAppWidget(thisWidget, updateViews);
+					
+					System.Diagnostics.Debug.WriteLine($"{TAG}: Widget updated successfully");
+				}
+				else
+				{
+					System.Diagnostics.Debug.WriteLine($"{TAG}: Widget update failed - null RemoteViews");
+				}
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"{TAG}: Widget update error: {ex.Message}");
+				// Create fallback widget with minimal info
+				try
+				{
+					var fallbackViews = CreateFallbackWidget(this);
+					var thisWidget = new ComponentName(this, Java.Lang.Class.FromType(typeof(AppWidget)).Name);
+					var manager = AppWidgetManager.GetInstance(this);
+					manager?.UpdateAppWidget(thisWidget, fallbackViews);
+				}
+				catch (Exception fallbackEx)
+				{
+					System.Diagnostics.Debug.WriteLine($"{TAG}: Fallback widget creation failed: {fallbackEx.Message}");
+				}
+			}
+		}
+
+		/// <summary>
+		/// Create fallback widget when main update fails
+		/// </summary>
+		private RemoteViews CreateFallbackWidget(Context context)
+		{
+			var language = Preferences.Get("SelectedLanguage", "tr");
+			var rtlService = new RtlService();
+			var isRtl = rtlService.IsRtlLanguage(language);
+			
+			// Use the existing layout determination method
+			var layoutResource = GetWidgetLayout(false, isRtl);
+			var updateViews = new RemoteViews(context.PackageName, layoutResource);
+			
+			// Basic error message
+			updateViews.SetTextViewText(Resource.Id.widgetLastRefreshed, "⚠️ Error loading prayer times");
+			updateViews.SetTextViewText(Resource.Id.widgetAppName, "Süleymaniye Calendar");
+			
+			// Apply basic theming
+			var isDarkMode = IsSystemDarkMode(context);
+			ApplyThemeColors(updateViews, isDarkMode);
+			
+			return updateViews;
 		}
 
 		// Build a widget update to show daily prayer times
 		private RemoteViews BuildUpdate (Context context)
 		{
 			var language = Preferences.Get("SelectedLanguage", "tr");
-			try { AppResources.Culture = new CultureInfo(language); } catch { }
-			
-			// Configure locale in a modern way (minSdk 26): create a localized configuration/context
-			var configuration = new Configuration(context.Resources?.Configuration);
-			var newLocaleLanguage = new Locale(language);
-			if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+			try 
+			{ 
+				AppResources.Culture = new CultureInfo(language); 
+			} 
+			catch (Exception ex)
 			{
-				Locale.SetDefault(Locale.Category.Display, newLocaleLanguage);
-				configuration.SetLocale(newLocaleLanguage);
-				configuration.SetLayoutDirection(newLocaleLanguage);
+				System.Diagnostics.Debug.WriteLine($"{TAG}: Culture setting failed: {ex.Message}");
+				// Continue with default culture
 			}
-			// Create a localizedContext if needed in the future (avoid deprecated UpdateConfiguration)
-			var localizedContext = context.CreateConfigurationContext(configuration);
+			
+			// Enhanced locale configuration with better error handling
+			Configuration localizedConfiguration = null;
+			try
+			{
+				localizedConfiguration = new Configuration(context.Resources?.Configuration);
+				var newLocaleLanguage = new Locale(language);
+				if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+				{
+					Locale.SetDefault(Locale.Category.Display, newLocaleLanguage);
+					localizedConfiguration.SetLocale(newLocaleLanguage);
+					localizedConfiguration.SetLayoutDirection(newLocaleLanguage);
+				}
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"{TAG}: Locale configuration failed: {ex.Message}");
+			}
+			
+			// Create a localizedContext if needed in the future (avoid deprecated UpdateConfiguration)  
+			Context localizedContext = null;
+			try
+			{
+				if (localizedConfiguration != null)
+					localizedContext = context.CreateConfigurationContext(localizedConfiguration);
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"{TAG}: Localized context creation failed: {ex.Message}");
+			}
 
 			// Detect theme preference
 			var selectedTheme = Preferences.Get("SelectedTheme", "System");

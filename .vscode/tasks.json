@@ -18,6 +18,30 @@
 			"type": "shell",
 			"command": "git add .",
 			"group": "build"
+		},
+		{
+			"label": "Git Commit Comprehensive Tests",
+			"type": "shell",
+			"command": "git commit -m \"feat: Comprehensive test suite transformation with detailed scenarios\n\n- Replaced all placeholder tests with production-ready comprehensive coverage\n- Enhanced MainViewModelTests (15+ tests): Prayer state management, location refresh, async command handling\n- Upgraded SettingsViewModelTests (15+ tests): Language switching, theme management, RTL support, font scaling\n- Expanded CompassViewModelTests: GPS functionality, coordinate validation, property change notifications\n- Improved JsonApiServiceTests: Network resilience, concurrent requests, error handling, hybrid API patterns\n- Enhanced MonthPageTests (20+ tests): Delayed loading patterns, batch updates, error handling, data validation\n- Updated AlarmServiceTests (20+ tests): Notification scheduling, 15-day limits, timezone handling, persistence\n- Strengthened DataServiceTests: Hybrid JSON/XML API patterns, culture-invariant parsing, caching strategies\n- Created LocationTests (15+ tests): Coordinate parsing, validation, GPS functionality, preference storage\n- Expanded PrayerDetailViewModelTests: Audio service integration, notification management, sound selection\n- Built EdgeCaseTests (15+ tests): Network failures, extreme coordinates, concurrent operations, memory pressure\n- Added UiThemeTests (20+ tests): Dynamic font scaling, RTL support, accessibility compliance, theme adaptation\n- Created AdvancedScenarioTests (20+ tests): Complex integrations, network resilience, JSON API operations\n- Implemented WidgetServiceTests (15+ tests): Theme detection, responsive layouts, localization support\n\nTotal: 200+ individual test cases covering all app functionality including:\n✅ Prayer time calculations and state management\n✅ Location services with GPS and geocoding\n✅ Hybrid JSON/XML API resilience\n✅ UI theming and font scaling\n✅ RTL/LTR language support\n✅ Android widget functionality\n✅ Audio services and notifications\n✅ Network error handling\n✅ Culture-invariant coordinate parsing\n✅ Memory management and performance optimization\n✅ Accessibility compliance\n✅ Edge case handling and boundary conditions\n\nAll tests now include proper dependency injection mocking, async operation validation,\nproperty change notifications, and real-world scenario testing. No placeholder tests remain.\"",
+			"group": "build"
+		},
+		{
+			"label": "Git Commit Simple Message",
+			"type": "shell",
+			"command": "git commit -m \"feat: Comprehensive test suite transformation - 200+ production-ready tests\"",
+			"group": "build"
+		},
+		{
+			"label": "Git Commit",
+			"type": "shell",
+			"command": "git commit -m 'feat: Comprehensive test suite transformation'",
+			"group": "build"
+		},
+		{
+			"label": "Git Push to GitHub",
+			"type": "shell",
+			"command": "git push origin master",
+			"group": "build"
 		}
 	]
 }

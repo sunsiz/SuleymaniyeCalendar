@@ -8,6 +8,7 @@ namespace SuleymaniyeCalendar.Services
 {
     public static class ToastAndDialogService
     {
+        // Enhanced severity levels with icons for better user feedback
         public static async Task ShowErrorDialogAsync(string title, string message, string primaryAction = null, string secondaryAction = null)
         {
             await MainThread.InvokeOnMainThreadAsync(async () =>
@@ -48,6 +49,36 @@ namespace SuleymaniyeCalendar.Services
             {
                 var toast = Toast.Make($"❌ {message}", ToastDuration.Long, 16);
                 toast.Show(CancellationToken.None);
+            });
+        }
+
+        /// <summary>
+        /// Enhanced network connectivity feedback with contextual guidance
+        /// </summary>
+        public static void ShowNetworkErrorToast(string feature = null)
+        {
+            var message = string.IsNullOrEmpty(feature) 
+                ? AppResources.RadyoIcinInternet 
+                : $"{feature} {AppResources.TakvimIcinInternet}";
+            
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                var toast = Toast.Make($"📶 {message}", ToastDuration.Long, 16);
+                toast.Show(CancellationToken.None);
+            });
+        }
+
+        /// <summary>
+        /// Location permission guidance with action suggestions
+        /// </summary>
+        public static async Task ShowLocationPermissionDialogAsync()
+        {
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                await Shell.Current.DisplayAlert(
+                    AppResources.KonumIzniBaslik, 
+                    $"{AppResources.KonumIzniIcerik} {AppResources.UygulamaAyarlari}",
+                    AppResources.Tamam);
             });
         }
     }

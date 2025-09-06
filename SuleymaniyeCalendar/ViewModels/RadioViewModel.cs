@@ -76,18 +76,24 @@ namespace SuleymaniyeCalendar.ViewModels
 			});
 		}
 
-		private static async Task<bool> CheckInternetAsync()
+		private static Task<bool> CheckInternetAsync()
 		{
 			var current = Connectivity.NetworkAccess;
 			if (current != NetworkAccess.Internet)
 			{
-				CancellationTokenSource cancellationTokenSource = new();
-				var toast = Toast.Make(AppResources.RadyoIcinInternet, ToastDuration.Short, 14);
-				await toast.Show(cancellationTokenSource.Token);
-				return false;
+				// Enhanced network feedback with contextual guidance
+				var message = $"{AppResources.RadyoIcinInternet} 📶";
+				
+				MainThread.BeginInvokeOnMainThread(() =>
+				{
+					CancellationTokenSource cancellationTokenSource = new();
+					var toast = Toast.Make(message, ToastDuration.Long, 16);
+					toast.Show(cancellationTokenSource.Token);
+				});
+				return Task.FromResult(false);
 			}
 
-			return true;
+			return Task.FromResult(true);
 		}
 
 		public IRadioService GetRadioService() => _radioService;

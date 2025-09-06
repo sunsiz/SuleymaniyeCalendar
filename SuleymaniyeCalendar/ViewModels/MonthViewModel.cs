@@ -104,19 +104,33 @@ namespace SuleymaniyeCalendar.ViewModels
 					}
 					
 					// Performance optimized update: Use ReplaceRange if available, otherwise batch clear/add
-					await MainThread.InvokeOnMainThreadAsync(() => 
+					await MainThread.InvokeOnMainThreadAsync(async () => 
 					{
-						// Clear existing items efficiently
-						MonthlyCalendar.Clear();
-						
-						// Add items in batches for better performance
-						const int batchSize = 10;
-						for (int i = 0; i < monthlyData.Count; i += batchSize)
+						// Performance optimization: Use collection replacement for better UI responsiveness
+						if (monthlyData.Count <= 10)
 						{
-							var batch = monthlyData.Skip(i).Take(batchSize);
-							foreach (var item in batch)
-							{
+							// Small datasets: Direct replacement for instant display
+							MonthlyCalendar.Clear();
+							foreach (var item in monthlyData)
 								MonthlyCalendar.Add(item);
+						}
+						else
+						{
+							// Large datasets: Smooth progressive loading to prevent UI blocking
+							MonthlyCalendar.Clear();
+							const int batchSize = 8; // Optimized batch size for better perceived performance
+							
+							for (int i = 0; i < monthlyData.Count; i += batchSize)
+							{
+								var batch = monthlyData.Skip(i).Take(batchSize);
+								foreach (var item in batch)
+								{
+									MonthlyCalendar.Add(item);
+								}
+								
+								// Micro-delay for UI thread breathing room on large datasets
+								if (i > 0 && monthlyData.Count > 50)
+									await Task.Delay(1);
 							}
 						}
 						
