@@ -1,0 +1,23 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run MSTest suite",
+			"type": "shell",
+			"command": "dotnet test --collect:\"XPlat Code Coverage\" --results-directory ./TestResults",
+			"group": "test"
+		},
+		{
+			"label": "Run MSTest suite (target test project)",
+			"type": "shell",
+			"command": "dotnet test SuleymaniyeCalendar.Tests/SuleymaniyeCalendar.Tests.csproj --collect:\"XPlat Code Coverage\" --results-directory ./TestResults",
+			"group": "test"
+		},
+		{
+			"label": "Git Add All Changes",
+			"type": "shell",
+			"command": "git add .",
+			"group": "build"
+		}
+	]
+}
