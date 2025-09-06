@@ -23,11 +23,9 @@ namespace SuleymaniyeCalendar.Services
 		public Calendar calendar;
 		private Calendar _location;
 		private ObservableCollection<Calendar> _monthlyCalendar;
-		public readonly string _fileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "monthlycalendar.xml");
-		public readonly string _jsonFileName = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "monthlycalendar.json");
 		private bool askedLocationPermission;
 		private static readonly HttpClient _xmlHttpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
-	private const int UnifiedCacheVersion = 1;
+		private const int UnifiedCacheVersion = 1;
 
 		// Primary constructor for DI: JsonApiService is injected
 		public DataService(IAlarmService alarmService, JsonApiService jsonApiService)
@@ -82,33 +80,42 @@ namespace SuleymaniyeCalendar.Services
 
 		private Calendar GetTakvimFromFile()
 		{
-			if (File.Exists(_fileName))
+			try
 			{
-				try
+				// Use unified cache for today's data
+				var location = new Location()
 				{
-					XDocument xmldoc = XDocument.Load(_fileName);
-					var days = ParseXmlList(xmldoc);
-					if (days != null && ParseCalendarDateOrMin(days[0].Date) <= DateTime.Today &&
-						ParseCalendarDateOrMin(days[days.Count() - 1].Date) >= DateTime.Today)
+					Latitude = Preferences.Get("LastLatitude", 0.0),
+					Longitude = Preferences.Get("LastLongitude", 0.0),
+					Altitude = Preferences.Get("LastAltitude", 0.0)
+				};
+
+				if (location.Latitude != 0.0 && location.Longitude != 0.0)
+				{
+					var currentYear = DateTime.Today.Year;
+					var cachedYearData = LoadYearCacheAsync(location, currentYear).GetAwaiter().GetResult();
+					
+					if (cachedYearData != null)
 					{
-						foreach (var item in days)
+						var todayData = cachedYearData.FirstOrDefault(d => 
+							ParseCalendarDateOrMin(d.Date) == DateTime.Today);
+						
+						if (todayData != null)
 						{
-							if (ParseCalendarDateOrMin(item.Date) == DateTime.Today)
-							{
-								calendar = item;
-								calendar.Latitude = Preferences.Get("LastLatitude", 0.0);
-								calendar.Longitude = Preferences.Get("LastLongitude", 0.0);
-								calendar.Altitude = Preferences.Get("LastAltitude", 0.0);
-								return calendar;
-							}
+							calendar = todayData;
+							calendar.Latitude = location.Latitude;
+							calendar.Longitude = location.Longitude;
+							calendar.Altitude = location.Altitude ?? 0;
+							return calendar;
 						}
 					}
 				}
-				catch (Exception ex)
-				{
-					Debug.WriteLine(ex.Message);
-				}
 			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"GetTakvimFromFile unified cache error: {ex.Message}");
+			}
+			
 			return calendar;
 		}
 
@@ -237,29 +244,16 @@ namespace SuleymaniyeCalendar.Services
 
 		public ObservableCollection<Calendar> GetMonthlyPrayerTimes(Location location, bool forceRefresh = false)
 		{
-			if (File.Exists(_fileName) && !forceRefresh)
+			// **UNIFIED CACHE APPROACH** - Use only the modern unified cache system
+			if (!forceRefresh)
 			{
-				try
+				var month = DateTime.Now.Month;
+				var year = DateTime.Now.Year;
+				var unified = TryGetMonthlyFromUnifiedCacheAsync(location, year, month).GetAwaiter().GetResult();
+				if (unified != null)
 				{
-					XDocument xmldoc = XDocument.Load(_fileName);
-					var calendarDays = ParseXmlList(xmldoc);
-					xmldoc = null;
-					if (calendarDays != null)
-					{
-						var first = ParseCalendarDateOrMin(calendarDays[0].Date);
-						var days = first == DateTime.MinValue ? int.MaxValue : (DateTime.Today - first).Days;
-						if (days is < 21 and >= 0)
-						{
-							_monthlyCalendar = calendarDays;
-							return _monthlyCalendar;
-						}
-					}
-
-					if (!HaveInternet()) return _monthlyCalendar = calendarDays;
-				}
-				catch (Exception exception)
-				{
-					Debug.WriteLine($"An error occurred while reading or parsing the file, details: {exception.Message}");
+					_monthlyCalendar = unified;
+					return _monthlyCalendar;
 				}
 			}
 
@@ -287,7 +281,8 @@ namespace SuleymaniyeCalendar.Services
 			{
 				XDocument doc = XDocument.Load(url);
 				_monthlyCalendar = ParseXmlList(doc, _location.Latitude, _location.Longitude, _location.Altitude);
-				WriteTakvimFile(doc.ToString());
+				// Save to unified cache only (synchronous version)
+				_ = Task.Run(async () => await SaveToUnifiedCacheAsync(location, _monthlyCalendar.ToList()));
 				return _monthlyCalendar;
 			}
 			catch (Exception exception)
@@ -333,8 +328,7 @@ namespace SuleymaniyeCalendar.Services
 				var xml = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
 				var doc = XDocument.Parse(xml);
 				var result = ParseXmlList(doc, location.Latitude, location.Longitude, location.Altitude ?? 0);
-				await File.WriteAllTextAsync(_fileName, doc.ToString()).ConfigureAwait(false);
-				// Save into unified cache as well
+				// Save to unified cache only
 				await SaveToUnifiedCacheAsync(location, result.ToList()).ConfigureAwait(false);
 				return result;
 			}
@@ -467,11 +461,6 @@ namespace SuleymaniyeCalendar.Services
 			}
 
 			return calendar;
-		}
-
-		private void WriteTakvimFile(string fileContent)
-		{
-			File.WriteAllText(_fileName, fileContent);
 		}
 
 		public bool HaveInternet()
@@ -1272,81 +1261,32 @@ namespace SuleymaniyeCalendar.Services
 		}
 
 		/// <summary>
-		/// Try to get monthly data from cache (both JSON and XML)
+		/// Try to get monthly data from unified cache only
 		/// </summary>
 		private async Task<ObservableCollection<Calendar>> TryGetMonthlyFromCacheAsync()
 		{
-			// Try JSON cache first
-			if (File.Exists(_jsonFileName))
-			{
-				try
-				{
-					var jsonContent = await File.ReadAllTextAsync(_jsonFileName);
-					var cachedData = JsonSerializer.Deserialize<List<Calendar>>(jsonContent);
-						if (cachedData != null && cachedData.Count > 0)
-					{
-							var firstDate = ParseCalendarDateOrMin(cachedData[0].Date);
-							var lastDate = ParseCalendarDateOrMin(cachedData[cachedData.Count - 1].Date);
-						var daysFromStart = (DateTime.Today - firstDate).Days;
-						
-						if (daysFromStart >= 0 && daysFromStart < 21 && lastDate >= DateTime.Today)
-						{
-							Debug.WriteLine("Found valid JSON cache");
-							return new ObservableCollection<Calendar>(cachedData);
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					Debug.WriteLine($"Error reading JSON cache: {ex.Message}");
-				}
-			}
-
-			// Fallback to XML cache
-			if (File.Exists(_fileName))
-			{
-				try
-				{
-					XDocument xmldoc = XDocument.Load(_fileName);
-					var calendarDays = ParseXmlList(xmldoc);
-					if (calendarDays != null && calendarDays.Count > 0)
-					{
-							var first = ParseCalendarDateOrMin(calendarDays[0].Date);
-							var days = first == DateTime.MinValue ? int.MaxValue : (DateTime.Today - first).Days;
-						if (days is < 21 and >= 0)
-						{
-							Debug.WriteLine("Found valid XML cache");
-							return calendarDays;
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					Debug.WriteLine($"Error reading XML cache: {ex.Message}");
-				}
-			}
-
-			return null;
-		}
-
-		/// <summary>
-		/// Save monthly prayer times to JSON cache
-		/// </summary>
-		private async Task SaveMonthlyToJsonCacheAsync(ObservableCollection<Calendar> monthlyData)
-		{
 			try
 			{
-				var jsonContent = JsonSerializer.Serialize(monthlyData.ToList(), new JsonSerializerOptions 
-				{ 
-					WriteIndented = true 
-				});
-				await File.WriteAllTextAsync(_jsonFileName, jsonContent);
-				Debug.WriteLine("Saved monthly data to JSON cache");
+				var location = new Location()
+				{
+					Latitude = Preferences.Get("LastLatitude", 0.0),
+					Longitude = Preferences.Get("LastLongitude", 0.0),
+					Altitude = Preferences.Get("LastAltitude", 0.0)
+				};
+
+				if (location.Latitude != 0.0 && location.Longitude != 0.0)
+				{
+					var month = DateTime.Now.Month;
+					var year = DateTime.Now.Year;
+					return await TryGetMonthlyFromUnifiedCacheAsync(location, year, month);
+				}
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"Error saving JSON cache: {ex.Message}");
+				Debug.WriteLine($"Error reading unified cache: {ex.Message}");
 			}
+
+			return null;
 		}
 
 		/// <summary>

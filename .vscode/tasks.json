@@ -42,6 +42,15 @@
 			"type": "shell",
 			"command": "git push origin master",
 			"group": "build"
+		},
+		{
+			"label": "Build Project",
+			"type": "shell",
+			"command": "dotnet build",
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
 		}
 	]
 }
