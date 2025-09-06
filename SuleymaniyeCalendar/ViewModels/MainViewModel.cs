@@ -134,14 +134,30 @@ namespace SuleymaniyeCalendar.ViewModels
 
             try
             {
-                _calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
-                await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+                // Force location refresh when user manually taps refresh button
+                var location = await _data.GetCurrentLocationAsync(refreshLocation: true).ConfigureAwait(false);
+                if (location != null && location.Latitude != 0 && location.Longitude != 0)
+                {
+                    // Get fresh prayer times with the updated location
+                    _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
+                    // Also refresh monthly data for alarms
+                    var monthlyData = await _data.GetMonthlyPrayerTimesHybridAsync(location, forceRefresh: true).ConfigureAwait(false);
+                    
+                    await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
 
-                // Coalesced UI update after background work
-                await RefreshUiAsync(force: true).ConfigureAwait(false);
+                    // Coalesced UI update after background work
+                    await RefreshUiAsync(force: true).ConfigureAwait(false);
 
-                // Fire and forget non-UI work
-                _ = Task.Run(() => GetCity());
+                    // Fire and forget non-UI work
+                    _ = Task.Run(() => GetCity());
+                }
+                else
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        ShowToast(AppResources.KonumIzniIcerik);
+                    });
+                }
             }
             catch (Exception ex)
             {
