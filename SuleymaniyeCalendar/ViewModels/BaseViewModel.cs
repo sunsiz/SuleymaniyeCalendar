@@ -50,10 +50,10 @@ namespace SuleymaniyeCalendar.ViewModels
 					if (Application.Current?.Resources != null)
 					{
 						Application.Current.Resources["DefaultFontSize"] = (double)clampedValue;
-						Application.Current.Resources["HeaderFontSize"] = clampedValue * 1.5;
-						Application.Current.Resources["SubHeaderFontSize"] = clampedValue * 1.25;
-						Application.Current.Resources["CaptionFontSize"] = clampedValue * 0.925;
-						Application.Current.Resources["BodyFontSize"] = clampedValue * 0.875;
+						Application.Current.Resources["HeaderFontSize"] = clampedValue * 1.35;
+						Application.Current.Resources["SubHeaderFontSize"] = clampedValue * 1.2;
+						Application.Current.Resources["CaptionFontSize"] = clampedValue * 1.1;
+						Application.Current.Resources["BodyFontSize"] = clampedValue * 1.05;
 						Application.Current.Resources["FontScale"] = scale;
 						// Icons scale proportionally with text; keep a slight bias to avoid oversized icons
 						Application.Current.Resources["IconSmallFontSize"] = Math.Round(clampedValue * 1.1);
@@ -67,7 +67,8 @@ namespace SuleymaniyeCalendar.ViewModels
 
 		public int HeaderFontSize => (int)(FontSize * 1.5);
 		public int SubHeaderFontSize => (int)(FontSize * 1.25);
-		public int CaptionFontSize => (int)(FontSize * 0.875);
+		public int CaptionFontSize => (int)(FontSize * 1.1);
+        public int BodyFontSize => (int)(FontSize * 1.05);
 
 		public static void ShowToast(string message)
 		{

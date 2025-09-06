@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-  <!-- Revert to MaterialComponents parent: required by MAUI controls (e.g., BottomNavigationView, MaterialButton, CheckBox)
-       to avoid IllegalArgumentException at runtime: "requires your app theme to be Theme.MaterialComponents".
-       Using NoActionBar variant to keep app fullscreen styling consistent. -->
-  <style name="Maui.MainTheme.Base" parent="Theme.MaterialComponents.DayNight.NoActionBar" />
-</resources>

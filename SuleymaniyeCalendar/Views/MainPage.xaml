@@ -119,11 +119,11 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Prayer">
-                            <ContentView Padding="6,6,6,8">
+                            <ContentView Padding="4,3">
                                 <!-- Outer container to allow shadow bleed beyond rounded corners -->
                                 <Border
-                                    Margin="3"
-                                    Padding="3"
+                                    Margin="4"
+                                    Padding="4"
                                     Opacity="{Binding Opacity}"
                                     Style="{StaticResource AnimatedPrayerCard}">
                                     <Border.Triggers>
