@@ -198,8 +198,8 @@ namespace SuleymaniyeCalendar.Tests
                 var scaledFontSize = (int)(14 * scale); // 14 is base widget font size
                 
                 // Assert - Font size should be within reasonable bounds for widget
-                scaledFontSize.Should().BeGreaterOrEqualTo(10); // Minimum readable size
-                scaledFontSize.Should().BeLessOrEqualTo(21); // Maximum widget size
+                scaledFontSize.Should().BeGreaterThanOrEqualTo(10); // Minimum readable size
+                scaledFontSize.Should().BeLessThanOrEqualTo(21); // Maximum widget size
             }
         }
 
@@ -342,9 +342,9 @@ namespace SuleymaniyeCalendar.Tests
             var cpuUsagePercent = 1; // Minimal CPU usage
 
             // Act & Assert - Widget should be resource efficient
-            updateFrequencyMinutes.Should().BeGreaterOrEqualTo(60); // Don't update too frequently
-            memoryUsageKB.Should().BeLessOrEqualTo(1024); // Keep memory usage low
-            cpuUsagePercent.Should().BeLessOrEqualTo(5); // Minimal CPU impact
+            updateFrequencyMinutes.Should().BeGreaterThanOrEqualTo(60); // Don't update too frequently
+            memoryUsageKB.Should().BeLessThanOrEqualTo(1024); // Keep memory usage low
+            cpuUsagePercent.Should().BeLessThanOrEqualTo(5); // Minimal CPU impact
         }
 
         [TestMethod]
@@ -369,7 +369,7 @@ namespace SuleymaniyeCalendar.Tests
             {
                 // Medium widget: Show 3-4 prayers
                 var maxPrayersToShow = 3;
-                maxPrayersToShow.Should().BeGreaterOrEqualTo(3);
+                maxPrayersToShow.Should().BeGreaterThanOrEqualTo(3);
             }
             else if (largeWidgetHeight > 200)
             {

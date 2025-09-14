@@ -14,4 +14,10 @@ public partial class SettingsPage : ContentPage
 		InitializeComponent();
 		BindingContext = viewModel;
 	}
+
+    private void OnLanguageCardTapped(object sender, EventArgs e)
+    {
+        // Show the language picker when the language card is tapped
+        LanguagePicker.Focus();
+    }
 }

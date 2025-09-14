@@ -19,7 +19,8 @@ public partial class PrayerDetailPage : ContentPage
 	protected override void OnDisappearing()
 	{
 		base.OnDisappearing();
-		_viewModel.GoBack();
+		// Ensure any pending changes are saved and alarms scheduled even if user uses system back
+		_ = _viewModel.SaveAndScheduleAsync();
 		//DataService data = new DataService();
 		//if (data.CheckRemindersEnabledAny())
 		//    DependencyService.Get<IForegroundServiceControlService>().StartService();

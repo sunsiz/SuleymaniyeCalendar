@@ -222,8 +222,8 @@ namespace SuleymaniyeCalendar.Tests
                 baseViewModel.FontSize = scale;
 
                 // Assert - Verify clamping and proportional scaling
-                baseViewModel.FontSize.Should().BeGreaterOrEqualTo(12);
-                baseViewModel.FontSize.Should().BeLessOrEqualTo(28);
+                baseViewModel.FontSize.Should().BeGreaterThanOrEqualTo(12);
+                baseViewModel.FontSize.Should().BeLessThanOrEqualTo(28);
                 baseViewModel.HeaderFontSize.Should().Be((int)(baseViewModel.FontSize * 1.5));
                 baseViewModel.SubHeaderFontSize.Should().Be((int)(baseViewModel.FontSize * 1.25));
                 baseViewModel.CaptionFontSize.Should().Be((int)(baseViewModel.FontSize * 1.1));

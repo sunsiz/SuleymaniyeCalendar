@@ -853,6 +853,12 @@ namespace SuleymaniyeCalendar.Services
 			list.Add(new Prayer { Id = "isha",      Name = AppResources.Yatsi,     Time = day.Isha,       Enabled = Preferences.Get("ishaEnabled", false) });
 			list.Add(new Prayer { Id = "endofisha", Name = AppResources.YatsiSonu, Time = day.EndOfIsha,  Enabled = Preferences.Get("endofishaEnabled", false) });
 
+			// Assign animated weather icons based on prayer ID (not localized name)
+			foreach (var prayer in list)
+			{
+				PrayerIconService.AssignIconById(prayer);
+			}
+
 			return list;
 		}
 

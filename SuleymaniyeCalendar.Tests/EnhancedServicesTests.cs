@@ -48,7 +48,7 @@ namespace SuleymaniyeCalendar.Tests
 
             // Assert
             fontScale.Should().BeGreaterThan(0);
-            fontScale.Should().BeLessOrEqualTo(32); // Reasonable maximum
+            fontScale.Should().BeLessThanOrEqualTo(32); // Reasonable maximum
         }
 
         [TestMethod]

@@ -113,6 +113,10 @@ namespace SuleymaniyeCalendar.Tests
             propertyChanges.Should().Contain(nameof(BaseViewModel.FontSize));
             propertyChanges.Should().Contain(nameof(BaseViewModel.HeaderFontSize));
             propertyChanges.Should().Contain(nameof(BaseViewModel.SubHeaderFontSize));
+            propertyChanges.Should().Contain(nameof(BaseViewModel.TitleSmallFontSize));
+            propertyChanges.Should().Contain(nameof(BaseViewModel.BodyLargeFontSize));
+            propertyChanges.Should().Contain(nameof(BaseViewModel.CaptionFontSize));
+            propertyChanges.Should().Contain(nameof(BaseViewModel.BodyFontSize));
         }
 
         [TestMethod]
@@ -354,6 +358,73 @@ namespace SuleymaniyeCalendar.Tests
             // Assert
             viewModel.Title.Should().Be("Test Title");
             titleChanged.Should().BeTrue();
+        }
+
+        [TestMethod]
+        public void FontSize_UpdatesAllDynamicResourceKeys()
+        {
+            // Arrange
+            var viewModel = new BaseViewModel();
+            var mockResourceDictionary = new Microsoft.Maui.Controls.ResourceDictionary();
+            
+            // Mock Application.Current.Resources for testing
+            if (Application.Current?.Resources != null)
+            {
+                // Act
+                viewModel.FontSize = 20;
+
+                // Assert - Verify all DynamicResource keys are updated
+                Application.Current.Resources.Should().ContainKey("DefaultFontSize");
+                Application.Current.Resources.Should().ContainKey("FontScale");
+                Application.Current.Resources.Should().ContainKey("DisplayFontSize");
+                Application.Current.Resources.Should().ContainKey("DisplaySmallFontSize");
+                Application.Current.Resources.Should().ContainKey("TitleFontSize");
+                Application.Current.Resources.Should().ContainKey("TitleMediumFontSize");
+                Application.Current.Resources.Should().ContainKey("TitleSmallFontSize"); // Critical for prayer times
+                Application.Current.Resources.Should().ContainKey("HeaderFontSize");
+                Application.Current.Resources.Should().ContainKey("SubHeaderFontSize");
+                Application.Current.Resources.Should().ContainKey("BodyLargeFontSize"); // Critical for prayer names
+                Application.Current.Resources.Should().ContainKey("BodyFontSize");
+                Application.Current.Resources.Should().ContainKey("BodySmallFontSize");
+                Application.Current.Resources.Should().ContainKey("CaptionFontSize");
+                
+                // Verify icon font sizes
+                Application.Current.Resources.Should().ContainKey("IconSmallFontSize");
+                Application.Current.Resources.Should().ContainKey("IconMediumFontSize");
+                Application.Current.Resources.Should().ContainKey("IconLargeFontSize");
+                Application.Current.Resources.Should().ContainKey("IconXLFontSize");
+
+                // Verify specific values for critical prayer card fonts
+                Application.Current.Resources["TitleSmallFontSize"].Should().Be(20 * 1.29); // 25.8 for prayer times
+                Application.Current.Resources["BodyLargeFontSize"].Should().Be(20 * 1.14);  // 22.8 for prayer names
+                Application.Current.Resources["DefaultFontSize"].Should().Be(20.0);
+            }
+        }
+
+        [TestMethod]
+        public void FontSize_PrayerCardFontScaling_WorksCorrectly()
+        {
+            // Arrange
+            var viewModel = new BaseViewModel();
+            
+            if (Application.Current?.Resources != null)
+            {
+                // Act - Test minimum font size
+                viewModel.FontSize = 12;
+                var minTitleSmall = Application.Current.Resources["TitleSmallFontSize"];
+                var minBodyLarge = Application.Current.Resources["BodyLargeFontSize"];
+                
+                // Act - Test maximum font size  
+                viewModel.FontSize = 28;
+                var maxTitleSmall = Application.Current.Resources["TitleSmallFontSize"];
+                var maxBodyLarge = Application.Current.Resources["BodyLargeFontSize"];
+
+                // Assert - Prayer card fonts scale properly
+                minTitleSmall.Should().Be(12 * 1.29); // 15.48 at minimum
+                minBodyLarge.Should().Be(12 * 1.14);  // 13.68 at minimum
+                maxTitleSmall.Should().Be(28 * 1.29); // 36.12 at maximum
+                maxBodyLarge.Should().Be(28 * 1.14);  // 31.92 at maximum
+            }
         }
     }
 }

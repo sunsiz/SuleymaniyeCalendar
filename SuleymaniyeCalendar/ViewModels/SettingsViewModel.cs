@@ -19,6 +19,8 @@ namespace SuleymaniyeCalendar.ViewModels
 {
 	public partial class SettingsViewModel : BaseViewModel
 	{
+		// Prevent re-entrant/duplicated theme updates when toggling via gestures and radios
+		private bool suppressThemeUpdates;
 		private IList<Language> supportedLanguages = Enumerable.Empty<Language>().ToList();
 		public IList<Language> SupportedLanguages { get => supportedLanguages; set => SetProperty(ref supportedLanguages, value); }
 
@@ -68,7 +70,9 @@ namespace SuleymaniyeCalendar.ViewModels
 			get => lightChecked;
 			set
 			{
-				if (SetProperty(ref lightChecked, value) && value)
+				if (!SetProperty(ref lightChecked, value)) return;
+				if (suppressThemeUpdates) return;
+				if (value)
 				{
 					ApplyThemeInternal(1);
 					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(1));
@@ -82,7 +86,9 @@ namespace SuleymaniyeCalendar.ViewModels
 			get => darkChecked;
 			set
 			{
-				if (SetProperty(ref darkChecked, value) && value)
+				if (!SetProperty(ref darkChecked, value)) return;
+				if (suppressThemeUpdates) return;
+				if (value)
 				{
 					ApplyThemeInternal(0);
 					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(0));
@@ -96,7 +102,9 @@ namespace SuleymaniyeCalendar.ViewModels
 			get => systemChecked;
 			set
 			{
-				if (SetProperty(ref systemChecked, value) && value)
+				if (!SetProperty(ref systemChecked, value)) return;
+				if (suppressThemeUpdates) return;
+				if (value)
 				{
 					ApplyThemeInternal(2);
 					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(2));
@@ -130,16 +138,23 @@ namespace SuleymaniyeCalendar.ViewModels
 				{
 					Preferences.Set("NotificationPrayerTimesEnabled", value);
 #if ANDROID
-					// If the service is running, ask it to refresh the notification now
-					if (Preferences.Get("ForegroundServiceEnabled", true))
+					try
 					{
-						var ctx = Android.App.Application.Context;
-						var refreshIntent = new Intent(ctx, typeof(AlarmForegroundService))
-							.SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
-						if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-							ctx.StartForegroundService(refreshIntent);
-						else
-							ctx.StartService(refreshIntent);
+						// If the service is running, ask it to refresh the notification now
+						if (Preferences.Get("ForegroundServiceEnabled", true))
+						{
+							var ctx = Android.App.Application.Context;
+							var refreshIntent = new Intent(ctx, typeof(AlarmForegroundService))
+								.SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
+							if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+								ctx.StartForegroundService(refreshIntent);
+							else
+								ctx.StartService(refreshIntent);
+						}
+					}
+					catch (System.Exception ex)
+					{
+						System.Diagnostics.Debug.WriteLine($"Error refreshing notification: {ex}");
 					}
 #endif
 				}
@@ -171,26 +186,33 @@ namespace SuleymaniyeCalendar.ViewModels
 #endif
 					OnPropertyChanged(nameof(ShowNotificationPrayerOption));
 #if ANDROID
-					var ctx = Android.App.Application.Context;
-					if (!value)
+					try
 					{
-						// Stop the foreground service if it's running
-						var stopIntent = new Intent(ctx, typeof(AlarmForegroundService));
-						stopIntent.SetAction("SuleymaniyeTakvimi.action.STOP_SERVICE");
-						if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-							ctx.StartForegroundService(stopIntent);
+						var ctx = Android.App.Application.Context;
+						if (!value)
+						{
+							// Stop the foreground service if it's running
+							var stopIntent = new Intent(ctx, typeof(AlarmForegroundService));
+							stopIntent.SetAction("SuleymaniyeTakvimi.action.STOP_SERVICE");
+							if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+								ctx.StartForegroundService(stopIntent);
+							else
+								ctx.StartService(stopIntent);
+						}
 						else
-							ctx.StartService(stopIntent);
+						{
+							// Start the foreground service
+							var startIntent = new Intent(ctx, typeof(AlarmForegroundService));
+							startIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
+							if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+								ctx.StartForegroundService(startIntent);
+							else
+								ctx.StartService(startIntent);
+						}
 					}
-					else
+					catch (System.Exception ex)
 					{
-						// Start the foreground service
-						var startIntent = new Intent(ctx, typeof(AlarmForegroundService));
-						startIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
-						if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-							ctx.StartForegroundService(startIntent);
-						else
-							ctx.StartService(startIntent);
+						System.Diagnostics.Debug.WriteLine($"Error toggling foreground service: {ex}");
 					}
 #endif
 				}
@@ -217,10 +239,12 @@ namespace SuleymaniyeCalendar.ViewModels
 			LoadLanguages(); // sets SelectedLanguage based on resourceManager culture
 			// Use saved theme (0=Dark,1=Light,2=System)
 			CurrentTheme = Theme.Tema;
-			// Initialize radio flags from current theme
+			// Initialize radio flags from current theme (suppress side-effects to avoid loops)
+			suppressThemeUpdates = true;
 			LightChecked = CurrentTheme == 1;
 			DarkChecked = CurrentTheme == 0;
 			SystemChecked = CurrentTheme == 2;
+			suppressThemeUpdates = false;
 			//AlarmDuration = Preferences.Get("AlarmDuration", 4);
 			ForegroundServiceEnabled = Preferences.Get("ForegroundServiceEnabled", true);
 			NotificationPrayerTimesEnabled = Preferences.Get("NotificationPrayerTimesEnabled", false);
@@ -245,6 +269,36 @@ namespace SuleymaniyeCalendar.ViewModels
 			{
 				SetUserAppTheme(themeValue);
 			});
+		}
+
+		// Allow tapping the entire row to set theme: 0=Dark,1=Light,2=System
+		[RelayCommand]
+		private void SetThemeByIndex(object parameter)
+		{
+			int index = 2; // default to System
+			try
+			{
+				// Convert parameter to int robustly (handles string, boxed int, null)
+				if (parameter is int i)
+					index = i;
+				else if (parameter is string s && int.TryParse(s, out var parsed))
+					index = parsed;
+			}
+			catch { /* ignore and use default */ }
+			index = Math.Clamp(index, 0, 2);
+			try
+			{
+				suppressThemeUpdates = true;
+				LightChecked = index == 1;
+				DarkChecked = index == 0;
+				SystemChecked = index == 2;
+			}
+			finally
+			{
+				suppressThemeUpdates = false;
+			}
+			ApplyThemeInternal(index);
+			MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(index));
 		}
 
 		// CurrentTheme setter contains the UI theme application logic

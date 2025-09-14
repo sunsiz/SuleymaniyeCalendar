@@ -77,6 +77,30 @@ namespace SuleymaniyeCalendar.Models
 			set => SetProperty(ref opacity, value);
 		}
 
+		// Icon path for animated weather icons
+		private string iconPath = string.Empty;
+		public string IconPath
+		{
+			get => iconPath;
+			set => SetProperty(ref iconPath, value);
+		}
+
+		// Fallback FontAwesome icon for when SVG is not available
+		private string fontAwesomeIcon = string.Empty;
+		public string FontAwesomeIcon
+		{
+			get => fontAwesomeIcon;
+			set => SetProperty(ref fontAwesomeIcon, value);
+		}
+
+		// Astronomical description of the prayer time
+		private string description = string.Empty;
+		public string Description
+		{
+			get => description;
+			set => SetProperty(ref description, value);
+		}
+
 		// Default constructor
 		public Prayer()
 		{

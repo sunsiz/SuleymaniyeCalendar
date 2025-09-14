@@ -5,6 +5,7 @@ using Microsoft.Maui.Controls;
 using Microsoft.Maui.Storage;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Resources.Strings;
+using SuleymaniyeCalendar.ViewModels;
 
 namespace SuleymaniyeCalendar;
 
@@ -18,7 +19,8 @@ public partial class App : Application
 
         InitializeComponent();
 
-        Resources["DefaultFontSize"] = Preferences.Get("FontSize", 14);
+        // Initialize complete font scaling system at app startup
+        BaseViewModel.InitializeFontSize();
         // Do not set MainPage here (deprecated in .NET 9)
     }
 
@@ -50,7 +52,8 @@ public partial class App : Application
             2 => AppTheme.Unspecified,
             _ => AppTheme.Unspecified
         };
-        app.Resources["DefaultFontSize"] = Preferences.Get("FontSize", 14);
+        // Initialize complete font scaling system
+        BaseViewModel.InitializeFontSize();
     }
 }
 #nullable disable

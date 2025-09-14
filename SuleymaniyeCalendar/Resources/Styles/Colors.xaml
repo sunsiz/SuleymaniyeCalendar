@@ -2,123 +2,345 @@
 <?xaml-comp compile="true" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!-- Core neutrals and basics -->
-    <Color x:Key="White">White</Color>
-    <Color x:Key="Black">Black</Color>
-    <Color x:Key="Gray100">#E1E1E1</Color>
-    <Color x:Key="Gray200">#C8C8C8</Color>
-    <Color x:Key="Gray300">#ACACAC</Color>
-    <Color x:Key="Gray400">#919191</Color>
-    <Color x:Key="Gray500">#6E6E6E</Color>
-    <Color x:Key="Gray600">#404040</Color>
-    <Color x:Key="Gray900">#212121</Color>
-    <Color x:Key="Gray950">#141414</Color>
-    
-    <!-- Optional brushes for neutrals (kept minimal) -->
-    <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}" />
-    <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}" />
-    <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}" />
-    <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}" />
-    <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}" />
-    <SolidColorBrush x:Key="Gray400Brush" Color="{StaticResource Gray400}" />
-    <SolidColorBrush x:Key="Gray500Brush" Color="{StaticResource Gray500}" />
-    <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}" />
-    <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}" />
-    <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}" />
+    <!--  Material Design 3 Color System - Optimized & Cleaned  -->
 
-    <!-- Brand palette (modernized, matching logo primary brown with complementary teal) -->
-    <Color x:Key="AppBackgroundColor">#FAF7F5</Color>
-    <Color x:Key="AppBackgroundColorDark">#121212</Color>
-    <Color x:Key="PrimaryColor">#5C3021</Color>
-    <Color x:Key="PrimaryLightColor">#7A4B3A</Color>
-    <Color x:Key="PrimaryDarkColor">#3D1710</Color>
-    <Color x:Key="PrimaryTextColor">#1F1511</Color>
-    <Color x:Key="PrimaryAccent50Color">#FFEDE3</Color>
-    <Color x:Key="PrimaryAccent100Color">#E6CFC3</Color>
-    <Color x:Key="PrimaryAccent400Color">#9C6C59</Color>
-    <Color x:Key="PrimaryAccent600Color">#6C3B2A</Color>
-    <Color x:Key="PrimaryAccent800Color">#4D241A</Color>
-    <Color x:Key="PrimaryAccent900Color">#3D1710</Color>
-    <Color x:Key="SecondaryColor">#146C6F</Color>
-    <Color x:Key="TertiaryDarkColor">#0E7A3C</Color>
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  BASE COLORS - Core neutrals and foundation colors  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!-- Dark elevations -->
-    <Color x:Key="DarkElevation2dp">#212121</Color>
-    <Color x:Key="DarkElevation8dp">#2D2D2D</Color>
-    <Color x:Key="DarkElevation12dp">#323232</Color>
-    <Color x:Key="DarkElevation16dp">#353535</Color>
-    <Color x:Key="DarkElevation24dp">#373737</Color>
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Black">#000000</Color>
+    <Color x:Key="Transparent">Transparent</Color>
 
-    <Color x:Key="OnPrimaryColor">#000000</Color>
-    <Color x:Key="OnSecondaryColor">#000000</Color>
-    <Color x:Key="TransparentColor">Transparent</Color>
+    <!--  Neutral Palette - Material Design 3 aligned  -->
+    <Color x:Key="Neutral10">#FEFBFF</Color>
+    <Color x:Key="Neutral20">#F5F1F6</Color>
+    <Color x:Key="Neutral25">#F0ECF1</Color>
+    <Color x:Key="Neutral30">#EBE7EC</Color>
+    <Color x:Key="Neutral40">#C8C5CA</Color>
+    <Color x:Key="Neutral50">#A5A2A7</Color>
+    <Color x:Key="Neutral60">#8F8C91</Color>
+    <Color x:Key="Neutral70">#79757F</Color>
+    <Color x:Key="Neutral80">#605D64</Color>
+    <Color x:Key="Neutral90">#47454A</Color>
+    <Color x:Key="Neutral95">#2F2D32</Color>
+    <Color x:Key="Neutral98">#1A1B1F</Color>
+    <Color x:Key="Neutral99">#0F0F11</Color>
 
-    <!-- Status colors for prayer list (soft tints with accessible contrast) -->
-    <Color x:Key="PastTimeBackgroundColor">#F4ECE8</Color>
-    <Color x:Key="PastTimeBackgroundColorDark">#262626</Color>
-    <Color x:Key="CurrentTimeBackgroundColor">#EAF6EF</Color>
-    <Color x:Key="CurrentTimeBackgroundColorDark">#17351C</Color>
-    <Color x:Key="FutureTimeBackgroundColor">#E8F3F5</Color>
-    <Color x:Key="FutureTimeBackgroundColorDark">#1C2F35</Color>
-    <Color x:Key="TimeTextColor">#53382E</Color>
-    <Color x:Key="TimeTextColorDark">#F2E8E3</Color>
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  BRAND COLORS - Primary brown palette with teal accent  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!-- Semantic colors consistent with primary brown palette -->
-    <Color x:Key="SuccessColor">#8C5A49</Color>
-    <Color x:Key="SuccessColorDark">#B07A6B</Color>
-    <Color x:Key="WarningColor">#D2691E</Color>
-    <Color x:Key="WarningColorDark">#DEB887</Color>
-    <Color x:Key="ErrorColor">#8B0000</Color>
-    <Color x:Key="ErrorColorDark">#CD5C5C</Color>
-    <Color x:Key="InfoColor">#6C3B2A</Color>
-    <Color x:Key="InfoColorDark">#8C5A49</Color>
+    <!--  Primary - Warm brown inspired by Islamic architecture  -->
+    <Color x:Key="Primary10">#FFEDE5</Color>
+    <Color x:Key="Primary20">#F4CEB5</Color>
+    <Color x:Key="Primary30">#E8B08A</Color>
+    <Color x:Key="Primary40">#DC925E</Color>
+    <Color x:Key="Primary50">#C67B3B</Color>
+    <Color x:Key="Primary60">#A8632A</Color>
+    <Color x:Key="Primary70">#8A4E1E</Color>
+    <Color x:Key="Primary80">#6D3A16</Color>
+    <Color x:Key="Primary90">#4F280E</Color>
+    <Color x:Key="Primary95">#321607</Color>
+    <Color x:Key="Primary99">#190A03</Color>
 
-    <!-- Prayer Time States (refined) -->
-    <Color x:Key="PrayerActiveBackgroundColor">#EAF6EF</Color>
-    <Color x:Key="PrayerActiveBackgroundColorDark">#18361D</Color>
-    <Color x:Key="PrayerPastBackgroundColor">#F2F0EE</Color>
-    <Color x:Key="PrayerPastBackgroundColorDark">#242424</Color>
-    <Color x:Key="PrayerUpcomingBackgroundColor">#FFF1E6</Color>
-    <Color x:Key="PrayerUpcomingBackgroundColorDark">#3A2819</Color>
-    
-    <!-- Modern Interactive States -->
-    <Color x:Key="InteractiveHoverColor">#F0F0F0</Color>
-    <Color x:Key="InteractiveHoverColorDark">#404040</Color>
-    <Color x:Key="InteractivePressedColor">#E0E0E0</Color>
-    <Color x:Key="InteractivePressedColorDark">#505050</Color>
-    
-    <!-- Enhanced Focus and Accessibility - consistent with primary palette -->
-    <Color x:Key="FocusRingColor">#8C5A49</Color>
-    <Color x:Key="FocusRingColorDark">#B07A6B</Color>
+    <!--  Secondary - Complementary teal  -->
+    <Color x:Key="Secondary10">#E8F7F8</Color>
+    <Color x:Key="Secondary20">#B8E6E9</Color>
+    <Color x:Key="Secondary30">#88D5DA</Color>
+    <Color x:Key="Secondary40">#58C4CB</Color>
+    <Color x:Key="Secondary50">#2E9FA8</Color>
+    <Color x:Key="Secondary60">#218187</Color>
+    <Color x:Key="Secondary70">#186265</Color>
+    <Color x:Key="Secondary80">#114244</Color>
+    <Color x:Key="Secondary90">#0B2527</Color>
+    <Color x:Key="Secondary95">#051013</Color>
+    <Color x:Key="Secondary99">#020608</Color>
+
+    <!--  Tertiary - Accent green for success states  -->
+    <Color x:Key="Tertiary10">#E8F5E8</Color>
+    <Color x:Key="Tertiary20">#C8E6C8</Color>
+    <Color x:Key="Tertiary30">#A8D7A8</Color>
+    <Color x:Key="Tertiary40">#88C888</Color>
+    <Color x:Key="Tertiary50">#5FA85F</Color>
+    <Color x:Key="Tertiary60">#4F8B4F</Color>
+    <Color x:Key="Tertiary70">#3F6E3F</Color>
+    <Color x:Key="Tertiary80">#2F512F</Color>
+    <Color x:Key="Tertiary90">#1F341F</Color>
+    <Color x:Key="Tertiary95">#0F1A0F</Color>
+    <Color x:Key="Tertiary99">#050805</Color>
+
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  SEMANTIC COLORS - Status and feedback colors  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  Error Colors  -->
+    <Color x:Key="Error10">#FFEDE9</Color>
+    <Color x:Key="Error20">#FFD7D0</Color>
+    <Color x:Key="Error30">#FFBAB1</Color>
+    <Color x:Key="Error40">#FF9C8E</Color>
+    <Color x:Key="Error50">#F2554F</Color>
+    <Color x:Key="Error60">#DC362E</Color>
+    <Color x:Key="Error70">#B91E1E</Color>
+    <Color x:Key="Error80">#990F0F</Color>
+    <Color x:Key="Error90">#7A0606</Color>
+    <Color x:Key="Error95">#5C0303</Color>
+    <Color x:Key="Error99">#3E0101</Color>
+
+    <!--  Warning Colors  -->
+    <Color x:Key="Warning10">#FFF8E5</Color>
+    <Color x:Key="Warning20">#FFEDB5</Color>
+    <Color x:Key="Warning30">#FFE085</Color>
+    <Color x:Key="Warning40">#FFD355</Color>
+    <Color x:Key="Warning50">#F0B429</Color>
+    <Color x:Key="Warning60">#CC9A1D</Color>
+    <Color x:Key="Warning70">#A87F15</Color>
+    <Color x:Key="Warning80">#85640F</Color>
+    <Color x:Key="Warning90">#634B0A</Color>
+    <Color x:Key="Warning95">#423306</Color>
+    <Color x:Key="Warning99">#211A03</Color>
+
+    <!--  Success Colors  -->
+    <Color x:Key="Success10">#E8F5E8</Color>
+    <Color x:Key="Success20">#C1E8C1</Color>
+    <Color x:Key="Success30">#9ADB9A</Color>
+    <Color x:Key="Success40">#73CE73</Color>
+    <Color x:Key="Success50">#4CAE4C</Color>
+    <Color x:Key="Success60">#3D8B3D</Color>
+    <Color x:Key="Success70">#2E682E</Color>
+    <Color x:Key="Success80">#1F451F</Color>
+    <Color x:Key="Success90">#142614</Color>
+    <Color x:Key="Success95">#0A130A</Color>
+    <Color x:Key="Success99">#050805</Color>
+
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  SURFACE COLORS - Background and container colors  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  Light Theme Surfaces  -->
+    <Color x:Key="SurfaceLight">#FEFBFF</Color>
+    <Color x:Key="SurfaceDimLight">#DFD8E0</Color>
+    <Color x:Key="SurfaceBrightLight">#FEFBFF</Color>
+    <Color x:Key="SurfaceContainerLowestLight">#FFFFFF</Color>
+    <Color x:Key="SurfaceContainerLowLight">#F9F2F4</Color>
+    <Color x:Key="SurfaceContainerLight">#F3ECEE</Color>
+    <Color x:Key="SurfaceContainerHighLight">#EDE6E8</Color>
+    <Color x:Key="SurfaceContainerHighestLight">#E7E0E2</Color>
+    <Color x:Key="SurfaceVariantLight">#E7E0E2</Color>
+
+    <!--  Dark Theme Surfaces  -->
+    <Color x:Key="SurfaceDark">#141218</Color>
+    <Color x:Key="SurfaceDimDark">#141218</Color>
+    <Color x:Key="SurfaceBrightDark">#3A3740</Color>
+    <Color x:Key="SurfaceContainerLowestDark">#0F0E13</Color>
+    <Color x:Key="SurfaceContainerLowDark">#1C1B20</Color>
+    <Color x:Key="SurfaceContainerDark">#201F24</Color>
+    <Color x:Key="SurfaceContainerHighDark">#2B2A2F</Color>
+    <Color x:Key="SurfaceContainerHighestDark">#36343A</Color>
+    <Color x:Key="SurfaceVariantDark">#49454F</Color>
+
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  APPLICATION THEME COLORS - Semantic assignments  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  App Backgrounds - Softer, less bright  -->
+    <Color x:Key="AppBackgroundColor">#FAF7FC</Color>
+    <Color x:Key="AppBackgroundColorDark">#141218</Color>
+
+    <!--  Primary Theme Colors  -->
+    <Color x:Key="PrimaryColor">#8A4E1E</Color>
+    <Color x:Key="PrimaryLightColor">#DC925E</Color>
+    <Color x:Key="PrimaryDarkColor">#6D3A16</Color>
+    <Color x:Key="PrimaryTextColor">#321607</Color>
+
+    <!--  Primary Container Colors  -->
+    <Color x:Key="PrimaryContainerLight">#F4CEB5</Color>
+    <Color x:Key="PrimaryContainerDark">#4F280E</Color>
+    <Color x:Key="OnPrimaryContainerLight">#321607</Color>
+    <Color x:Key="OnPrimaryContainerDark">#F4CEB5</Color>
+
+    <!--  Secondary Theme Colors  -->
+    <Color x:Key="SecondaryColor">#218187</Color>
+    <Color x:Key="SecondaryLightColor">#58C4CB</Color>
+    <Color x:Key="SecondaryDarkColor">#114244</Color>
+
+    <!--  On-Surface Colors  -->
+    <Color x:Key="OnSurfaceColor">#2F2D32</Color>
+    <Color x:Key="OnSurfaceColorDark">#F5F1F6</Color>
+    <Color x:Key="OnSurfaceVariantLight">#605D64</Color>
+    <Color x:Key="OnSurfaceVariantDark">#EBE7EC</Color>
+
+    <!--  Outline Colors  -->
+    <Color x:Key="OutlineColor">#C8C5CA</Color>
+    <Color x:Key="OutlineColorDark">#79757F</Color>
+    <Color x:Key="OutlineVariantLight">#EBE7EC</Color>
+    <Color x:Key="OutlineVariantDark">#79757F</Color>
+
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  PRAYER TIME STATE COLORS - Visual states for prayer times  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  Past Prayer States - Much stronger differentiation  -->
+    <Color x:Key="PrayerPastBackgroundColor">#E8E5EA</Color>
+    <Color x:Key="PrayerPastBackgroundColorDark">#1A1A1A</Color>
+    <Color x:Key="PrayerPastTextColor">#8A8695</Color>
+    <Color x:Key="PrayerPastTextColorDark">#9A9A9A</Color>
+
+    <!--  Current Prayer States - More vibrant distinction  -->
+    <Color x:Key="PrayerActiveBackgroundColor">#D4EFDC</Color>
+    <Color x:Key="PrayerActiveBackgroundColorDark">#0D2818</Color>
+    <Color x:Key="PrayerActiveTextColor">#0A5A2A</Color>
+    <Color x:Key="PrayerActiveTextColorDark">#A3CFBB</Color>
+
+    <!--  Upcoming Prayer States - Enhanced warm distinction  -->
+    <Color x:Key="PrayerUpcomingBackgroundColor">#FFEDC7</Color>
+    <Color x:Key="PrayerUpcomingBackgroundColorDark">#2D1B00</Color>
+    <Color x:Key="PrayerUpcomingTextColor">#7A4A15</Color>
+    <Color x:Key="PrayerUpcomingTextColorDark">#E8B08A</Color>    
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  COMPONENT COLORS - Specific UI component colors  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  Card Colors - Better contrast with background  -->
+    <Color x:Key="CardBackgroundColor">#F8F5FA</Color>
+    <Color x:Key="CardBackgroundColorDark">#0F0E13</Color>
+
+    <!--  Tab Bar Colors  -->
+    <Color x:Key="TabBarBgColor">#8A4E1E</Color>
+    <Color x:Key="TabBarBackgroundColorDark">#201F24</Color>
+    <Color x:Key="TabBarSelectedColor">#FFFFFF</Color>
+    <Color x:Key="TabBarUnselectedColor">#F4CEB5</Color>
+
+    <!--  Interactive States  -->
+    <Color x:Key="InteractiveHoverColor">#EDE6E8</Color>
+    <Color x:Key="InteractiveHoverColorDark">#2B2A2F</Color>
+    <Color x:Key="InteractivePressedColor">#F3ECEE</Color>
+    <Color x:Key="InteractivePressedColorDark">#201F24</Color>
+
+    <!--  Focus and Accessibility  -->
+    <Color x:Key="FocusRingColor">#C67B3B</Color>
+    <Color x:Key="FocusRingColorDark">#E8B08A</Color>
     <Color x:Key="HighContrastTextColor">#000000</Color>
     <Color x:Key="HighContrastTextColorDark">#FFFFFF</Color>
 
-    <Color x:Key="CityBackgroundColor">#157D83</Color>
-    <Color x:Key="CityBackgroundColorDark">#0D2A2F</Color>
-    <Color x:Key="MonthlyButtonBackgroundColor">#146C6F</Color>
-    <Color x:Key="MonthlyButtonBackgroundColorDark">#0F4E51</Color>
-    <Color x:Key="CardBackgroundColor">#FBF8F6</Color>
-    <Color x:Key="CardBackgroundColorDark">#1E1E1E</Color>
-    <Color x:Key="ButtonTextColor">#FFFFFF</Color>
-    <Color x:Key="ButtonTextColorDark">#FFFFFF</Color>
+    <!--  City and Location Colors - Enhanced contrast  -->
+    <Color x:Key="CityBackgroundColor">#1B6B73</Color>
+    <Color x:Key="CityBackgroundColorDark">#114244</Color>
+    <Color x:Key="CityTextColor">#FFFFFF</Color>
+    <Color x:Key="CityTextColorDark">#FFFFFF</Color>
+    <Color x:Key="MonthlyButtonBackgroundColor">#2E9FA8</Color>
+    <Color x:Key="MonthlyButtonBackgroundColorDark">#186265</Color>
 
-    <!-- Tab bar -->
-    <Color x:Key="TabBarBackgroundColorDark">#353535</Color>
-    <Color x:Key="TabBarBgColor">#7B4B3A</Color>
-    <Color x:Key="TabBarSelectedColor">#FFFFFF</Color>
-    <Color x:Key="TabBarUnselectedColor">#E6D7CF</Color>
-
-    <!-- Surfaces and outlines (Material-inspired) -->
-    <Color x:Key="SurfaceColor">#F8F3F1</Color>
-    <Color x:Key="SurfaceColorDark">#141414</Color>
-    <Color x:Key="SurfaceVariantColor">#EFE3DE</Color>
-    <Color x:Key="SurfaceVariantColorDark">#222222</Color>
-    <Color x:Key="OnSurfaceColor">#2A1D18</Color>
-    <Color x:Key="OnSurfaceColorDark">#E8DCD6</Color>
-    <Color x:Key="OutlineColor">#E5D7D0</Color>
-    <Color x:Key="OutlineColorDark">#3A322E</Color>
-
-    <!-- Scrims and overlays -->
+    <!--  Overlay and Scrim  -->
     <Color x:Key="BusyOverlayColor">#80000000</Color>
-    <Color x:Key="BusyOverlayColorDark">#80FFFFFF</Color>
+    <Color x:Key="BusyOverlayColorDark">#80000000</Color>
+
+    <!--  Enhanced gradient colors for premium design  -->
+    <Color x:Key="GradientPrimaryStart">#8A4E1E</Color>
+    <Color x:Key="GradientPrimaryEnd">#A8632A</Color>
+    <Color x:Key="GradientSecondaryStart">#218187</Color>
+    <Color x:Key="GradientSecondaryEnd">#2E9FA8</Color>
+
+    <!--  Interactive state colors - enhanced ripple effects  -->
+    <Color x:Key="InteractiveRippleColor">#20218187</Color>
+    <Color x:Key="InteractiveRippleColorDark">#302E9FA8</Color>
+
+    <!--  Enhanced shadow colors  -->
+    <Color x:Key="ShadowPrimary">#808A4E1E</Color>
+    <Color x:Key="ShadowSecondary">#60218187</Color>
+    <Color x:Key="ShadowGeneral">#40000000</Color>
+    <Color x:Key="ShadowElevated">#60000000</Color>
+
+    <!--  High contrast colors for improved accessibility  -->
+    <Color x:Key="HighContrastPrimary">#6B3410</Color>
+    <Color x:Key="HighContrastPrimaryDark">#F4CEB5</Color>
+    <Color x:Key="HighContrastOnSurface">#1A1A1A</Color>
+    <Color x:Key="HighContrastOnSurfaceDark">#FFFFFF</Color>
+    <Color x:Key="HighContrastOutline">#999999</Color>
+    <Color x:Key="HighContrastOutlineDark">#666666</Color>
+
+    <!--  Ultra-high contrast colors for critical text  -->
+    <Color x:Key="UltraHighContrastText">#0F0F11</Color>
+    <Color x:Key="UltraHighContrastTextDark">#FFFFFF</Color>
+    <Color x:Key="UltraHighContrastOnPrimary">#FFFFFF</Color>
+    <Color x:Key="UltraHighContrastOnPrimaryDark">#FFFFFF</Color>
+
+    <!--  Component separation colors for better UI differentiation  -->
+    <Color x:Key="ComponentBoundary">#E0E0E0</Color>
+    <Color x:Key="ComponentBoundaryDark">#333333</Color>
+    <Color x:Key="ComponentElevation1">#F8F8F8</Color>
+    <Color x:Key="ComponentElevation1Dark">#1F1F1F</Color>
+    <Color x:Key="ComponentElevation2">#F2F2F2</Color>
+    <Color x:Key="ComponentElevation2Dark">#2A2A2A</Color>
+
+    <!--  Interactive state colors - enhanced for better feedback  -->
+    <Color x:Key="InteractiveHoverStrong">#E8E8E8</Color>
+    <Color x:Key="InteractiveHoverStrongDark">#383838</Color>
+    <Color x:Key="InteractivePressedStrong">#DEDEDE</Color>
+    <Color x:Key="InteractivePressedStrongDark">#2E2E2E</Color>
+
+    <!--  Enhanced focus indicator colors  -->
+    <Color x:Key="FocusIndicatorPrimary">#8A4E1E</Color>
+    <Color x:Key="FocusIndicatorPrimaryDark">#E8B08A</Color>
+    <Color x:Key="FocusIndicatorSecondary">#218187</Color>
+    <Color x:Key="FocusIndicatorSecondaryDark">#88D5DA</Color>
+
+    <!--  Primary accent colors for backward compatibility  -->
+    <Color x:Key="PrimaryAccent50Color">#FFEDE5</Color>
+    <Color x:Key="PrimaryAccent100Color">#F4CEB5</Color>
+    <Color x:Key="PrimaryAccent400Color">#C67B3B</Color>
+    <Color x:Key="PrimaryAccent600Color">#A8632A</Color>
+    <Color x:Key="PrimaryAccent800Color">#4F280E</Color>
+    <Color x:Key="PrimaryAccent900Color">#321607</Color>
+    <Color x:Key="TertiaryDarkColor">#2F512F</Color>
+
+    <!--  Dark elevation surfaces for backward compatibility  -->
+    <Color x:Key="DarkElevation2dp">#1C1B20</Color>
+    <Color x:Key="DarkElevation8dp">#201F24</Color>
+    <Color x:Key="DarkElevation12dp">#2B2A2F</Color>
+    <Color x:Key="DarkElevation16dp">#36343A</Color>
+    <Color x:Key="DarkElevation24dp">#3A3740</Color>
+
+    <!--  M3 On-Color Roles for Proper Contrast  -->
+    <Color x:Key="OnPrimaryColor">#FFFFFF</Color>
+    <Color x:Key="OnPrimaryColorDark">#1A1C1E</Color>
+
+    <Color x:Key="OnSurfaceVariantColor">#44474E</Color>
+    <Color x:Key="OnSurfaceVariantColorDark">#C4C7CE</Color>
+
+    <Color x:Key="OnErrorColor">#FFFFFF</Color>
+    <Color x:Key="OnErrorColorDark">#601410</Color>
+    
+    <!--  On-Secondary Colors for text/icons placed on Secondary backgrounds  -->
+    <Color x:Key="OnSecondaryColor">#FFFFFF</Color>
+    <Color x:Key="OnSecondaryColorDark">#1A1C1E</Color>
+
+    <!--  State Layer Colors (M3 Interactive States)  -->
+    <Color x:Key="StateLayerPrimary">#6750A4</Color>
+    <Color x:Key="StateLayerPrimaryDark">#D0BCFF</Color>
+
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  COMPATIBILITY ALIASES - Keys referenced in legacy/new XAML mapped to current palette  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  Surface aliases  -->
+    <!--  Some views refer to SurfaceVariantColor/SurfaceVariantColorDark; map to M3 variant tokens  -->
+    <Color x:Key="SurfaceVariantColor">#E7E0E2</Color>         <!-- equals SurfaceVariantLight -->
+    <Color x:Key="SurfaceVariantColorDark">#49454F</Color>     <!-- equals SurfaceVariantDark  -->
+
+    <!--  Some views refer to SurfaceColor/SurfaceColorDark; use container surfaces  -->
+    <Color x:Key="SurfaceColor">#F3ECEE</Color>               <!-- equals SurfaceContainerLight -->
+    <Color x:Key="SurfaceColorDark">#201F24</Color>           <!-- equals SurfaceContainerDark  -->
+
+    <!--  Gray scale aliases used in some pages  -->
+    <Color x:Key="Gray900">#1A1A1A</Color>
+    <Color x:Key="Gray300">#E0E0E0</Color>
+
+    <!--  Info semantic colors used in About page; align with Secondary palette  -->
+    <Color x:Key="InfoColor">#218187</Color>                  <!-- equals Secondary60 -->
+    <Color x:Key="InfoColorDark">#88D5DA</Color>              <!-- equals Secondary30 -->
+
+    <!--  OnWarningColor alias used in MonthPage buttons; on-color for Warning backgrounds  -->
+    <Color x:Key="OnWarningColor">#000000</Color>
+    <Color x:Key="OnWarningColorDark">#000000</Color>
 </ResourceDictionary>

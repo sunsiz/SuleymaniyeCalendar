@@ -67,29 +67,42 @@ namespace SuleymaniyeCalendar.ViewModels
 		}
 
 		[RelayCommand]
-		public void GoBack()
+		public async Task GoBack()
 		{
-                    IsBusy = true;
-			MainThread.BeginInvokeOnMainThread(async () =>
+			IsBusy = true;
+			try
 			{
-				try
-                {
-					if (PrayerId != null && SelectedSound != null)
-						Preferences.Set(PrayerId + "AlarmSound", SelectedSound.FileName);
-					// Ensure preview is stopped when leaving
-					await _audioPreview.StopAsync().ConfigureAwait(false);
-					IsPlaying = false;
-					await Task.Delay(1000);
-					await _dataService.SetMonthlyAlarmsAsync();
-                }
-				catch (Exception ex)
+				await SaveAndScheduleAsync().ConfigureAwait(false);
+				await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync(".."));
+			}
+			finally
+			{
+				IsBusy = false;
+			}
+		}
+
+		public async Task SaveAndScheduleAsync()
+		{
+			try
+			{
+				// Persist selected sound if changed
+				if (!string.IsNullOrWhiteSpace(PrayerId) && SelectedSound != null)
 				{
-					Alert("Test", ex.Message);
+					Preferences.Set(PrayerId + "AlarmSound", SelectedSound.FileName);
 				}
-			});
-			Shell.Current.GoToAsync("..");
-            IsBusy = false;
-        }
+
+				// Stop any preview playback
+				await _audioPreview.StopAsync().ConfigureAwait(false);
+				await MainThread.InvokeOnMainThreadAsync(() => IsPlaying = false);
+
+				// Schedule alarms for upcoming days
+				await _dataService.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+			}
+			catch (Exception ex)
+			{
+				Alert(AppResources.SorunCikti, ex.Message);
+			}
+		}
 
 		//[RelayCommand]
 		//public void NotificationCheckedChanged(bool value)

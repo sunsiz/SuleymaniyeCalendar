@@ -319,9 +319,9 @@ namespace SuleymaniyeCalendar.Tests
                 var name = "Test Prayer";
 
                 // Assert - Should handle boundary times correctly
-                timeSpan.Should().BeGreaterOrEqualTo(TimeSpan.Zero);
+                timeSpan.Should().BeGreaterThanOrEqualTo(TimeSpan.Zero);
                 timeSpan.Should().BeLessThan(TimeSpan.FromDays(1));
-                offset.Should().BeGreaterOrEqualTo(0);
+                offset.Should().BeGreaterThanOrEqualTo(0);
                 name.Should().NotBeNullOrEmpty();
             }
         }
@@ -384,7 +384,7 @@ namespace SuleymaniyeCalendar.Tests
             foreach (var batch in edgeCaseBatches)
             {
                 // Act & Assert - Batch processing should handle all sizes
-                batch.Count.Should().BeGreaterOrEqualTo(0);
+                batch.Count.Should().BeGreaterThanOrEqualTo(0);
                 
                 // Simulate batch processing
                 const int batchSize = 10;

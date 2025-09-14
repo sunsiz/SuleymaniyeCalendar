@@ -7,7 +7,20 @@
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     x:DataType="viewModels:AboutViewModel"
     Title="{Binding Title}"
-    FlowDirection="{DynamicResource FlowDirection}">
+    FlowDirection="{DynamicResource FlowDirection}"
+    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor}, Dark={StaticResource AppBackgroundColorDark}}">
+
+    <Shell.TitleView>
+        <StackLayout
+            Margin="10"
+            HeightRequest="34"
+            Orientation="Horizontal">
+            <Label
+                AutomationProperties.IsInAccessibleTree="True"
+                Style="{StaticResource LabelSectionHeader}"
+                Text="{localization:Translate SuleymaniyeVakfi}" />
+        </StackLayout>
+    </Shell.TitleView>
 
     <ContentPage.Content>
         <ScrollView
@@ -15,19 +28,21 @@
             Orientation="Vertical"
             VerticalOptions="Fill">
             <VerticalStackLayout
-                Padding="16"
-                Spacing="20">
+                Padding="10"
+                Spacing="8">
 
-                <!--  Hero Section with App Description  -->
-                <Border Style="{StaticResource AnimatedPrayerCard}">
-                    <VerticalStackLayout Spacing="12">
-                        <Label Style="{StaticResource HeadlineLargeLabel}"
+                <!--  Hero Section with App Description (with subtle halo)  -->
+                <Grid>
+                    <BoxView Background="{StaticResource PrimaryHaloBrush}" />
+                    <Border Style="{StaticResource GlassCard}">
+                        <VerticalStackLayout Spacing="10">
+                        <Label Style="{StaticResource HeadlineLargeStyle}"
                                Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent100Color}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}" />
                         
                         <Label TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
-                               Style="{StaticResource BodyLargeLabel}"
+                               Style="{StaticResource BodyLargeStyle}"
                                HorizontalTextAlignment="Center">
                             <Label.FormattedText>
                                 <FormattedString>
@@ -48,8 +63,8 @@
 
                         <!-- Version Info -->
                         <Label HorizontalTextAlignment="Center"
-                               Style="{StaticResource LabelLargeLabel}"
-                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}">
+                               Style="{StaticResource LabelLargeStyle}"
+                               TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}">
                             <Label.FormattedText>
                                 <FormattedString>
                                     <Span Text="{Binding VersionNumber}" />
@@ -57,19 +72,20 @@
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
-                    </VerticalStackLayout>
-                </Border>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
 
                 <!--  Social Media Section  -->
-                <Border Style="{StaticResource AnimatedCard}">
-                    <VerticalStackLayout Spacing="16">
+                <Border Style="{StaticResource GlassCard}">
+                    <VerticalStackLayout Spacing="12">
                         <Label Text="{localization:Translate SosyalMedyaBaglantisi}"
-                               Style="{StaticResource TitleLargeLabel}"
+                               Style="{StaticResource TitleLargeStyle}"
                                HorizontalTextAlignment="Center" />
                                
                         <Grid
                             ColumnDefinitions="*,*,*,*"
-                            ColumnSpacing="16"
+                            ColumnSpacing="12"
                             RowDefinitions="Auto">
 
                             <ImageButton
@@ -77,8 +93,8 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://www.suleymaniyevakfi.org/"
-                                HeightRequest="56"
-                                WidthRequest="56"
+                                HeightRequest="48"
+                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfi}"
                                 Source="app_logo.png" />
 
@@ -87,8 +103,8 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://www.facebook.com/suleymaniyevakfi/"
-                                HeightRequest="56"
-                                WidthRequest="56"
+                                HeightRequest="48"
+                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiFacebook}"
                                 Source="facebook.png" />
 
@@ -97,8 +113,8 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://twitter.com/suleymaniye_vkf"
-                                HeightRequest="56"
-                                WidthRequest="56"
+                                HeightRequest="48"
+                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiTwitter}"
                                 Source="twitter.png" />
 
@@ -107,8 +123,8 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://www.instagram.com/suleymaniyevakfi"
-                                HeightRequest="56"
-                                WidthRequest="56"
+                                HeightRequest="48"
+                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiInstagram}"
                                 Source="instagram.png" />
                         </Grid>
@@ -116,15 +132,15 @@
                 </Border>
 
                 <!--  App Store Section  -->
-                <Border Style="{StaticResource SettingsCard}">
-                    <VerticalStackLayout Spacing="16">
+        <Border Style="{StaticResource GlassCard}">
+                    <VerticalStackLayout Spacing="12">
                         <Label Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
-                               Style="{StaticResource TitleLargeLabel}"
+                               Style="{StaticResource TitleLargeStyle}"
                                HorizontalTextAlignment="Center" />
                                
                         <Grid
                             ColumnDefinitions="*,*"
-                            ColumnSpacing="16"
+                            ColumnSpacing="12"
                             HorizontalOptions="Center">
 
                             <ImageButton
@@ -132,8 +148,8 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://play.google.com/store/apps/details?id=org.suleymaniyevakfi"
-                                HeightRequest="56"
-                                WidthRequest="56"
+                                HeightRequest="48"
+                                WidthRequest="48"
                                 SemanticProperties.Description="Google Play Store"
                                 Source="google_play.png" />
 
@@ -142,8 +158,8 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://apps.apple.com/app/id688657265"
-                                HeightRequest="56"
-                                WidthRequest="56"
+                                HeightRequest="48"
+                                WidthRequest="48"
                                 SemanticProperties.Description="Apple App Store"
                                 Source="app_store.png" />
                         </Grid>
@@ -152,11 +168,26 @@
 
                 <!--  Action Section  -->
                 <Border Style="{StaticResource Card}" IsVisible="{Binding ShowButtons}">
-                    <Button
-                        Command="{Binding SettingsCommand}"
-                        SemanticProperties.Description="{localization:Translate UygulamaAyarlari}"
-                        Style="{StaticResource PrimaryButton}"
-                        Text="{localization:Translate UygulamaAyarlari}" />
+                    <!-- Settings Button with gradient background (rounded) -->
+                    <Border
+                        Padding="0"
+                        StrokeThickness="0"
+                        Background="{StaticResource PrimaryGradientBrush}">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="20" />
+                        </Border.StrokeShape>
+                        <Button
+                            Command="{Binding SettingsCommand}"
+                            SemanticProperties.Description="{localization:Translate UygulamaAyarlari}"
+                            BackgroundColor="Transparent"
+                            TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}"
+                            FontFamily="OpenSansRegular"
+                            FontSize="{DynamicResource BodyFontSize}"
+                            FontAttributes="Bold"
+                            Padding="20,12"
+                            MinimumHeightRequest="48"
+                            Text="{localization:Translate UygulamaAyarlari}" />
+                    </Border>
                 </Border>
 
             </VerticalStackLayout>

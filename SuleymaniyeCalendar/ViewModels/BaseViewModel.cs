@@ -8,6 +8,13 @@ namespace SuleymaniyeCalendar.ViewModels
 {
 	public partial class BaseViewModel : ObservableObject
 	{
+		public BaseViewModel()
+		{
+			// Initialize font size at startup - this triggers the setter which updates all DynamicResource keys
+			var savedFontSize = Preferences.Get("FontSize", 14);
+			FontSize = savedFontSize;
+		}
+
 		private string _title = string.Empty;
 		public string Title
 		{
@@ -30,7 +37,7 @@ namespace SuleymaniyeCalendar.ViewModels
 
 		public bool IsNotBusy => !IsBusy;
 
-		private int _fontSize = Preferences.Get("FontSize", 14);
+		private int _fontSize = 14; // Default value, will be set in constructor from Preferences
 		public int FontSize
 		{
 			get => _fontSize;
@@ -42,19 +49,33 @@ namespace SuleymaniyeCalendar.ViewModels
 					Preferences.Set("FontSize", clampedValue);
 					OnPropertyChanged(nameof(HeaderFontSize));
 					OnPropertyChanged(nameof(SubHeaderFontSize));
+					OnPropertyChanged(nameof(TitleSmallFontSize));
+					OnPropertyChanged(nameof(BodyLargeFontSize));
 					OnPropertyChanged(nameof(CaptionFontSize));
+					OnPropertyChanged(nameof(BodyFontSize));
 
 					var baseSize = 14.0;
 					var scale = clampedValue / baseSize;
 
 					if (Application.Current?.Resources != null)
 					{
+						// Base sizes
 						Application.Current.Resources["DefaultFontSize"] = (double)clampedValue;
-						Application.Current.Resources["HeaderFontSize"] = clampedValue * 1.35;
-						Application.Current.Resources["SubHeaderFontSize"] = clampedValue * 1.2;
-						Application.Current.Resources["CaptionFontSize"] = clampedValue * 1.1;
-						Application.Current.Resources["BodyFontSize"] = clampedValue * 1.05;
 						Application.Current.Resources["FontScale"] = scale;
+						
+						// Material Design 3 Typography Scale
+						Application.Current.Resources["DisplayFontSize"] = clampedValue * 2.0;          // Display Large
+						Application.Current.Resources["DisplaySmallFontSize"] = clampedValue * 1.7;     // Display Small
+						Application.Current.Resources["TitleFontSize"] = clampedValue * 1.57;           // Title Large
+						Application.Current.Resources["TitleMediumFontSize"] = clampedValue * 1.43;     // Title Medium
+						Application.Current.Resources["TitleSmallFontSize"] = clampedValue * 1.29;      // Title Small (Prayer Times)
+						Application.Current.Resources["HeaderFontSize"] = clampedValue * 1.35;         // Headline/Header
+						Application.Current.Resources["SubHeaderFontSize"] = clampedValue * 1.2;       // Headline Small
+						Application.Current.Resources["BodyLargeFontSize"] = clampedValue * 1.14;      // Body Large (Prayer Names)
+						Application.Current.Resources["BodyFontSize"] = clampedValue * 1.05;          // Body Medium
+						Application.Current.Resources["BodySmallFontSize"] = clampedValue * 1.0;       // Body Small
+						Application.Current.Resources["CaptionFontSize"] = clampedValue * 0.86;        // Caption/Label Small
+						
 						// Icons scale proportionally with text; keep a slight bias to avoid oversized icons
 						Application.Current.Resources["IconSmallFontSize"] = Math.Round(clampedValue * 1.1);
 						Application.Current.Resources["IconMediumFontSize"] = Math.Round(clampedValue * 1.25);
@@ -65,9 +86,11 @@ namespace SuleymaniyeCalendar.ViewModels
 			}
 		}
 
-		public int HeaderFontSize => (int)(FontSize * 1.5);
-		public int SubHeaderFontSize => (int)(FontSize * 1.25);
-		public int CaptionFontSize => (int)(FontSize * 1.1);
+		public int HeaderFontSize => (int)(FontSize * 1.35);
+		public int SubHeaderFontSize => (int)(FontSize * 1.2);
+		public int TitleSmallFontSize => (int)(FontSize * 1.29);
+		public int BodyLargeFontSize => (int)(FontSize * 1.14);
+		public int CaptionFontSize => (int)(FontSize * 0.86);
         public int BodyFontSize => (int)(FontSize * 1.05);
 
 		public static void ShowToast(string message)
@@ -80,6 +103,38 @@ namespace SuleymaniyeCalendar.ViewModels
 				var toast = Toast.Make(message, duration, fontSize);
 				toast.Show(cancellationTokenSource.Token);
 			});
+		}
+
+		public static void InitializeFontSize()
+		{
+			var savedFontSize = Preferences.Get("FontSize", 14);
+			var clampedValue = Math.Max(12, Math.Min(28, savedFontSize));
+			
+			if (Application.Current?.Resources != null)
+			{
+				// Base sizes
+				Application.Current.Resources["DefaultFontSize"] = (double)clampedValue;
+				Application.Current.Resources["FontScale"] = clampedValue / 14.0;
+				
+				// Material Design 3 Typography Scale
+				Application.Current.Resources["DisplayFontSize"] = clampedValue * 2.0;          // Display Large
+				Application.Current.Resources["DisplaySmallFontSize"] = clampedValue * 1.7;     // Display Small
+				Application.Current.Resources["TitleFontSize"] = clampedValue * 1.57;           // Title Large
+				Application.Current.Resources["TitleMediumFontSize"] = clampedValue * 1.43;     // Title Medium
+				Application.Current.Resources["TitleSmallFontSize"] = clampedValue * 1.29;      // Title Small (Prayer Times)
+				Application.Current.Resources["HeaderFontSize"] = clampedValue * 1.35;         // Headline/Header
+				Application.Current.Resources["SubHeaderFontSize"] = clampedValue * 1.2;       // Headline Small
+				Application.Current.Resources["BodyLargeFontSize"] = clampedValue * 1.14;      // Body Large (Prayer Names)
+				Application.Current.Resources["BodyFontSize"] = clampedValue * 1.05;          // Body Medium
+				Application.Current.Resources["BodySmallFontSize"] = clampedValue * 1.0;       // Body Small
+				Application.Current.Resources["CaptionFontSize"] = clampedValue * 0.86;        // Caption/Label Small
+				
+				// Icons scale proportionally with text; keep a slight bias to avoid oversized icons
+				Application.Current.Resources["IconSmallFontSize"] = Math.Round(clampedValue * 1.1);
+				Application.Current.Resources["IconMediumFontSize"] = Math.Round(clampedValue * 1.25);
+				Application.Current.Resources["IconLargeFontSize"] = Math.Round(clampedValue * 1.6);
+				Application.Current.Resources["IconXLFontSize"] = Math.Round(clampedValue * 3.6);
+			}
 		}
 
 		public static void Alert(string title, string message)

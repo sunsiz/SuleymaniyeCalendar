@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+  <!-- App Background Brushes (subtle gradients) -->
+  <LinearGradientBrush x:Key="AppBackgroundBrushLight" StartPoint="0,0" EndPoint="0,1">
+    <GradientStop Color="#FFFDFCFF" Offset="0" />
+    <GradientStop Color="#FFF7F3" Offset="1" />
+  </LinearGradientBrush>
+
+  <LinearGradientBrush x:Key="AppBackgroundBrushDark" StartPoint="0,0" EndPoint="0,1">
+    <GradientStop Color="#141218" Offset="0" />
+    <GradientStop Color="#1C1B20" Offset="1" />
+  </LinearGradientBrush>
+
+  <!-- Frosted glass brushes (MD3-friendly) -->
+  <LinearGradientBrush x:Key="PrimaryGlassBrush" StartPoint="0,0" EndPoint="0,1">
+    <GradientStop Color="#E6FFFFFF" Offset="0" />
+    <GradientStop Color="{StaticResource Primary10}" Offset="0.4" />
+    <GradientStop Color="#CCFFFFFF" Offset="1" />
+  </LinearGradientBrush>
+
+  <LinearGradientBrush x:Key="SecondaryGlassBrush" StartPoint="0,0" EndPoint="0,1">
+    <GradientStop Color="#E6FFFFFF" Offset="0" />
+    <GradientStop Color="{StaticResource Secondary10}" Offset="0.4" />
+    <GradientStop Color="#CCFFFFFF" Offset="1" />
+  </LinearGradientBrush>
+
+  <!-- Theme-aware glass container brushes -->
+  <LinearGradientBrush x:Key="SurfaceGlassBrushLight" StartPoint="0,0" EndPoint="0,1">
+    <GradientStop Color="#F2FFFFFF" Offset="0" />
+    <GradientStop Color="{StaticResource SurfaceContainerLight}" Offset="0.5" />
+    <GradientStop Color="#80FFFFFF" Offset="1" />
+  </LinearGradientBrush>
+
+  <LinearGradientBrush x:Key="SurfaceGlassBrushDark" StartPoint="0,0" EndPoint="0,1">
+    <GradientStop Color="#26FFFFFF" Offset="0" />
+    <GradientStop Color="{StaticResource SurfaceContainerDark}" Offset="0.5" />
+    <GradientStop Color="#40FFFFFF" Offset="1" />
+  </LinearGradientBrush>
+
+  <!-- Subtle radial halo for hero cards -->
+  <RadialGradientBrush x:Key="PrimaryHaloBrush" Center="0.5,0.2" Radius="0.8">
+    <GradientStop Color="#22DC925E" Offset="0" />
+    <GradientStop Color="Transparent" Offset="1" />
+  </RadialGradientBrush>
+
+  <!-- Elevated shadows as semi-transparent overlays -->
+  <SolidColorBrush x:Key="ShadowOverlayBrush" Color="#20000000" />
+  <SolidColorBrush x:Key="StrongShadowOverlayBrush" Color="#33000000" />
+
+  <!-- Subtle outline for glass cards (theme-aware, semi-transparent using alpha) -->
+  <SolidColorBrush x:Key="GlassStrokeBrush"
+                   Color="{AppThemeBinding Light=#48EBE7EC, Dark=#4079757F}" />
+
+  <!-- MD3 container overlays with translucency for glass effect -->
+  <SolidColorBrush x:Key="GlassContainerBrush" Color="#E6FFFFFF" />
+  <SolidColorBrush x:Key="GlassContainerBrushDark" Color="#1AFFFFFF" />
+
+  <!-- Reusable linear gradient brushes -->
+  <LinearGradientBrush x:Key="PrimaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="{StaticResource GradientPrimaryStart}" Offset="0" />
+    <GradientStop Color="#FFC67B3B" Offset="0.6" />
+    <GradientStop Color="{StaticResource GradientPrimaryEnd}" Offset="1" />
+  </LinearGradientBrush>
+
+  <LinearGradientBrush x:Key="SecondaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
+    <GradientStop Color="{StaticResource GradientSecondaryStart}" Offset="0" />
+    <GradientStop Color="#7FF0FFFF" Offset="0.5" />
+    <GradientStop Color="{StaticResource GradientSecondaryEnd}" Offset="1" />
+  </LinearGradientBrush>
+
+</ResourceDictionary>

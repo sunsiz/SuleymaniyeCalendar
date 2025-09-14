@@ -23,7 +23,7 @@
             <!-- Header Template -->
             <CollectionView.Header>
                 <Border BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                          Dark={StaticResource PrimaryAccent800Color}}"
+                                                          Dark={StaticResource Primary80}}"
                         Stroke="Transparent"
                         StrokeShape="RoundRectangle 8,8,0,0"
                         Margin="0,0,0,0">
@@ -33,47 +33,47 @@
                           WidthRequest="562"
                           MinimumHeightRequest="48">
                         <Label Grid.Column="0" FontAttributes="Bold" HorizontalTextAlignment="Center"
-                               Text="{localization:Translate Tarih}" TextColor="White" VerticalTextAlignment="Center" 
+                               Text="{localization:Translate Tarih}" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}" VerticalTextAlignment="Center" 
                                FontSize="{DynamicResource CaptionFontSize}"
                                AutomationProperties.IsInAccessibleTree="True"
                                SemanticProperties.Description="{localization:Translate Tarih}" />
                         <Label Grid.Column="1" FontAttributes="Bold" HorizontalTextAlignment="Center"
-                               Text="{localization:Translate FecriKazip}" TextColor="White" VerticalTextAlignment="Center"
+                               Text="{localization:Translate FecriKazip}" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}" VerticalTextAlignment="Center"
                                FontSize="{DynamicResource CaptionFontSize}"
                                AutomationProperties.IsInAccessibleTree="True"
                                SemanticProperties.Description="{localization:Translate FecriKazip}" />
                         <Label Grid.Column="2" FontAttributes="Bold" HorizontalTextAlignment="Center"
-                               Text="{localization:Translate FecriSadik}" TextColor="White" VerticalTextAlignment="Center"
+                               Text="{localization:Translate FecriSadik}" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}" VerticalTextAlignment="Center"
                                FontSize="{DynamicResource CaptionFontSize}"
                                AutomationProperties.IsInAccessibleTree="True"
                                SemanticProperties.Description="{localization:Translate FecriSadik}" />
                         <Label Grid.Column="3" FontAttributes="Bold" HorizontalTextAlignment="Center"
-                               Text="{localization:Translate SabahSonu}" TextColor="White" VerticalTextAlignment="Center"
+                               Text="{localization:Translate SabahSonu}" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}" VerticalTextAlignment="Center"
                                FontSize="{DynamicResource CaptionFontSize}"
                                AutomationProperties.IsInAccessibleTree="True"
                                SemanticProperties.Description="{localization:Translate SabahSonu}" />
                         <Label Grid.Column="4" FontAttributes="Bold" HorizontalTextAlignment="Center"
-                               Text="{localization:Translate Ogle}" TextColor="White" VerticalTextAlignment="Center"
+                               Text="{localization:Translate Ogle}" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}" VerticalTextAlignment="Center"
                                FontSize="{DynamicResource CaptionFontSize}"
                                AutomationProperties.IsInAccessibleTree="True"
                                SemanticProperties.Description="{localization:Translate Ogle}" />
                         <Label Grid.Column="5" FontAttributes="Bold" HorizontalTextAlignment="Center"
-                               Text="{localization:Translate Ikindi}" TextColor="White" VerticalTextAlignment="Center"
+                               Text="{localization:Translate Ikindi}" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}" VerticalTextAlignment="Center"
                                FontSize="{DynamicResource CaptionFontSize}"
                                AutomationProperties.IsInAccessibleTree="True"
                                SemanticProperties.Description="{localization:Translate Ikindi}" />
                         <Label Grid.Column="6" FontAttributes="Bold" HorizontalTextAlignment="Center"
-                               Text="{localization:Translate Aksam}" TextColor="White" VerticalTextAlignment="Center"
+                               Text="{localization:Translate Aksam}" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}" VerticalTextAlignment="Center"
                                FontSize="{DynamicResource CaptionFontSize}"
                                AutomationProperties.IsInAccessibleTree="True"
                                SemanticProperties.Description="{localization:Translate Aksam}" />
                         <Label Grid.Column="7" FontAttributes="Bold" HorizontalTextAlignment="Center"
-                               Text="{localization:Translate Yatsi}" TextColor="White" VerticalTextAlignment="Center"
+                               Text="{localization:Translate Yatsi}" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}" VerticalTextAlignment="Center"
                                FontSize="{DynamicResource CaptionFontSize}"
                                AutomationProperties.IsInAccessibleTree="True"
                                SemanticProperties.Description="{localization:Translate Yatsi}" />
                         <Label Grid.Column="8" FontAttributes="Bold" HorizontalTextAlignment="Center"
-                               Text="{localization:Translate YatsiSonu}" TextColor="White" VerticalTextAlignment="Center"
+                               Text="{localization:Translate YatsiSonu}" TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}" VerticalTextAlignment="Center"
                                FontSize="{DynamicResource CaptionFontSize}"
                                AutomationProperties.IsInAccessibleTree="True"
                                SemanticProperties.Description="{localization:Translate YatsiSonu}" />
@@ -84,7 +84,7 @@
             <!-- Data Template with Clean Table Design -->
                      <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="models:Calendar">
-                    <Border BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceColor}, Dark={StaticResource SurfaceColorDark}}"
+                  <Border BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceColor}, Dark={StaticResource SurfaceColorDark}}"
                             Stroke="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}"
                             StrokeThickness="0.5"
                             Margin="0">
@@ -95,15 +95,15 @@
                               MinimumHeightRequest="10">
                             
                             <!-- Date Column -->
-                            <Border Grid.Column="0" 
-                                    BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryAccent50Color}, Dark={StaticResource SurfaceVariantColorDark}}"
-                                    StrokeShape="RoundRectangle 4"
-                                    Stroke="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
-                                    StrokeThickness="1" Margin="1"
-                                    Padding="0">
+                         <Border Grid.Column="0" 
+                                BackgroundColor="{AppThemeBinding Light={StaticResource Primary10}, Dark={StaticResource SurfaceVariantDark}}"
+                                StrokeShape="RoundRectangle 4"
+                                Stroke="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary60}}"
+                                StrokeThickness="1" Margin="1"
+                                Padding="0">
                                 <Label FontAttributes="Bold" HorizontalTextAlignment="Center"
                                        Text="{Binding Date}" 
-                                       TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}"
                                        VerticalTextAlignment="Center" 
                                        FontSize="{DynamicResource CaptionFontSize}"
                                        AutomationProperties.IsInAccessibleTree="True"
@@ -118,7 +118,7 @@
                             <Label Grid.Column="2" FontAttributes="Bold" HorizontalTextAlignment="Center"
                                    Text="{Binding Fajr}" VerticalTextAlignment="Center" 
                                    FontSize="{DynamicResource CaptionFontSize}"
-                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}"
                                    AutomationProperties.IsInAccessibleTree="True"
                                    SemanticProperties.Description="{Binding Fajr}" />
                             <Label Grid.Column="3" HorizontalTextAlignment="Center"
@@ -130,7 +130,7 @@
                             <Label Grid.Column="4" FontAttributes="Bold" HorizontalTextAlignment="Center"
                                    Text="{Binding Dhuhr}" VerticalTextAlignment="Center" 
                                    FontSize="{DynamicResource CaptionFontSize}"
-                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}"
                                    AutomationProperties.IsInAccessibleTree="True"
                                    SemanticProperties.Description="{Binding Dhuhr}" />
                             <Label Grid.Column="5" HorizontalTextAlignment="Center"
@@ -142,7 +142,7 @@
                             <Label Grid.Column="6" FontAttributes="Bold" HorizontalTextAlignment="Center"
                                    Text="{Binding Maghrib}" VerticalTextAlignment="Center" 
                                    FontSize="{DynamicResource CaptionFontSize}"
-                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}"
                                    AutomationProperties.IsInAccessibleTree="True"
                                    SemanticProperties.Description="{Binding Maghrib}" />
                             <Label Grid.Column="7" HorizontalTextAlignment="Center"
@@ -154,7 +154,7 @@
                             <Label Grid.Column="8" FontAttributes="Bold" HorizontalTextAlignment="Center"
                                    Text="{Binding EndOfIsha}" VerticalTextAlignment="Center" 
                                    FontSize="{DynamicResource CaptionFontSize}"
-                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryAccent50Color}}"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}"
                                    AutomationProperties.IsInAccessibleTree="True"
                                    SemanticProperties.Description="{Binding EndOfIsha}" />
                         </Grid>

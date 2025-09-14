@@ -32,7 +32,7 @@
                                            HeightRequest="48"
                                            WidthRequest="48" />
                         <Label Text="{localization:Translate IcerikYukleniyor}"
-                               Style="{StaticResource TitleMediumLabel}"
+                               Style="{StaticResource TitleMediumStyle}"
                                HorizontalTextAlignment="Center"
                                TextColor="{StaticResource PrimaryColor}" />
                     </VerticalStackLayout>
@@ -40,22 +40,66 @@
             </Grid>
         </Grid>
 
-        <!-- Action Buttons -->
+        <!-- Action Buttons with Border (Android CornerRadius Workaround) -->
         <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="12">
-            <Button Grid.Column="0"
-                    Text="{localization:Translate Kapat}" 
-                    Command="{Binding GoBackCommand}" 
-                    Style="{StaticResource OutlineButton}" />
-            <Button Grid.Column="1"
+            <!-- Close Button -->
+            <Border Grid.Column="0"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariantLight}, Dark={StaticResource SurfaceVariantDark}}"
+                    Stroke="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}"
+                    StrokeThickness="1"
+                    Padding="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+                <Button Text="{localization:Translate Kapat}" 
+                        Command="{Binding GoBackCommand}" 
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}"
+                        FontFamily="OpenSansRegular"
+                        FontSize="{DynamicResource BodyFontSize}"
+                        FontAttributes="Bold"
+                        Padding="16,12" />
+            </Border>
+            
+            <!-- Share Button -->
+            <Border Grid.Column="1"
                     IsVisible="{Binding ShowShare}"
-                    Text="{localization:Translate Paylas}" 
-                    Command="{Binding ShareCommand}" 
-                    Style="{StaticResource WarningButton}" />
-            <Button Grid.Column="2"
-                    Text="{localization:Translate KonumYenileButton}" 
-                    Command="{Binding RefreshCommand}" 
-                    Style="{StaticResource PrimaryButton}"
-                    IsEnabled="{Binding IsNotBusy}" />
+                    BackgroundColor="{AppThemeBinding Light={StaticResource Warning60}, Dark={StaticResource Warning30}}"
+                    Stroke="Transparent"
+                    StrokeThickness="0"
+                    Padding="0">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+                <Button Text="{localization:Translate Paylas}" 
+                        Command="{Binding ShareCommand}" 
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light={StaticResource OnWarningColor}, Dark={StaticResource OnWarningColor}}"
+                        FontFamily="OpenSansRegular"
+                        FontSize="{DynamicResource BodyFontSize}"
+                        FontAttributes="Bold"
+                        Padding="16,12" />
+            </Border>
+            
+            <!-- Refresh Button with gradient background -->
+            <Border Grid.Column="2"
+                    Stroke="Transparent"
+                    StrokeThickness="0"
+                    Padding="0"
+                    Background="{StaticResource PrimaryGradientBrush}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="20" />
+                </Border.StrokeShape>
+                <Button Text="{localization:Translate KonumYenileButton}" 
+                        Command="{Binding RefreshCommand}" 
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColor}}"
+                        FontFamily="OpenSansRegular"
+                        FontSize="{DynamicResource BodyFontSize}"
+                        FontAttributes="Bold"
+                        Padding="16,12"
+                        IsEnabled="{Binding IsNotBusy}" />
+            </Border>
         </Grid>
     </Grid>
 </ContentPage.Content>
