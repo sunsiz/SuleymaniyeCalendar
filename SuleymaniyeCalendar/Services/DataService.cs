@@ -18,8 +18,9 @@ namespace SuleymaniyeCalendar.Services
 {
 	public class DataService
 	{
-		private readonly IAlarmService _alarmService;
-		private readonly JsonApiService _jsonApiService;
+	private readonly IAlarmService _alarmService;
+	private readonly JsonApiService _jsonApiService;
+	private readonly PerformanceService _perf;
 		public Calendar calendar;
 		private Calendar _location;
 		private ObservableCollection<Calendar> _monthlyCalendar;
@@ -28,10 +29,11 @@ namespace SuleymaniyeCalendar.Services
 		private const int UnifiedCacheVersion = 1;
 
 		// Primary constructor for DI: JsonApiService is injected
-		public DataService(IAlarmService alarmService, JsonApiService jsonApiService)
+		public DataService(IAlarmService alarmService, JsonApiService jsonApiService, PerformanceService perf = null)
 		{
 			_alarmService = alarmService;
 			_jsonApiService = jsonApiService;
+			_perf = perf ?? new PerformanceService();
 			calendar = GetTakvimFromFile() ?? new Calendar()
 			{
 				Latitude = Preferences.Get("latitude", 41.0),
@@ -52,7 +54,7 @@ namespace SuleymaniyeCalendar.Services
 		}
 
 		// Backward-compatible constructor for callers without DI (e.g., Android widget fallback)
-		public DataService(IAlarmService alarmService) : this(alarmService, new JsonApiService())
+	public DataService(IAlarmService alarmService) : this(alarmService, new JsonApiService())
 		{
 		}
 
@@ -126,7 +128,11 @@ namespace SuleymaniyeCalendar.Services
 			// - Otherwise, use last known/saved location to avoid prompting at launch
 			var forceLocationRefresh = Preferences.Get("AlwaysRenewLocationEnabled", false);
 			var location = await GetCurrentLocationAsync(forceLocationRefresh).ConfigureAwait(false);
-			var monthly = await GetMonthlyPrayerTimesHybridAsync(location, true).ConfigureAwait(false);
+			ObservableCollection<Calendar> monthly;
+			using (_perf.StartTimer("DataService.GetMonthly.HybridStartup"))
+			{
+				monthly = await GetMonthlyPrayerTimesHybridAsync(location, true).ConfigureAwait(false);
+			}
 			if (monthly != null && monthly.Count > 0)
 			{
 				// Pick today's entry; fallback to closest
@@ -179,7 +185,13 @@ namespace SuleymaniyeCalendar.Services
 			}
 			try
 			{
-				if (!refreshLocation) location = await Geolocation.Default.GetLastKnownLocationAsync().ConfigureAwait(false);
+				if (!refreshLocation)
+				{
+					using (_perf.StartTimer("Location.LastKnown"))
+					{
+						location = await Geolocation.Default.GetLastKnownLocationAsync().ConfigureAwait(false);
+					}
+				}
 
 				if (location == null || refreshLocation)
 				{
@@ -189,7 +201,10 @@ namespace SuleymaniyeCalendar.Services
 					//location = await Geolocation.GetLocationAsync(request, cts.Token).ConfigureAwait(false);
 					//var permissionService = new PermissionService();
 					//location = await permissionService.RequestLocationAsync(10).ConfigureAwait(false);
-					location = await RequestLocationAsync().ConfigureAwait(false);
+					using (_perf.StartTimer("Location.Request"))
+					{
+						location = await RequestLocationAsync().ConfigureAwait(false);
+					}
 					if (location == null) location = new Location(42.142, 29.218, 10);
 				}
 
@@ -323,6 +338,7 @@ namespace SuleymaniyeCalendar.Services
 
 			try
 			{
+				using var _ = _perf.StartTimer("XML.Monthly.GetAsync");
 				var resp = await _xmlHttpClient.GetAsync(url).ConfigureAwait(false);
 				resp.EnsureSuccessStatusCode();
 				var xml = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -692,7 +708,11 @@ namespace SuleymaniyeCalendar.Services
 			var yearCaches = new Dictionary<int, List<Calendar>>();
 			foreach (var y in years)
 			{
-				var cached = await LoadYearCacheAsync(location, y).ConfigureAwait(false);
+				List<Calendar> cached;
+				using (_perf.StartTimer($"Cache.LoadYear.{y}"))
+				{
+					cached = await LoadYearCacheAsync(location, y).ConfigureAwait(false);
+				}
 				yearCaches[y] = cached ?? new List<Calendar>();
 			}
 
@@ -737,7 +757,10 @@ namespace SuleymaniyeCalendar.Services
 					var toAdd = fetched.ToList();
 					if (!yearCaches.ContainsKey(year)) yearCaches[year] = new List<Calendar>();
 					yearCaches[year] = MergeCalendars(yearCaches[year], toAdd);
-					await SaveYearCacheAsync(location, year, yearCaches[year]).ConfigureAwait(false);
+					using (_perf.StartTimer($"Cache.SaveYear.{year}"))
+					{
+						await SaveYearCacheAsync(location, year, yearCaches[year]).ConfigureAwait(false);
+					}
 					return toAdd;
 				}
 
@@ -748,7 +771,11 @@ namespace SuleymaniyeCalendar.Services
 			var cursor = new DateTime(startDate.Year, startDate.Month, 1);
 			while (cursor <= endDate)
 			{
-				var monthDays = await GetMonthAsync(cursor.Year, cursor.Month).ConfigureAwait(false);
+				List<Calendar> monthDays;
+				using (_perf.StartTimer($"EnsureDays.GetMonth.{cursor.Year}-{cursor.Month}"))
+				{
+					monthDays = await GetMonthAsync(cursor.Year, cursor.Month).ConfigureAwait(false);
+				}
 				result.AddRange(monthDays);
 				cursor = cursor.AddMonths(1);
 			}
@@ -793,7 +820,11 @@ namespace SuleymaniyeCalendar.Services
 			{
 				var path = GetYearCachePath(location, year);
 				if (!File.Exists(path)) return null;
-				var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
+				string json;
+				using (_perf.StartTimer($"IO.ReadAllText.{year}"))
+				{
+					json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
+				}
 				var wrapper = JsonSerializer.Deserialize<YearCacheWrapper>(json);
 				if (wrapper != null && wrapper.Version == UnifiedCacheVersion && wrapper.Year == year)
 				{
@@ -822,7 +853,10 @@ namespace SuleymaniyeCalendar.Services
 				};
 				var json = JsonSerializer.Serialize(wrapper, new JsonSerializerOptions { WriteIndented = false });
 				var path = GetYearCachePath(location, year);
-				await File.WriteAllTextAsync(path, json).ConfigureAwait(false);
+				using (_perf.StartTimer($"IO.WriteAllText.{year}"))
+				{
+					await File.WriteAllTextAsync(path, json).ConfigureAwait(false);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -1161,7 +1195,11 @@ namespace SuleymaniyeCalendar.Services
 			{
 				var month = DateTime.Now.Month;
 				var year = DateTime.Now.Year;
-				var unified = await TryGetMonthlyFromUnifiedCacheAsync(location, year, month).ConfigureAwait(false);
+				ObservableCollection<Calendar> unified;
+				using (_perf.StartTimer("Cache.TryGetMonthlyUnified"))
+				{
+					unified = await TryGetMonthlyFromUnifiedCacheAsync(location, year, month).ConfigureAwait(false);
+				}
 				if (unified != null)
 				{
 					Debug.WriteLine("Hybrid: Returning unified cache data");
@@ -1179,8 +1217,12 @@ namespace SuleymaniyeCalendar.Services
 			Debug.WriteLine("Hybrid: Trying new JSON API");
 			try
 			{
-				var jsonResult = await _jsonApiService.GetMonthlyPrayerTimesAsync(
-					location.Latitude, location.Longitude, currentMonth, altitude);
+				ObservableCollection<Calendar> jsonResult;
+				using (_perf.StartTimer("JSON.Monthly"))
+				{
+					jsonResult = await _jsonApiService.GetMonthlyPrayerTimesAsync(
+						location.Latitude, location.Longitude, currentMonth, altitude);
+				}
 				
 				if (jsonResult != null && jsonResult.Count > 0)
 				{
@@ -1199,7 +1241,11 @@ namespace SuleymaniyeCalendar.Services
 			Debug.WriteLine("Hybrid: Falling back to XML API");
 			try
 			{
-				var xmlResult = await GetMonthlyPrayerTimesXmlAsync(location, forceRefresh).ConfigureAwait(false);
+				ObservableCollection<Calendar> xmlResult;
+				using (_perf.StartTimer("XML.Monthly.Fallback"))
+				{
+					xmlResult = await GetMonthlyPrayerTimesXmlAsync(location, forceRefresh).ConfigureAwait(false);
+				}
 				if (xmlResult != null && xmlResult.Count > 0)
 				{
 					Debug.WriteLine($"Hybrid: XML API success - {xmlResult.Count} days");
@@ -1229,8 +1275,12 @@ namespace SuleymaniyeCalendar.Services
 			Debug.WriteLine("Hybrid Daily: Trying new JSON API");
 			try
 			{
-				var jsonResult = await _jsonApiService.GetDailyPrayerTimesAsync(
-					location.Latitude, location.Longitude, targetDate, altitude);
+				Calendar jsonResult;
+				using (_perf.StartTimer("JSON.Daily"))
+				{
+					jsonResult = await _jsonApiService.GetDailyPrayerTimesAsync(
+						location.Latitude, location.Longitude, targetDate, altitude);
+				}
 				
 				if (jsonResult != null)
 				{
@@ -1249,7 +1299,11 @@ namespace SuleymaniyeCalendar.Services
 			Debug.WriteLine("Hybrid Daily: Falling back to XML API");
 			try
 			{
-				var xmlResult = await GetPrayerTimesAsync(false);
+				Calendar xmlResult;
+				using (_perf.StartTimer("XML.Daily.Fallback"))
+				{
+					xmlResult = await GetPrayerTimesAsync(false);
+				}
 				if (xmlResult != null)
 				{
 					Debug.WriteLine("Hybrid Daily: XML API success");

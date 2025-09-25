@@ -54,8 +54,11 @@ namespace SuleymaniyeCalendar.ViewModels
         // Prevent double navigation/reentrancy on fast taps/selection churn
         private bool _isNavigating;
 
-        public MainViewModel(DataService dataService)
+        private readonly PerformanceService _perf;
+
+        public MainViewModel(DataService dataService, PerformanceService perf = null)
         {
+            _perf = perf ?? new PerformanceService();
             Debug.WriteLine("TimeStamp-MainViewModel-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
             if (DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 10)
             {
@@ -466,6 +469,12 @@ namespace SuleymaniyeCalendar.ViewModels
                 _ticker.Start();
             }
 
+            // Emit an aggregated performance snapshot shortly after appearing
+            Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(2), () =>
+            {
+                _perf.LogSummary("MainView");
+            });
+
             // For returning users with auto-renew off, backfill today's cache entry if missing and update UI
             if (!Preferences.Get("AlwaysRenewLocationEnabled", false))
             {
@@ -509,10 +518,13 @@ namespace SuleymaniyeCalendar.ViewModels
                 await Task.Yield();
 
                 // Ensure any UI-bound collection updates happen on the main thread
-                await MainThread.InvokeOnMainThreadAsync(() =>
+                using (_perf.StartTimer("UI.LoadPrayers"))
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() =>
                 {
                     LoadPrayers();
                 });
+                }
 
                 // Start city lookup in background without blocking UI
                 _ = Task.Run(async () => await GetCityAsync());

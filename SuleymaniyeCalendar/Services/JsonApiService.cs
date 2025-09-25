@@ -14,6 +14,7 @@ namespace SuleymaniyeCalendar.Services
     public class JsonApiService
     {
         private readonly HttpClient _httpClient;
+        private readonly PerformanceService _perf;
         private const string BaseUrl = "https://api.suleymaniyetakvimi.com/api/";
         private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {
@@ -21,12 +22,13 @@ namespace SuleymaniyeCalendar.Services
             AllowTrailingCommas = true
         };
 
-        public JsonApiService()
+        public JsonApiService(PerformanceService perf = null)
         {
             _httpClient = new HttpClient
             {
                 Timeout = TimeSpan.FromSeconds(30)
             };
+            _perf = perf ?? new PerformanceService();
         }
 
         /// <summary>
@@ -43,6 +45,7 @@ namespace SuleymaniyeCalendar.Services
 
                 Debug.WriteLine($"JSON API Daily Request: {url}");
 
+                using var _ = _perf.StartTimer("HTTP.JSON.Daily");
                 var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
                 var jsonContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
@@ -83,6 +86,7 @@ namespace SuleymaniyeCalendar.Services
 
                 Debug.WriteLine($"JSON API Monthly Request: {url}");
 
+                using var _ = _perf.StartTimer("HTTP.JSON.Monthly");
                 var response = await _httpClient.GetAsync(url).ConfigureAwait(false);
                 var jsonContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
@@ -174,6 +178,7 @@ namespace SuleymaniyeCalendar.Services
             {
                 // Prefer the warmup endpoint if available; otherwise try a very light daily query
                 var warmupUrl = $"{BaseUrl}TimeCalculation/warmup";
+                using var _ = _perf.StartTimer("HTTP.JSON.Warmup");
                 var warmupResponse = await _httpClient.GetAsync(warmupUrl).ConfigureAwait(false);
                 if (warmupResponse.IsSuccessStatusCode)
                 {

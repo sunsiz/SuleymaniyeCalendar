@@ -15,6 +15,7 @@ namespace SuleymaniyeCalendar.ViewModels
 	public partial class MonthViewModel : BaseViewModel
 	{
 		private DataService _data;
+        private readonly PerformanceService _perf;
 
 		private ObservableCollection<Calendar> monthlyCalendar = new();
 		public ObservableCollection<Calendar> MonthlyCalendar
@@ -26,10 +27,11 @@ namespace SuleymaniyeCalendar.ViewModels
 		public bool HasData => MonthlyCalendar?.Count > 0;
         public bool ShowShare => Preferences.Get("LastLatitude", 0.0) != 0.0 && Preferences.Get("LastLongitude", 0.0) != 0.0;
 
-        public MonthViewModel(DataService dataService)
+		public MonthViewModel(DataService dataService, PerformanceService perf = null)
 		{
 			Title = AppResources.AylikTakvim;
 			_data = dataService;
+            _perf = perf ?? new PerformanceService();
 			MonthlyCalendar = new ObservableCollection<Calendar>();
 			IsBusy = false; // Start with false to show window immediately
 		}
@@ -62,7 +64,10 @@ namespace SuleymaniyeCalendar.ViewModels
 			// Small additional delay for smooth UX
 			await Task.Delay(500);
 			
-			await LoadMonthlyDataAsync().ConfigureAwait(false);
+			using (_perf.StartTimer("Month.LoadData.Delayed"))
+			{
+				await LoadMonthlyDataAsync().ConfigureAwait(false);
+			}
 		}
 
 		public async Task InitializeAsync()
@@ -78,7 +83,10 @@ namespace SuleymaniyeCalendar.ViewModels
 				IsBusy = true;
 			});
 			
-			await LoadMonthlyDataAsync().ConfigureAwait(false);
+			using (_perf.StartTimer("Month.LoadData"))
+			{
+				await LoadMonthlyDataAsync().ConfigureAwait(false);
+			}
 		}
 
 		private async Task LoadMonthlyDataAsync()
@@ -92,7 +100,11 @@ namespace SuleymaniyeCalendar.ViewModels
 				if (location.Latitude != 0.0 && location.Longitude != 0.0)
 				{
 					// Use new hybrid API approach: JSON first, XML fallback
-					var monthlyData = await _data.GetMonthlyPrayerTimesHybridAsync(location, false).ConfigureAwait(false);
+					ObservableCollection<Calendar> monthlyData;
+					using (_perf.StartTimer("Month.HybridMonthly"))
+					{
+						monthlyData = await _data.GetMonthlyPrayerTimesHybridAsync(location, false).ConfigureAwait(false);
+					}
 					
 					if (monthlyData == null)
 					{
@@ -110,14 +122,14 @@ namespace SuleymaniyeCalendar.ViewModels
 						if (monthlyData.Count <= 10)
 						{
 							// Small datasets: Direct replacement for instant display
-							MonthlyCalendar.Clear();
+							using (_perf.StartTimer("Month.UI.ReplaceSmall")) MonthlyCalendar.Clear();
 							foreach (var item in monthlyData)
 								MonthlyCalendar.Add(item);
 						}
 						else
 						{
 							// Large datasets: Smooth progressive loading to prevent UI blocking
-							MonthlyCalendar.Clear();
+							using (_perf.StartTimer("Month.UI.ReplaceLarge.Clear")) MonthlyCalendar.Clear();
 							const int batchSize = 8; // Optimized batch size for better perceived performance
 							
 							for (int i = 0; i < monthlyData.Count; i += batchSize)

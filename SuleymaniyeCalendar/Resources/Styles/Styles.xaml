@@ -574,6 +574,9 @@
 
     <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
     <!-- ENHANCED CARD SYSTEM - Premium design with sophisticated elevation -->
+    <!-- Optional: runtime-selectable visual fidelity alias. Default to glass. -->
+    <x:String x:Key="CardVisualStyleKey">GlassCard</x:String>
+
     <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
 
     <!--  Base Card - Foundation for all cards with premium styling  -->
@@ -940,6 +943,19 @@
             <Setter Property="Shadow">
                 <Setter.Value>
                     <Shadow Opacity="0.2" Radius="24" Offset="0,8" />
+                </Setter.Value>
+            </Setter>
+            </Style>
+
+        <!-- Flat Card for performance testing and dense lists (no gradients, minimal shadow) -->
+        <Style x:Key="FlatCard" TargetType="Border" BasedOn="{StaticResource Card}">
+            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowestLight}, Dark={StaticResource SurfaceContainerLowestDark}}" />
+            <Setter Property="Background" Value="{x:Null}" />
+            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource OutlineVariantLight}, Dark={StaticResource OutlineVariantDark}}" />
+            <Setter Property="StrokeThickness" Value="0.5" />
+            <Setter Property="Shadow">
+                <Setter.Value>
+                    <Shadow Brush="Transparent" />
                 </Setter.Value>
             </Setter>
         </Style>
