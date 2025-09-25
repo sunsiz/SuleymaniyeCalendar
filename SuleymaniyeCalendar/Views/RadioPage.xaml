@@ -39,10 +39,9 @@
             </Border>
 
             <Border
-                Style="{StaticResource GlassCard}"
+                Style="{StaticResource GlassMediaCard}"
                 Grid.Row="1"
-                Margin="0,-25,0,-15"
-                StrokeShape="RoundRectangle 25">
+                Margin="0,-25,0,-15">
                 <Grid
                     Padding="15,0,15,20"
                     ColumnDefinitions="*, Auto, *"

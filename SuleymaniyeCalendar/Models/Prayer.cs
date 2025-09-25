@@ -1,5 +1,6 @@
 ﻿using System;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace SuleymaniyeCalendar.Models
 {
@@ -106,6 +107,9 @@ namespace SuleymaniyeCalendar.Models
 		{
 			// Defaults already set via field initializers
 		}
+
+		// Compiled-binding friendly navigation command (set by ViewModel)
+		public IRelayCommand NavigateCommand { get; set; }
 
 		// Helper method to update visual state based on prayer timing
 		public void UpdateVisualState()

@@ -17,7 +17,7 @@
             Spacing="12">
             
             <!--  Compact Prayer Title Card  -->
-            <Border Style="{StaticResource GlassCard}">
+            <Border Style="{StaticResource GlassMediaCard}">
                 <VerticalStackLayout Spacing="12">
                     <Label
                         FontAttributes="Bold"
@@ -34,7 +34,7 @@
             </Border>
 
             <!--  Compact Time & Enable Card  -->
-            <Border Style="{StaticResource GlassCard}">
+            <Border Style="{StaticResource FrostMediaCard}">
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16" RowDefinitions="Auto,Auto" RowSpacing="12">
                     <!-- Time Section -->
                     <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="4">
@@ -114,7 +114,7 @@
             </Border>-->
 
             <!--  Compact Notification Settings Card  -->
-            <Border IsVisible="{Binding Enabled}" Style="{StaticResource GlassCard}">
+            <Border IsVisible="{Binding Enabled}" Style="{StaticResource FrostMediaCard}">
                 <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="16">
                     <!--  Notification Time Section  -->
                     <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="12">
@@ -134,11 +134,7 @@
                             </Label>
                         </VerticalStackLayout>
                         
-                        <Border
-                            BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceVariantColorDark}}"
-                            Stroke="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}"
-                            StrokeShape="RoundRectangle 12"
-                            Padding="12,8">
+                        <Border Style="{StaticResource GlassCardSoft}" Padding="12,8">
                             <Slider
                                 AutomationProperties.IsInAccessibleTree="true"
                                 HeightRequest="36"
@@ -160,99 +156,53 @@
                     <VerticalStackLayout Spacing="12">
                         <Label Style="{StaticResource TitleMediumStyle}" Text="{localization:Translate Birsessecin}" />
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                            <Border
-                                Grid.Column="0"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource SurfaceVariantColor},
-                                                                  Dark={StaticResource SurfaceVariantColorDark}}"
-                                Stroke="{AppThemeBinding Light={StaticResource OutlineColor},
-                                                         Dark={StaticResource OutlineColorDark}}"
-                                StrokeShape="RoundRectangle 12"
-                                StrokeThickness="1"
-                                Padding="12,8">
+                            <Border Grid.Column="0" Style="{StaticResource GlassCardSoft}" Padding="12,8">
                                 <Picker
                                     Title="{localization:Translate Birsessecin}"
                                     BackgroundColor="Transparent"
                                     HorizontalOptions="Fill"
-                                    ItemDisplayBinding="{Binding Name}"
                                     ItemsSource="{Binding AvailableSounds}"
                                     SelectedItem="{Binding SelectedSound}"
                                     TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor},
                                                                 Dark={StaticResource OnSurfaceColorDark}}"
                                     FontSize="{DynamicResource DefaultFontSize}" />
                             </Border>
-                                <Border
-                                Grid.Column="1"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                  Dark={StaticResource Primary80}}"
-                                HeightRequest="48"
-                                Stroke="Transparent"
-                                StrokeShape="RoundRectangle 12"
-                                WidthRequest="48">
-                                <Button
-                                    Padding="0"
-                                    AutomationProperties.IsInAccessibleTree="True"
-                                    BackgroundColor="Transparent"
-                                    Command="{Binding TestButtonClickedCommand}"
-                                    HeightRequest="48"
-                                    SemanticProperties.Description="{localization:Translate AlarmSwitch}"
-                                    WidthRequest="48">
+                                <Button Grid.Column="1"
+                                    x:DataType="viewModels:PrayerDetailViewModel"
+                                    Margin="6"
+                                        Style="{StaticResource GlassButtonSuccess}"
+                                        Command="{Binding TestButtonClickedCommand}"
+                                        WidthRequest="52" HeightRequest="48">
                                     <Button.Triggers>
-                                        <DataTrigger
-                                            Binding="{Binding IsPlaying}"
-                                            TargetType="Button"
-                                            Value="False">
+                                        <DataTrigger Binding="{Binding IsPlaying}" TargetType="Button" Value="False">
                                             <Setter Property="ImageSource">
                                                 <Setter.Value>
-                                                    <FontImageSource
-                                                        FontFamily="{StaticResource IconFontFamily}"
-                                                        Glyph="&#xf04b;"
-                                                        Size="{DynamicResource IconSmallFontSize}"
-                                                        Color="{AppThemeBinding Light={StaticResource OnPrimaryColor},
-                                                                                Dark={StaticResource OnPrimaryColor}}" />
+                                                    <FontImageSource FontFamily="{StaticResource IconFontFamily}"
+                                                                     Glyph="&#xf04b;" Size="{DynamicResource IconSmallFontSize}" />
                                                 </Setter.Value>
                                             </Setter>
                                         </DataTrigger>
-                                        <DataTrigger
-                                            Binding="{Binding IsPlaying}"
-                                            TargetType="Button"
-                                            Value="True">
+                                        <DataTrigger Binding="{Binding IsPlaying}" TargetType="Button" Value="True">
+                                            <Setter Property="Style" Value="{StaticResource GlassButtonWarning}" />
                                             <Setter Property="ImageSource">
                                                 <Setter.Value>
-                                                    <FontImageSource
-                                                        FontFamily="{StaticResource IconFontFamily}"
-                                                        Glyph="&#xf04d;"
-                                                        Size="{DynamicResource IconSmallFontSize}"
-                                                        Color="{AppThemeBinding Light={StaticResource OnPrimaryColor},
-                                                                                Dark={StaticResource OnPrimaryColor}}" />
+                                                    <FontImageSource FontFamily="{StaticResource IconFontFamily}"
+                                                                     Glyph="&#xf04d;" Size="{DynamicResource IconSmallFontSize}" />
                                                 </Setter.Value>
                                             </Setter>
                                         </DataTrigger>
                                     </Button.Triggers>
                                 </Button>
-                            </Border>
                         </Grid>
                     </VerticalStackLayout>
                 </VerticalStackLayout>
             </Border>
 
-            <!--  Compact Close Button with gradient background  -->
-            <Border
-                HeightRequest="48"
-                Stroke="Transparent"
-                StrokeShape="RoundRectangle 16"
-                Margin="0,4,0,0"
-                Background="{StaticResource PrimaryGradientBrush}">
-                <Button
-                    Padding="20,0"
-                    BackgroundColor="Transparent"
-                    Command="{Binding GoBackCommand}"
-                    FontAttributes="Bold"
-                    FontSize="{DynamicResource DefaultFontSize}"
-                    HorizontalOptions="Fill"
-                    Text="{localization:Translate Kapat}"
-                    TextColor="{AppThemeBinding Light={StaticResource OnPrimaryColor},
-                                                Dark={StaticResource OnPrimaryColor}}" />
-            </Border>
+            <!--  Close Button - Glass primary variant  -->
+            <Button
+                Style="{StaticResource GlassButtonPrimary}"
+                Command="{Binding GoBackCommand}"
+                Text="{localization:Translate Kapat}" />
         </VerticalStackLayout>
     </ScrollView>
 

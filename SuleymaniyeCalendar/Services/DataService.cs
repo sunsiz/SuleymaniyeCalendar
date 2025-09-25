@@ -579,13 +579,12 @@ namespace SuleymaniyeCalendar.Services
 					TimeZoneInfo.Local.IsDaylightSavingTime(withKind))
 					Debug.WriteLine("{0} may be daylight saving time in {1}.",
 						withKind, TimeZoneInfo.Local.DisplayName);
-				var client = new HttpClient();
 				var uri = new Uri($"http://servis.suleymaniyetakvimi.com/servis.asmx/" +
 								  $"VakitHesabi?Enlem={Convert.ToDouble(loc.Latitude, CultureInfo.InvariantCulture.NumberFormat)}" +
 								  $"&Boylam={Convert.ToDouble(loc.Longitude, CultureInfo.InvariantCulture.NumberFormat)}" +
 								  $"&Yukseklik={Convert.ToDouble(loc.Altitude, CultureInfo.InvariantCulture.NumberFormat)}" +
 								  $"&SaatBolgesi={loc.TimeZone}&yazSaati={loc.DayLightSaving}&Tarih={loc.Date}");
-				var response = await client.GetAsync(uri).ConfigureAwait(false);
+				var response = await _xmlHttpClient.GetAsync(uri).ConfigureAwait(false);
 				var xmlResult = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 				if (!string.IsNullOrEmpty(xmlResult) && xmlResult.StartsWith("<?xml"))
 				{
@@ -1325,9 +1324,7 @@ namespace SuleymaniyeCalendar.Services
 				var sw = System.Diagnostics.Stopwatch.StartNew();
 				try
 				{
-					var client = new HttpClient();
-					client.Timeout = TimeSpan.FromSeconds(10);
-					var response = await client.GetAsync("http://servis.suleymaniyetakvimi.com/servis.asmx");
+					var response = await _xmlHttpClient.GetAsync("http://servis.suleymaniyetakvimi.com/servis.asmx");
 					sw.Stop();
 					return ("XML", response.IsSuccessStatusCode, sw.ElapsedMilliseconds);
 				}

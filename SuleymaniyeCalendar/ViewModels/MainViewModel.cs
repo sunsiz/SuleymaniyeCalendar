@@ -380,6 +380,25 @@ namespace SuleymaniyeCalendar.ViewModels
                     p.State = CheckState(ParseTimeOrMin(current), ParseTimeOrMin(next));
                     p.StateDescription = GetStateDescription(p.State);
                     p.UpdateVisualState();
+
+                    // Wire a compiled-binding friendly navigation command on each item
+                    p.NavigateCommand = new AsyncRelayCommand(async () =>
+                    {
+                        if (_isNavigating) return;
+                        _isNavigating = true;
+                        try
+                        {
+                            await Shell.Current.GoToAsync(
+                                nameof(PrayerDetailPage),
+                                true,
+                                new Dictionary<string, object> { { nameof(PrayerDetailViewModel.PrayerId), p.Id } }
+                            ).ConfigureAwait(false);
+                        }
+                        finally
+                        {
+                            _isNavigating = false;
+                        }
+                    });
                 }
 
                 // Persist raw times consistently

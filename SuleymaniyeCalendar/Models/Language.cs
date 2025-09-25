@@ -21,6 +21,12 @@ namespace SuleymaniyeCalendar.Models
 		public string CI { get; set; }
 		public bool IsRtl { get; set; }
 		public FlowDirection FlowDirection { get; set; }
+
+		public override string ToString()
+		{
+			// Enable Picker to display without ItemDisplayBinding and avoid XamlC warnings
+			return Name ?? base.ToString();
+		}
 		
 		private static bool DetermineIfRtl(string languageCode)
 		{

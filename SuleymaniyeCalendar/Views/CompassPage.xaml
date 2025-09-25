@@ -45,7 +45,7 @@
                     Spacing="8">
 
                     <!--  Compass Section  -->
-                    <Border Style="{StaticResource GlassCard}">
+                    <Border Style="{StaticResource GlassCardSoft}">
                         <VerticalStackLayout Spacing="16">
                             <Label
                                 HorizontalTextAlignment="Center"
@@ -72,7 +72,7 @@
                     </Border>
 
                     <!--  Location Information  -->
-                    <Border Style="{StaticResource GlassCard}">
+                    <Border Style="{StaticResource GlassMediaCard}">
                         <VerticalStackLayout Spacing="16">
                             <Label
                                 HorizontalTextAlignment="Center"
@@ -82,14 +82,14 @@
                             <!--  Coordinates Grid  -->
                             <Grid
                                 ColumnDefinitions="*,*"
-                                ColumnSpacing="20"
+                                ColumnSpacing="10"
                                 RowDefinitions="Auto,Auto,Auto"
                                 RowSpacing="16">
                                 <!--  Latitude  -->
                                 <VerticalStackLayout
                                     Grid.Row="0"
                                     Grid.Column="0"
-                                    Spacing="6">
+                                    Spacing="4">
                                     <Label
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
@@ -109,7 +109,7 @@
                                 <VerticalStackLayout
                                     Grid.Row="0"
                                     Grid.Column="1"
-                                    Spacing="6">
+                                    Spacing="4">
                                     <Label
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
@@ -129,7 +129,7 @@
                                 <VerticalStackLayout
                                     Grid.Row="1"
                                     Grid.Column="0"
-                                    Spacing="6">
+                                    Spacing="4">
                                     <Label
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
@@ -149,7 +149,7 @@
                                 <VerticalStackLayout
                                     Grid.Row="1"
                                     Grid.Column="1"
-                                    Spacing="6">
+                                    Spacing="4">
                                     <Label
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
@@ -170,7 +170,7 @@
                                     Grid.Row="2"
                                     Grid.Column="0"
                                     Grid.ColumnSpan="2"
-                                    Spacing="8">
+                                    Spacing="4">
                                     <Label
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
@@ -187,16 +187,12 @@
                                 </VerticalStackLayout>
                             </Grid>
 
-                            <!--  Action Button  -->
-                            <Border Padding="0" StrokeThickness="0" Background="{StaticResource PrimaryGradientBrush}" StrokeShape="RoundRectangle 20">
-                                <Button
-                                    BackgroundColor="Transparent"
-                                    Command="{Binding GoToMapCommand}"
-                                    Text="{localization:Translate HaritadaGoster}"
-                                    TextColor="{StaticResource OnPrimaryColor}"
-                                    FontAttributes="Bold"
-                                    Padding="20,12" />
-                            </Border>
+                            <!--  Action Button - Glass primary -->
+                            <Button
+                                Margin="12,0,12,12"
+                                Style="{StaticResource GlassButtonSecondary}"
+                                Command="{Binding GoToMapCommand}"
+                                Text="{localization:Translate HaritadaGoster}" />
                         </VerticalStackLayout>
                     </Border>
                 </VerticalStackLayout>
@@ -205,6 +201,7 @@
             <!--  Busy overlay  -->
             <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}" IsVisible="{Binding IsBusy}">
                 <ActivityIndicator
+                    Style="{StaticResource ActivityIndicator}"
                     HorizontalOptions="Center"
                     IsRunning="True"
                     VerticalOptions="Center"

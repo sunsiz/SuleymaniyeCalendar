@@ -16,5 +16,11 @@ namespace SuleymaniyeCalendar.Models
 		
 		public string FileName { get; set; }
 		public string Name { get; set; }
+
+		public override string ToString()
+		{
+			// Allow Picker to display item text without ItemDisplayBinding
+			return Name ?? base.ToString();
+		}
 	}
 }

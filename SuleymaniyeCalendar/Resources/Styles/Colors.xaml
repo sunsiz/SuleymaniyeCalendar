@@ -118,15 +118,16 @@
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  Light Theme Surfaces  -->
-    <Color x:Key="SurfaceLight">#FEFBFF</Color>
-    <Color x:Key="SurfaceDimLight">#DFD8E0</Color>
-    <Color x:Key="SurfaceBrightLight">#FEFBFF</Color>
+    <!-- Slightly deepened and softly tinted for better card/page separation in light mode -->
+    <Color x:Key="SurfaceLight">#FBF9FD</Color>
+    <Color x:Key="SurfaceDimLight">#DBD5DE</Color>
+    <Color x:Key="SurfaceBrightLight">#FBF9FD</Color>
     <Color x:Key="SurfaceContainerLowestLight">#FFFFFF</Color>
-    <Color x:Key="SurfaceContainerLowLight">#F9F2F4</Color>
-    <Color x:Key="SurfaceContainerLight">#F3ECEE</Color>
-    <Color x:Key="SurfaceContainerHighLight">#EDE6E8</Color>
-    <Color x:Key="SurfaceContainerHighestLight">#E7E0E2</Color>
-    <Color x:Key="SurfaceVariantLight">#E7E0E2</Color>
+    <Color x:Key="SurfaceContainerLowLight">#F1ECEF</Color>
+    <Color x:Key="SurfaceContainerLight">#ECE6EB</Color>
+    <Color x:Key="SurfaceContainerHighLight">#E6E0E5</Color>
+    <Color x:Key="SurfaceContainerHighestLight">#E1DBE0</Color>
+    <Color x:Key="SurfaceVariantLight">#E1DBE0</Color>
 
     <!--  Dark Theme Surfaces  -->
     <Color x:Key="SurfaceDark">#141218</Color>
@@ -143,8 +144,8 @@
     <!--  APPLICATION THEME COLORS - Semantic assignments  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  App Backgrounds - Softer, less bright  -->
-    <Color x:Key="AppBackgroundColor">#FAF7FC</Color>
+    <!--  App Backgrounds - Softer, less bright (reduced glare)  -->
+    <Color x:Key="AppBackgroundColor">#F2EFF7</Color>
     <Color x:Key="AppBackgroundColorDark">#141218</Color>
 
     <!--  Primary Theme Colors  -->
@@ -181,19 +182,19 @@
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  Past Prayer States - Much stronger differentiation  -->
-    <Color x:Key="PrayerPastBackgroundColor">#E8E5EA</Color>
-    <Color x:Key="PrayerPastBackgroundColorDark">#1A1A1A</Color>
-    <Color x:Key="PrayerPastTextColor">#8A8695</Color>
+    <Color x:Key="PrayerPastBackgroundColor">#FFBEBDBE</Color>
+    <Color x:Key="PrayerPastBackgroundColorDark">#EE3D3C3C</Color>
+    <Color x:Key="PrayerPastTextColor">#FF46444B</Color>
     <Color x:Key="PrayerPastTextColorDark">#9A9A9A</Color>
 
     <!--  Current Prayer States - More vibrant distinction  -->
-    <Color x:Key="PrayerActiveBackgroundColor">#D4EFDC</Color>
-    <Color x:Key="PrayerActiveBackgroundColorDark">#0D2818</Color>
+    <Color x:Key="PrayerActiveBackgroundColor">#FF8CFAAB</Color>
+    <Color x:Key="PrayerActiveBackgroundColorDark">#E10B331B</Color>
     <Color x:Key="PrayerActiveTextColor">#0A5A2A</Color>
     <Color x:Key="PrayerActiveTextColorDark">#A3CFBB</Color>
 
     <!--  Upcoming Prayer States - Enhanced warm distinction  -->
-    <Color x:Key="PrayerUpcomingBackgroundColor">#FFEDC7</Color>
+    <Color x:Key="PrayerUpcomingBackgroundColor">#FFE2CD9F</Color>
     <Color x:Key="PrayerUpcomingBackgroundColorDark">#2D1B00</Color>
     <Color x:Key="PrayerUpcomingTextColor">#7A4A15</Color>
     <Color x:Key="PrayerUpcomingTextColorDark">#E8B08A</Color>    
@@ -202,8 +203,18 @@
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  Card Colors - Better contrast with background  -->
-    <Color x:Key="CardBackgroundColor">#F8F5FA</Color>
+    <Color x:Key="CardBackgroundColor">#FFC0B9BF</Color>
     <Color x:Key="CardBackgroundColorDark">#0F0E13</Color>
+    
+    <!--  Optional card flavor variants (light) for subtle visual variety  -->
+    <Color x:Key="CardBackgroundWarmLight">#F4ECE6</Color>     <!-- warm beige tint -->
+    <Color x:Key="CardBackgroundCoolLight">#E8F2F4</Color>     <!-- cool teal tint  -->
+    <Color x:Key="CardBackgroundNeutralLight">#ECE8F1</Color>  <!-- neutral lavender -->
+    
+    <!--  Optional card flavor variants (dark) to keep parity (unused by default)  -->
+    <Color x:Key="CardBackgroundWarmDark">#28211D</Color>
+    <Color x:Key="CardBackgroundCoolDark">#1C2426</Color>
+    <Color x:Key="CardBackgroundNeutralDark">#222126</Color>
 
     <!--  Tab Bar Colors  -->
     <Color x:Key="TabBarBgColor">#8A4E1E</Color>
@@ -329,7 +340,7 @@
     <Color x:Key="SurfaceVariantColorDark">#49454F</Color>     <!-- equals SurfaceVariantDark  -->
 
     <!--  Some views refer to SurfaceColor/SurfaceColorDark; use container surfaces  -->
-    <Color x:Key="SurfaceColor">#F3ECEE</Color>               <!-- equals SurfaceContainerLight -->
+    <Color x:Key="SurfaceColor">#ECE6EB</Color>               <!-- equals SurfaceContainerLight -->
     <Color x:Key="SurfaceColorDark">#201F24</Color>           <!-- equals SurfaceContainerDark  -->
 
     <!--  Gray scale aliases used in some pages  -->
