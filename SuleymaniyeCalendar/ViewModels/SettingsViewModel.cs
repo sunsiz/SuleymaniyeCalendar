@@ -19,31 +19,98 @@ namespace SuleymaniyeCalendar.ViewModels
 {
 	public partial class SettingsViewModel : BaseViewModel
 	{
+		private readonly PerformanceService _perf;
+		// Guard flags to prevent recursive language reload loops
+		private bool _updatingLanguages;
 		// Prevent re-entrant/duplicated theme updates when toggling via gestures and radios
 		private bool suppressThemeUpdates;
 		private IList<Language> supportedLanguages = Enumerable.Empty<Language>().ToList();
 		public IList<Language> SupportedLanguages { get => supportedLanguages; set => SetProperty(ref supportedLanguages, value); }
 
+		// Original simple placeholder; real selection loaded in constructor via LoadLanguagesInternal.
 		private Language selectedLanguage = new Language(AppResources.English, "en");
+		// (Reverted) Simplified language change logic – advanced debounce removed due to hang issues.
 		public Language SelectedLanguage
 		{
 			get => selectedLanguage;
 			set
 			{
+				// Prevent infinite recursion when we rebuild SupportedLanguages or set selection programmatically
+				if (_updatingLanguages)
+				{
+					selectedLanguage = value;
+					OnPropertyChanged(nameof(SelectedLanguage));
+					return;
+				}
+
 				if (SetProperty(ref selectedLanguage, value))
 				{
-					if (value is not null)
+					if (value is null) return;
+					// Skip if already active culture
+					if (string.Equals(resourceManager?.CurrentCulture?.TwoLetterISOLanguageName, value.CI, StringComparison.OrdinalIgnoreCase))
+						return;
+					_updatingLanguages = true;
+					try
 					{
-						var ci = CultureInfo.GetCultureInfo(value.CI);
-						resourceManager.CurrentCulture = ci;
-						AppResources.Culture = ci;
-						Preferences.Set("SelectedLanguage", value.CI);
-						rtlService.ApplyFlowDirection(value.CI);
-						Title = AppResources.UygulamaAyarlari;
-#if ANDROID
-						UpdateWidget();
-#endif
+						using (_perf.StartTimer("Settings.ChangeLanguage"))
+						{
+							var ci = CultureInfo.GetCultureInfo(value.CI);
+							resourceManager.CurrentCulture = ci;
+							AppResources.Culture = ci;
+							Preferences.Set("SelectedLanguage", value.CI);
+							rtlService.ApplyFlowDirection(value.CI);
+							Title = AppResources.UygulamaAyarlari;
+	#if ANDROID
+							UpdateWidget();
+	#endif
+						}
 					}
+					finally
+					{
+						_updatingLanguages = false;
+					}
+
+					// OPTIONAL: Refresh displayed language names asynchronously without rebuilding the list structure.
+					_ = Task.Run(() =>
+					{
+						try
+						{
+							// Capture localized names after culture switch
+							var updated = new Dictionary<string, string>
+							{
+								{"ar", AppResources.Arabic},
+								{"az", AppResources.Azerbaijani},
+								{"zh", AppResources.Chinese},
+								{"de", AppResources.Deutsch},
+								{"en", AppResources.English},
+								{"fa", AppResources.Farsi},
+								{"fr", AppResources.French},
+								{"ru", AppResources.Russian},
+								{"tr", AppResources.Turkish},
+								{"ug", AppResources.Uyghur},
+								{"uz", AppResources.Uzbek}
+							};
+							MainThread.BeginInvokeOnMainThread(() =>
+							{
+								bool anyChanged = false;
+								foreach (var lang in SupportedLanguages)
+								{
+									if (updated.TryGetValue(lang.CI, out var newName) && lang.Name != newName)
+									{
+										lang.Name = newName;
+										anyChanged = true;
+									}
+								}
+								if (anyChanged)
+								{
+									OnPropertyChanged(nameof(SupportedLanguages));
+									// Also trigger SelectedLanguage PropertyChanged so Picker refreshes display
+									OnPropertyChanged(nameof(SelectedLanguage));
+								}
+							});
+						}
+						catch { /* ignore background refresh issues */ }
+					});
 				}
 			}
 		}
@@ -224,8 +291,9 @@ namespace SuleymaniyeCalendar.ViewModels
 
 		public bool IsNecessary => !((DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 10) || DeviceInfo.Platform == DevicePlatform.iOS);
 
-		public SettingsViewModel(ILocalizationResourceManager resourceManager, IRtlService rtlService)
+		public SettingsViewModel(ILocalizationResourceManager resourceManager, IRtlService rtlService, PerformanceService perf = null)
 		{
+			_perf = perf ?? new PerformanceService();
 			IsBusy = true;
 			this.resourceManager = resourceManager;
 			this.rtlService = rtlService;
@@ -311,23 +379,56 @@ namespace SuleymaniyeCalendar.ViewModels
 
 		private void ApplyThemeInternal(int themeValue)
 		{
-			Theme.Tema = themeValue;
-			CurrentTheme = themeValue;
-			Dark = themeValue == 0;
-			
-			// Save theme preference for widget
-			Preferences.Set("SelectedTheme", themeValue switch
+			// Idempotency: skip full apply if no change
+			if (Theme.Tema == themeValue && CurrentTheme == themeValue && Dark == (themeValue == 0))
+				return;
+
+			using (_perf.StartTimer("Settings.ApplyThemeInternal"))
 			{
-				0 => "Dark",
-				1 => "Light",
-				2 => "System",
-				_ => "System"
-			});
+				// Persist selection first
+				Theme.Tema = themeValue;
+				var previousTheme = CurrentTheme;
+				CurrentTheme = themeValue; // triggers SetUserAppTheme via setter if used elsewhere
+				Dark = themeValue == 0;
+
+				using (_perf.StartTimer("Settings.ApplyThemeInternal.SavePrefs"))
+				{
+					Preferences.Set("SelectedTheme", themeValue switch
+					{
+						0 => "Dark",
+						1 => "Light",
+						2 => "System",
+						_ => "System"
+					});
+				}
+
+				// Optional simplified gradient mode to test theme speed differences
+				bool simplifiedGradients = Preferences.Get("SimplifiedGradients", false);
+				if (simplifiedGradients)
+				{
+					using (_perf.StartTimer("Settings.ApplyThemeInternal.Simplify"))
+					{
+						var app = Application.Current;
+						if (app?.Resources != null)
+						{
+							// Replace heavy gradient brushes with flat color placeholders (non-destructive test)
+							if (app.Resources.ContainsKey("PrimaryGradientBrush"))
+								app.Resources["PrimaryGradientBrush"] = new SolidColorBrush((Color)app.Resources["PrimaryColor"]);
+							if (app.Resources.ContainsKey("SurfaceGlassBrushLight"))
+								app.Resources["SurfaceGlassBrushLight"] = new SolidColorBrush((Color)app.Resources["SurfaceVariantColor"]);
+							if (app.Resources.ContainsKey("SurfaceGlassBrushDark"))
+								app.Resources["SurfaceGlassBrushDark"] = new SolidColorBrush((Color)app.Resources["SurfaceVariantColorDark"]);
+						}
+					}
+				}
 
 #if ANDROID
-			// Update widget when theme changes
-			UpdateWidget();
+				using (_perf.StartTimer("Settings.ApplyThemeInternal.UpdateWidget"))
+				{
+					UpdateWidget();
+				}
 #endif
+			}
 		}
 
 		private static void SetUserAppTheme(int themeValue)
@@ -366,7 +467,7 @@ namespace SuleymaniyeCalendar.ViewModels
 
 		[RelayCommand]
 		private void GoBack() { Shell.Current.GoToAsync(".."); }
-		void LoadLanguages()
+		private void LoadLanguagesInternal(string reselectCi = null)
 		{
 			SupportedLanguages = new List<Language>()
 			{
@@ -382,7 +483,13 @@ namespace SuleymaniyeCalendar.ViewModels
 				new Language(AppResources.Uyghur, "ug"),
 				{ new Language(AppResources.Uzbek, "uz") }
 			};
-			SelectedLanguage = SupportedLanguages.FirstOrDefault(lan => lan.CI == resourceManager?.CurrentCulture.TwoLetterISOLanguageName);
+			var targetCi = reselectCi ?? resourceManager?.CurrentCulture.TwoLetterISOLanguageName;
+			var match = SupportedLanguages.FirstOrDefault(l => l.CI == targetCi) ?? SupportedLanguages.FirstOrDefault();
+			// Directly set backing field under guard to avoid recursion
+			selectedLanguage = match;
+			OnPropertyChanged(nameof(SelectedLanguage));
 		}
+
+		void LoadLanguages() => LoadLanguagesInternal();
 	}
 }

@@ -24,7 +24,6 @@ namespace SuleymaniyeCalendar.Services
 		public Calendar calendar;
 		private Calendar _location;
 		private ObservableCollection<Calendar> _monthlyCalendar;
-		private bool askedLocationPermission;
 		private static readonly HttpClient _xmlHttpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
 		private const int UnifiedCacheVersion = 1;
 
@@ -150,6 +149,22 @@ namespace SuleymaniyeCalendar.Services
 		public async Task<Location> GetCurrentLocationAsync(bool refreshLocation)
 		{
 			var location = new Location(0, 0);
+			// WINDOWS SAFEGUARD: Some Windows environments (missing capability or OS-level location disabled)
+			// have been observed to terminate the process (exit code 0xC000027B) when invoking Geolocation APIs.
+			// To prevent crash-at-start, we completely bypass runtime geolocation on WinUI and rely on the
+			// last persisted coordinates (if any). User can still refresh on mobile platforms.
+			if (DeviceInfo.Platform == DevicePlatform.WinUI)
+			{
+				var lat = Preferences.Get("LastLatitude", 0.0);
+				var lng = Preferences.Get("LastLongitude", 0.0);
+				var alt = Preferences.Get("LastAltitude", 0.0);
+				if (lat != 0.0 || lng != 0.0)
+				{
+					return new Location(lat, lng, alt);
+				}
+				// Fallback default (Istanbul) – mirrors initial placeholder values used elsewhere.
+				return new Location(41.0, 29.0, 114.0);
+			}
 			// If we have a saved location and no explicit refresh is requested, use it without requesting permissions
 			if (!refreshLocation && Preferences.Get("LocationSaved", false))
 			{
@@ -161,25 +176,25 @@ namespace SuleymaniyeCalendar.Services
 					return new Location(lat, lng, alt);
 				}
 			}
-			if (!askedLocationPermission)
+			// Always ensure permission when explicitly refreshing or when not granted
 			{
-				//var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
-				//var status = await DependencyService.Get<IPermissionService>().HandlePermissionAsync().ConfigureAwait(false);
-				//var permissionService=new PermissionService();
-				//var status=await permissionService.HandlePermissionAsync().ConfigureAwait(false);
 				var status = PermissionStatus.Unknown;
-				if (DeviceInfo.Platform == DevicePlatform.WinUI) { status = PermissionStatus.Granted; }
+				if (DeviceInfo.Platform == DevicePlatform.WinUI)
+				{
+					status = PermissionStatus.Granted;
+				}
 				else
 				{
-					//var permissionService = new PermissionService();
-					//status = await permissionService.HandlePermissionAsync().ConfigureAwait(false);
-					status = await CheckAndRequestLocationPermission().ConfigureAwait(false);
+					status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
+					if (refreshLocation || status != PermissionStatus.Granted)
+					{
+						status = await CheckAndRequestLocationPermission().ConfigureAwait(false);
+					}
 				}
+
 				if (status != PermissionStatus.Granted)
 				{
-					// Notify user permission was denied
-					//UserDialogs.Instance.Alert(AppResources.KonumIzniIcerik, AppResources.KonumIzniBaslik);
-					askedLocationPermission = true;
+					// Permission not granted; return default (0,0) and let callers show a permission message
 					return location;
 				}
 			}
@@ -203,9 +218,35 @@ namespace SuleymaniyeCalendar.Services
 					//location = await permissionService.RequestLocationAsync(10).ConfigureAwait(false);
 					using (_perf.StartTimer("Location.Request"))
 					{
-						location = await RequestLocationAsync().ConfigureAwait(false);
+						// Shorten initial wait to improve perceived performance; fallback path inside will extend slightly if needed.
+						location = await RequestLocationAsync(waitDelay: 5).ConfigureAwait(false);
 					}
-					if (location == null) location = new Location(42.142, 29.218, 10);
+
+					// Fallbacks when a fresh fix isn't available quickly
+					if (location is null)
+					{
+						using (_perf.StartTimer("Location.Fallback.LastKnown"))
+						{
+							var lastKnown = await Geolocation.Default.GetLastKnownLocationAsync().ConfigureAwait(false);
+							if (lastKnown is not null)
+								location = lastKnown;
+						}
+
+						// Try stored preferences if last-known is unavailable
+						if (location is null)
+						{
+							var lat = Preferences.Get("LastLatitude", 0.0);
+							var lng = Preferences.Get("LastLongitude", 0.0);
+							var alt = Preferences.Get("LastAltitude", 0.0);
+							if (lat != 0.0 || lng != 0.0)
+							{
+								location = new Location(lat, lng, alt);
+							}
+						}
+
+						// Absolute last resort: keep existing default
+						location ??= new Location(42.142, 29.218, 10);
+					}
 				}
 
 				if (location != null && location.Latitude != 0 && location.Longitude != 0)
@@ -481,14 +522,20 @@ namespace SuleymaniyeCalendar.Services
 
 		public bool HaveInternet()
 		{
-			var current = Connectivity.NetworkAccess;
-			if (current != Microsoft.Maui.Networking.NetworkAccess.Internet)
+			// Consider Internet and ConstrainedInternet as online to avoid false negatives
+			var access = Connectivity.NetworkAccess;
+			if (access == NetworkAccess.Internet || access == NetworkAccess.ConstrainedInternet)
+				return true;
+
+			// Some platforms report Unknown while still having a connection profile
+			if (access == NetworkAccess.Unknown)
 			{
-				//UserDialogs.Instance.Toast(AppResources.TakvimIcinInternet, TimeSpan.FromSeconds(7));
-				return false;
+				var profiles = Connectivity.ConnectionProfiles;
+				if (profiles.Contains(ConnectionProfile.WiFi) || profiles.Contains(ConnectionProfile.Cellular))
+					return true;
 			}
 
-			return true;
+			return false;
 		}
 
 		public async Task<Calendar> GetPrayerTimesFastAsync()
@@ -1058,6 +1105,30 @@ namespace SuleymaniyeCalendar.Services
 			return null;
 		}
 
+		/// <summary>
+		/// Returns the current month's data from unified cache if present (even if incomplete) without null;
+		/// returns an empty collection when no cache file or month fragment exists. Never hits network.
+		/// </summary>
+		public async Task<ObservableCollection<Calendar>> GetMonthlyFromCacheOrEmptyAsync(Location location)
+		{
+			var year = DateTime.Now.Year;
+			var month = DateTime.Now.Month;
+			try
+			{
+				var list = await LoadYearCacheAsync(location, year).ConfigureAwait(false) ?? new List<Calendar>();
+				var monthDays = list.Where(d => {
+					var dd = ParseCalendarDateOrMin(d.Date);
+					return dd != DateTime.MinValue && dd.Year == year && dd.Month == month;
+				}).OrderBy(d => ParseCalendarDateOrMin(d.Date)).ToList();
+				return new ObservableCollection<Calendar>(monthDays);
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"GetMonthlyFromCacheOrEmptyAsync failed: {ex.Message}");
+				return new ObservableCollection<Calendar>();
+			}
+		}
+
 		private async Task SaveToUnifiedCacheAsync(Location location, List<Calendar> days)
 		{
 			if (days == null || days.Count == 0) return;
@@ -1110,50 +1181,71 @@ namespace SuleymaniyeCalendar.Services
 
 		public async Task<PermissionStatus> CheckAndRequestLocationPermission()
 		{
+			// Windows: Completely bypass permission flow (mock/static location strategy)
+			if (DeviceInfo.Platform == DevicePlatform.WinUI)
+			{
+				return PermissionStatus.Granted;
+			}
+			// Check can be done off the UI thread
 			var status = await Permissions.CheckStatusAsync<Permissions.LocationWhenInUse>();
 			if (status == PermissionStatus.Granted)
 				return status;
 
-			if (Permissions.ShouldShowRationale<Permissions.LocationWhenInUse>())
-			{
-				Alert(AppResources.KonumIzniBaslik, AppResources.KonumIzniIcerik);
-			}
+			var firstAskKey = "LocationPermissionAsked";
+			var alreadyAsked = Preferences.Get(firstAskKey, false);
 
-			status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
-			if (status == PermissionStatus.Denied && DeviceInfo.Platform == DevicePlatform.iOS)
+			// Request must run on main thread
+			status = await MainThread.InvokeOnMainThreadAsync(async () =>
 			{
-				// On iOS once denied it may require manual settings
-				Alert(AppResources.KonumIzniBaslik, AppResources.KonumIzniIcerik);
-			}
-			else if (status == PermissionStatus.Denied)
-			{
-				MainThread.BeginInvokeOnMainThread(() => AppInfo.ShowSettingsUI());
-			}
+				return await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
+			});
+			Preferences.Set(firstAskKey, true);
 
+			if (status == PermissionStatus.Denied)
+			{
+				var shouldShow = Permissions.ShouldShowRationale<Permissions.LocationWhenInUse>();
+				if (shouldShow)
+				{
+					// Soft denial: show a non-blocking toast so next explicit action can re-request.
+					ShowToast(AppResources.KonumIzniIcerik);
+				}
+				else if (alreadyAsked)
+				{
+					// Permanent denial path (Don't ask again) – show modal guidance once.
+					Alert(AppResources.KonumIzniBaslik, AppResources.KonumIzniIcerik);
+				}
+			}
 			return status;
 		}
-		public async Task<Location> RequestLocationAsync(int waitDelay = 10)
+		public async Task<Location> RequestLocationAsync(int waitDelay = 5)
 		{
+			// Windows: do not invoke Geolocation APIs – return null so caller uses saved/mock coordinates
+			if (DeviceInfo.Platform == DevicePlatform.WinUI)
+			{
+				return null;
+			}
 			Location location = null;
 			try
 			{
-				var request = new GeolocationRequest(GeolocationAccuracy.Low, TimeSpan.FromSeconds(waitDelay));
-				CancellationTokenSource cts = new CancellationTokenSource();
-				if (DeviceInfo.Platform == DevicePlatform.WinUI)
+				// Strategy: fast first fix, then a quick fallback for broader providers.
+				// 1) Medium accuracy, short timeout (good balance for speed vs. precision)
+				var cts = new CancellationTokenSource();
+				var requestFast = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(waitDelay));
+
+				using (_perf.StartTimer("Location.Request.Fast"))
 				{
-					Application.Current?.Dispatcher.Dispatch(async () =>
-					{
-						location = await Geolocation.Default.GetLocationAsync(request, cts.Token).ConfigureAwait(false);
-						if (location != null)
-							Debug.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
-					});
+					location = await Geolocation.Default.GetLocationAsync(requestFast, cts.Token).ConfigureAwait(false);
 				}
-				else
+
+				// 2) If still null, try Low accuracy with a slightly longer timeout to allow coarse providers (cell/Wi‑Fi)
+				if (location is null)
 				{
-					//MainThread.BeginInvokeOnMainThread(async () =>
-					//{
-					location = await Geolocation.Default.GetLocationAsync(request, cts.Token).ConfigureAwait(false);
-					//});
+					var fallbackTimeout = TimeSpan.FromSeconds(Math.Max(waitDelay + 3, 8));
+					var requestFallback = new GeolocationRequest(GeolocationAccuracy.Low, fallbackTimeout);
+					using (_perf.StartTimer("Location.Request.Fallback"))
+					{
+						location = await Geolocation.Default.GetLocationAsync(requestFallback, cts.Token).ConfigureAwait(false);
+					}
 				}
 			}
 			catch (FeatureNotSupportedException fnsEx)
@@ -1402,9 +1494,21 @@ namespace SuleymaniyeCalendar.Services
 		{
 			var location = await GetCurrentLocationAsync(refreshLocation).ConfigureAwait(false);
 			if (location == null || location.Latitude == 0 || location.Longitude == 0)
+			{
+				// Fallback to last known or placeholder
 				return GetTakvimFromFile() ?? calendar;
+			}
 
-			return await GetDailyPrayerTimesHybridAsync(location);
+			// Try daily hybrid fetch and keep the service-level calendar in sync
+			var daily = await GetDailyPrayerTimesHybridAsync(location).ConfigureAwait(false);
+			if (daily != null)
+			{
+				calendar = daily; // ensure consumers reading DataService.calendar see the fresh value
+				return daily;
+			}
+
+			// If daily fetch failed, keep existing calendar (maybe monthly prepared earlier)
+			return calendar ?? GetTakvimFromFile();
 		}
 
 		/// <summary>

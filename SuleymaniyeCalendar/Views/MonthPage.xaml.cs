@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SuleymaniyeCalendar.ViewModels;
 using SuleymaniyeCalendar.Views;
+using SuleymaniyeCalendar.Services;
 
 namespace SuleymaniyeCalendar.Views;
 
@@ -12,6 +13,7 @@ public partial class MonthPage : ContentPage
 {
     private readonly MonthViewModel _viewModel;
     private bool _tableBuilt;
+    private readonly PerformanceService _perf = new PerformanceService();
 
     public MonthPage(MonthViewModel viewModel)
     {
@@ -27,7 +29,10 @@ public partial class MonthPage : ContentPage
         if (!_tableBuilt)
         {
             // Always create table immediately for instant UI
-            CreateTableImmediately();
+            using (_perf.StartTimer("MonthPage.CreateTable"))
+            {
+                CreateTableImmediately();
+            }
             
             // Check if we have data already (subsequent visits)
             if (_viewModel.HasData)
@@ -38,7 +43,10 @@ public partial class MonthPage : ContentPage
             else
             {
                 // First time - start delayed loading for smooth UX
-                _ = LoadDataWithDelay();
+                using (_perf.StartTimer("MonthPage.TriggerLoad"))
+                {
+                    _ = LoadDataWithDelay();
+                }
             }
         }
     }

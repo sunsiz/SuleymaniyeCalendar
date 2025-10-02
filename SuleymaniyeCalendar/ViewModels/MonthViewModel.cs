@@ -1,241 +1,254 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.Services;
 
-namespace SuleymaniyeCalendar.ViewModels
+namespace SuleymaniyeCalendar.ViewModels;
+
+public partial class MonthViewModel : BaseViewModel
 {
-	public partial class MonthViewModel : BaseViewModel
-	{
-		private DataService _data;
-        private readonly PerformanceService _perf;
+    private readonly DataService _data;
+    private readonly PerformanceService _perf;
 
-		private ObservableCollection<Calendar> monthlyCalendar = new();
-		public ObservableCollection<Calendar> MonthlyCalendar
-		{
-			get => monthlyCalendar;
-			set => SetProperty(ref monthlyCalendar, value);
-		}
-		
-		public bool HasData => MonthlyCalendar?.Count > 0;
-        public bool ShowShare => Preferences.Get("LastLatitude", 0.0) != 0.0 && Preferences.Get("LastLongitude", 0.0) != 0.0;
+    private ObservableCollection<SuleymaniyeCalendar.Models.Calendar> monthlyCalendar = new();
+    /// <summary>
+    /// The collection bound to the month view. Populated in staged batches for perceived performance.
+    /// </summary>
+    public ObservableCollection<SuleymaniyeCalendar.Models.Calendar> MonthlyCalendar
+    {
+        get => monthlyCalendar;
+        set => SetProperty(ref monthlyCalendar, value);
+    }
 
-		public MonthViewModel(DataService dataService, PerformanceService perf = null)
-		{
-			Title = AppResources.AylikTakvim;
-			_data = dataService;
-            _perf = perf ?? new PerformanceService();
-			MonthlyCalendar = new ObservableCollection<Calendar>();
-			IsBusy = false; // Start with false to show window immediately
-		}
+    /// <summary>
+    /// Indicates whether any calendar data is present.
+    /// </summary>
+    public bool HasData => MonthlyCalendar?.Count > 0;
 
-		/// <summary>
-		/// Initialize with instant UI - loads data after a delay to show empty page first
-		/// </summary>
-		public async Task InitializeWithDelayAsync()
-		{
-			if (MonthlyCalendar?.Count > 0)
-			{
-				return; // Already loaded
-			}
+    /// <summary>
+    /// Whether the share button should be shown – only when we have a cached location.
+    /// </summary>
+    public bool ShowShare => Preferences.Get("LastLatitude", 0.0) != 0.0 && Preferences.Get("LastLongitude", 0.0) != 0.0;
 
-			// Show empty UI first for instant appearance
-			await MainThread.InvokeOnMainThreadAsync(() => 
-			{
-				// UI is already shown with empty collection
-			});
-			
-			// Small delay to let UI render first
-			await Task.Delay(100);
-			
-			// Then start loading with indicator
-			await MainThread.InvokeOnMainThreadAsync(() => 
-			{
-				IsBusy = true;
-			});
-			
-			// Small additional delay for smooth UX
-			await Task.Delay(500);
-			
-			using (_perf.StartTimer("Month.LoadData.Delayed"))
-			{
-				await LoadMonthlyDataAsync().ConfigureAwait(false);
-			}
-		}
+    public MonthViewModel(DataService dataService, PerformanceService perf = null)
+    {
+        Title = AppResources.AylikTakvim;
+        _data = dataService;
+        _perf = perf ?? new PerformanceService();
+    MonthlyCalendar = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar>();
+        IsBusy = false;
+    }
 
-		public async Task InitializeAsync()
-		{
-			if (MonthlyCalendar?.Count > 0)
-			{
-				return; // Already loaded
-			}
+    /// <summary>
+    /// Legacy entrypoint preserved for existing bindings/tests – delegates to <see cref="InitializeAsync"/>.
+    /// </summary>
+    public Task InitializeWithDelayAsync() => InitializeAsync();
 
-			// Set busy state immediately when loading starts
-			await MainThread.InvokeOnMainThreadAsync(() => 
-			{
-				IsBusy = true;
-			});
-			
-			using (_perf.StartTimer("Month.LoadData"))
-			{
-				await LoadMonthlyDataAsync().ConfigureAwait(false);
-			}
-		}
+    /// <summary>
+    /// Initializes the month view if not already loaded. Performs a cache-first staged fill then background refresh.
+    /// </summary>
+    public async Task InitializeAsync()
+    {
+        if (MonthlyCalendar?.Count > 0) return;
+        await MainThread.InvokeOnMainThreadAsync(() => IsBusy = true);
+        await LoadMonthlyDataAsync().ConfigureAwait(false);
+        Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("MonthView"));
+    }
 
-		private async Task LoadMonthlyDataAsync()
-		{
-			try
-			{
-				var place = _data.calendar;
-				var location = new Location()
-					{ Latitude = place.Latitude, Longitude = place.Longitude, Altitude = place.Altitude };
-				
-				if (location.Latitude != 0.0 && location.Longitude != 0.0)
-				{
-					// Use new hybrid API approach: JSON first, XML fallback
-					ObservableCollection<Calendar> monthlyData;
-					using (_perf.StartTimer("Month.HybridMonthly"))
-					{
-						monthlyData = await _data.GetMonthlyPrayerTimesHybridAsync(location, false).ConfigureAwait(false);
-					}
-					
-					if (monthlyData == null)
-					{
-						await MainThread.InvokeOnMainThreadAsync(() => 
-						{
-							Alert(AppResources.TakvimIcinInternet, AppResources.TakvimIcinInternetBaslik);
-						});
-						return;
-					}
-					
-					// Performance optimized update: Use ReplaceRange if available, otherwise batch clear/add
-					await MainThread.InvokeOnMainThreadAsync(async () => 
-					{
-						// Performance optimization: Use collection replacement for better UI responsiveness
-						if (monthlyData.Count <= 10)
-						{
-							// Small datasets: Direct replacement for instant display
-							using (_perf.StartTimer("Month.UI.ReplaceSmall")) MonthlyCalendar.Clear();
-							foreach (var item in monthlyData)
-								MonthlyCalendar.Add(item);
-						}
-						else
-						{
-							// Large datasets: Smooth progressive loading to prevent UI blocking
-							using (_perf.StartTimer("Month.UI.ReplaceLarge.Clear")) MonthlyCalendar.Clear();
-							const int batchSize = 8; // Optimized batch size for better perceived performance
-							
-							for (int i = 0; i < monthlyData.Count; i += batchSize)
-							{
-								var batch = monthlyData.Skip(i).Take(batchSize);
-								foreach (var item in batch)
-								{
-									MonthlyCalendar.Add(item);
-								}
-								
-								// Micro-delay for UI thread breathing room on large datasets
-								if (i > 0 && monthlyData.Count > 50)
-									await Task.Delay(1);
-							}
-						}
-						
-						OnPropertyChanged(nameof(HasData));
-					});
-				}
-				else
-				{
-					await MainThread.InvokeOnMainThreadAsync(() => 
-					{
-						ShowToast(AppResources.KonumIzniIcerik);
-					});
-				}
-			}
-			catch (Exception ex)
-			{
-				await MainThread.InvokeOnMainThreadAsync(() => 
-				{
-					Alert($"Error: {ex.Message}", "Error");
-				});
-			}
-			finally
-			{
-				await MainThread.InvokeOnMainThreadAsync(() => 
-				{
-					IsBusy = false;
-				});
-			}
-		}
-
-		[RelayCommand]
-		private async Task Refresh()
-		{
-			IsBusy = true;
-			
-			try
-			{
-				// Avoid permission prompt on first load; refresh only on user action
-				Location location = await _data.GetCurrentLocationAsync(false).ConfigureAwait(false);
-				if (location != null && location.Latitude != 0 && location.Longitude != 0)
-				{
-					// Use new hybrid API approach with force refresh
-					var monthlyData = await _data.GetMonthlyPrayerTimesHybridAsync(location, true).ConfigureAwait(false);
-					
-					if (monthlyData == null)
-					{
-						await MainThread.InvokeOnMainThreadAsync(() => 
-						{
-							Alert(AppResources.TakvimIcinInternet, AppResources.TakvimIcinInternetBaslik);
-						});
-					}
-					else
-					{
-						// Batch update for better performance
-						await MainThread.InvokeOnMainThreadAsync(() => 
-						{
-							MonthlyCalendar.Clear();
-							
-							// Add all items at once for better performance
-							foreach (var item in monthlyData)
-							{
-								MonthlyCalendar.Add(item);
-							}
-							
-							OnPropertyChanged(nameof(HasData));
-							ShowToast(AppResources.AylikTakvimYenilendi);
-						});
-					}
-				}
-			}
-			finally
-			{
-				await MainThread.InvokeOnMainThreadAsync(() => 
-				{
-					IsBusy = false;
-				});
-			}
-		}
-
-		[RelayCommand]
-		private async Task GoBack()
-		{
-			await Shell.Current.GoToAsync("..").ConfigureAwait(false);
-		}
-
-        [RelayCommand]
-        private async Task Share()
+    /// <summary>
+    /// Core monthly loading logic. Uses cached JSON first (if available) for instant UI, then refreshes from hybrid API.
+    /// UI population is staged in 10 + 10 + remainder batches to keep main thread responsive.
+    /// </summary>
+    private async Task LoadMonthlyDataAsync()
+    {
+        try
         {
-            var latitude = Preferences.Get("LastLatitude", 0.0);
-            var longitude = Preferences.Get("LastLongitude", 0.0);
-            var url =
-                $"https://www.suleymaniyetakvimi.com/monthlyCalendar.html?latitude={latitude}&longitude={longitude}&monthId={DateTime.Today.Month}";
-            await Launcher.OpenAsync(url).ConfigureAwait(false);
+            var place = _data.calendar;
+            var location = new Location { Latitude = place.Latitude, Longitude = place.Longitude, Altitude = place.Altitude };
+            if (location.Latitude == 0 || location.Longitude == 0)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    ShowToast(AppResources.KonumIzniIcerik);
+                    IsBusy = false;
+                });
+                return;
+            }
+
+            // Cached first (shows full spinner until assignment completes)
+            ObservableCollection<SuleymaniyeCalendar.Models.Calendar> cached = null;
+            using (_perf.StartTimer("Month.ReadCache"))
+            {
+                cached = await _data.GetMonthlyFromCacheOrEmptyAsync(location).ConfigureAwait(false);
+            }
+            if (cached != null && cached.Count > 0)
+            {
+                var normalizedCache = DeduplicateAndSort(cached);
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    using (_perf.StartTimer("Month.UI.Assign.CacheFull"))
+                    {
+                        MonthlyCalendar = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar>(normalizedCache);
+                        OnPropertyChanged(nameof(HasData));
+                    }
+                    IsBusy = false; // hide spinner once full list visible
+                });
+            }
+
+            // Fresh replacement (background). Spinner remains hidden; result just swaps silently unless larger.
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    ObservableCollection<SuleymaniyeCalendar.Models.Calendar> fresh;
+                    using (_perf.StartTimer("Month.HybridMonthly"))
+                    {
+                        fresh = await _data.GetMonthlyPrayerTimesHybridAsync(location, forceRefresh: false).ConfigureAwait(false);
+                    }
+                    if (fresh == null || fresh.Count == 0) return;
+                    var normalizedFresh = DeduplicateAndSort(fresh);
+                    // Only update if content differs (count or any date/time mismatch)
+                    bool differs = ShouldReplace(normalizedFresh, MonthlyCalendar?.ToList());
+                    if (!differs) return;
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        using (_perf.StartTimer("Month.UI.Assign.FreshFull"))
+                        {
+                            MonthlyCalendar = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar>(normalizedFresh);
+                            OnPropertyChanged(nameof(HasData));
+                        }
+                    });
+                }
+                catch { /* ignore background errors */ }
+            });
         }
-	}
+        catch (Exception ex)
+        {
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                Alert($"Error: {ex.Message}", "Error");
+                IsBusy = false;
+            });
+        }
+        finally
+        {
+            if (MonthlyCalendar.Count == 0)
+            {
+                // No data at all (cache empty & network likely offline) – ensure spinner off
+                await MainThread.InvokeOnMainThreadAsync(() => IsBusy = false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Pull-to-refresh command: forces a fresh hybrid fetch and replaces the entire collection (no staging).
+    /// </summary>
+    [RelayCommand]
+    private async Task Refresh()
+    {
+        await MainThread.InvokeOnMainThreadAsync(() => IsBusy = true);
+        try
+        {
+            var location = await _data.GetCurrentLocationAsync(false).ConfigureAwait(false);
+            if (location == null || location.Latitude == 0 || location.Longitude == 0)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => ShowToast(AppResources.KonumIzniIcerik));
+                return;
+            }
+            var fresh = await _data.GetMonthlyPrayerTimesHybridAsync(location, true).ConfigureAwait(false);
+            if (fresh == null)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => Alert(AppResources.TakvimIcinInternet, AppResources.TakvimIcinInternetBaslik));
+                return;
+            }
+            var normalizedFresh = DeduplicateAndSort(fresh.ToList());
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                using (_perf.StartTimer("Month.UI.AssignItemsSource.RefreshFull"))
+                {
+                    MonthlyCalendar = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar>(normalizedFresh);
+                    OnPropertyChanged(nameof(HasData));
+                }
+                ShowToast(AppResources.AylikTakvimYenilendi);
+            });
+        }
+        finally
+        {
+            await MainThread.InvokeOnMainThreadAsync(() => IsBusy = false);
+        }
+    }
+
+    /// <summary>
+    /// Removes duplicate calendar entries by date and returns a chronologically sorted distinct list.
+    /// </summary>
+    private List<SuleymaniyeCalendar.Models.Calendar> DeduplicateAndSort(IEnumerable<SuleymaniyeCalendar.Models.Calendar> source)
+    {
+    if (source == null) return new List<SuleymaniyeCalendar.Models.Calendar>();
+        var formats = new[] { "dd.MM.yyyy", "dd/MM/yyyy", "dd-MM-yyyy", "yyyy-MM-dd" };
+        DateTime Parse(string s)
+        {
+            if (DateTime.TryParseExact(s, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt)) return dt.Date;
+            if (DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) return dt.Date;
+            return DateTime.MinValue;
+        }
+    var map = new Dictionary<DateTime, SuleymaniyeCalendar.Models.Calendar>();
+        foreach (var cal in source)
+        {
+            var key = Parse(cal.Date);
+            if (key == DateTime.MinValue) continue;
+            // Prefer later occurrence (assume newer/fresher data overwrites older duplicate)
+            map[key] = cal;
+        }
+        return map.OrderBy(kv => kv.Key).Select(kv => kv.Value).ToList();
+    }
+
+    /// <summary>
+    /// Determines if new list differs from currently displayed list (count or any field time differences per date).
+    /// </summary>
+    private bool ShouldReplace(List<SuleymaniyeCalendar.Models.Calendar> incoming, List<SuleymaniyeCalendar.Models.Calendar> existing)
+    {
+        if (existing == null) return true;
+        if (incoming.Count != existing.Count) return true;
+        for (int i = 0; i < incoming.Count; i++)
+        {
+            var a = incoming[i];
+            var b = existing[i];
+            if (!string.Equals(a.Date, b.Date, StringComparison.Ordinal)) return true;
+            if (!string.Equals(a.Fajr, b.Fajr, StringComparison.Ordinal) ||
+                !string.Equals(a.Sunrise, b.Sunrise, StringComparison.Ordinal) ||
+                !string.Equals(a.Dhuhr, b.Dhuhr, StringComparison.Ordinal) ||
+                !string.Equals(a.Asr, b.Asr, StringComparison.Ordinal) ||
+                !string.Equals(a.Maghrib, b.Maghrib, StringComparison.Ordinal) ||
+                !string.Equals(a.Isha, b.Isha, StringComparison.Ordinal) ||
+                !string.Equals(a.EndOfIsha, b.EndOfIsha, StringComparison.Ordinal) ||
+                !string.Equals(a.FalseFajr, b.FalseFajr, StringComparison.Ordinal))
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Navigates back in the shell hierarchy.
+    /// </summary>
+    [RelayCommand]
+    private async Task GoBack() => await Shell.Current.GoToAsync("..").ConfigureAwait(false);
+
+    /// <summary>
+    /// Opens the Suleymaniye Takvimi monthly calendar share URL using the last known location.
+    /// </summary>
+    [RelayCommand]
+    private async Task Share()
+    {
+        var latitude = Preferences.Get("LastLatitude", 0.0);
+        var longitude = Preferences.Get("LastLongitude", 0.0);
+        var url = $"https://www.suleymaniyetakvimi.com/monthlyCalendar.html?latitude={latitude}&longitude={longitude}&monthId={DateTime.Today.Month}";
+        await Launcher.OpenAsync(url).ConfigureAwait(false);
+    }
 }
+

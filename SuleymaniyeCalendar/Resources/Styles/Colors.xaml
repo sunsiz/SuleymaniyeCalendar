@@ -148,6 +148,8 @@
     <Color x:Key="AppBackgroundColor">#F2EFF7</Color>
     <Color x:Key="AppBackgroundColorDark">#141218</Color>
 
+    <Color x:Key="CardBackgroundColorGrey">#f9f9f9</Color>
+
     <!--  Primary Theme Colors  -->
     <Color x:Key="PrimaryColor">#8A4E1E</Color>
     <Color x:Key="PrimaryLightColor">#DC925E</Color>
@@ -183,7 +185,7 @@
 
     <!--  Past Prayer States - Much stronger differentiation  -->
     <Color x:Key="PrayerPastBackgroundColor">#FFBEBDBE</Color>
-    <Color x:Key="PrayerPastBackgroundColorDark">#EE3D3C3C</Color>
+    <Color x:Key="PrayerPastBackgroundColorDark">#FF1D1C1C</Color>
     <Color x:Key="PrayerPastTextColor">#FF46444B</Color>
     <Color x:Key="PrayerPastTextColorDark">#9A9A9A</Color>
 
@@ -195,7 +197,7 @@
 
     <!--  Upcoming Prayer States - Enhanced warm distinction  -->
     <Color x:Key="PrayerUpcomingBackgroundColor">#FFE2CD9F</Color>
-    <Color x:Key="PrayerUpcomingBackgroundColorDark">#2D1B00</Color>
+    <Color x:Key="PrayerUpcomingBackgroundColorDark">#669D9B90</Color>
     <Color x:Key="PrayerUpcomingTextColor">#7A4A15</Color>
     <Color x:Key="PrayerUpcomingTextColorDark">#E8B08A</Color>    
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->

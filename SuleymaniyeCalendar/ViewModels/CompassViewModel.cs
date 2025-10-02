@@ -10,13 +10,14 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SuleymaniyeCalendar.Services;
 using Microsoft.Maui.ApplicationModel;
+using SuleymaniyeCalendar.Services;
 
 namespace SuleymaniyeCalendar.ViewModels
 {
 	public partial class CompassViewModel : BaseViewModel
 	{
+		private readonly PerformanceService _perf = new PerformanceService();
 		// AOT-safe explicit properties using SetProperty
 		private string latitudeAltitude;
 		public string LatitudeAltitude { get => latitudeAltitude; set => SetProperty(ref latitudeAltitude, value); }
@@ -70,7 +71,11 @@ namespace SuleymaniyeCalendar.ViewModels
 				//{
 			IsBusy = true;
 			// Explicit user action: force fresh GPS fix
-			var location = await _dataService.GetCurrentLocationAsync(true).ConfigureAwait(false);
+			Location location;
+			using (_perf.StartTimer("Compass.RefreshLocation"))
+			{
+				location = await _dataService.GetCurrentLocationAsync(true).ConfigureAwait(false);
+			}
 			if (location != null && location.Latitude != 0 && location.Longitude != 0)
 			{
 				_currentLatitude = location.Latitude;
@@ -87,13 +92,16 @@ namespace SuleymaniyeCalendar.ViewModels
 				// reverse geocode to human-readable address (include country)
 				try
 				{
-					var placemarks = await Geocoding.GetPlacemarksAsync(_currentLatitude, _currentLongitude).ConfigureAwait(false);
+					using (_perf.StartTimer("Compass.ReverseGeocode"))
+					{
+						var placemarks = await Geocoding.GetPlacemarksAsync(_currentLatitude, _currentLongitude).ConfigureAwait(false);
 					var place = placemarks?.FirstOrDefault();
 					var full = BuildAddressFromPlacemark(place);
 					if (!string.IsNullOrWhiteSpace(full))
 					{
 						MainThread.BeginInvokeOnMainThread(() => Address = full);
 						Preferences.Set("LastAddress", full);
+					}
 					}
 				}
 				catch { /* ignore geocode failures */ }

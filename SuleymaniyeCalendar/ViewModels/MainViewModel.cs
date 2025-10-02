@@ -24,6 +24,7 @@ namespace SuleymaniyeCalendar.ViewModels
         private DataService _data;
         private Task _startupRefreshTask;
         private Task _weeklyAlarmsTask;
+    // (Removed legacy _skipWindowsGeocoding flag; Windows geocoding guarded by token check in GetCityAsync.)
 
         // Throttle refreshes to avoid duplicate work during navigation churn
         private DateTimeOffset _lastUiRefresh = DateTimeOffset.MinValue;
@@ -31,6 +32,8 @@ namespace SuleymaniyeCalendar.ViewModels
 
         // Single-flight guard for UI refresh
         private int _refreshing; // 0 = idle, 1 = running
+    // Single-flight guard for manual location refresh pipeline (pull-to-refresh and refresh button)
+    private int _locationRefreshing; // 0 = idle, 1 = running
 
     private ObservableCollection<Prayer> prayers;
     public ObservableCollection<Prayer> Prayers { get => prayers; set => SetProperty(ref prayers, value); }
@@ -85,10 +88,20 @@ namespace SuleymaniyeCalendar.ViewModels
             // Fire and forget non-UI work
             _ = Task.Run(() => GetCity());
 
-            if (!Preferences.Get("LocationSaved", false))
-                CheckLocationInfo(3000);
+#if WINDOWS
+            // On Windows we run in MOCK mode: no permission prompts, no geolocation queries.
+            // Ensure a mock/cached city is visible immediately and skip first-run auto location logic.
+            var mockCity = Preferences.Get("sehir", "Istanbul");
+            City = mockCity;
+#endif
 
-            if (Preferences.Get("AlwaysRenewLocationEnabled", false))
+            if (DeviceInfo.Platform != DevicePlatform.WinUI)
+            {
+                if (!Preferences.Get("LocationSaved", false))
+                    _ = CheckLocationInfoAsync(3000);
+            }
+
+            if (DeviceInfo.Platform != DevicePlatform.WinUI && Preferences.Get("AlwaysRenewLocationEnabled", false))
                 _startupRefreshTask = RefreshLocationCommand.ExecuteAsync(null);
 
             var lastAlarmDateStr = Preferences.Get("LastAlarmDate", "Empty");
@@ -111,6 +124,15 @@ namespace SuleymaniyeCalendar.ViewModels
         {
             try
             {
+#if WINDOWS
+                // If no Windows MapServiceToken provided, skip map/placemark usage to avoid crash.
+                var token = Preferences.Get("MapServiceToken", string.Empty);
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    ShowToast(AppResources.HaritaHatasi);
+                    return;
+                }
+#endif
                 var location = new Location(Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat));
                 var placeMark = await Geocoding.Default.GetPlacemarksAsync(Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat)).ConfigureAwait(true);
                 var options = new MapLaunchOptions { Name = placeMark.FirstOrDefault()?.Thoroughfare ?? placeMark.FirstOrDefault()?.CountryName };
@@ -125,31 +147,71 @@ namespace SuleymaniyeCalendar.ViewModels
         [RelayCommand]
         public async Task RefreshLocation()
         {
-            if (IsRefreshing || IsBusy)
+            // Prevent concurrent refreshes (pull-to-refresh or button)
+            if (System.Threading.Interlocked.Exchange(ref _locationRefreshing, 1) == 1)
                 return;
 
-            // Set UI flags on main thread
+            // Ensure permission up-front so the system prompt is shown predictably on user action
+            var permission = await _data.CheckAndRequestLocationPermission().ConfigureAwait(false);
+            if (permission != PermissionStatus.Granted)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => ShowToast(AppResources.KonumIzniIcerik));
+                System.Threading.Volatile.Write(ref _locationRefreshing, 0);
+                return;
+            }
+
+            // Immediately show overlay (single consistent indicator) and suppress RefreshView spinner
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                IsRefreshing = true;
-                IsBusy = true;
+                // If user pulled to refresh, MAUI may have set IsRefreshing=true automatically; cancel it.
+                if (IsRefreshing) IsRefreshing = false;
+                OverlayMessage = AppResources.Yenileniyor + "...";
+                ShowOverlay = true;
             });
 
+            // Kick off the heavy pipeline in the background
+            var pipelineTask = Task.Run(async () => await RunLocationRefreshPipelineAsync());
+
+            // No auto-dismiss; overlay closes when pipeline completes.
+
+            // Return quickly; the background pipeline will update UI and reset internal state when done
+            // Still yield once to keep async command behavior consistent
+            await Task.Yield();
+        }
+
+        private async Task RunLocationRefreshPipelineAsync()
+        {
             try
             {
-                // Force location refresh when user manually taps refresh button
+                // Force location refresh when user pulls to refresh or taps refresh
                 var location = await _data.GetCurrentLocationAsync(refreshLocation: true).ConfigureAwait(false);
                 if (location != null && location.Latitude != 0 && location.Longitude != 0)
                 {
+                    // Ensure overlay visible if a background trigger (like first permission grant) invoked this without UI state
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        if (!ShowOverlay)
+                        {
+                            OverlayMessage = AppResources.Yenileniyor + "...";
+                            ShowOverlay = true;
+                        }
+                    });
                     // Get fresh prayer times with the updated location
                     _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
-                    // Also refresh monthly data for alarms
+                    if (_calendar != null)
+                    {
+                        _data.calendar = _calendar; // sync service state
+                    }
+
+                    // Refresh monthly data (alarms depend on this); network may take time
                     var monthlyData = await _data.GetMonthlyPrayerTimesHybridAsync(location, forceRefresh: true).ConfigureAwait(false);
-                    
+
+                    // Schedule notifications (can be slow on Android); keep off UI thread
                     await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
 
                     // Coalesced UI update after background work
                     await RefreshUiAsync(force: true).ConfigureAwait(false);
+                    await MainThread.InvokeOnMainThreadAsync(() => ShowToast(AppResources.KonumYenilendi));
 
                     // Fire and forget non-UI work
                     _ = Task.Run(() => GetCity());
@@ -158,26 +220,26 @@ namespace SuleymaniyeCalendar.ViewModels
                 {
                     await MainThread.InvokeOnMainThreadAsync(() =>
                     {
+                        // Permission likely not granted or GPS disabled
                         ShowToast(AppResources.KonumIzniIcerik);
                     });
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"RefreshLocation error: {ex}");
-                await MainThread.InvokeOnMainThreadAsync(() =>
-                {
-                    ShowToast(AppResources.TakvimIcinInternet);
-                });
+                Debug.WriteLine($"RefreshLocation pipeline error: {ex}");
+                // Do not show generic internet toast on any exception; be silent here to avoid false positives
             }
             finally
             {
-                // Always reset UI flags on main thread to unblock RefreshView spinner
+                // Safety: ensure flags are reset even if auto-dismiss already ran
                 await MainThread.InvokeOnMainThreadAsync(() =>
                 {
-                    IsBusy = false;
-                    IsRefreshing = false;
+                    IsRefreshing = false; // safety
+                    ShowOverlay = false;
+                    OverlayMessage = null;
                 });
+                System.Threading.Volatile.Write(ref _locationRefreshing, 0);
             }
         }
 
@@ -264,16 +326,28 @@ namespace SuleymaniyeCalendar.ViewModels
                 // Add timeout to prevent hanging
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
                 
+#if WINDOWS
+                // Provide mock city immediately when no token; avoids any Geocoding API call (which crashes without token).
+                var mapToken = Preferences.Get("MapServiceToken", string.Empty);
+                if (string.IsNullOrWhiteSpace(mapToken))
+                {
+                    var mockCity = Preferences.Get("sehir", "Istanbul");
+                    await MainThread.InvokeOnMainThreadAsync(() => City = mockCity);
+                    Debug.WriteLine("[MainViewModel] Using mock city on Windows (no MapServiceToken). Skipping Geocoding.");
+                    return;
+                }
+#endif
+                // Non-Windows OR Windows with valid token proceeds to real reverse geocoding.
                 var placemark = await Geocoding.Default
                     .GetPlacemarksAsync(
                         Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat),
                         Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat))
                     .ConfigureAwait(false);
 
-                var city = placemark?.FirstOrDefault()?.Locality ?? 
-                          placemark?.FirstOrDefault()?.AdminArea ?? 
-                          placemark?.FirstOrDefault()?.SubAdminArea ?? 
-                          placemark?.FirstOrDefault()?.CountryName;
+                var city = placemark?.FirstOrDefault()?.Locality ??
+                           placemark?.FirstOrDefault()?.AdminArea ??
+                           placemark?.FirstOrDefault()?.SubAdminArea ??
+                           placemark?.FirstOrDefault()?.CountryName;
 
                 if (!string.IsNullOrWhiteSpace(city))
                 {
@@ -305,43 +379,93 @@ namespace SuleymaniyeCalendar.ViewModels
         }
 
         private bool _initialLocationChecked;
-        private void CheckLocationInfo(int timeDelay)
+        private async Task CheckLocationInfoAsync(int timeDelay)
         {
             if (_initialLocationChecked)
                 return;
-            var isLocationEnabled = _data.CheckAndRequestLocationPermission();
-            if (isLocationEnabled.Result != PermissionStatus.Granted) return;
+            // Shorten initial delay for faster perceived startup on first run
+            timeDelay = Math.Min(timeDelay, 500);
 
-            _ = Task.Run(async () =>
+            // Show lightweight overlay to communicate background work
+            await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                if (!_data.HaveInternet()) return;
-                Debug.WriteLine($"**** {this.GetType().Name}.{nameof(CheckLocationInfo)}: Starting at {DateTime.Now}");
-                await Task.Delay(timeDelay).ConfigureAwait(false);
-                var calendar = _data.calendar;
-                calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
-                if ((calendar.Altitude == 114.0 && calendar.Latitude == 41.0 && calendar.Longitude == 29.0) || (calendar.Altitude == 0 && calendar.Latitude == 0 && calendar.Longitude == 0))
-                {
-                    // Default coordinates detected, need fresh location
-                    _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
-                    var location = await _data.GetCurrentLocationAsync(false).ConfigureAwait(false);
-                    if (location != null && location.Latitude != 0 && location.Longitude != 0)
-                        _data.GetMonthlyPrayerTimes(location, false);
-                }
-
-                await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
-
-                // Coalesced UI update
-                await RefreshUiAsync(force: true).ConfigureAwait(false);
-
-                _initialLocationChecked = true;
+                OverlayMessage = AppResources.Yenileniyor + "...";
+                ShowOverlay = true;
             });
+
+            var status = await _data.CheckAndRequestLocationPermission().ConfigureAwait(false);
+            if (status != PermissionStatus.Granted)
+            {
+                // Fast dismiss overlay if user denied; no need to linger
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    ShowOverlay = false;
+                    OverlayMessage = null;
+                });
+                return;
+            }
+
+            if (!_data.HaveInternet())
+            {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    ShowOverlay = false;
+                    OverlayMessage = null;
+                });
+                return;
+            }
+            Debug.WriteLine($"**** {this.GetType().Name}.{nameof(CheckLocationInfoAsync)}: Starting at {DateTime.Now}");
+            await Task.Delay(timeDelay).ConfigureAwait(false);
+            var calendar = _data.calendar;
+            calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
+            if ((calendar.Altitude == 114.0 && calendar.Latitude == 41.0 && calendar.Longitude == 29.0) || (calendar.Altitude == 0 && calendar.Latitude == 0 && calendar.Longitude == 0))
+            {
+                // Default coordinates detected, need fresh location
+                _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
+                if (_calendar != null)
+                {
+                    _data.calendar = _calendar; // keep service field synchronized
+                }
+                var location = await _data.GetCurrentLocationAsync(false).ConfigureAwait(false);
+                if (location != null && location.Latitude != 0 && location.Longitude != 0)
+                {
+                    var monthly = _data.GetMonthlyPrayerTimes(location, false);
+                    // If monthly data contains today, update calendars before UI refresh
+                    var today = monthly?.FirstOrDefault(d => d.Date == DateTime.Today.ToString("dd/MM/yyyy"));
+                    if (today != null)
+                    {
+                        _calendar = today;
+                        _data.calendar = today;
+                    }
+                }
+            }
+
+            await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+
+            // Coalesced UI update
+            await RefreshUiAsync(force: true).ConfigureAwait(false);
+
+            // Success toast (location + times refreshed)
+            await MainThread.InvokeOnMainThreadAsync(() => ShowToast(AppResources.KonumYenilendi));
+
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                ShowOverlay = false;
+                OverlayMessage = null;
+            });
+
+            _initialLocationChecked = true;
         }
 
         private ObservableCollection<Prayer> LoadPrayers()
         {
             Debug.WriteLine("TimeStamp-MainViewModel-ExecuteLoadItemsCommand-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 
-            _calendar = _data.calendar ?? _calendar;
+            // Only adopt DataService.calendar if we don't already have a fresher _calendar.
+            if (_calendar == null && _data.calendar != null)
+            {
+                _calendar = _data.calendar;
+            }
             if (_calendar == null)
             {
                 Debug.WriteLine("[MainViewModel] No calendar available yet; skipping LoadPrayers.");
@@ -407,22 +531,8 @@ namespace SuleymaniyeCalendar.ViewModels
                 // Persist raw times consistently
                 _data.SavePrayerTimesToPreferences(_calendar);
 
-                // Apply to UI atomically on main thread
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    if (Prayers == null)
-                    {
-                        Prayers = new ObservableCollection<Prayer>(list);
-                    }
-                    else
-                    {
-                        Prayers.Clear();
-                        foreach (var p in list)
-                            Prayers.Add(p);
-                    }
-                    Debug.WriteLine($"[MainViewModel] Refreshed prayers. Enabled flags: FF:{list.First(x=>x.Id=="falsefajr").Enabled} F:{list.First(x=>x.Id=="fajr").Enabled} SR:{list.First(x=>x.Id=="sunrise").Enabled} D:{list.First(x=>x.Id=="dhuhr").Enabled} A:{list.First(x=>x.Id=="asr").Enabled} M:{list.First(x=>x.Id=="maghrib").Enabled} I:{list.First(x=>x.Id=="isha").Enabled} EI:{list.First(x=>x.Id=="endofisha").Enabled}");
-                    Debug.WriteLine("TimeStamp-MainViewModel-ExecuteLoadItemsCommand-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
-                });
+                // Apply diff (only 8 items) to minimize churn
+                MainThread.BeginInvokeOnMainThread(() => ApplyPrayerDiff(list));
             }
             catch (Exception ex)
             {
@@ -430,6 +540,35 @@ namespace SuleymaniyeCalendar.ViewModels
             }
 
             return Prayers;
+        }
+
+        private void ApplyPrayerDiff(List<Prayer> newList)
+        {
+            if (Prayers == null || Prayers.Count != newList.Count)
+            {
+                Prayers = new ObservableCollection<Prayer>(newList);
+            }
+            else
+            {
+                for (int i = 0; i < newList.Count; i++)
+                {
+                    var existing = Prayers[i];
+                    var incoming = newList[i];
+                    // Update only changed fields
+                    // Also update localized Name when language changes – previously omitted so prayer names stayed stale after culture switch.
+                    if (existing.Name != incoming.Name) existing.Name = incoming.Name;
+                    if (existing.Time != incoming.Time) existing.Time = incoming.Time;
+                    if (existing.State != incoming.State)
+                    {
+                        existing.State = incoming.State;
+                        existing.StateDescription = incoming.StateDescription;
+                        existing.UpdateVisualState();
+                    }
+                    if (existing.Enabled != incoming.Enabled) existing.Enabled = incoming.Enabled;
+                    // Keep NavigateCommand already assigned; no need to replace entire object
+                }
+            }
+            Debug.WriteLine("[MainViewModel] ApplyPrayerDiff completed");
         }
 
         private string CheckState(DateTime current, DateTime next)
@@ -454,6 +593,12 @@ namespace SuleymaniyeCalendar.ViewModels
 
         public void OnAppearing()
         {
+            // Ensure any stuck pull-to-refresh indicator is cleared when navigating back to this page
+            if (IsRefreshing)
+            {
+                Application.Current?.Dispatcher.Dispatch(() => IsRefreshing = false);
+            }
+
             // Schedule refresh on the next loop so the first frame can render immediately
             Application.Current?.Dispatcher.Dispatch(() =>
             {

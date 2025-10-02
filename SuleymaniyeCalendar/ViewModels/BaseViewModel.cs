@@ -59,28 +59,34 @@ namespace SuleymaniyeCalendar.ViewModels
 
 					if (Application.Current?.Resources != null)
 					{
+						// NOTE: We now round all calculated font sizes to whole numbers to avoid subtle sub-pixel layout
+						// differences between the initial cached month assignment and the later fresh replacement.
+						// Fractions like 14.7 could initially rasterize at 14px and later reflow to 15px after a
+						// subsequent measure pass, which looks like a font size change. Rounding stabilizes layout.
+						Func<double, double> R = v => Math.Round(v); // Round to nearest integer for consistency.
+
 						// Base sizes
 						Application.Current.Resources["DefaultFontSize"] = (double)clampedValue;
-						Application.Current.Resources["FontScale"] = scale;
-						
-						// Material Design 3 Typography Scale
-						Application.Current.Resources["DisplayFontSize"] = clampedValue * 2.0;          // Display Large
-						Application.Current.Resources["DisplaySmallFontSize"] = clampedValue * 1.7;     // Display Small
-						Application.Current.Resources["TitleFontSize"] = clampedValue * 1.57;           // Title Large
-						Application.Current.Resources["TitleMediumFontSize"] = clampedValue * 1.43;     // Title Medium
-						Application.Current.Resources["TitleSmallFontSize"] = clampedValue * 1.29;      // Title Small (Prayer Times)
-						Application.Current.Resources["HeaderFontSize"] = clampedValue * 1.35;         // Headline/Header
-						Application.Current.Resources["SubHeaderFontSize"] = clampedValue * 1.2;       // Headline Small
-						Application.Current.Resources["BodyLargeFontSize"] = clampedValue * 1.14;      // Body Large (Prayer Names)
-						Application.Current.Resources["BodyFontSize"] = clampedValue * 1.05;          // Body Medium
-						Application.Current.Resources["BodySmallFontSize"] = clampedValue * 1.0;       // Body Small
-						Application.Current.Resources["CaptionFontSize"] = clampedValue * 0.86;        // Caption/Label Small
-						
-						// Icons scale proportionally with text; keep a slight bias to avoid oversized icons
-						Application.Current.Resources["IconSmallFontSize"] = Math.Round(clampedValue * 1.1);
-						Application.Current.Resources["IconMediumFontSize"] = Math.Round(clampedValue * 1.25);
-						Application.Current.Resources["IconLargeFontSize"] = Math.Round(clampedValue * 1.6);
-						Application.Current.Resources["IconXLFontSize"] = Math.Round(clampedValue * 3.6);
+						Application.Current.Resources["FontScale"] = scale; // Keep scale as double (may be fractional)
+
+						// Material Design 3 Typography Scale (rounded)
+						Application.Current.Resources["DisplayFontSize"] = R(clampedValue * 2.0);          // Display Large
+						Application.Current.Resources["DisplaySmallFontSize"] = R(clampedValue * 1.7);     // Display Small
+						Application.Current.Resources["TitleFontSize"] = R(clampedValue * 1.57);           // Title Large
+						Application.Current.Resources["TitleMediumFontSize"] = R(clampedValue * 1.43);     // Title Medium
+						Application.Current.Resources["TitleSmallFontSize"] = R(clampedValue * 1.29);      // Title Small (Prayer Times)
+						Application.Current.Resources["HeaderFontSize"] = R(clampedValue * 1.35);         // Headline/Header
+						Application.Current.Resources["SubHeaderFontSize"] = R(clampedValue * 1.2);       // Headline Small
+						Application.Current.Resources["BodyLargeFontSize"] = R(clampedValue * 1.14);      // Body Large (Prayer Names)
+						Application.Current.Resources["BodyFontSize"] = R(clampedValue * 1.05);          // Body Medium
+						Application.Current.Resources["BodySmallFontSize"] = R(clampedValue * 1.0);       // Body Small
+						Application.Current.Resources["CaptionFontSize"] = R(clampedValue * 0.86);        // Caption/Label Small
+
+						// Icons scale proportionally with text; keep a slight bias to avoid oversized icons (rounded)
+						Application.Current.Resources["IconSmallFontSize"] = R(clampedValue * 1.1);
+						Application.Current.Resources["IconMediumFontSize"] = R(clampedValue * 1.25);
+						Application.Current.Resources["IconLargeFontSize"] = R(clampedValue * 1.6);
+						Application.Current.Resources["IconXLFontSize"] = R(clampedValue * 3.6);
 					}
 				}
 			}
@@ -92,6 +98,21 @@ namespace SuleymaniyeCalendar.ViewModels
 		public int BodyLargeFontSize => (int)(FontSize * 1.14);
 		public int CaptionFontSize => (int)(FontSize * 0.86);
         public int BodyFontSize => (int)(FontSize * 1.05);
+
+		// Lightweight cross-page modal overlay state; used for long running operations (refreshing, scheduling, etc.)
+		private bool showOverlay;
+		public bool ShowOverlay
+		{
+			get => showOverlay;
+			set => SetProperty(ref showOverlay, value);
+		}
+
+		private string overlayMessage;
+		public string OverlayMessage
+		{
+			get => overlayMessage;
+			set => SetProperty(ref overlayMessage, value);
+		}
 
 		public static void ShowToast(string message)
 		{
@@ -112,28 +133,31 @@ namespace SuleymaniyeCalendar.ViewModels
 			
 			if (Application.Current?.Resources != null)
 			{
+				// NOTE: See comment in FontSize setter about rounding to stabilize layout across refreshes.
+				Func<double, double> R = v => Math.Round(v);
+
 				// Base sizes
 				Application.Current.Resources["DefaultFontSize"] = (double)clampedValue;
 				Application.Current.Resources["FontScale"] = clampedValue / 14.0;
-				
-				// Material Design 3 Typography Scale
-				Application.Current.Resources["DisplayFontSize"] = clampedValue * 2.0;          // Display Large
-				Application.Current.Resources["DisplaySmallFontSize"] = clampedValue * 1.7;     // Display Small
-				Application.Current.Resources["TitleFontSize"] = clampedValue * 1.57;           // Title Large
-				Application.Current.Resources["TitleMediumFontSize"] = clampedValue * 1.43;     // Title Medium
-				Application.Current.Resources["TitleSmallFontSize"] = clampedValue * 1.29;      // Title Small (Prayer Times)
-				Application.Current.Resources["HeaderFontSize"] = clampedValue * 1.35;         // Headline/Header
-				Application.Current.Resources["SubHeaderFontSize"] = clampedValue * 1.2;       // Headline Small
-				Application.Current.Resources["BodyLargeFontSize"] = clampedValue * 1.14;      // Body Large (Prayer Names)
-				Application.Current.Resources["BodyFontSize"] = clampedValue * 1.05;          // Body Medium
-				Application.Current.Resources["BodySmallFontSize"] = clampedValue * 1.0;       // Body Small
-				Application.Current.Resources["CaptionFontSize"] = clampedValue * 0.86;        // Caption/Label Small
-				
-				// Icons scale proportionally with text; keep a slight bias to avoid oversized icons
-				Application.Current.Resources["IconSmallFontSize"] = Math.Round(clampedValue * 1.1);
-				Application.Current.Resources["IconMediumFontSize"] = Math.Round(clampedValue * 1.25);
-				Application.Current.Resources["IconLargeFontSize"] = Math.Round(clampedValue * 1.6);
-				Application.Current.Resources["IconXLFontSize"] = Math.Round(clampedValue * 3.6);
+
+				// Material Design 3 Typography Scale (rounded)
+				Application.Current.Resources["DisplayFontSize"] = R(clampedValue * 2.0);          // Display Large
+				Application.Current.Resources["DisplaySmallFontSize"] = R(clampedValue * 1.7);     // Display Small
+				Application.Current.Resources["TitleFontSize"] = R(clampedValue * 1.57);           // Title Large
+				Application.Current.Resources["TitleMediumFontSize"] = R(clampedValue * 1.43);     // Title Medium
+				Application.Current.Resources["TitleSmallFontSize"] = R(clampedValue * 1.29);      // Title Small (Prayer Times)
+				Application.Current.Resources["HeaderFontSize"] = R(clampedValue * 1.35);         // Headline/Header
+				Application.Current.Resources["SubHeaderFontSize"] = R(clampedValue * 1.2);       // Headline Small
+				Application.Current.Resources["BodyLargeFontSize"] = R(clampedValue * 1.14);      // Body Large (Prayer Names)
+				Application.Current.Resources["BodyFontSize"] = R(clampedValue * 1.05);          // Body Medium
+				Application.Current.Resources["BodySmallFontSize"] = R(clampedValue * 1.0);       // Body Small
+				Application.Current.Resources["CaptionFontSize"] = R(clampedValue * 0.86);        // Caption/Label Small
+
+				// Icons scale proportionally with text; keep a slight bias to avoid oversized icons (rounded)
+				Application.Current.Resources["IconSmallFontSize"] = R(clampedValue * 1.1);
+				Application.Current.Resources["IconMediumFontSize"] = R(clampedValue * 1.25);
+				Application.Current.Resources["IconLargeFontSize"] = R(clampedValue * 1.6);
+				Application.Current.Resources["IconXLFontSize"] = R(clampedValue * 3.6);
 			}
 		}
 

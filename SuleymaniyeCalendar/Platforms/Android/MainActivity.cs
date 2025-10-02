@@ -11,11 +11,19 @@ public class MainActivity : MauiAppCompatActivity
 	protected override async void OnCreate(Bundle savedInstanceState)
 	{
 		base.OnCreate(savedInstanceState);
+        // Yield once to keep async signature purposeful (avoids analyzer warning after deferring tasks)
+        await Task.Yield();
 
-		await EnsureNotificationPermissionAsync();
+        // Defer notification permission so location permission (requested by first page ViewModel) can surface first
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(2500); // allow initial UI + location permission
+            await MainThread.InvokeOnMainThreadAsync(async () => await EnsureNotificationPermissionAsync());
+        });
+
         EnsureExactAlarmCapability();
 
-		if (Preferences.Get("ForegroundServiceEnabled", true))
+        if (Preferences.Get("ForegroundServiceEnabled", true))
 		{
             var startServiceIntent = new Intent(this, typeof(AlarmForegroundService));
             startServiceIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
@@ -35,20 +43,15 @@ public class MainActivity : MauiAppCompatActivity
             var status = await Permissions.CheckStatusAsync<Permissions.PostNotifications>();
             if (status != PermissionStatus.Granted)
             {
+                var alreadyAsked = Preferences.Get("NotificationPermissionAsked", false);
                 status = await Permissions.RequestAsync<Permissions.PostNotifications>();
-                if (status != PermissionStatus.Granted)
+                Preferences.Set("NotificationPermissionAsked", true);
+                if (status == PermissionStatus.Granted)
                 {
-                    // Optional: guide user to settings
-                    AppInfo.ShowSettingsUI();
-                }
-                else
-                {
-                    // Permission granted - refresh notification display if prayer notifications are enabled
                     if (Preferences.Get("NotificationPrayerTimesEnabled", false) && Preferences.Get("ForegroundServiceEnabled", true))
-                    {
                         RefreshForegroundServiceNotification();
-                    }
                 }
+                // If denied the first time, do nothing intrusive; user can enable later from Settings screen.
             }
         }
     }

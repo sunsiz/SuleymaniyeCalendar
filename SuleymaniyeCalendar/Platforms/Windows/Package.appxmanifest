@@ -41,6 +41,8 @@
 
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
+    <!-- Enable location access for Geolocation / Geocoding APIs -->
+    <Capability Name="location" />
   </Capabilities>
 
 </Package>

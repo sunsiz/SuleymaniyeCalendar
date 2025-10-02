@@ -13,6 +13,7 @@ namespace SuleymaniyeCalendar.ViewModels
 	{
 		private readonly IAudioPreviewService _audioPreview;
 		private readonly DataService _dataService;
+		private readonly PerformanceService _perf = new PerformanceService();
 		private string time;
 		public string Time { get => time; set => SetProperty(ref time, value); }
 		private bool enabled;
@@ -69,40 +70,65 @@ namespace SuleymaniyeCalendar.ViewModels
 		[RelayCommand]
 		public async Task GoBack()
 		{
+			// Show overlay during explicit user confirmation and keep it visible until navigation begins.
 			IsBusy = true;
+			OverlayMessage = AppResources.AlarmlarPlanlaniyor + "...";
+			ShowOverlay = true;
 			try
 			{
-				await SaveAndScheduleAsync().ConfigureAwait(false);
+				await SaveAndScheduleInternalAsync().ConfigureAwait(false);
+				// Brief delay so user perceives progress if scheduling was extremely fast
+				await Task.Delay(400).ConfigureAwait(false);
 				await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync(".."));
 			}
 			finally
 			{
+				ShowOverlay = false;
+				OverlayMessage = null;
 				IsBusy = false;
+				_scheduledOnce = true;
 			}
 		}
 
-		public async Task SaveAndScheduleAsync()
+		/// <summary>
+		/// Ensure scheduling occurs (used by page OnDisappearing for system back). Avoids overlay and duplicate runs.
+		/// </summary>
+		public void EnsureScheduled()
 		{
+			// For system back gestures we still ensure scheduling, but without overlay.
+			if (_scheduledOnce || _scheduling) return;
+			_ = SaveAndScheduleInternalAsync();
+		}
+
+		private async Task SaveAndScheduleInternalAsync()
+		{
+			if (_scheduling) return; // reentrancy guard
+			_scheduling = true;
 			try
 			{
-				// Persist selected sound if changed
-				if (!string.IsNullOrWhiteSpace(PrayerId) && SelectedSound != null)
+				using (_perf.StartTimer("PrayerDetail.SaveAndSchedule"))
 				{
-					Preferences.Set(PrayerId + "AlarmSound", SelectedSound.FileName);
+					if (!string.IsNullOrWhiteSpace(PrayerId) && SelectedSound != null)
+					{
+						Preferences.Set(PrayerId + "AlarmSound", SelectedSound.FileName);
+					}
+					await _audioPreview.StopAsync().ConfigureAwait(false);
+					await MainThread.InvokeOnMainThreadAsync(() => IsPlaying = false);
+					await _dataService.SetMonthlyAlarmsAsync().ConfigureAwait(false);
 				}
-
-				// Stop any preview playback
-				await _audioPreview.StopAsync().ConfigureAwait(false);
-				await MainThread.InvokeOnMainThreadAsync(() => IsPlaying = false);
-
-				// Schedule alarms for upcoming days
-				await _dataService.SetMonthlyAlarmsAsync().ConfigureAwait(false);
 			}
 			catch (Exception ex)
 			{
 				Alert(AppResources.SorunCikti, ex.Message);
 			}
+			finally
+			{
+				_scheduling = false;
+			}
 		}
+
+		private bool _scheduling;
+		private bool _scheduledOnce;
 
 		//[RelayCommand]
 		//public void NotificationCheckedChanged(bool value)

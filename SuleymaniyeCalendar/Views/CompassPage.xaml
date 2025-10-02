@@ -11,25 +11,31 @@
 
     <Shell.TitleView>
         <Grid
-            Padding="16,0"
-            ColumnDefinitions="*,Auto"
+            Margin="10"
+            ColumnDefinitions="*,Auto" ColumnSpacing="8"
             HeightRequest="40">
             <Label
                 Grid.Column="0"
+                FontSize="{DynamicResource HeaderFontSize}"
                 AutomationProperties.IsInAccessibleTree="True"
+                SemanticProperties.HeadingLevel="Level1"
                 Style="{StaticResource LabelSectionHeader}"
                 Text="{localization:Translate KibleGostergesi}"
-                VerticalOptions="Center" />
+                VerticalOptions="Start" />
             <ImageButton
                 Grid.Column="1"
+                Margin="10,0,12,0"
+                AutomationProperties.IsInAccessibleTree="True"
+                VerticalOptions="Center"
                 Command="{Binding RefreshLocationCommand}"
                 SemanticProperties.Description="{localization:Translate Yenile}">
                 <ImageButton.Source>
-                    <FontImageSource
+                    <FontImageSource                        
+                        FontAutoScalingEnabled="True"
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="{DynamicResource IconSmallFontSize}"
-                        Color="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}" />
+                        Size="{DynamicResource IconLargeFontSize}"
+                        Color="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColorDark}}" />
                 </ImageButton.Source>
             </ImageButton>
         </Grid>
@@ -45,7 +51,7 @@
                     Spacing="8">
 
                     <!--  Compass Section  -->
-                    <Border Style="{StaticResource GlassCardSoft}">
+                    <Border Style="{StaticResource FrostGlassCardFrozen}">
                         <VerticalStackLayout Spacing="16">
                             <Label
                                 HorizontalTextAlignment="Center"
@@ -72,7 +78,7 @@
                     </Border>
 
                     <!--  Location Information  -->
-                    <Border Style="{StaticResource GlassMediaCard}">
+                    <Border Style="{StaticResource FrostGlassCardCrystal}">
                         <VerticalStackLayout Spacing="16">
                             <Label
                                 HorizontalTextAlignment="Center"
@@ -190,7 +196,7 @@
                             <!--  Action Button - Glass primary -->
                             <Button
                                 Margin="12,0,12,12"
-                                Style="{StaticResource GlassButtonSecondary}"
+                                Style="{StaticResource GlassButtonPillTertiary}"
                                 Command="{Binding GoToMapCommand}"
                                 Text="{localization:Translate HaritadaGoster}" />
                         </VerticalStackLayout>

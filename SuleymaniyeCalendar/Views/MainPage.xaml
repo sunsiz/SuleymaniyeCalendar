@@ -36,7 +36,8 @@
                         FontAutoScalingEnabled="True"
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf013;"
-                        Size="{DynamicResource IconLargeFontSize}" />
+                        Size="{DynamicResource IconLargeFontSize}"
+                        Color="{AppThemeBinding Light=White, Dark={StaticResource OnSurfaceColorDark}}" />
                 </Image.Source>
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer x:DataType="viewModels:MainViewModel" Command="{Binding SettingsCommand}" NumberOfTapsRequired="1" />
@@ -52,7 +53,8 @@
                     <FontImageSource
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="{DynamicResource IconLargeFontSize}" />
+                        Size="{DynamicResource IconLargeFontSize}"
+                        Color="{AppThemeBinding Light=White, Dark={StaticResource OnSurfaceColorDark}}" />
                 </Image.Source>
                 <Image.GestureRecognizers>
                     <TapGestureRecognizer x:DataType="viewModels:MainViewModel" Command="{Binding RefreshLocationCommand}" NumberOfTapsRequired="1" />
@@ -63,14 +65,10 @@
 
     <ContentPage.Content>
         <RefreshView Command="{Binding RefreshLocationCommand}" IsRefreshing="{Binding IsRefreshing}">
-            <Grid
-                Padding="12,6"
-                ColumnDefinitions="*"
-                HorizontalOptions="Fill"
-                RowDefinitions="*">
+            <Grid ColumnDefinitions="*" RowDefinitions="*" HorizontalOptions="Fill" Margin="0" Padding="0" >
                 <CollectionView
                     x:Name="PrayersView"
-                    HorizontalOptions="Fill"
+                    HorizontalOptions="Center"
                     ItemsSource="{Binding Prayers}"
                     SelectedItem="{Binding SelectedPrayer, Mode=TwoWay}"
                     SelectionChangedCommand="{Binding PrayerSelectedCommand}"
@@ -78,47 +76,50 @@
                     VerticalOptions="Fill"
                     VerticalScrollBarVisibility="Never">
                     <CollectionView.ItemsLayout>
-                        <LinearItemsLayout ItemSpacing="8" Orientation="Vertical" />
+                        <!-- Reduced ItemSpacing to tighten vertical layout -->
+                        <LinearItemsLayout ItemSpacing="4" Orientation="Vertical" />
                     </CollectionView.ItemsLayout>
                     <CollectionView.Header>
                         <StackLayout x:DataType="viewModels:MainViewModel">
+                            <!-- Remaining Time Card - use softer glass variant -->
                             <Border
-                                Margin="10,5"
-                                HorizontalOptions="Center"
-                                IsEnabled="{Binding IsNotBusy}"
-                                Style="{StaticResource LocationCard}">
-                                <Label
-                                    Margin="3,0"
-                                    Padding="3"
-                                    x:DataType="viewModels:MainViewModel"
-                                    AutomationProperties.IsInAccessibleTree="True"
-                                    HorizontalOptions="Center"
-                                    SemanticProperties.Description="{localization:Translate Sehir}"
-                                    Style="{StaticResource LocationStyle}"
-                                    VerticalTextAlignment="Center">
-                                    <Label.FormattedText>
-                                        <FormattedString>
-                                            <Span
-                                                FontFamily="{StaticResource IconFontFamily}"
-                                                FontSize="{DynamicResource SubHeaderFontSize}"
-                                                Text="&#xf3c5; " />
-                                            <Span Text="{Binding City}" TextTransform="Uppercase" />
-                                        </FormattedString>
-                                    </Label.FormattedText>
-                                </Label>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding GoToMapCommand}" NumberOfTapsRequired="1" />
-                                </Border.GestureRecognizers>
+                                Margin="8,4,8,4" Padding="8,6"
+                                Style="{StaticResource iOSGlassCard}"
+                                HorizontalOptions="Fill">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
+                                    <Border
+                                        Grid.Column="0"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource Secondary10}, Dark={StaticResource Secondary95}}"
+                                        StrokeShape="RoundRectangle 16"
+                                        WidthRequest="32"
+                                        HeightRequest="32"
+                                        VerticalOptions="Center">
+                                        <Label
+                                            FontFamily="{StaticResource IconFontFamily}"
+                                            FontSize="{DynamicResource IconMediumFontSize}"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center"
+                                            Text="&#xf017;"
+                                            TextColor="{AppThemeBinding Light={StaticResource SecondaryColor}, Dark={StaticResource Secondary30}}" />
+                                    </Border>
+                                    
+                                    <Label
+                                        Grid.Column="1"
+                                        AutomationProperties.IsInAccessibleTree="True"
+                                        Style="{StaticResource BodyLargeStyle}"
+                                        Text="{Binding RemainingTime}"
+                                        VerticalOptions="Center" />
+                                </Grid>
                             </Border>
                         </StackLayout>
                     </CollectionView.Header>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Prayer">
-                            <ContentView Padding="0">
+                            <ContentView Padding="0" Margin="9,0">
+                                <Grid>
                                 <!-- Enhanced Prayer Card with Premium Styling -->
                                 <Border
-                                    Margin="6,3"
                                     Style="{StaticResource PrayerCard}">
                                     <Border.Triggers>
                                         <DataTrigger
@@ -126,8 +127,7 @@
                                             TargetType="Border"
                                             Value="True">
                                             <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassPrayerPastLight}, Dark={StaticResource GlassPrayerPastDark}}" />
-                                            <Setter Property="Opacity" Value="0.8" />
-                                            <Setter Property="Scale" Value="0.96" />
+                                            <Setter Property="Opacity" Value="0.9" />
                                             <Setter Property="Shadow">
                                                 <Shadow
                                                     Brush="{AppThemeBinding Light={StaticResource Success40}, Dark={StaticResource Success30}}"
@@ -141,11 +141,10 @@
                                             TargetType="Border"
                                             Value="True">
                                             <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassPrayerActiveLight}, Dark={StaticResource GlassPrayerActiveDark}}" />
-                                            <Setter Property="Scale" Value="1.03" />
                                             <Setter Property="Shadow">
                                                 <Shadow
                                                     Brush="{AppThemeBinding Light={StaticResource Success40}, Dark={StaticResource Success30}}"
-                                                    Opacity="0.6"
+                                                    Opacity="1"
                                                     Radius="1"
                                                     Offset="1,2" />
                                             </Setter>
@@ -281,7 +280,7 @@
                                             VerticalOptions="Center">
                                             <Label
                                                 AutomationProperties.IsInAccessibleTree="True"
-                                                FontFamily="FontAwesomeSolid"
+                                                FontFamily="{StaticResource IconFontFamily}"
                                                 FontSize="{DynamicResource IconMediumFontSize}"
                                                 HorizontalOptions="Center"
                                                 VerticalOptions="Center"
@@ -331,16 +330,16 @@
                                             </Border.Triggers>
                                         </Border>
                                     </Grid>
-                                </Border>
+                                </Border></Grid>
                             </ContentView>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
 
                     <CollectionView.Footer>
-                        <StackLayout x:DataType="viewModels:MainViewModel" Orientation="Vertical" Spacing="12" Margin="0,4">
+                        <StackLayout x:DataType="viewModels:MainViewModel" Orientation="Vertical" Spacing="8" Margin="0,2,0,2">
                             <!-- Monthly Calendar Button - Glass primary style -->
                             <Button
-                                Margin="16,0"
+                                Margin="32,0,32,0"
                                 Style="{StaticResource GlassButtonPillSecondary}"
                                 Text="{localization:Translate AylikTakvim}"
                                 Command="{Binding GoToMonthCommand}"
@@ -355,39 +354,47 @@
                                 </Button.ImageSource>
                             </Button>
 
-                            <!-- Remaining Time Card - use softer glass variant -->
-                            <Border
-                                Margin="2,0,2,4"
-                                Style="{StaticResource GlassCardSoft}"
-                                HorizontalOptions="Fill">
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                                    <Border
-                                        Grid.Column="0"
-                                        BackgroundColor="{AppThemeBinding Light={StaticResource Secondary10}, Dark={StaticResource Secondary95}}"
-                                        StrokeShape="RoundRectangle 16"
-                                        WidthRequest="32"
-                                        HeightRequest="32"
-                                        VerticalOptions="Center">
-                                        <Label
-                                            FontFamily="{StaticResource IconFontFamily}"
-                                            FontSize="{DynamicResource IconMediumFontSize}"
-                                            HorizontalOptions="Center"
-                                            VerticalOptions="Center"
-                                            Text="&#xf017;"
-                                            TextColor="{AppThemeBinding Light={StaticResource SecondaryColor}, Dark={StaticResource Secondary30}}" />
-                                    </Border>
-                                    
-                                    <Label
-                                        Grid.Column="1"
-                                        AutomationProperties.IsInAccessibleTree="True"
-                                        Style="{StaticResource BodyLargeStyle}"
-                                        Text="{Binding RemainingTime}"
-                                        VerticalOptions="Center" />
-                                </Grid>
+                                <Border
+                                Margin="32,0,32,6"
+                                HorizontalOptions="Fill"
+                                IsEnabled="{Binding IsNotBusy}"
+                                Style="{StaticResource LocationCard}">
+                                <Label
+                                    Margin="3,0"
+                                    Padding="3"
+                                    x:DataType="viewModels:MainViewModel"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    HorizontalOptions="Center"
+                                    SemanticProperties.Description="{localization:Translate Sehir}"
+                                    Style="{StaticResource LocationStyle}"
+                                    VerticalTextAlignment="Center">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span
+                                                FontFamily="{StaticResource IconFontFamily}"
+                                                FontSize="{DynamicResource SubHeaderFontSize}"
+                                                Text="&#xf3c5; " />
+                                            <Span Text="{Binding City}" TextTransform="Uppercase" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding GoToMapCommand}" NumberOfTapsRequired="1" />
+                                </Border.GestureRecognizers>
                             </Border>
                         </StackLayout>
                     </CollectionView.Footer>
                 </CollectionView>
+
+                <!-- Long running overlay (location refresh) -->
+                <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
+                    <Border Style="{StaticResource GlassCardSoft}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                        <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                            <ActivityIndicator IsRunning="True" Color="{StaticResource PrimaryColor}" WidthRequest="40" HeightRequest="40" />
+                            <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
             </Grid>
         </RefreshView>
     </ContentPage.Content>

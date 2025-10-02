@@ -11,6 +11,11 @@
     x:DataType="viewModels:SettingsViewModel"
     FlowDirection="{DynamicResource FlowDirection}">
 
+    <!-- Windows: explicit back navigation (Shell back button not always visible)
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="←" Priority="0" Order="Primary" Command="{Binding GoBackCommand}" />
+    </ContentPage.ToolbarItems> -->
+
     <ContentPage.Content>
         <ScrollView
             x:DataType="viewModels:SettingsViewModel"
@@ -162,7 +167,7 @@
                                     <Label Grid.Column="0" 
                                            FontFamily="{StaticResource IconFontFamily}" 
                                            FontSize="{DynamicResource IconSmallFontSize}" 
-                                           Text="&#xf108;"
+                                           Text="&#xf3ce;"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
                                            VerticalOptions="Center" />
                                     <Label Grid.Column="1" 

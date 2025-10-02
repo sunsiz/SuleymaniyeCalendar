@@ -32,6 +32,8 @@ public static class MauiProgram
                 settings.AddResource(AppResources.ResourceManager);
                 settings.RestoreLatestCulture(true);
             })
+            // Explicit runtime registration improves reliability on Windows where alias resolution
+            // occasionally fails to bind to <MauiFont> aliases alone (observed missing glyphs).
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("FontAwesome6FreeSolid.otf", "FontAwesomeSolid");

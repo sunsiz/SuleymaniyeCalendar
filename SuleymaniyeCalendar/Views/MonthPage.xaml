@@ -37,6 +37,16 @@
                     </VerticalStackLayout>
                 </Border>
             </Grid>
+
+            <!-- Optional overlay (reserved for future extended operations) -->
+            <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
+                <Border Style="{StaticResource GlassCardSoft}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                        <ActivityIndicator IsRunning="True" Color="{StaticResource PrimaryColor}" WidthRequest="40" HeightRequest="40" />
+                        <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </Border>
+            </Grid>
         </Grid>
 
         <!-- Action Buttons with Border (Android CornerRadius Workaround) -->

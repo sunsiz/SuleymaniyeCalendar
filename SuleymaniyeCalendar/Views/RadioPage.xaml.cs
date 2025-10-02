@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SuleymaniyeCalendar.ViewModels;
+using SuleymaniyeCalendar.Services;
 
 namespace SuleymaniyeCalendar.Views;
 
 public partial class RadioPage : ContentPage
 {
 	private readonly RadioViewModel _viewModel;
+	private readonly PerformanceService _perf = new PerformanceService();
 
 	public RadioPage(RadioViewModel viewModel)
 	{
@@ -21,12 +23,14 @@ public partial class RadioPage : ContentPage
 	protected override void OnAppearing()
 	{
 		base.OnAppearing();
-		
-		// Connect the MediaElement to the radio service
-		var radioService = _viewModel.GetRadioService();
-		if (radioService is SuleymaniyeCalendar.Services.RadioService service)
+		using (_perf.StartTimer("Radio.OnAppearing"))
 		{
-			service.SetMediaElement(RadioPlayer);
+			// Connect the MediaElement to the radio service
+			var radioService = _viewModel.GetRadioService();
+			if (radioService is SuleymaniyeCalendar.Services.RadioService service)
+			{
+				service.SetMediaElement(RadioPlayer);
+			}
 		}
 	}
 

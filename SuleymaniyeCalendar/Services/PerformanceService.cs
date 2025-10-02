@@ -39,9 +39,9 @@ namespace SuleymaniyeCalendar.Services
             var (report, items) = GetSummary();
             var header = $"📊 Perf Summary{(string.IsNullOrWhiteSpace(tag) ? string.Empty : $" [{tag}]")}: {items} metrics";
             System.Diagnostics.Debug.WriteLine(header);
-            System.Diagnostics.Debug.WriteLine(report);
+            System.Diagnostics.Debug.WriteLine($"📊 Perf Report: {report}");
             _logger?.LogInformation(header);
-            if (!string.IsNullOrWhiteSpace(report)) _logger?.LogInformation(report);
+            if (!string.IsNullOrWhiteSpace(report)) _logger?.LogInformation($"📊 Perf Report: {report}");
         }
 
         public void Reset() => _metrics.Clear();

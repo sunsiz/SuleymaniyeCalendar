@@ -58,6 +58,11 @@ public partial class MainPage : ContentPage
 	{
 		base.OnDisappearing();
 		_viewModel?.OnDisappearing();
+		// Safety: clear any lingering pull-to-refresh spinner when leaving the page
+		if (_viewModel?.IsRefreshing == true)
+		{
+			Application.Current?.Dispatcher.Dispatch(() => _viewModel.IsRefreshing = false);
+		}
 	}
 
 	// NOTE: removed the _viewModel.OnAppearing() call here to avoid double refresh.

@@ -31,6 +31,9 @@
 	<MauiFont Include="Resources\Fonts\FontAwesome6FreeSolid.otf" Alias="FontAwesomeSolid" />
 	<MauiFont Include="Resources\Fonts\OpenSans-Regular.ttf" Alias="OpenSansRegular" />
 	<!-- Fonts are registered via ConfigureFonts in MauiProgram.cs -->
+	<!-- Windows-specific: Embed fonts in assembly to improve reliability -->
+	<EmbeddedResource Include="Resources\Fonts\FontAwesome6FreeSolid.otf" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
+	<EmbeddedResource Include="Resources\Fonts\OpenSans-Regular.ttf" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
 	<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>

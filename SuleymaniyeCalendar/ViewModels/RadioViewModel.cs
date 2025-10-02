@@ -10,6 +10,7 @@ namespace SuleymaniyeCalendar.ViewModels
 	public partial class RadioViewModel : BaseViewModel
 	{
 		private readonly IRadioService _radioService;
+		private readonly PerformanceService _perf = new PerformanceService();
 
 		private bool isPlaying;
 		public bool IsPlaying { get => isPlaying; set => SetProperty(ref isPlaying, value); }
@@ -37,13 +38,16 @@ namespace SuleymaniyeCalendar.ViewModels
 		{
 			if (await CheckInternetAsync().ConfigureAwait(false))
 			{
-				if (IsPlaying)
+				using (_perf.StartTimer("Radio.TogglePlay"))
 				{
-					await _radioService.PauseAsync().ConfigureAwait(false);
-				}
-				else
-				{
-					await _radioService.PlayAsync().ConfigureAwait(false);
+					if (IsPlaying)
+					{
+						await _radioService.PauseAsync().ConfigureAwait(false);
+					}
+					else
+					{
+						await _radioService.PlayAsync().ConfigureAwait(false);
+					}
 				}
 			}
 			else
