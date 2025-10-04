@@ -31,6 +31,15 @@ namespace SuleymaniyeCalendar.ViewModels
 			}
 		}
 
+		[ObservableProperty]
+		private bool _showDesignShowcase = false;
+
+		[RelayCommand]
+		private void ToggleShowcase()
+		{
+			ShowDesignShowcase = !ShowDesignShowcase;
+		}
+
 		public AboutViewModel()
 		{
 			Title = AppResources.SuleymaniyeVakfi;

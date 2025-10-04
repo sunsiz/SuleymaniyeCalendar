@@ -81,27 +81,23 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.Header>
                         <StackLayout x:DataType="viewModels:MainViewModel">
-                            <!-- Remaining Time Card - use softer glass variant -->
+                            <!--  Remaining Time Card - Simplified icon ✅  -->
                             <Border
-                                Margin="8,4,8,4" Padding="8,6"
+                                Margin="{StaticResource CardMarginList}"
+                                Padding="{StaticResource CardPaddingTight}"
                                 Style="{StaticResource iOSGlassCard}"
                                 HorizontalOptions="Fill">
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="6">
-                                    <Border
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{StaticResource SpacingTight}">
+                                    <!--  Simplified clock icon  -->
+                                    <Label
                                         Grid.Column="0"
-                                        BackgroundColor="{AppThemeBinding Light={StaticResource Secondary10}, Dark={StaticResource Secondary95}}"
-                                        StrokeShape="RoundRectangle 16"
-                                        WidthRequest="32"
-                                        HeightRequest="32"
-                                        VerticalOptions="Center">
-                                        <Label
-                                            FontFamily="{StaticResource IconFontFamily}"
-                                            FontSize="{DynamicResource IconMediumFontSize}"
-                                            HorizontalOptions="Center"
-                                            VerticalOptions="Center"
-                                            Text="&#xf017;"
-                                            TextColor="{AppThemeBinding Light={StaticResource SecondaryColor}, Dark={StaticResource Secondary30}}" />
-                                    </Border>
+                                        FontFamily="{StaticResource IconFontFamily}"
+                                        FontSize="22"
+                                        Text="&#xf017;"
+                                        TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                        VerticalOptions="Center"
+                                        WidthRequest="44"
+                                        HorizontalTextAlignment="Center" />
                                     
                                     <Label
                                         Grid.Column="1"
@@ -116,45 +112,42 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Prayer">
-                            <ContentView Padding="0" Margin="9,0">
+                            <ContentView Padding="0" Margin="7,0">
                                 <Grid>
-                                <!-- Enhanced Prayer Card with Premium Styling -->
+                                <!-- ⚡ Performance-Optimized Prayer Card (Phase 5.1 Enhanced) -->
+                                <!-- Uses solid colors with strong visual differentiation -->
                                 <Border
-                                    Style="{StaticResource PrayerCard}">
+                                    Style="{StaticResource PrayerCardOptimized}">
                                     <Border.Triggers>
+                                        <!-- 🎨 Phase 5.2.4: Glassmorphism matte for past prayers -->
                                         <DataTrigger
                                             Binding="{Binding IsPast}"
                                             TargetType="Border"
                                             Value="True">
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassPrayerPastLight}, Dark={StaticResource GlassPrayerPastDark}}" />
-                                            <Setter Property="Opacity" Value="0.9" />
-                                            <Setter Property="Shadow">
-                                                <Shadow
-                                                    Brush="{AppThemeBinding Light={StaticResource Success40}, Dark={StaticResource Success30}}"
-                                                    Radius="0"
-                                                    Offset="0,0" />
-                                            </Setter>
-                                            <Setter Property="Margin" Value="0,0" />
+                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardPastGradientLight}, Dark={StaticResource PrayerCardPastGradientDark}}" />
+                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardPastBorderLight}, Dark={StaticResource PrayerCardPastBorderDark}}" />
+                                            <Setter Property="Opacity" Value="0.88" />
                                         </DataTrigger>
+                                        <!-- 🎨 Phase 5.2.4: Glassmorphism ULTRA GREEN for current prayer -->
                                         <DataTrigger
                                             Binding="{Binding IsActive}"
                                             TargetType="Border"
                                             Value="True">
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassPrayerActiveLight}, Dark={StaticResource GlassPrayerActiveDark}}" />
+                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardCurrentGradientLight}, Dark={StaticResource PrayerCardCurrentGradientDark}}" />
+                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardCurrentBorderLight}, Dark={StaticResource PrayerCardCurrentBorderDark}}" />
+                                            <Setter Property="StrokeThickness" Value="2.5" />
                                             <Setter Property="Shadow">
-                                                <Shadow
-                                                    Brush="{AppThemeBinding Light={StaticResource Success40}, Dark={StaticResource Success30}}"
-                                                    Opacity="1"
-                                                    Radius="1"
-                                                    Offset="1,2" />
+                                                <Shadow Brush="{AppThemeBinding Light={StaticResource PrayerCardCurrentShadowLight}, Dark={StaticResource PrayerCardCurrentShadowDark}}" Radius="6" Offset="0,3" />
                                             </Setter>
                                         </DataTrigger>
+                                        <!-- 🎨 Phase 5.2.4: Glassmorphism ULTRA AMBER for upcoming -->
                                         <MultiTrigger TargetType="Border">
                                             <MultiTrigger.Conditions>
                                                 <BindingCondition Binding="{Binding IsActive}" Value="False" />
                                                 <BindingCondition Binding="{Binding IsPast}" Value="False" />
                                             </MultiTrigger.Conditions>
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassPrayerUpcomingLight}, Dark={StaticResource GlassPrayerUpcomingDark}}" />
+                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardUpcomingGradientLight}, Dark={StaticResource PrayerCardUpcomingGradientDark}}" />
+                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardUpcomingBorderLight}, Dark={StaticResource PrayerCardUpcomingBorderDark}}" />
                                         </MultiTrigger>
                                     </Border.Triggers>
 
@@ -336,8 +329,8 @@
                     </CollectionView.ItemTemplate>
 
                     <CollectionView.Footer>
-                        <StackLayout x:DataType="viewModels:MainViewModel" Orientation="Vertical" Spacing="8" Margin="0,2,0,2">
-                            <!-- Monthly Calendar Button - Glass primary style -->
+                        <StackLayout x:DataType="viewModels:MainViewModel" Orientation="Vertical" Spacing="{StaticResource SpacingTight}" Margin="0,4,0,4">
+                            <!--  Monthly Calendar Button - 8px grid spacing ✅  -->
                             <Button
                                 Margin="32,0,32,0"
                                 Style="{StaticResource GlassButtonPillSecondary}"
@@ -354,8 +347,9 @@
                                 </Button.ImageSource>
                             </Button>
 
-                                <Border
-                                Margin="32,0,32,6"
+                            <!--  City Location Card - 8px grid spacing ✅  -->
+                            <Border
+                                Margin="32,0,32,8"
                                 HorizontalOptions="Fill"
                                 IsEnabled="{Binding IsNotBusy}"
                                 Style="{StaticResource LocationCard}">

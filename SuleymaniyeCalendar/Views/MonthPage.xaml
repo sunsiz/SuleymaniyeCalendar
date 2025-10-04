@@ -10,7 +10,7 @@
              FlowDirection="{DynamicResource FlowDirection}">
 
 <ContentPage.Content>
-    <Grid RowDefinitions="*,Auto" Padding="4" RowSpacing="4">
+    <Grid RowDefinitions="*,Auto" Padding="{StaticResource SpacingXS}" RowSpacing="{StaticResource SpacingXS}">
 
         <!-- Main content area -->
         <Grid Grid.Row="0">

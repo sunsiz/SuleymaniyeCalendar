@@ -14,9 +14,9 @@
     <Grid>
     <ScrollView x:DataType="viewModels:PrayerDetailViewModel" VerticalScrollBarVisibility="Never">
         <VerticalStackLayout
-            Padding="16"
+            Padding="{StaticResource PagePaddingMobile}"
             x:DataType="viewModels:PrayerDetailViewModel"
-            Spacing="12">
+            Spacing="{StaticResource SpacingDefault}">
             
             <!--  Compact Prayer Title Card  -->
             <Border Style="{StaticResource iOS26Tile}">

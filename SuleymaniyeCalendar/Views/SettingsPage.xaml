@@ -22,30 +22,26 @@
             HorizontalOptions="Fill"
             Orientation="Vertical"
             VerticalOptions="Fill"
-            Padding="16,8">
-            <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
+            Padding="{StaticResource PagePaddingMobile}">
+            <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="{StaticResource SpacingDefault}">
 
                 <!--  Language Selection - Compact  -->
+                <!--  Language Selection - Simplified icon ✅  -->
                 <Border Style="{StaticResource SettingsCard}">
                     <Grid x:DataType="viewModels:SettingsViewModel" Padding="16,12" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <Border
+                        <!--  Simplified icon - direct Label with semantic color  -->
+                        <Label
                             Grid.Column="0"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource Primary10}, Dark={StaticResource Primary95}}"
-                            StrokeShape="RoundRectangle 16"
-                            WidthRequest="32"
-                            HeightRequest="32"
-                            VerticalOptions="Center">
-                            <Label
-                                FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="{DynamicResource IconSmallFontSize}"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                Text="&#xf0ac;"
-                                TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}" />
-                        </Border>
+                            FontFamily="{StaticResource IconFontFamily}"
+                            FontSize="22"
+                            Text="&#xf0ac;"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                            VerticalOptions="Center"
+                            WidthRequest="44"
+                            HorizontalTextAlignment="Center" />
 
                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
-                            <Label Style="{StaticResource TitleMediumStyle}" Text="{localization:Translate UygulamaDili}" />
+                            <Label Style="{StaticResource HeadlineMediumStyle}" Text="{localization:Translate UygulamaDili}" />
                             <Label 
                                 Style="{StaticResource BodySmallStyle}"
                                 Text="{Binding SelectedLanguage.Name}"
@@ -75,28 +71,24 @@
                     SelectedItem="{Binding SelectedLanguage}" />
 
                 <!--  Theme Selection - Compact  -->
+                <!--  Theme Selection - Simplified icon ✅  -->
                 <Border Style="{StaticResource SettingsCard}">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Padding="16,12" Spacing="16">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <Border
+                            <!--  Simplified icon - direct Label with semantic color  -->
+                            <Label
                                 Grid.Column="0"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource Secondary10}, Dark={StaticResource Secondary95}}"
-                                StrokeShape="RoundRectangle 16"
-                                WidthRequest="32"
-                                HeightRequest="32"
-                                VerticalOptions="Center">
-                                <Label
-                                    FontFamily="{StaticResource IconFontFamily}"
-                                    FontSize="{DynamicResource IconSmallFontSize}"
-                                    HorizontalOptions="Center"
-                                    VerticalOptions="Center"
-                                    Text="&#xf042;"
-                                    TextColor="{AppThemeBinding Light={StaticResource SecondaryColor}, Dark={StaticResource Secondary30}}" />
-                            </Border>
+                                FontFamily="{StaticResource IconFontFamily}"
+                                FontSize="22"
+                                Text="&#xf042;"
+                                TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                VerticalOptions="Center"
+                                WidthRequest="44"
+                                HorizontalTextAlignment="Center" />
                             
                             <Label 
                                 Grid.Column="1"
-                                Style="{StaticResource TitleMediumStyle}" 
+                                Style="{StaticResource HeadlineMediumStyle}" 
                                 Text="{localization:Translate UygulamaTema}"
                                 VerticalOptions="Center" />
                         </Grid>
@@ -195,25 +187,20 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  Font Size - Enhanced  -->
+                <!--  Font Size - Simplified icon ✅  -->
                 <Border Style="{StaticResource SettingsCard}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                            <Border
+                            <!--  Simplified icon  -->
+                            <Label
                                 Grid.Column="0"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource Tertiary10}, Dark={StaticResource Tertiary95}}"
-                                StrokeShape="RoundRectangle 16"
-                                WidthRequest="32"
-                                HeightRequest="32"
-                                VerticalOptions="Center">
-                                <Label
-                                    FontFamily="{StaticResource IconFontFamily}"
-                                    FontSize="16"
-                                    HorizontalOptions="Center"
-                                    VerticalOptions="Center"
-                                    Text="&#xf031;"
-                                    TextColor="{AppThemeBinding Light={StaticResource Tertiary60}, Dark={StaticResource Tertiary30}}" />
-                            </Border>
+                                FontFamily="{StaticResource IconFontFamily}"
+                                FontSize="22"
+                                Text="&#xf031;"
+                                TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                VerticalOptions="Center"
+                                WidthRequest="44"
+                                HorizontalTextAlignment="Center" />
                             
                             <Label 
                                 Grid.Column="1"
@@ -249,24 +236,19 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  Location Settings - Enhanced  -->
+                <!--  Location Settings - Simplified icon ✅  -->
                 <Border Style="{StaticResource SettingsCard}" Padding="16,12">
                     <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <Border
+                        <!--  Simplified icon  -->
+                        <Label
                             Grid.Column="0"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource Warning10}, Dark={StaticResource Warning95}}"
-                            StrokeShape="RoundRectangle 16"
-                            WidthRequest="32"
-                            HeightRequest="32"
-                            VerticalOptions="Center">
-                            <Label
-                                FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="16"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                Text="&#xf3c5;"
-                                TextColor="{AppThemeBinding Light={StaticResource Warning70}, Dark={StaticResource Warning30}}" />
-                        </Border>
+                            FontFamily="{StaticResource IconFontFamily}"
+                            FontSize="22"
+                            Text="&#xf3c5;"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                            VerticalOptions="Center"
+                            WidthRequest="44"
+                            HorizontalTextAlignment="Center" />
 
                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                             <Label
@@ -287,24 +269,19 @@
                     </Grid>
                 </Border>
 
-                <!--  Android Notifications - Enhanced  -->
+                <!--  Android Notifications - Simplified icon ✅  -->
                 <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource SettingsCard}" Padding="16,12">
                     <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <Border
+                        <!--  Simplified icon  -->
+                        <Label
                             Grid.Column="0"
-                            BackgroundColor="{AppThemeBinding Light={StaticResource Error10}, Dark={StaticResource Error95}}"
-                            StrokeShape="RoundRectangle 16"
-                            WidthRequest="32"
-                            HeightRequest="32"
-                            VerticalOptions="Center">
-                            <Label
-                                FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="16"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                Text="&#xf0f3;"
-                                TextColor="{AppThemeBinding Light={StaticResource Error60}, Dark={StaticResource Error30}}" />
-                        </Border>
+                            FontFamily="{StaticResource IconFontFamily}"
+                            FontSize="22"
+                            Text="&#xf0f3;"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                            VerticalOptions="Center"
+                            WidthRequest="44"
+                            HorizontalTextAlignment="Center" />
 
                         <Label Grid.Column="1" Style="{StaticResource HeadlineMediumStyle}" Text="{localization:Translate BildirimNamazVakitleri}" VerticalOptions="Center" />
                         
@@ -317,25 +294,20 @@
                     </Grid>
                 </Border>
 
-                <!--  Android Foreground Service - Enhanced  -->
+                <!--  Android Foreground Service - Simplified icon ✅  -->
                 <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource SettingsCard}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                            <Border
+                            <!--  Simplified icon  -->
+                            <Label
                                 Grid.Column="0"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource Success10}, Dark={StaticResource Success95}}"
-                                StrokeShape="RoundRectangle 16"
-                                WidthRequest="32"
-                                HeightRequest="32"
-                                VerticalOptions="Center">
-                                <Label
-                                    FontFamily="{StaticResource IconFontFamily}"
-                                    FontSize="16"
-                                    HorizontalOptions="Center"
-                                    VerticalOptions="Center"
-                                    Text="&#xf1e6;"
-                                    TextColor="{AppThemeBinding Light={StaticResource Success60}, Dark={StaticResource Success30}}" />
-                            </Border>
+                                FontFamily="{StaticResource IconFontFamily}"
+                                FontSize="22"
+                                Text="&#xf1e6;"
+                                TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                VerticalOptions="Center"
+                                WidthRequest="44"
+                                HorizontalTextAlignment="Center" />
 
                             <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                 <Label

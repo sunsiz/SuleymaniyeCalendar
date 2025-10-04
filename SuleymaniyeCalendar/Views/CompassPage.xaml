@@ -45,10 +45,10 @@
         <Grid>
             <ScrollView>
                 <VerticalStackLayout
-                    Padding="16,12"
+                    Padding="{StaticResource PagePaddingMobile}"
                     BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
                                                       Dark={StaticResource AppBackgroundColorDark}}"
-                    Spacing="8">
+                    Spacing="{StaticResource SpacingTight}">
 
                     <!--  Compass Section  -->
                     <Border Style="{StaticResource FrostGlassCardFrozen}">

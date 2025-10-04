@@ -45,10 +45,10 @@
                 Grid.Row="1"
                 Margin="0,-25,0,-15">
                 <Grid
-                    Padding="15,0,15,20"
+                    Padding="{StaticResource CardPaddingDefault}"
                     ColumnDefinitions="*, Auto, *"
                     RowDefinitions="Auto"
-                    ColumnSpacing="20"
+                    ColumnSpacing="{StaticResource SpacingLG}"
                     VerticalOptions="Center">
                     <StackLayout
                         Grid.Row="0"

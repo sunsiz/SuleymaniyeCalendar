@@ -27,6 +27,41 @@
     <x:Double x:Key="TitleFontSize">28</x:Double>
     <x:Double x:Key="DisplaySmallFontSize">32</x:Double>
     <x:Double x:Key="DisplayFontSize">36</x:Double>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+    <!-- TYPOGRAPHY USAGE GUIDELINES (Mobile-First) -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+    <!--
+    DISPLAY STYLES (36-32pt):
+    - DisplayLargeStyle (36pt): App launch screen, hero sections
+    - DisplayMediumStyle (32pt): Major page headers (rarely used on mobile)
+
+    TITLE STYLES (28-20pt):
+    - TitleLargeStyle (28pt): Main page titles, dialog headers
+    - TitleMediumStyle (24pt): Section headers (use sparingly on mobile)
+    - TitleSmallStyle (20pt): Card titles (major cards only)
+
+    HEADLINE STYLES (22-18pt):
+    - HeadlineLargeStyle (22pt): Page section headers
+    - HeadlineMediumStyle (18pt): Settings row labels, list headers ← RECOMMENDED FOR SETTINGS
+    - HeadlineSmallStyle (18pt): Sub-section headers
+
+    BODY STYLES (15-13pt):
+    - BodyLargeStyle (15pt): Primary content text, important information
+    - BodyMediumStyle (14pt): Standard UI text ← DEFAULT FOR MOST TEXT
+    - BodySmallStyle (13pt): Supporting text, descriptions, metadata
+
+    LABEL STYLES (14-12pt):
+    - LabelLargeStyle (14pt): Button text, emphasized labels
+    - LabelMediumStyle (12pt): Captions, small labels
+
+    MOBILE BEST PRACTICES:
+    - Use HeadlineMediumStyle (18pt) for Settings page labels (not TitleMediumStyle 24pt)
+    - Use BodySmallStyle (13pt) for supporting text under settings
+    - Avoid TitleLargeStyle on small screens (too large for mobile)
+    - Ensure minimum 12pt for readability
+    -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
     
     <!--  Icon sizes that scale with typography  -->
     <x:Double x:Key="IconSmallSize">16</x:Double>
@@ -56,6 +91,32 @@
     <x:Double x:Key="RadiusLG">16</x:Double>
     <x:Double x:Key="RadiusXL">24</x:Double>
     <x:Double x:Key="RadiusRound">999</x:Double>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+    <!-- 8PX GRID SYSTEM - Mobile-first consistent spacing (all multiples of 8) -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+    <!--  Card Padding Constants - Internal spacing for cards  -->
+    <Thickness x:Key="CardPaddingTight">12,8</Thickness>        <!-- Compact elements, list items -->
+    <Thickness x:Key="CardPaddingDefault">16,12</Thickness>     <!-- Standard cards, settings -->
+    <Thickness x:Key="CardPaddingComfy">20,16</Thickness>       <!-- Hero cards, emphasis -->
+    <Thickness x:Key="CardPaddingSpacious">24,20</Thickness>    <!-- Large feature cards -->
+
+    <!--  Card Margin Constants - Separation between cards  -->
+    <Thickness x:Key="CardMarginList">8,4</Thickness>           <!-- List items (tight vertical) -->
+    <Thickness x:Key="CardMarginCompact">8,6</Thickness>        <!-- Compact layouts -->
+    <Thickness x:Key="CardMarginDefault">12,8</Thickness>       <!-- Standard separation -->
+    <Thickness x:Key="CardMarginSpacer">16,12</Thickness>       <!-- Section separators -->
+
+    <!--  Page Padding Constants - Edge spacing for mobile screens  -->
+    <Thickness x:Key="PagePaddingMobile">16,8</Thickness>       <!-- Standard mobile padding -->
+    <Thickness x:Key="PagePaddingWide">24,12</Thickness>        <!-- Larger phones, tablets -->
+
+    <!--  Element Spacing - For StackLayout/Grid spacing properties  -->
+    <x:Double x:Key="SpacingTight">8</x:Double>                 <!-- Tight grouping -->
+    <x:Double x:Key="SpacingDefault">12</x:Double>              <!-- Standard spacing -->
+    <x:Double x:Key="SpacingComfortable">16</x:Double>          <!-- Comfortable breathing room -->
+    <x:Double x:Key="SpacingLoose">24</x:Double>                <!-- Section separators -->
 
     <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
     <!-- IMPLICIT CONTROL STYLES - Base styles for all controls -->
@@ -193,15 +254,15 @@
         </Setter>
     </Style>
 
-    <!--  Prayer Time Card - Glassy with state tints and subtle stroke  -->
+    <!--  Prayer Time Card - Mobile accessible with 8px grid spacing ✅  -->
     <!--  Placed AFTER GlassCard definition to avoid forward StaticResource lookups  -->
     <Style x:Key="PrayerCard" TargetType="Border" BasedOn="{StaticResource GlassCard}">
-        <!-- Reduced internal padding & margin to fit full list on smaller heights -->
-        <Setter Property="Padding" Value="8,4" />
-        <Setter Property="Margin" Value="4,2" />
+        <!-- 8px grid system for consistency -->
+        <Setter Property="Padding" Value="{StaticResource CardPaddingTight}" />       <!-- Was "10,6" → now "12,8" -->
+        <Setter Property="Margin" Value="{StaticResource CardMarginList}" />          <!-- Was "4,2" → now "8,4" -->
         <Setter Property="StrokeShape" Value="RoundRectangle 14" />
-        <!-- Lower minimum height to compress vertical footprint while preserving readability -->
-        <Setter Property="MinimumHeightRequest" Value="54" />
+        <!-- Increased to 60px minimum for accessibility (WCAG AA) -->
+        <Setter Property="MinimumHeightRequest" Value="60" />
         <Setter Property="StrokeThickness" Value="0.8" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource iOSGlassStrokeLight}, Dark={StaticResource iOSGlassStrokeDark}}" />
         <Setter Property="Shadow">
@@ -222,15 +283,15 @@
                     </VisualState>
                     <VisualState x:Name="Current">
                         <VisualState.Setters>
-                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassPrayerActiveLight}, Dark={StaticResource GlassPrayerActiveDark}}" />
-                            <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
-                            <Setter Property="StrokeThickness" Value="1" />
+                            <!-- 🎨 Phase 5.2.1: STRONGER green background for current prayer -->
+                            <!-- MORE VIBRANT - impossible to miss! -->
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#C8F3D0, Dark=#F02D4A2D}" />
+                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassSoftLight}, Dark={StaticResource GlassSoftDark}}" />
+                            <Setter Property="Stroke" Value="{AppThemeBinding Light=#FF6EE895, Dark=#FF4CAF50}" />
+                            <Setter Property="StrokeThickness" Value="2.5" />
+                            <!-- Enhanced shadow with green glow -->
                             <Setter Property="Shadow">
-                                <Shadow
-                                    Brush="{AppThemeBinding Light={StaticResource Success40}, Dark={StaticResource Success30}}"
-                                    Opacity="0.28"
-                                    Radius="2"
-                                    Offset="2,4" />
+                                <Shadow Brush="{AppThemeBinding Light=#50388E3C, Dark=#504CAF50}" Radius="6" Offset="0,3" />
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>
@@ -246,18 +307,90 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <Setter Property="Opacity" Value="0.95" />
+                            <!-- 🎯 Phase 6: Enhanced mobile press feedback -->
+                            <!-- Stronger visual response for premium tactile feel -->
+                            <Setter Property="Opacity" Value="0.82" />               <!-- Was 0.88 → stronger -->
+                            <Setter Property="Scale" Value="0.96" />                 <!-- Was 0.97 → more pronounced -->
+                            <Setter Property="TranslationY" Value="2" />             <!-- NEW: Push-down effect -->
                         </VisualState.Setters>
                     </VisualState>
-                    <VisualState x:Name="PointerOver">
+                    <!-- Focused state for keyboard/assistive navigation ✅ -->
+                    <VisualState x:Name="Focused">
                         <VisualState.Setters>
+                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}" />
+                            <Setter Property="StrokeThickness" Value="3" />
                             <Setter Property="Shadow">
                                 <Shadow
-                                    Brush="#25000000"
-                                    Opacity="0.22"
-                                    Radius="38"
-                                    Offset="0,12" />
+                                    Brush="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                    Opacity="0.5"
+                                    Radius="24"
+                                    Offset="0,0" />
                             </Setter>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!--  🚀 PERFORMANCE-OPTIMIZED CARDS (Phase 5)                                   -->
+    <!--  Solid colors instead of gradients for high-frequency rendering contexts    -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+
+    <!--  GlassCardOptimized - Solid color version for list performance  -->
+    <Style x:Key="GlassCardOptimized" TargetType="Border" BasedOn="{StaticResource Card}">
+        <!-- Use solid SurfaceVariantColor instead of gradient brush -->
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceVariantColorDark}}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
+        <Setter Property="StrokeThickness" Value="0.75" />
+        <!-- Reduced shadow complexity -->
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow
+                    Brush="#1A000000"
+                    Radius="8"
+                    Offset="0,2" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  PrayerCardOptimized - High-performance version for MainPage list  -->
+    <!--  Prayer state colors (Past/Current/Future) are defined via DataTriggers in MainPage.xaml  -->
+    <!--  This avoids duplication and uses automatic data binding instead of manual VisualStateManager calls  -->
+    <Style x:Key="PrayerCardOptimized" TargetType="Border" BasedOn="{StaticResource GlassCardOptimized}">
+        <!-- 8px grid system -->
+        <Setter Property="Padding" Value="{StaticResource CardPaddingTight}" />
+        <Setter Property="Margin" Value="{StaticResource CardMarginList}" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+        <Setter Property="MinimumHeightRequest" Value="60" />
+        <Setter Property="StrokeThickness" Value="1.2" />
+        <!-- Simpler shadow -->
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow Brush="#1A000000" Radius="2" Offset="0,2" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <!--  Prayer state colors removed - handled by MainPage.xaml DataTriggers  -->
+                <!--  This eliminates duplicate definitions and uses automatic data binding  -->
+                <VisualStateGroup x:Name="InteractionStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Pressed">
+                        <VisualState.Setters>
+                            <!-- 🎯 Phase 6: Enhanced mobile press feedback -->
+                            <Setter Property="Opacity" Value="0.82" />               <!-- Stronger feedback -->
+                            <Setter Property="Scale" Value="0.96" />                 <!-- More pronounced scale -->
+                            <Setter Property="TranslationY" Value="2" />             <!-- Push-down effect -->
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Focused">
+                        <VisualState.Setters>
+                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}" />
+                            <Setter Property="StrokeThickness" Value="3" />
+                            <!-- No glow shadow for performance -->
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -625,7 +758,7 @@
         <Setter Property="Margin" Value="0,0,0,6" />
     </Style>
 
-    <!--  Section Header Typography - Ultra-high contrast for main app title  -->
+    <!--  Section Header Typography - Theme-aware shadow (dark mode only) ✅  -->
     <Style x:Key="LabelSectionHeader" TargetType="Label" BasedOn="{StaticResource Label}">
         <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
@@ -635,8 +768,8 @@
         <Setter Property="Shadow">
             <Setter.Value>
                 <Shadow
-                    Brush="#80000000"
-                    Opacity="0.6"
+                    Brush="{AppThemeBinding Light=Transparent, Dark=#80000000}"
+                    Opacity="{AppThemeBinding Light=0, Dark=0.6}"
                     Radius="3"
                     Offset="1,1" />
             </Setter.Value>
@@ -1226,11 +1359,13 @@
             </Setter>
         </Style>
 
+    <!--  Settings Card - Mobile-optimized with 8px grid spacing ✅  -->
     <Style x:Key="SettingsCard" TargetType="Border" BasedOn="{StaticResource GlassCard}">
         <!-- Let the inherited glass brush show through -->
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassDuotoneLight}, Dark={StaticResource GlassDuotoneDark}}" />
-        <Setter Property="Padding" Value="6,4" />
-        <Setter Property="Margin" Value="10,2" />
+        <Setter Property="Padding" Value="{StaticResource CardPaddingDefault}" />      <!-- Was "6,4" → now "16,12" -->
+        <Setter Property="Margin" Value="{StaticResource CardMarginDefault}" />        <!-- Was "10,2" → now "12,8" -->
+        <Setter Property="MinimumHeightRequest" Value="60" />                          <!-- Accessibility: 60px touch target -->
         <Setter Property="StrokeThickness" Value="0.5" />
         <Setter Property="Stroke" Value="Transparent" />
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -1249,25 +1384,34 @@
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>
-                    <VisualState x:Name="PointerOver">
+                    <!-- Enhanced mobile press feedback (removed hover for mobile-only) -->
+                    <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <!-- Slightly stronger outline on hover -->
-                            <Setter Property="Stroke" Value="Transparent" />
-                            <Setter Property="StrokeThickness" Value="0" />
+                            <!-- 🎯 Phase 6: Enhanced press feedback with translation -->
+                            <Setter Property="Opacity" Value="0.80" />               <!-- Was 0.85 → stronger -->
+                            <Setter Property="Scale" Value="0.96" />                 <!-- Was 0.97 → more pronounced -->
+                            <Setter Property="TranslationY" Value="3" />             <!-- NEW: Deeper push-down -->
                             <Setter Property="Shadow">
                                 <Shadow
-                                    Brush="#20000000"
-                                    Opacity="0.15"
-                                    Radius="24"
-                                    Offset="0,6" />
+                                    Brush="#15000000"
+                                    Opacity="0.08"
+                                    Radius="12"
+                                    Offset="0,3" />
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>
-                    <VisualState x:Name="Pressed">
+                    <!-- Focused state for keyboard/assistive navigation ✅ -->
+                    <VisualState x:Name="Focused">
                         <VisualState.Setters>
-                            <Setter Property="Scale" Value="0.98" />
-                            <Setter Property="Opacity" Value="0.95" />
-                            <Setter Property="BackgroundColor" Value="Transparent" />
+                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}" />
+                            <Setter Property="StrokeThickness" Value="3" />
+                            <Setter Property="Shadow">
+                                <Shadow
+                                    Brush="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                    Opacity="0.5"
+                                    Radius="24"
+                                    Offset="0,0" />
+                            </Setter>
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -1275,9 +1419,9 @@
         </Setter>
     </Style>
 
-    <!--  City/Location Card - Tinted glass chip for readability and consistency  -->
+    <!--  City/Location Card - Mobile-optimized with 8px grid ✅  -->
     <Style x:Key="LocationCard" TargetType="Border" BasedOn="{StaticResource GlassCardSecondaryTint}">
-        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Padding" Value="{StaticResource CardPaddingTight}" />       <!-- Was "12,8" ✅ already aligned -->
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="StrokeShape" Value="RoundRectangle 20" />
         <Setter Property="StrokeThickness" Value="0.75" />
@@ -1460,15 +1604,15 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <Setter Property="Scale" Value="0.95" />
-                            <Setter Property="Opacity" Value="0.9" />
+                            <!-- 🎯 Phase 6: Enhanced button press feedback -->
+                            <Setter Property="Scale" Value="0.94" />                <!-- Was 0.95 → stronger -->
+                            <Setter Property="Opacity" Value="0.85" />              <!-- Was 0.9 → more pronounced -->
+                            <Setter Property="TranslationY" Value="2" />            <!-- NEW: Push-down effect -->
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="Shadow">
-                                <Shadow Opacity="0.32" Radius="24" Offset="0,8" />
-                            </Setter>
+                            <!-- Removed for mobile-only (no hover on touch devices) -->
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>

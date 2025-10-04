@@ -172,8 +172,8 @@
     <SolidColorBrush x:Key="ShadowOverlayBrush" Color="#20000000" />
     <SolidColorBrush x:Key="StrongShadowOverlayBrush" Color="#33000000" />
 
-    <!--  Subtle outline for glass cards (theme-aware, semi-transparent using alpha)  -->
-    <SolidColorBrush x:Key="GlassStrokeBrush" Color="{AppThemeBinding Light=#48EBE7EC, Dark=#4079757F}" />
+    <!--  Enhanced glass card outlines (40% opacity for better visibility) ✅  -->
+    <SolidColorBrush x:Key="GlassStrokeBrush" Color="{AppThemeBinding Light=#65EBE7EC, Dark=#5579757F}" />
 
     <!--  MD3 container overlays with translucency for glass effect  -->
     <SolidColorBrush x:Key="GlassContainerBrush" Color="#E6FFFFFF" />

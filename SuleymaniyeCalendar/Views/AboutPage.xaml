@@ -28,8 +28,8 @@
             Orientation="Vertical"
             VerticalOptions="Fill">
             <VerticalStackLayout
-                Padding="10"
-                Spacing="8">
+                Padding="{StaticResource CardPaddingTight}"
+                Spacing="{StaticResource SpacingTight}">
 
                 <!--  Hero Section with App Description (with subtle halo)  -->
                 <Grid>
@@ -175,10 +175,63 @@
                         Text="{localization:Translate UygulamaAyarlari}" />
                 </Border>
 
+                <!--  Design Showcase Toggle Button  -->
+                <Border Style="{StaticResource GlassCardSoft}" Padding="16,12">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="🎨 Design System Showcase" 
+                               Style="{StaticResource LabelLargeStyle}" 
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="Explore the complete glassmorphism design system with interactive examples"
+                               Style="{StaticResource CaptionStyle}" 
+                               HorizontalTextAlignment="Center"
+                               Opacity="0.8" />
+                        <Button 
+                            Style="{StaticResource GlassButtonPillSecondary}"
+                            Command="{Binding ToggleShowcaseCommand}"
+                            HorizontalOptions="Fill"
+                            Margin="0,8,0,0">
+                            <Button.Triggers>
+                                <DataTrigger TargetType="Button" Binding="{Binding ShowDesignShowcase}" Value="False">
+                                    <Setter Property="Text" Value="👁️ Show Design Showcase" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Button" Binding="{Binding ShowDesignShowcase}" Value="True">
+                                    <Setter Property="Text" Value="🔒 Hide Design Showcase" />
+                                </DataTrigger>
+                            </Button.Triggers>
+                        </Button>
+                    </VerticalStackLayout>
+                </Border>
 
+                <!--  ALL SHOWCASE SECTIONS - Hidden by default for performance  -->
+                <VerticalStackLayout IsVisible="{Binding ShowDesignShowcase}" Spacing="24">
 
+                <!--  SHOWCASE INTRODUCTION  -->
+                <Border Style="{StaticResource GlassCardPrimaryTint}" Padding="20,16">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="📐 Design System Documentation" 
+                               Style="{StaticResource HeadlineMediumStyle}" 
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="This showcase demonstrates the complete Material Design 3 implementation with premium glassmorphism effects used throughout the app."
+                               Style="{StaticResource BodySmallStyle}" 
+                               HorizontalTextAlignment="Center"
+                               Opacity="0.9" />
+                        <BoxView HeightRequest="1" 
+                                 Color="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}"
+                                 Opacity="0.3"
+                                 Margin="0,8,0,0" />
+                        <Label Text="Use these patterns for consistent user experience across all features"
+                               Style="{StaticResource CaptionStyle}" 
+                               HorizontalTextAlignment="Center"
+                               FontAttributes="Italic"
+                               Opacity="0.7" />
+                    </VerticalStackLayout>
+                </Border>
 
                 <!--  iOS Glass Aesthetic Showcase  -->
+                <Label Text="🍎 iOS 26 Glass System" 
+                       Style="{StaticResource TitleLargeStyle}" 
+                       HorizontalTextAlignment="Start"
+                       Margin="4,8,0,0" />
                 <Border Style="{StaticResource iOSGlassCard}">
                     <VerticalStackLayout Spacing="12">
                         <Label Text="iOS 26 Style Glass" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
@@ -274,6 +327,10 @@
                 </Border>
 
                 <!--  Glass Effects Showcase  -->
+                <Label Text="💎 Glass Effects Library" 
+                       Style="{StaticResource TitleLargeStyle}" 
+                       HorizontalTextAlignment="Start"
+                       Margin="4,8,0,0" />
                 <Border Style="{StaticResource GlassCard}">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="Glass Effects Showcase" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
@@ -319,6 +376,10 @@
                 </Border>
 
                 <!--  Advanced Glass Design Lab -->
+                <Label Text="🧪 Advanced Glass Design Lab" 
+                       Style="{StaticResource TitleLargeStyle}" 
+                       HorizontalTextAlignment="Start"
+                       Margin="4,8,0,0" />
                 <Border Style="{StaticResource GlassDemoDuotone}">
                     <VerticalStackLayout Spacing="12">
                         <Label Text="Advanced Glass Design Lab" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
@@ -459,6 +520,10 @@
                 </Border>
 
                 <!--  Glass Morphism Style Showcase (New)  -->
+                <Label Text="✨ Glass Morphism Patterns" 
+                       Style="{StaticResource TitleLargeStyle}" 
+                       HorizontalTextAlignment="Start"
+                       Margin="4,8,0,0" />
                 <Border Style="{StaticResource GlassCardStrong}">
                     <VerticalStackLayout Spacing="14">
                         <Label Text="Glass Morphism Showcase" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
@@ -529,6 +594,10 @@
                 </Border>
 
                 <!--  Frosted Glass Transparency Scale Showcase (New) -->
+                <Label Text="🌡️ Frosted Transparency Scale" 
+                       Style="{StaticResource TitleLargeStyle}" 
+                       HorizontalTextAlignment="Start"
+                       Margin="4,8,0,0" />
                 <Border Style="{StaticResource FrostShowcaseContainer}">
                     <VerticalStackLayout Spacing="14">
                         <Label Text="Frosted Transparency Scale" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
@@ -606,6 +675,10 @@
                 </Border>
 
                 <!-- Interactive Theme & Elevation Preview -->
+                <Label Text="🎛️ Interactive Preview Lab" 
+                       Style="{StaticResource TitleLargeStyle}" 
+                       HorizontalTextAlignment="Start"
+                       Margin="4,8,0,0" />
                 <Border Style="{StaticResource GlassCardSoft}">
                     <VerticalStackLayout Spacing="12">
                         <Label Text="Interactive Preview" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
@@ -633,6 +706,10 @@
                 </Border>
 
                 <!--  Neo Glass & Floating Icon Buttons Showcase (New) -->
+                <Label Text="🎨 Neo Glass Premium Panel" 
+                       Style="{StaticResource TitleLargeStyle}" 
+                       HorizontalTextAlignment="Start"
+                       Margin="4,8,0,0" />
                 <Border Style="{StaticResource NeoGlassCard}">
                     <VerticalStackLayout Spacing="16">
                         <Label Text="Neo Glass Panel" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
@@ -683,6 +760,31 @@
                         </Grid>
                     </VerticalStackLayout>
                 </Border>
+
+                <!--  SHOWCASE CONCLUSION  -->
+                <Border Style="{StaticResource GlassCardAccentGradient}" Padding="20,16">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="🏆 Premium Design Excellence" 
+                               Style="{StaticResource HeadlineMediumStyle}" 
+                               HorizontalTextAlignment="Center" />
+                        <Label Text="You've explored 85+ hand-crafted gradient brushes and Material Design 3 components that power this app's premium experience."
+                               Style="{StaticResource BodySmallStyle}" 
+                               HorizontalTextAlignment="Center"
+                               Opacity="0.9" />
+                        <BoxView HeightRequest="1" 
+                                 Color="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}"
+                                 Opacity="0.3"
+                                 Margin="0,8,0,0" />
+                        <Label Text="Every card, button, and animation is optimized for 60fps performance while maintaining stunning visual quality."
+                               Style="{StaticResource CaptionStyle}" 
+                               HorizontalTextAlignment="Center"
+                               FontAttributes="Italic"
+                               Opacity="0.7" />
+                    </VerticalStackLayout>
+                </Border>
+
+                </VerticalStackLayout>
+                <!--  END OF SHOWCASE SECTIONS  -->
 
             </VerticalStackLayout>
         </ScrollView>
