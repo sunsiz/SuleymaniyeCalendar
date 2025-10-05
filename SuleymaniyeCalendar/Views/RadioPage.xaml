@@ -61,12 +61,12 @@
                                         FontFamily="{StaticResource IconFontFamily}"
                                         FontSize="{DynamicResource IconLargeFontSize}"
                                         Text="&#xf0ae; "
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
-                                                                    Dark={StaticResource Primary20}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                                                    Dark={StaticResource GoldMedium}}" />
                                     <Span 
                                         Text="{localization:Translate YayinAkisi}" 
                                         FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource Primary20}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
@@ -133,12 +133,12 @@
                                         FontFamily="{StaticResource IconFontFamily}"
                                         FontSize="{DynamicResource IconLargeFontSize}"
                                         Text="&#xf0ac; "
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
-                                                                    Dark={StaticResource Primary20}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                                                    Dark={StaticResource GoldMedium}}" />
                                     <Span 
                                         Text="{localization:Translate WebSayfa}" 
                                         FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource Primary20}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>

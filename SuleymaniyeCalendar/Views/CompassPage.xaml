@@ -51,12 +51,13 @@
                                                       Dark={StaticResource AppBackgroundColorDark}}"
                     Spacing="{StaticResource SpacingTight}">
 
-                    <!--  Compass Section  -->
+                    <!--  Compass Section - Golden Hour ✨  -->
                     <Border Style="{StaticResource FrostGlassCardFrozen}">
                         <VerticalStackLayout Spacing="16">
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
+                                TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}"
                                 Text="{localization:Translate KibleGostergesi}" />
 
                             <Grid HeightRequest="260" HorizontalOptions="Center">
@@ -78,12 +79,13 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!--  Location Information  -->
+                    <!--  Location Information - Golden Hour ✨  -->
                     <Border Style="{StaticResource FrostGlassCardCrystal}">
                         <VerticalStackLayout Spacing="16">
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
+                                TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}"
                                 Text="{localization:Translate KonumBilgileri}" />
 
                             <!--  Coordinates Grid  -->
@@ -92,7 +94,7 @@
                                 ColumnSpacing="10"
                                 RowDefinitions="Auto,Auto,Auto"
                                 RowSpacing="16">
-                                <!--  Latitude  -->
+                                <!--  Latitude - Golden ✨  -->
                                 <VerticalStackLayout
                                     Grid.Row="0"
                                     Grid.Column="0"
@@ -102,8 +104,8 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate EnlemFormatsiz}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                                                    Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -112,7 +114,7 @@
                                                                     Dark={StaticResource OnSurfaceColorDark}}" />
                                 </VerticalStackLayout>
 
-                                <!--  Longitude  -->
+                                <!--  Longitude - Golden ✨  -->
                                 <VerticalStackLayout
                                     Grid.Row="0"
                                     Grid.Column="1"
@@ -122,8 +124,8 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate BoylamFormatsiz}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                                                    Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -132,7 +134,7 @@
                                                                     Dark={StaticResource OnSurfaceColorDark}}" />
                                 </VerticalStackLayout>
 
-                                <!--  Altitude  -->
+                                <!--  Altitude - Golden ✨  -->
                                 <VerticalStackLayout
                                     Grid.Row="1"
                                     Grid.Column="0"
@@ -142,8 +144,8 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate YukseklikFormatsiz}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                                                    Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -152,7 +154,7 @@
                                                                     Dark={StaticResource OnSurfaceColorDark}}" />
                                 </VerticalStackLayout>
 
-                                <!--  Heading  -->
+                                <!--  Heading - Golden ✨  -->
                                 <VerticalStackLayout
                                     Grid.Row="1"
                                     Grid.Column="1"
@@ -162,8 +164,8 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate Aci}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                                                    Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -172,7 +174,7 @@
                                                                     Dark={StaticResource OnSurfaceColorDark}}" />
                                 </VerticalStackLayout>
 
-                                <!--  Address - spans both columns  -->
+                                <!--  Address - Golden ✨ spans both columns  -->
                                 <VerticalStackLayout
                                     Grid.Row="2"
                                     Grid.Column="0"
@@ -183,8 +185,8 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource TitleMediumStyle}"
                                         Text="{localization:Translate Adres}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                                                    Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"

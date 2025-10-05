@@ -39,7 +39,7 @@
                         <Label Style="{StaticResource HeadlineLargeStyle}"
                                Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}" />
                         
                         <Label TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
                                Style="{StaticResource BodyLargeStyle}"
