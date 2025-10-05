@@ -140,7 +140,16 @@
                                             TargetType="Border"
                                             Value="True">
                                             <Setter Property="Background" Value="{StaticResource PastPrayerBrush}" />
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary60}}" />
+                                            <Setter Property="Stroke">
+                                                <Setter.Value>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                        <GradientStop Offset="0" Color="#40A8896F" />
+                                                        <GradientStop Offset="0.5" Color="#60C8A05F" />
+                                                        <GradientStop Offset="1" Color="#40A8896F" />
+                                                    </LinearGradientBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="StrokeThickness" Value="1.2" />
                                             <Setter Property="Opacity" Value="0.75" />
                                         </DataTrigger>
                                         <!-- � GOLDEN HOUR REDESIGN: Current prayer - Radiant golden gradient with glow -->
@@ -164,7 +173,16 @@
                                                 <BindingCondition Binding="{Binding IsPast}" Value="False" />
                                             </MultiTrigger.Conditions>
                                             <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}" />
+                                            <Setter Property="Stroke">
+                                                <Setter.Value>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                        <GradientStop Offset="0" Color="#50C8A05F" />
+                                                        <GradientStop Offset="0.5" Color="#80FFD700" />
+                                                        <GradientStop Offset="1" Color="#50C8A05F" />
+                                                    </LinearGradientBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="StrokeThickness" Value="1.4" />
                                             <Setter Property="Opacity" Value="0.9" />
                                         </MultiTrigger>
                                     </Border.Triggers>

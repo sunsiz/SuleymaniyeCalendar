@@ -1630,16 +1630,36 @@
         </Setter>
     </Style>
 
-    <!--  Glass Media Card - Translucent variant optimized for media / playback controls  -->
+    <!--  Glass Media Card - Golden luxury variant for media controls ✨  -->
     <Style x:Key="GlassMediaCard" TargetType="Border" BasedOn="{StaticResource GlassCardSoft}">
-        <!-- Slightly larger radius for pronounced floating feel -->
         <Setter Property="StrokeShape" Value="RoundRectangle 28" />
         <Setter Property="Padding" Value="20,18" />
         <Setter Property="Margin" Value="8,4" />
-        <!-- Stronger but soft shadow for separation over artwork backgrounds -->
+        <!-- Golden luxury background -->
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFEF8, Dark=#1A1814}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFF8E8, Dark=#22201C}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFCF0, Dark=#1C1A16}" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <!-- Golden border -->
+        <Setter Property="Stroke">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Offset="0" Color="#50D4AF37" />
+                    <GradientStop Offset="0.5" Color="#80FFD700" />
+                    <GradientStop Offset="1" Color="#50C8A05F" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="StrokeThickness" Value="1.5" />
+        <!-- Golden glow shadow -->
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.32" Radius="34" Offset="0,14" />
+                <Shadow Brush="#FFD700" Opacity="0.40" Radius="34" Offset="0,14" />
             </Setter.Value>
         </Setter>
     </Style>
