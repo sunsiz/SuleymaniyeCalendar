@@ -8,7 +8,7 @@
     x:DataType="viewModels:AboutViewModel"
     Title="{Binding Title}"
     FlowDirection="{DynamicResource FlowDirection}"
-    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor}, Dark={StaticResource AppBackgroundColorDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
 
     <Shell.TitleView>
         <StackLayout

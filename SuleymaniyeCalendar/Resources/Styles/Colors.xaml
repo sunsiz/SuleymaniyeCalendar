@@ -28,11 +28,11 @@
     <Color x:Key="Neutral99">#0F0F11</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  BRAND COLORS - Primary brown palette with teal accent  -->
+    <!--  BRAND COLORS - Golden Hour Palette (Redesign)  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Primary - Warm brown inspired by Islamic architecture  -->
-    <Color x:Key="Primary10">#FFEDE5</Color>
+    <!--  Primary - Golden copper gradient inspired by mosque domes at sunset  -->
+    <Color x:Key="Primary10">#FFF8F0</Color>
     <Color x:Key="Primary20">#F4CEB5</Color>
     <Color x:Key="Primary30">#E8B08A</Color>
     <Color x:Key="Primary40">#DC925E</Color>
@@ -44,10 +44,27 @@
     <Color x:Key="Primary95">#321607</Color>
     <Color x:Key="Primary99">#190A03</Color>
 
-    <!--  Secondary - Complementary teal  -->
+    <!--  Golden Hour - Special colors for current prayer hero card  -->
+    <Color x:Key="GoldHighlight">#FFFEF8</Color>
+    <Color x:Key="GoldLight">#FFF4E0</Color>
+    <Color x:Key="GoldBase">#FFE8B8</Color>
+    <Color x:Key="GoldMedium">#FFD18A</Color>
+    <Color x:Key="GoldDeep">#FFC870</Color>
+    <Color x:Key="GoldPure">#FFD700</Color>
+    <Color x:Key="GoldOrange">#FFA500</Color>
+
+    <!--  Prayer State Colors (Enhanced differentiation)  -->
+    <Color x:Key="CurrentPrayerStart">#FFD700</Color>
+    <Color x:Key="CurrentPrayerEnd">#FFA500</Color>
+    <Color x:Key="UpcomingPrayerStart">#FFE8B8</Color>
+    <Color x:Key="UpcomingPrayerEnd">#FFD18A</Color>
+    <Color x:Key="PastPrayerStart">#E8E4E0</Color>
+    <Color x:Key="PastPrayerEnd">#D0C8C0</Color>
+
+    <!--  Secondary - Teal accent for Qibla compass and special features  -->
     <Color x:Key="Secondary10">#E8F7F8</Color>
     <Color x:Key="Secondary20">#B8E6E9</Color>
-    <Color x:Key="Secondary30">#88D5DA</Color>
+    <Color x:Key="Secondary30">#4DB8C4</Color>
     <Color x:Key="Secondary40">#58C4CB</Color>
     <Color x:Key="Secondary50">#2E9FA8</Color>
     <Color x:Key="Secondary60">#218187</Color>
@@ -57,12 +74,12 @@
     <Color x:Key="Secondary95">#051013</Color>
     <Color x:Key="Secondary99">#020608</Color>
 
-    <!--  Tertiary - Accent green for success states  -->
+    <!--  Tertiary - Vibrant green for success states and notifications  -->
     <Color x:Key="Tertiary10">#E8F5E8</Color>
     <Color x:Key="Tertiary20">#C8E6C8</Color>
     <Color x:Key="Tertiary30">#A8D7A8</Color>
     <Color x:Key="Tertiary40">#88C888</Color>
-    <Color x:Key="Tertiary50">#5FA85F</Color>
+    <Color x:Key="Tertiary50">#2D8B57</Color>
     <Color x:Key="Tertiary60">#4F8B4F</Color>
     <Color x:Key="Tertiary70">#3F6E3F</Color>
     <Color x:Key="Tertiary80">#2F512F</Color>
@@ -74,12 +91,12 @@
     <!--  SEMANTIC COLORS - Status and feedback colors  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Error Colors  -->
+    <!--  Error Colors - Warmer, softer error states  -->
     <Color x:Key="Error10">#FFEDE9</Color>
     <Color x:Key="Error20">#FFD7D0</Color>
     <Color x:Key="Error30">#FFBAB1</Color>
     <Color x:Key="Error40">#FF9C8E</Color>
-    <Color x:Key="Error50">#F2554F</Color>
+    <Color x:Key="Error50">#E85D35</Color>
     <Color x:Key="Error60">#DC362E</Color>
     <Color x:Key="Error70">#B91E1E</Color>
     <Color x:Key="Error80">#990F0F</Color>

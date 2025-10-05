@@ -7,7 +7,8 @@
              xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
              Title="{Binding Title}" 
              x:DataType="viewModels:MonthViewModel"
-             FlowDirection="{DynamicResource FlowDirection}">
+             FlowDirection="{DynamicResource FlowDirection}"
+             Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
 
 <ContentPage.Content>
     <Grid RowDefinitions="*,Auto" Padding="{StaticResource SpacingXS}" RowSpacing="{StaticResource SpacingXS}">

@@ -11,7 +11,7 @@
     Title="{Binding Title}"
     x:DataType="viewModels:MainViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor}, Dark={StaticResource AppBackgroundColorDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
 
     <Shell.TitleView>
         <Grid Margin="10" x:DataType="viewModels:MainViewModel" HeightRequest="40"
@@ -81,29 +81,44 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.Header>
                         <StackLayout x:DataType="viewModels:MainViewModel">
-                            <!--  Remaining Time Card - Simplified icon ✅  -->
+                            <!-- 🌟 GOLDEN HOUR: Remaining Time Card with warm gradient -->
                             <Border
-                                Margin="{StaticResource CardMarginList}"
-                                Padding="{StaticResource CardPaddingTight}"
-                                Style="{StaticResource iOSGlassCard}"
+                                Margin="12,8"
+                                Padding="18,14"
+                                Background="{StaticResource UpcomingPrayerBrush}"
+                                Stroke="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                StrokeThickness="2"
+                                StrokeShape="RoundRectangle 20"
+                                Opacity="0.95"
                                 HorizontalOptions="Fill">
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{StaticResource SpacingTight}">
-                                    <!--  Simplified clock icon  -->
-                                    <Label
+                                <Border.Shadow>
+                                    <Shadow Brush="{StaticResource GoldOrange}" Radius="16" Offset="0,4" Opacity="0.25" />
+                                </Border.Shadow>
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                                    <!-- Golden clock icon -->
+                                    <Border
                                         Grid.Column="0"
-                                        FontFamily="{StaticResource IconFontFamily}"
-                                        FontSize="22"
-                                        Text="&#xf017;"
-                                        TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
-                                        VerticalOptions="Center"
                                         WidthRequest="44"
-                                        HorizontalTextAlignment="Center" />
+                                        HeightRequest="44"
+                                        Background="{AppThemeBinding Light={StaticResource SurfaceContainerLowestLight}, Dark={StaticResource SurfaceContainerDark}}"
+                                        StrokeShape="RoundRectangle 22"
+                                        VerticalOptions="Center">
+                                        <Label
+                                            FontFamily="{StaticResource IconFontFamily}"
+                                            FontSize="24"
+                                            Text="&#xf017;"
+                                            TextColor="{StaticResource GoldPure}"
+                                            VerticalOptions="Center"
+                                            HorizontalTextAlignment="Center" />
+                                    </Border>
                                     
                                     <Label
                                         Grid.Column="1"
                                         AutomationProperties.IsInAccessibleTree="True"
-                                        Style="{StaticResource BodyLargeStyle}"
+                                        FontSize="{DynamicResource SubheaderFontSize}"
+                                        FontAttributes="Bold"
                                         Text="{Binding RemainingTime}"
+                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceVariantColor}}"
                                         VerticalOptions="Center" />
                                 </Grid>
                             </Border>
@@ -119,35 +134,38 @@
                                 <Border
                                     Style="{StaticResource PrayerCardOptimized}">
                                     <Border.Triggers>
-                                        <!-- 🎨 Phase 5.2.4: Glassmorphism matte for past prayers -->
+                                        <!-- � GOLDEN HOUR REDESIGN: Past prayer - Elegant gray-copper -->
                                         <DataTrigger
                                             Binding="{Binding IsPast}"
                                             TargetType="Border"
                                             Value="True">
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardPastGradientLight}, Dark={StaticResource PrayerCardPastGradientDark}}" />
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardPastBorderLight}, Dark={StaticResource PrayerCardPastBorderDark}}" />
-                                            <Setter Property="Opacity" Value="0.88" />
+                                            <Setter Property="Background" Value="{StaticResource PastPrayerBrush}" />
+                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary60}}" />
+                                            <Setter Property="Opacity" Value="0.75" />
                                         </DataTrigger>
-                                        <!-- 🎨 Phase 5.2.4: Glassmorphism ULTRA GREEN for current prayer -->
+                                        <!-- � GOLDEN HOUR REDESIGN: Current prayer - Radiant golden gradient with glow -->
                                         <DataTrigger
                                             Binding="{Binding IsActive}"
                                             TargetType="Border"
                                             Value="True">
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardCurrentGradientLight}, Dark={StaticResource PrayerCardCurrentGradientDark}}" />
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardCurrentBorderLight}, Dark={StaticResource PrayerCardCurrentBorderDark}}" />
-                                            <Setter Property="StrokeThickness" Value="2.5" />
+                                            <Setter Property="Background" Value="{StaticResource HeroCurrentPrayerBrush}" />
+                                            <Setter Property="Stroke" Value="{StaticResource GoldPure}" />
+                                            <Setter Property="StrokeThickness" Value="3" />
                                             <Setter Property="Shadow">
-                                                <Shadow Brush="{AppThemeBinding Light={StaticResource PrayerCardCurrentShadowLight}, Dark={StaticResource PrayerCardCurrentShadowDark}}" Radius="6" Offset="0,3" />
+                                                <Shadow Brush="{StaticResource GoldPure}" Radius="24" Offset="0,6" Opacity="0.35" />
                                             </Setter>
+                                            <Setter Property="HeightRequest" Value="96" />
+                                            <Setter Property="Padding" Value="16,14" />
                                         </DataTrigger>
-                                        <!-- 🎨 Phase 5.2.4: Glassmorphism ULTRA AMBER for upcoming -->
+                                        <!-- � GOLDEN HOUR REDESIGN: Upcoming prayer - Soft amber glow -->
                                         <MultiTrigger TargetType="Border">
                                             <MultiTrigger.Conditions>
                                                 <BindingCondition Binding="{Binding IsActive}" Value="False" />
                                                 <BindingCondition Binding="{Binding IsPast}" Value="False" />
                                             </MultiTrigger.Conditions>
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardUpcomingGradientLight}, Dark={StaticResource PrayerCardUpcomingGradientDark}}" />
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardUpcomingBorderLight}, Dark={StaticResource PrayerCardUpcomingBorderDark}}" />
+                                            <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
+                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}" />
+                                            <Setter Property="Opacity" Value="0.9" />
                                         </MultiTrigger>
                                     </Border.Triggers>
 
@@ -164,6 +182,14 @@
                                             Background="{AppThemeBinding Light={StaticResource PrimaryGradientBrush}, Dark={StaticResource SurfaceGlassBrushDark}}"
         									Stroke="{StaticResource GlassStrokeBrush}"
                                             VerticalOptions="Center">
+                                            <Border.Triggers>
+                                                <!-- 🌟 GOLDEN HOUR: Golden glow for current prayer icon container -->
+                                                <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
+                                                    <Setter Property="Background" Value="{StaticResource GoldLight}" />
+                                                    <Setter Property="Stroke" Value="{StaticResource GoldPure}" />
+                                                    <Setter Property="StrokeThickness" Value="2" />
+                                                </DataTrigger>
+                                            </Border.Triggers>
                                             <Image
                                                 Source="{Binding IconPath}"
                                                 Aspect="AspectFit"
@@ -185,7 +211,7 @@
                                                         TargetType="Image"
                                                         Value="True">
                                                         <Setter Property="Opacity" Value="1.0" />
-                                                        <Setter Property="Scale" Value="1.1" />
+                                                        <Setter Property="Scale" Value="1.2" />
                                                     </DataTrigger>
                                                     <!-- Upcoming prayers: High visibility in both modes -->
                                                     <MultiTrigger TargetType="Image">
@@ -218,6 +244,8 @@
                                                     Value="True">
                                                     <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
                                                     <Setter Property="FontAttributes" Value="Bold" />
+                                                    <Setter Property="FontSize" Value="{DynamicResource SubheaderFontSize}" />
+                                                    <Setter Property="CharacterSpacing" Value="0.5" />
                                                 </DataTrigger>
                                                 <MultiTrigger TargetType="Label">
                                                     <MultiTrigger.Conditions>
@@ -249,6 +277,8 @@
                                                     Value="True">
                                                     <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
                                                     <Setter Property="FontAttributes" Value="Bold" />
+                                                    <Setter Property="FontSize" Value="{DynamicResource SubheaderFontSize}" />
+                                                    <Setter Property="CharacterSpacing" Value="0.5" />
                                                 </DataTrigger>
                                                 <MultiTrigger TargetType="Label">
                                                     <MultiTrigger.Conditions>
@@ -298,6 +328,15 @@
                                                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Success60}, Dark={StaticResource Success30}}" />
                                                         <Setter Property="Opacity" Value="1.0" />
                                                     </DataTrigger>
+                                                    <!-- 🌟 GOLDEN HOUR: Golden bell for enabled current prayer -->
+                                                    <MultiTrigger TargetType="Label">
+                                                        <MultiTrigger.Conditions>
+                                                            <BindingCondition Binding="{Binding IsActive}" Value="True" />
+                                                            <BindingCondition Binding="{Binding Enabled}" Value="True" />
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter Property="TextColor" Value="{StaticResource GoldPure}" />
+                                                        <Setter Property="Scale" Value="1.1" />
+                                                    </MultiTrigger>
                                                 </Label.Triggers>
                                             </Label>
                                             <Border.GestureRecognizers>
@@ -313,6 +352,16 @@
                                                     <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Success40}, Dark={StaticResource Success60}}" />
                                                     <Setter Property="StrokeThickness" Value="1.25" />
                                                 </DataTrigger>
+                                                <!-- 🌟 GOLDEN HOUR: Golden background for enabled current prayer bell -->
+                                                <MultiTrigger TargetType="Border">
+                                                    <MultiTrigger.Conditions>
+                                                        <BindingCondition Binding="{Binding IsActive}" Value="True" />
+                                                        <BindingCondition Binding="{Binding Enabled}" Value="True" />
+                                                    </MultiTrigger.Conditions>
+                                                    <Setter Property="Background" Value="{StaticResource GoldLight}" />
+                                                    <Setter Property="Stroke" Value="{StaticResource GoldPure}" />
+                                                    <Setter Property="StrokeThickness" Value="1.5" />
+                                                </MultiTrigger>
                                                 <DataTrigger
                                                     Binding="{Binding Enabled}"
                                                     TargetType="Border"

@@ -967,6 +967,83 @@
         </Setter>
     </Style>
 
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  HERO CURRENT PRAYER CARD - Golden Hour Redesign  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    
+    <Style x:Key="HeroCurrentPrayerCard" TargetType="Border">
+        <Setter Property="Padding" Value="24,20" />
+        <Setter Property="Margin" Value="16,12" />
+        <Setter Property="HeightRequest" Value="160" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="Background" Value="{StaticResource HeroCurrentPrayerBrush}" />
+        <Setter Property="StrokeThickness" Value="3" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 24" />
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow
+                    Brush="{StaticResource GoldPure}"
+                    Opacity="0.4"
+                    Radius="32"
+                    Offset="0,8" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="Scale" Value="1.0" />
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="Scale" Value="1.01" />
+                            <Setter Property="Shadow">
+                                <Shadow
+                                    Brush="{StaticResource GoldOrange}"
+                                    Opacity="0.5"
+                                    Radius="40"
+                                    Offset="0,12" />
+                            </Setter>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <!--  Compact Prayer Card - For 2-column grid (Upcoming/Past prayers)  -->
+    <Style x:Key="CompactPrayerCard" TargetType="Border" BasedOn="{StaticResource Card}">
+        <Setter Property="Padding" Value="12,10" />
+        <Setter Property="Margin" Value="6,4" />
+        <Setter Property="HeightRequest" Value="56" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow
+                    Brush="{StaticResource ShadowOverlayBrush}"
+                    Opacity="0.15"
+                    Radius="12"
+                    Offset="0,4" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  Compact Past Prayer - Muted, minimal style  -->
+    <Style x:Key="CompactPastPrayerCard" TargetType="Border" BasedOn="{StaticResource CompactPrayerCard}">
+        <Setter Property="Background" Value="{StaticResource PastPrayerBrush}" />
+        <Setter Property="Opacity" Value="0.75" />
+    </Style>
+
+    <!--  Compact Upcoming Prayer - Amber glow  -->
+    <Style x:Key="CompactUpcomingPrayerCard" TargetType="Border" BasedOn="{StaticResource CompactPrayerCard}">
+        <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
+        <Setter Property="Opacity" Value="0.9" />
+    </Style>
+
 
     <!--  Glass Variant: Soft (lighter diffusion, minimal shadow)  -->
     <Style x:Key="GlassCardSoft" TargetType="Border" BasedOn="{StaticResource Card}">

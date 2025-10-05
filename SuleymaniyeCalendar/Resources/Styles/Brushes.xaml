@@ -2,9 +2,43 @@
 <?xaml-comp compile="true" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!--  App Background Brushes (subtle gradients)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  GOLDEN HOUR REDESIGN - Hero Current Prayer Gradients  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  Hero Current Prayer - Radiant Golden Gradient  -->
+    <LinearGradientBrush x:Key="HeroCurrentPrayerBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{StaticResource GoldHighlight}" />
+        <GradientStop Offset="0.25" Color="{StaticResource GoldLight}" />
+        <GradientStop Offset="0.5" Color="{StaticResource GoldBase}" />
+        <GradientStop Offset="0.75" Color="{StaticResource GoldMedium}" />
+        <GradientStop Offset="1.0" Color="{StaticResource GoldDeep}" />
+    </LinearGradientBrush>
+
+    <!--  Hero Current Prayer - Border Radial Gradient (Gold to Copper)  -->
+    <RadialGradientBrush x:Key="HeroCurrentPrayerBorderBrush" Center="0.5,0.5" Radius="1.0">
+        <GradientStop Offset="0.0" Color="{StaticResource GoldPure}" />
+        <GradientStop Offset="0.5" Color="{StaticResource Primary50}" />
+        <GradientStop Offset="1.0" Color="{StaticResource Primary70}" />
+    </RadialGradientBrush>
+
+    <!--  Upcoming Prayer - Soft Amber Glow  -->
+    <LinearGradientBrush x:Key="UpcomingPrayerBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{StaticResource UpcomingPrayerStart}" />
+        <GradientStop Offset="0.5" Color="{StaticResource GoldBase}" />
+        <GradientStop Offset="1.0" Color="{StaticResource UpcomingPrayerEnd}" />
+    </LinearGradientBrush>
+
+    <!--  Past Prayer - Elegant Gray-Copper  -->
+    <LinearGradientBrush x:Key="PastPrayerBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{StaticResource PastPrayerStart}" />
+        <GradientStop Offset="0.5" Color="#DCD8D4" />
+        <GradientStop Offset="1.0" Color="{StaticResource PastPrayerEnd}" />
+    </LinearGradientBrush>
+
+    <!--  App Background - Golden Dawn (Light Mode)  -->
     <LinearGradientBrush x:Key="AppBackgroundBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#FFF3F2F5" />
+        <GradientStop Offset="0" Color="{StaticResource Primary10}" />
         <GradientStop Offset="1" Color="#FFF5E3D9" />
     </LinearGradientBrush>
 
