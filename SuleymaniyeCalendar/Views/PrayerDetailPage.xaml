@@ -32,8 +32,8 @@
                         HeightRequest="2"
                         HorizontalOptions="Center"
                         WidthRequest="90"
-                        Color="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                Dark={StaticResource Primary30}}" />
+                        Color="{AppThemeBinding Light={StaticResource GoldPure},
+                                                Dark={StaticResource GoldMedium}}" />
                 </VerticalStackLayout>
             </Border>
 
@@ -50,7 +50,7 @@
                             FontAttributes="Bold"
                             FontSize="{DynamicResource SubHeaderFontSize}"
                             Text="{Binding Time}"
-                            TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}" />
+                            TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}" />
                     </VerticalStackLayout>
                     
                     <!-- Enable Switch Section -->
@@ -64,11 +64,11 @@
                             HorizontalOptions="Center"
                             AutomationProperties.IsInAccessibleTree="True"
                             IsToggled="{Binding Enabled}"
-                            OnColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                      Dark={StaticResource Primary30}}"
+                            OnColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                                      Dark={StaticResource GoldMedium}}"
                             SemanticProperties.Description="{localization:Translate EtkinlestirSwitchAciklama}"
-                            ThumbColor="{AppThemeBinding Light={StaticResource OnPrimaryColor},
-                                                         Dark={StaticResource OnPrimaryColor}}" />
+                            ThumbColor="{AppThemeBinding Light={StaticResource GoldHighlight},
+                                                         Dark={StaticResource GoldLight}}" />
                     </VerticalStackLayout>
                 </Grid>
             </Border>
@@ -147,11 +147,11 @@
                                 MaximumTrackColor="{AppThemeBinding Light={StaticResource Neutral60},
                                                                     Dark={StaticResource Neutral60}}"
                                 Minimum="0"
-                                MinimumTrackColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}"
+                                MinimumTrackColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                                                    Dark={StaticResource GoldMedium}}"
                                 SemanticProperties.Description="{localization:Translate BildirmeZamani}"
-                                ThumbColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                             Dark={StaticResource Primary30}}"
+                                ThumbColor="{AppThemeBinding Light={StaticResource GoldPure},
+                                                             Dark={StaticResource GoldMedium}}"
                                 Value="{Binding NotificationTime}" />
                         </Border>
                     </VerticalStackLayout>

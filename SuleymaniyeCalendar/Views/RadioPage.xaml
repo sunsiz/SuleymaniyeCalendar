@@ -75,15 +75,23 @@
                         </StackLayout.GestureRecognizers>
                     </StackLayout>
 
-                    <!--  Enhanced Play / Pause control with circular, elegant design  -->
+                    <!--  Enhanced Play / Pause control with golden circular design ✨  -->
                     <Border
                         Grid.Row="0"
                         Grid.Column="1"
                         Style="{StaticResource LuminousCircularIcon}"
                         HeightRequest="56"
                         WidthRequest="56"
+                        Stroke="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
+                        StrokeThickness="2"
                         HorizontalOptions="Center"
                         VerticalOptions="Center">
+                        <Border.Shadow>
+                            <Shadow Brush="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}"
+                                    Radius="16"
+                                    Opacity="0.3"
+                                    Offset="0,2" />
+                        </Border.Shadow>
                         <Label
                             Padding="0"
                             AutomationProperties.IsInAccessibleTree="True"
