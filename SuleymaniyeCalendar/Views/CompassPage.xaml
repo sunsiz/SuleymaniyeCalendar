@@ -196,10 +196,11 @@
                                 </VerticalStackLayout>
                             </Grid>
 
-                            <!--  Action Button - Glass primary -->
+                            <!--  Action Button - Golden Glass ✨  -->
                             <Button
                                 Margin="12,0,12,12"
                                 Style="{StaticResource GlassButtonPillTertiary}"
+                                TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldLight}}"
                                 Command="{Binding GoToMapCommand}"
                                 Text="{localization:Translate HaritadaGoster}" />
                         </VerticalStackLayout>

@@ -50,19 +50,22 @@
             </Grid>
         </Grid>
 
-        <!-- Action Buttons with Border (Android CornerRadius Workaround) -->
+        <!-- Action Buttons with Golden Enhancement ✨ -->
         <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="12">
             <Button Grid.Column="0"
                     Style="{StaticResource GlassButtonOutline}"
+                    TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldLight}}"
                     Text="{localization:Translate Kapat}"
                     Command="{Binding GoBackCommand}" />
             <Button Grid.Column="1"
                     Style="{StaticResource GlassButtonWarning}"
                     IsVisible="{Binding ShowShare}"
+                    TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldLight}}"
                     Text="{localization:Translate Paylas}"
                     Command="{Binding ShareCommand}" />
             <Button Grid.Column="2"
                     Style="{StaticResource GlassButtonPrimary}"
+                    TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldLight}}"
                     Text="{localization:Translate KonumYenileButton}"
                     Command="{Binding RefreshCommand}"
                     IsEnabled="{Binding IsNotBusy}" />

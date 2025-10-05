@@ -610,17 +610,23 @@
         </Setter>
     </Style>
 
-    <!--  Modern Image Button - Enhanced icon buttons with Material Design 3 styling  -->
+    <!--  Modern Image Button - Golden-enhanced with glow ✨  -->
     <Style x:Key="ModernImageButton" TargetType="ImageButton">
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="BorderColor" Value="Transparent" />
         <Setter Property="BorderWidth" Value="0" />
-        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="CornerRadius" Value="12" />
         <Setter Property="HeightRequest" Value="48" />
         <Setter Property="WidthRequest" Value="48" />
         <Setter Property="Padding" Value="8" />
         <Setter Property="MinimumHeightRequest" Value="48" />
         <Setter Property="MinimumWidthRequest" Value="48" />
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <!-- Subtle golden glow -->
+                <Shadow Opacity="0.2" Radius="12" Offset="0,4" Brush="{AppThemeBinding Light=#40FFD700, Dark=#40FFD700}" />
+            </Setter.Value>
+        </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -632,8 +638,21 @@
                     </VisualState>
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <Setter Property="Scale" Value="0.94" />
-                            <Setter Property="Opacity" Value="0.8" />
+                            <Setter Property="Scale" Value="0.92" />
+                            <Setter Property="Opacity" Value="0.75" />
+                            <!-- Enhanced golden glow on press -->
+                            <Setter Property="Shadow">
+                                <Shadow Opacity="0.4" Radius="20" Offset="0,6" Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" />
+                            </Setter>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="PointerOver">
+                        <VisualState.Setters>
+                            <Setter Property="Scale" Value="1.08" />
+                            <!-- Stronger golden glow on hover -->
+                            <Setter Property="Shadow">
+                                <Shadow Opacity="0.5" Radius="24" Offset="0,8" Brush="{AppThemeBinding Light=#70FFD700, Dark=#70FFD700}" />
+                            </Setter>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Disabled">
@@ -1228,26 +1247,64 @@
         <Setter Property="StrokeThickness" Value="1.05" />
     </Style>
 
-    <!--  High-opacity tiers -->
+    <!--  High-opacity tiers - Golden-optimized ✨  -->
     <Style x:Key="FrostGlassCardFrozen" TargetType="Border" BasedOn="{StaticResource Card}">
         <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource FrostGlassFrozenLight}, Dark={StaticResource FrostGlassFrozenDark}}" />
-        <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
-        <Setter Property="StrokeThickness" Value="1.1" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <!-- Deep cream-golden for golden text readability -->
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFFBF0, Dark=#FF1C1A16}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFF5E0, Dark=#FF242218}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFFCF5, Dark=#FF1E1C18}" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Stroke">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <!-- Golden shimmering border -->
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#60D4AF37, Dark=#60FFD700}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#90FFD700, Dark=#90FFD700}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#60C8A05F, Dark=#60D4AF37}" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="StrokeThickness" Value="1.5" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.46" Radius="36" Offset="0,14" Brush="{StaticResource StrongShadowOverlayBrush}" />
+                <!-- Golden glow shadow -->
+                <Shadow Opacity="0.35" Radius="40" Offset="0,16" Brush="{AppThemeBinding Light=#50FFD700, Dark=#50FFD700}" />
             </Setter.Value>
         </Setter>
     </Style>
     <Style x:Key="FrostGlassCardCrystal" TargetType="Border" BasedOn="{StaticResource Card}">
         <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource FrostGlassCrystalLight}, Dark={StaticResource FrostGlassCrystalDark}}" />
-        <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
-        <Setter Property="StrokeThickness" Value="1.15" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <!-- Deep cream-golden for premium feel -->
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFFDF8, Dark=#FF18161  4}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFF7E8, Dark=#FF201E1A}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFFBF0, Dark=#FF1A1816}" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Stroke">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <!-- Stronger golden border -->
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#70D4AF37, Dark=#70FFD700}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#A0FFD700, Dark=#A0FFD700}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#70C8A05F, Dark=#70D4AF37}" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="StrokeThickness" Value="1.75" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.50" Radius="40" Offset="0,16" Brush="{StaticResource StrongShadowOverlayBrush}" />
+                <!-- Enhanced golden glow -->
+                <Shadow Opacity="0.40" Radius="44" Offset="0,18" Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -1977,15 +2034,32 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnErrorColor}, Dark={StaticResource OnErrorColorDark}}" />
     </Style>
 
-    <!--  Outline Glass Button - nearly transparent center, emphasized border  -->
+    <!--  Outline Glass Button - Golden-optimized ✨  -->
     <Style x:Key="GlassButtonOutline" TargetType="Button" BasedOn="{StaticResource GlassButtonBase}">
-        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassOutlineLight}, Dark={StaticResource GlassSoftDark}}" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary70}, Dark={StaticResource Primary30}}" />
-        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource HighContrastOutlineDark}}" />
-        <Setter Property="BorderWidth" Value="1.25" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <!-- Deep backgrounds for golden text -->
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#FF28251F, Dark=#FF3C3833}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FF1E1B16, Dark=#FF2E2B26}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#FF242118, Dark=#FF36332E}" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldLight}}" />
+        <Setter Property="BorderColor">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#70C8A05F, Dark=#70FFCC80}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#A0FFD700, Dark=#A0FFD700}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#70B8935D, Dark=#70D4AF37}" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="BorderWidth" Value="1.5" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.12" Radius="12" Offset="0,4" />
+                <Shadow Opacity="0.25" Radius="16" Offset="0,6" Brush="{AppThemeBinding Light=#50FFD700, Dark=#50FFD700}" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -2200,14 +2274,33 @@
         <Setter Property="BackgroundColor" Value="Transparent" />
     </Style>
 
-    <!--  Neo Glass Card (subtle grid overlay + floating translucent panel) -->
+    <!--  Neo Glass Card - Golden-optimized ✨  -->
     <Style x:Key="NeoGlassCard" TargetType="Border" BasedOn="{StaticResource GlassCardStrong}">
         <Setter Property="StrokeShape" Value="RoundRectangle 28" />
         <Setter Property="Padding" Value="20,16" />
-        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource CardBackgroundColorGrey}, Dark={StaticResource GlassStrongDark}}" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <!-- Deep cream-golden premium background -->
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFFEF8, Dark=#FF1A1814}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFF8E8, Dark=#FF22201C}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFFCF0, Dark=#FF1C1A16}" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Stroke">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#50D4AF37, Dark=#50FFD700}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#80FFD700, Dark=#80FFD700}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#50C8A05F, Dark=#50D4AF37}" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="StrokeThickness" Value="1.5" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.40" Radius="42" Offset="0,18" Brush="{StaticResource StrongShadowOverlayBrush}" />
+                <Shadow Opacity="0.40" Radius="42" Offset="0,18" Brush="{AppThemeBinding Light=#40FFD700, Dark=#40FFD700}" />
             </Setter.Value>
         </Setter>
     </Style>
