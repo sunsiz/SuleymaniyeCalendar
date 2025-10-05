@@ -398,6 +398,37 @@
         </Setter>
     </Style>
 
+    <!-- 🦸 PHASE 9: MINIMAL LOCATION BADGE STYLE -->
+
+    <!--  Minimal Location Badge - Compact pill at top (36px)  -->
+    <Style x:Key="MinimalLocationBadge" TargetType="Border">
+        <Setter Property="HeightRequest" Value="36" />
+        <Setter Property="Padding" Value="12,6" />
+        <Setter Property="Margin" Value="12,8" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 18" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="Background">
+            <Setter.Value>
+                <SolidColorBrush Color="{AppThemeBinding Light=#FFFBF050, Dark=#3A332850}" />
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Stroke">
+            <Setter.Value>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Offset="0" Color="#60D4AF37" />
+                    <GradientStop Offset="0.5" Color="#90FFD700" />
+                    <GradientStop Offset="1" Color="#60C8A05F" />
+                </LinearGradientBrush>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow Brush="#FFD700" Opacity="0.20" Radius="8" Offset="0,2" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!--  Activity Indicator - Modern spinner  -->
     <Style TargetType="ActivityIndicator">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}" />
