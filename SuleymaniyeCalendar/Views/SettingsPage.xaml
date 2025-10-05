@@ -9,7 +9,8 @@
     xmlns:models="clr-namespace:SuleymaniyeCalendar.Models"
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     x:DataType="viewModels:SettingsViewModel"
-    FlowDirection="{DynamicResource FlowDirection}">
+    FlowDirection="{DynamicResource FlowDirection}"
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
 
     <!-- Windows: explicit back navigation (Shell back button not always visible)
     <ContentPage.ToolbarItems>
@@ -29,16 +30,17 @@
                 <!--  Language Selection - Simplified icon ✅  -->
                 <Border Style="{StaticResource SettingsCard}">
                     <Grid x:DataType="viewModels:SettingsViewModel" Padding="16,12" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <!--  Simplified icon - direct Label with semantic color  -->
+                        <!--  Golden language icon with increased visibility  -->
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
-                            FontSize="22"
+                            FontSize="26"
                             Text="&#xf0ac;"
-                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                            TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
                             VerticalOptions="Center"
                             WidthRequest="44"
-                            HorizontalTextAlignment="Center" />
+                            HorizontalTextAlignment="Center"
+                            FontAttributes="Bold" />
 
                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                             <Label Style="{StaticResource HeadlineMediumStyle}" Text="{localization:Translate UygulamaDili}" />
@@ -75,16 +77,17 @@
                 <Border Style="{StaticResource SettingsCard}">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Padding="16,12" Spacing="16">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <!--  Simplified icon - direct Label with semantic color  -->
+                            <!--  Golden theme icon with increased visibility  -->
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="22"
+                                FontSize="26"
                                 Text="&#xf042;"
-                                TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
                                 VerticalOptions="Center"
                                 WidthRequest="44"
-                                HorizontalTextAlignment="Center" />
+                                HorizontalTextAlignment="Center"
+                                FontAttributes="Bold" />
                             
                             <Label 
                                 Grid.Column="1"
@@ -191,16 +194,17 @@
                 <Border Style="{StaticResource SettingsCard}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                            <!--  Simplified icon  -->
+                            <!--  Golden font size icon with increased visibility  -->
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="22"
+                                FontSize="26"
                                 Text="&#xf031;"
-                                TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
                                 VerticalOptions="Center"
                                 WidthRequest="44"
-                                HorizontalTextAlignment="Center" />
+                                HorizontalTextAlignment="Center"
+                                FontAttributes="Bold" />
                             
                             <Label 
                                 Grid.Column="1"
@@ -239,16 +243,17 @@
                 <!--  Location Settings - Simplified icon ✅  -->
                 <Border Style="{StaticResource SettingsCard}" Padding="16,12">
                     <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <!--  Simplified icon  -->
+                        <!--  Golden location icon with increased visibility  -->
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
-                            FontSize="22"
+                            FontSize="26"
                             Text="&#xf3c5;"
-                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                            TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
                             VerticalOptions="Center"
                             WidthRequest="44"
-                            HorizontalTextAlignment="Center" />
+                            HorizontalTextAlignment="Center"
+                            FontAttributes="Bold" />
 
                         <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                             <Label
@@ -272,16 +277,17 @@
                 <!--  Android Notifications - Simplified icon ✅  -->
                 <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource SettingsCard}" Padding="16,12">
                     <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <!--  Simplified icon  -->
+                        <!--  Golden notification icon with increased visibility  -->
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
-                            FontSize="22"
+                            FontSize="26"
                             Text="&#xf0f3;"
-                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                            TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
                             VerticalOptions="Center"
                             WidthRequest="44"
-                            HorizontalTextAlignment="Center" />
+                            HorizontalTextAlignment="Center"
+                            FontAttributes="Bold" />
 
                         <Label Grid.Column="1" Style="{StaticResource HeadlineMediumStyle}" Text="{localization:Translate BildirimNamazVakitleri}" VerticalOptions="Center" />
                         
@@ -298,16 +304,17 @@
                 <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource SettingsCard}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                            <!--  Simplified icon  -->
+                            <!--  Golden service icon with increased visibility  -->
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="22"
+                                FontSize="26"
                                 Text="&#xf1e6;"
-                                TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
                                 VerticalOptions="Center"
                                 WidthRequest="44"
-                                HorizontalTextAlignment="Center" />
+                                HorizontalTextAlignment="Center"
+                                FontAttributes="Bold" />
 
                             <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
                                 <Label
@@ -327,10 +334,11 @@
                                 VerticalOptions="Center" />
                         </Grid>
 
-                        <!-- Settings button - glass secondary for higher contrast -->
+                        <!-- Settings button - golden glass for premium feel -->
                         <Button
                             Margin="8,0,8,16"
                             Style="{StaticResource GlassButtonSecondary}"
+                            TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
                             Command="{Binding GotoSettingsCommand}"
                             Text="{localization:Translate GotoSettings}" />
                     </VerticalStackLayout>

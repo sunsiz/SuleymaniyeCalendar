@@ -118,7 +118,7 @@
                                         FontSize="{DynamicResource SubheaderFontSize}"
                                         FontAttributes="Bold"
                                         Text="{Binding RemainingTime}"
-                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceVariantColor}}"
+                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
                                         VerticalOptions="Center" />
                                 </Grid>
                             </Border>

@@ -175,8 +175,8 @@
                                     x:DataType="viewModels:PrayerDetailViewModel"
                                     Margin="6"
                                         Style="{StaticResource VistaAeroGlassButton}"
-                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor},
-                                                                Dark={StaticResource OnSurfaceColorDark}}"
+                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                                                Dark={StaticResource GoldMedium}}"
                                         Command="{Binding TestButtonClickedCommand}"
                                         WidthRequest="52" HeightRequest="48">
                                     <Button.Triggers>
@@ -184,7 +184,8 @@
                                             <Setter Property="ImageSource">
                                                 <Setter.Value>
                                                     <FontImageSource FontFamily="{StaticResource IconFontFamily}"
-                                                                     Glyph="&#xf04b;" Size="{DynamicResource IconSmallFontSize}" />
+                                                                     Glyph="&#xf04b;" Size="{DynamicResource IconSmallFontSize}"
+                                                                     Color="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}" />
                                                 </Setter.Value>
                                             </Setter>
                                         </DataTrigger>
@@ -193,7 +194,8 @@
                                             <Setter Property="ImageSource">
                                                 <Setter.Value>
                                                     <FontImageSource FontFamily="{StaticResource IconFontFamily}"
-                                                                     Glyph="&#xf04d;" Size="{DynamicResource IconSmallFontSize}" />
+                                                                     Glyph="&#xf04d;" Size="{DynamicResource IconSmallFontSize}"
+                                                                     Color="{AppThemeBinding Light={StaticResource Warning60}, Dark={StaticResource Warning30}}" />
                                                 </Setter.Value>
                                             </Setter>
                                         </DataTrigger>
@@ -204,9 +206,10 @@
                 </VerticalStackLayout>
             </Border>
 
-            <!--  Close Button - Glass primary variant  -->
+            <!--  Close Button - Golden glass variant  -->
             <Button
                 Style="{StaticResource GlassButtonSecondary}"
+                TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
                 Command="{Binding GoBackCommand}"
                 Text="{localization:Translate Kapat}" />
         </VerticalStackLayout>
