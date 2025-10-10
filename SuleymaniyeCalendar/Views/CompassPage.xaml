@@ -7,7 +7,8 @@
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     Title="{Binding Title}"
     x:DataType="viewModels:CompassViewModel"
-    FlowDirection="{DynamicResource FlowDirection}">
+    FlowDirection="{DynamicResource FlowDirection}"
+    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
 
     <Shell.TitleView>
         <Grid
@@ -46,8 +47,6 @@
             <ScrollView>
                 <VerticalStackLayout
                     Padding="{StaticResource PagePaddingMobile}"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
-                                                      Dark={StaticResource AppBackgroundColorDark}}"
                     Spacing="{StaticResource SpacingTight}">
 
                     <!--  Compass Section  -->
@@ -100,15 +99,11 @@
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
-                                        Text="{localization:Translate EnlemFormatsiz}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}" />
+                                        Text="{localization:Translate EnlemFormatsiz}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
-                                        Text="{Binding Latitude, StringFormat='{0:F6}'}"
-                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor},
-                                                                    Dark={StaticResource OnSurfaceColorDark}}" />
+                                        Text="{Binding Latitude, StringFormat='{0:F6}'}" />
                                 </VerticalStackLayout>
 
                                 <!--  Longitude  -->
@@ -120,15 +115,11 @@
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
-                                        Text="{localization:Translate BoylamFormatsiz}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}" />
+                                        Text="{localization:Translate BoylamFormatsiz}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
-                                        Text="{Binding Longitude, StringFormat='{0:F6}'}"
-                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor},
-                                                                    Dark={StaticResource OnSurfaceColorDark}}" />
+                                        Text="{Binding Longitude, StringFormat='{0:F6}'}" />
                                 </VerticalStackLayout>
 
                                 <!--  Altitude  -->
@@ -140,15 +131,11 @@
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
-                                        Text="{localization:Translate YukseklikFormatsiz}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}" />
+                                        Text="{localization:Translate YukseklikFormatsiz}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
-                                        Text="{Binding Altitude, StringFormat='{0:N0} m'}"
-                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor},
-                                                                    Dark={StaticResource OnSurfaceColorDark}}" />
+                                        Text="{Binding Altitude, StringFormat='{0:N0} m'}" />
                                 </VerticalStackLayout>
 
                                 <!--  Heading  -->
@@ -160,15 +147,11 @@
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
-                                        Text="{localization:Translate Aci}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}" />
+                                        Text="{localization:Translate Aci}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
-                                        Text="{Binding Heading, StringFormat='{0:F0}°'}"
-                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor},
-                                                                    Dark={StaticResource OnSurfaceColorDark}}" />
+                                        Text="{Binding Heading, StringFormat='{0:F0}°'}" />
                                 </VerticalStackLayout>
 
                                 <!--  Address - spans both columns  -->
@@ -181,22 +164,18 @@
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource TitleMediumStyle}"
-                                        Text="{localization:Translate Adres}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}" />
+                                        Text="{localization:Translate Adres}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
-                                        Text="{Binding Address}"
-                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor},
-                                                                    Dark={StaticResource OnSurfaceColorDark}}" />
+                                        Text="{Binding Address}" />
                                 </VerticalStackLayout>
                             </Grid>
 
                             <!--  Action Button - Glass primary -->
                             <Button
                                 Margin="12,0,12,12"
-                                Style="{StaticResource GlassButtonPillTertiary}"
+                                Style="{StaticResource GlassButtonPillTertiaryFlat}"
                                 Command="{Binding GoToMapCommand}"
                                 Text="{localization:Translate HaritadaGoster}" />
                         </VerticalStackLayout>

@@ -11,7 +11,7 @@
     Title="{Binding Title}"
     x:DataType="viewModels:MainViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor}, Dark={StaticResource AppBackgroundColorDark}}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
 
     <Shell.TitleView>
         <Grid Margin="10" x:DataType="viewModels:MainViewModel" HeightRequest="40"
@@ -117,7 +117,7 @@
                                 <!-- ⚡ Performance-Optimized Prayer Card (Phase 5.1 Enhanced) -->
                                 <!-- Uses solid colors with strong visual differentiation -->
                                 <Border
-                                    Style="{StaticResource PrayerCardOptimized}">
+                                    Style="{StaticResource FrostGlassCardFrozen}">
                                     <Border.Triggers>
                                         <!-- 🎨 Phase 5.2.4: Glassmorphism matte for past prayers -->
                                         <DataTrigger
@@ -125,19 +125,22 @@
                                             TargetType="Border"
                                             Value="True">
                                             <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardPastGradientLight}, Dark={StaticResource PrayerCardPastGradientDark}}" />
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardPastBorderLight}, Dark={StaticResource PrayerCardPastBorderDark}}" />
-                                            <Setter Property="Opacity" Value="0.88" />
+                                            <!-- <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardPastBorderLight}, Dark={StaticResource PrayerCardPastBorderDark}}" /> -->
+                                            <Setter Property="Opacity" Value="0.99" />
+                                            <Setter Property="Shadow">
+                                                <Shadow Brush="{AppThemeBinding Light={StaticResource FrostGlassFrozenLight}, Dark={StaticResource FrostGlassFrozenDark}}" Radius="0" Offset="0,0" />
+                                            </Setter>
                                         </DataTrigger>
                                         <!-- 🎨 Phase 5.2.4: Glassmorphism ULTRA GREEN for current prayer -->
                                         <DataTrigger
                                             Binding="{Binding IsActive}"
                                             TargetType="Border"
                                             Value="True">
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardCurrentGradientLight}, Dark={StaticResource PrayerCardCurrentGradientDark}}" />
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardCurrentBorderLight}, Dark={StaticResource PrayerCardCurrentBorderDark}}" />
-                                            <Setter Property="StrokeThickness" Value="2.5" />
+                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardCurrentBackgroundLight}, Dark={StaticResource PrayerCardCurrentBackgroundDark}}" />
+                                            <!-- <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardCurrentBorderLight}, Dark={StaticResource PrayerCardCurrentBorderDark}}" /> -->
+                                            <!-- <Setter Property="StrokeThickness" Value="2.5" /> -->
                                             <Setter Property="Shadow">
-                                                <Shadow Brush="{AppThemeBinding Light={StaticResource PrayerCardCurrentShadowLight}, Dark={StaticResource PrayerCardCurrentShadowDark}}" Radius="6" Offset="0,3" />
+                                                <Shadow Brush="{AppThemeBinding Light={StaticResource PrayerCardCurrentShadowLight}, Dark={StaticResource PrayerCardCurrentShadowDark}}" Radius="0" Offset="0,1" />
                                             </Setter>
                                         </DataTrigger>
                                         <!-- 🎨 Phase 5.2.4: Glassmorphism ULTRA AMBER for upcoming -->
@@ -146,8 +149,11 @@
                                                 <BindingCondition Binding="{Binding IsActive}" Value="False" />
                                                 <BindingCondition Binding="{Binding IsPast}" Value="False" />
                                             </MultiTrigger.Conditions>
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardUpcomingGradientLight}, Dark={StaticResource PrayerCardUpcomingGradientDark}}" />
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardUpcomingBorderLight}, Dark={StaticResource PrayerCardUpcomingBorderDark}}" />
+                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource FrostGlassFrozenLight}, Dark={StaticResource FrostGlassFrozenDark}}" />
+                                            <!-- <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardUpcomingBorderLight}, Dark={StaticResource PrayerCardUpcomingBorderDark}}" /> -->
+                                            <Setter Property="Shadow">
+                                                <Shadow Brush="{AppThemeBinding Light={StaticResource FrostGlassFrozenLight}, Dark={StaticResource FrostGlassFrozenDark}}" Radius="0" Offset="0,0" />
+                                            </Setter>
                                         </MultiTrigger>
                                     </Border.Triggers>
 
@@ -161,7 +167,7 @@
                                             WidthRequest="40"
                                             HeightRequest="40"
                                             BackgroundColor="Transparent"
-                                            Background="{AppThemeBinding Light={StaticResource PrimaryGradientBrush}, Dark={StaticResource SurfaceGlassBrushDark}}"
+                                            Background="#F5917D3C"
         									Stroke="{StaticResource GlassStrokeBrush}"
                                             VerticalOptions="Center">
                                             <Image
@@ -352,7 +358,7 @@
                                 Margin="32,0,32,8"
                                 HorizontalOptions="Fill"
                                 IsEnabled="{Binding IsNotBusy}"
-                                Style="{StaticResource LocationCard}">
+                                Style="{StaticResource FrostGlassCardFrozen}">
                                 <Label
                                     Margin="3,0"
                                     Padding="3"

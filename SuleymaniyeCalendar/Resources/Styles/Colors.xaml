@@ -19,7 +19,7 @@
     <Color x:Key="Neutral30">#EBE7EC</Color>
     <Color x:Key="Neutral40">#C8C5CA</Color>
     <Color x:Key="Neutral50">#A5A2A7</Color>
-    <Color x:Key="Neutral60">#8F8C91</Color>
+    <Color x:Key="Neutral60">#FFE67D1C</Color>
     <Color x:Key="Neutral70">#79757F</Color>
     <Color x:Key="Neutral80">#605D64</Color>
     <Color x:Key="Neutral90">#47454A</Color>
@@ -172,6 +172,8 @@
     <Color x:Key="OnSurfaceColorDark">#F5F1F6</Color>
     <Color x:Key="OnSurfaceVariantLight">#605D64</Color>
     <Color x:Key="OnSurfaceVariantDark">#EBE7EC</Color>
+    <Color x:Key="OnSurfaceTextColor">#FF222222</Color>
+    <Color x:Key="OnSurfaceTextColorDark">#FFB8B8B8</Color>
 
     <!--  Outline Colors  -->
     <Color x:Key="OutlineColor">#C8C5CA</Color>
@@ -186,7 +188,7 @@
     <!--  Past Prayer States - Enhanced contrast (4.8:1 ratio) ✅  -->
     <Color x:Key="PrayerPastBackgroundColor">#FFD8D7D8</Color>       <!-- Lighter gray for better contrast -->
     <Color x:Key="PrayerPastBackgroundColorDark">#FF2A2828</Color>   <!-- Darker background for dark mode -->
-    <Color x:Key="PrayerPastTextColor">#FF2D2A32</Color>             <!-- Much darker text (was #46444B) -->
+    <Color x:Key="PrayerPastTextColor">#FF222222</Color>             <!-- Much darker text (was #46444B) -->
     <Color x:Key="PrayerPastTextColorDark">#FFB8B8B8</Color>         <!-- Lighter text for dark mode -->
 
     <!--  Current Prayer States - Enhanced visibility (5.2:1 ratio) ✅  -->
@@ -198,7 +200,7 @@
     <!--  Upcoming Prayer States - Enhanced warm distinction (4.9:1 ratio) ✅  -->
     <Color x:Key="PrayerUpcomingBackgroundColor">#FFD4B88A</Color>   <!-- Stronger warm tone -->
     <Color x:Key="PrayerUpcomingBackgroundColorDark">#FF4A4338</Color> <!-- More opaque dark mode -->
-    <Color x:Key="PrayerUpcomingTextColor">#7A4A15</Color>
+    <Color x:Key="PrayerUpcomingTextColor">#222222</Color>
     <Color x:Key="PrayerUpcomingTextColorDark">#E8B08A</Color>    
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->

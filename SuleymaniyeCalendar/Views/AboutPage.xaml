@@ -8,7 +8,7 @@
     x:DataType="viewModels:AboutViewModel"
     Title="{Binding Title}"
     FlowDirection="{DynamicResource FlowDirection}"
-    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor}, Dark={StaticResource AppBackgroundColorDark}}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
 
     <Shell.TitleView>
         <StackLayout
@@ -38,8 +38,7 @@
                         <VerticalStackLayout Spacing="10">
                         <Label Style="{StaticResource HeadlineLargeStyle}"
                                Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
-                               HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}" />
+                               HorizontalTextAlignment="Center" />
                         
                         <Label TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
                                Style="{StaticResource BodyLargeStyle}"
@@ -50,7 +49,7 @@
                                     <Span
                                         FontAttributes="Bold"
                                         Text="{localization:Translate AciklamaLinkText}"
-                                        TextColor="{AppThemeBinding Light={StaticResource InfoColor}, Dark={StaticResource InfoColorDark}}"
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryDarkColor}}"
                                         TextDecorations="Underline">
                                         <Span.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding LinkButtonClickedCommand}" CommandParameter="{localization:Translate AciklamaLinkURL}" />

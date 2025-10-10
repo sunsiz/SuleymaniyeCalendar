@@ -10,7 +10,7 @@
     Title="{Binding Title}"
     x:DataType="viewModels:RadioViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor}, Dark={StaticResource AppBackgroundColorDark}}">
+    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
 
     <Shell.TitleView>
         <StackLayout
@@ -32,8 +32,7 @@
                 Padding="0"
                 StrokeThickness="0"
                 Stroke="Transparent"
-                BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
-                                                  Dark={StaticResource AppBackgroundColorDark}}">
+                BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
                 <Image
                     Aspect="AspectFit"
                     Opacity="0.7"
@@ -60,13 +59,10 @@
                                     <Span
                                         FontFamily="{StaticResource IconFontFamily}"
                                         FontSize="{DynamicResource IconLargeFontSize}"
-                                        Text="&#xf0ae; "
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
-                                                                    Dark={StaticResource Primary20}}" />
+                                        Text="&#xf0ae; " />
                                     <Span 
                                         Text="{localization:Translate YayinAkisi}" 
-                                        FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource Primary20}}" />
+                                        FontSize="{DynamicResource BodyFontSize}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
@@ -93,7 +89,7 @@
                             HorizontalOptions="Center"
                             SemanticProperties.Description="{localization:Translate RadyoCal}"
                             Text="&#xf144;"
-                            TextColor="{AppThemeBinding Light={StaticResource Success60}, Dark={StaticResource Success30}}"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}"
                             VerticalOptions="Center">
                             <Label.Triggers>
                                 <DataTrigger
@@ -102,7 +98,7 @@
                                     Value="False">
                                     <Setter Property="Text" Value="&#xf144;" />
                                     <Setter Property="SemanticProperties.Description" Value="{localization:Translate Oynat}" />
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Success60}, Dark={StaticResource Success30}}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}" />
                                 </DataTrigger>
                                 <DataTrigger
                                     Binding="{Binding IsPlaying}"

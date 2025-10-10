@@ -9,7 +9,8 @@
     xmlns:models="clr-namespace:SuleymaniyeCalendar.Models"
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     x:DataType="viewModels:SettingsViewModel"
-    FlowDirection="{DynamicResource FlowDirection}">
+    FlowDirection="{DynamicResource FlowDirection}"
+    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
 
     <!-- Windows: explicit back navigation (Shell back button not always visible)
     <ContentPage.ToolbarItems>
@@ -117,9 +118,9 @@
                                 </Border.GestureRecognizers>
                                 <Border.Triggers>
                                     <DataTrigger Binding="{Binding LightChecked}" Value="True" TargetType="Border">
-                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary20}, Dark={StaticResource Primary90}}" />
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary10}, Dark={StaticResource Primary90}}" />
                                         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource HighContrastPrimary}, Dark={StaticResource HighContrastPrimaryDark}}" />
-                                        <Setter Property="StrokeThickness" Value="2.5" />
+                                        <Setter Property="StrokeThickness" Value="0.5" />
                                     </DataTrigger>
                                 </Border.Triggers>
                             </Border>
@@ -255,7 +256,6 @@
                                 Style="{StaticResource HeadlineMediumStyle}"
                                 Text="{localization:Translate KonumYenileButton}" />
                             <Label
-                                MaxLines="2"
                                 Style="{StaticResource BodySmallStyle}"
                                 Text="{localization:Translate HepKonumYenile}"
                                 Opacity="0.8" />
@@ -314,7 +314,6 @@
                                     Style="{StaticResource HeadlineMediumStyle}"
                                     Text="{localization:Translate BildirimKapatma}" />
                                 <Label
-                                    MaxLines="3"
                                     Style="{StaticResource BodySmallStyle}"
                                     Text="{localization:Translate BildirimUyari}"
                                     Opacity="0.8" />
@@ -330,9 +329,10 @@
                         <!-- Settings button - glass secondary for higher contrast -->
                         <Button
                             Margin="8,0,8,16"
-                            Style="{StaticResource GlassButtonSecondary}"
+                            Style="{StaticResource GlassButtonOutline}"
                             Command="{Binding GotoSettingsCommand}"
-                            Text="{localization:Translate GotoSettings}" />
+                            Text="{localization:Translate GotoSettings}"
+                            TextColor="{AppThemeBinding Light={StaticResource OnSurfaceTextColor}, Dark={StaticResource OnSurfaceTextColorDark}}" />
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>
