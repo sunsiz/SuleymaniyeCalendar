@@ -206,6 +206,9 @@
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>اوقات نماز امروز</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>امروز</value>
+  </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>ساعت زنگدار</value>
   </data>

@@ -211,6 +211,9 @@ Diese Anwendung wurde entwickelt, um einen sicheren und schnellen Zugriff auf Ge
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Die heutigen Gebetszeiten</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Heute</value>
+  </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>Wecker</value>
   </data>

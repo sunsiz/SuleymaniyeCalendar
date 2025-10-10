@@ -31,9 +31,9 @@
                 Margin="0"
                 Padding="0"
                 StrokeThickness="0"
-                Stroke="Transparent"
-                BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
-                                                  Dark={StaticResource AppBackgroundColorDark}}">
+                Stroke="Transparent">
+                <!-- BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
+                                                  Dark={StaticResource AppBackgroundColorDark}}" -->
                 <Image
                     Aspect="AspectFit"
                     Opacity="0.7"
@@ -41,7 +41,7 @@
             </Border>
 
             <Border
-                Style="{StaticResource GlassMediaCard}"
+                Style="{StaticResource NeoGlassCard}"
                 Grid.Row="1"
                 Margin="0,-25,0,-15">
                 <Grid
@@ -61,12 +61,12 @@
                                         FontFamily="{StaticResource IconFontFamily}"
                                         FontSize="{DynamicResource IconLargeFontSize}"
                                         Text="&#xf0ae; "
-                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                        TextColor="{AppThemeBinding Light=#3A2E1C,
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Span 
                                         Text="{localization:Translate YayinAkisi}" 
                                         FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}" />
+                                        TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
@@ -80,12 +80,10 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         Style="{StaticResource LuminousCircularIcon}"
-                        HeightRequest="56"
-                        WidthRequest="56"
                         Stroke="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
                         StrokeThickness="2"
                         HorizontalOptions="Center"
-                        VerticalOptions="Center">
+                        VerticalOptions="Center">                        
                         <Border.Shadow>
                             <Shadow Brush="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}"
                                     Radius="16"
@@ -101,7 +99,7 @@
                             HorizontalOptions="Center"
                             SemanticProperties.Description="{localization:Translate RadyoCal}"
                             Text="&#xf144;"
-                            TextColor="{AppThemeBinding Light={StaticResource Success60}, Dark={StaticResource Success30}}"
+                            TextColor="{AppThemeBinding Light={StaticResource GoldOrange}, Dark={StaticResource GoldDeep}}"
                             VerticalOptions="Center">
                             <Label.Triggers>
                                 <DataTrigger
@@ -110,7 +108,7 @@
                                     Value="False">
                                     <Setter Property="Text" Value="&#xf144;" />
                                     <Setter Property="SemanticProperties.Description" Value="{localization:Translate Oynat}" />
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Success60}, Dark={StaticResource Success30}}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource GoldOrange}, Dark={StaticResource GoldDeep}}" />
                                 </DataTrigger>
                                 <DataTrigger
                                     Binding="{Binding IsPlaying}"
@@ -141,12 +139,12 @@
                                         FontFamily="{StaticResource IconFontFamily}"
                                         FontSize="{DynamicResource IconLargeFontSize}"
                                         Text="&#xf0ac; "
-                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                        TextColor="{AppThemeBinding Light=#3A2E1C,
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Span 
                                         Text="{localization:Translate WebSayfa}" 
                                         FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}" />
+                                        TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
@@ -174,16 +172,12 @@
                 Source="https://www.suleymaniyevakfi.org/radio.mp3"
                 VerticalOptions="End" />
 
-            <ActivityIndicator
-                AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"
-                AbsoluteLayout.LayoutFlags="PositionProportional"
-                HeightRequest="80"
-                HorizontalOptions="Center"
-                IsRunning="{Binding IsBusy}"
-                VerticalOptions="Center"
-                Visual="Material"
-                WidthRequest="80"
-                Color="{StaticResource PrimaryColor}" />
+            <!-- 🎨 PHASE 15: Busy overlay with ElevatedPrimaryCard + GoldenActivityIndicator -->
+            <Grid BackgroundColor="#80000000" IsVisible="{Binding IsBusy}">
+                <Border Style="{StaticResource ElevatedPrimaryCard}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="40" HeightRequest="40" />
+                </Border>
+            </Grid>
         </Grid>
     </ContentPage.Content>
 

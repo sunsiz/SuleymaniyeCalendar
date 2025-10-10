@@ -36,7 +36,29 @@ public partial class App : Application
         ApplyTheme();
     }
 
-    protected override void OnResume() => ApplyTheme();
+    protected override void OnResume()
+    {
+        ApplyTheme();
+        
+        // 🔄 PHASE 18: Recalculate prayer states when app returns from background
+        // This ensures correct "current prayer" display when system time changes
+        // Note: Does NOT re-fetch from server (location changes require manual refresh)
+        try
+        {
+            if (Shell.Current?.CurrentPage?.BindingContext is MainViewModel mainViewModel)
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    // Just recalculate states from cached data, don't fetch from server
+                    mainViewModel.OnAppearing();
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"OnResume refresh error: {ex}");
+        }
+    }
 
     void ApplyTheme()
     {

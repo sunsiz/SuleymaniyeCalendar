@@ -47,17 +47,17 @@
             <ScrollView>
                 <VerticalStackLayout
                     Padding="{StaticResource PagePaddingMobile}"
-                    BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
-                                                      Dark={StaticResource AppBackgroundColorDark}}"
                     Spacing="{StaticResource SpacingTight}">
+                    <!-- BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
+                                                      Dark={StaticResource AppBackgroundColorDark}}" -->
 
-                    <!--  Compass Section - Golden Hour ✨  -->
-                    <Border Style="{StaticResource FrostGlassCardFrozen}">
-                        <VerticalStackLayout Spacing="16">
+                    <!--  🎨 PHASE 15: Compass Section - ElevatedPrimaryCard  -->
+                    <Border Style="{StaticResource AeroVistaCard}">
+                        <VerticalStackLayout Spacing="4">
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
-                                TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}"
+                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}"
                                 Text="{localization:Translate KibleGostergesi}" />
 
                             <Grid HeightRequest="260" HorizontalOptions="Center">
@@ -79,13 +79,13 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!--  Location Information - Golden Hour ✨  -->
-                    <Border Style="{StaticResource FrostGlassCardCrystal}">
-                        <VerticalStackLayout Spacing="16">
+                    <!--  🎨 PHASE 15: Location Information - StandardCard  -->
+                    <Border Style="{StaticResource ElevatedSecondaryCard}">
+                        <VerticalStackLayout Spacing="4">
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
-                                TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}"
+                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}"
                                 Text="{localization:Translate KonumBilgileri}" />
 
                             <!--  Coordinates Grid  -->
@@ -93,7 +93,7 @@
                                 ColumnDefinitions="*,*"
                                 ColumnSpacing="10"
                                 RowDefinitions="Auto,Auto,Auto"
-                                RowSpacing="16">
+                                RowSpacing="12">
                                 <!--  Latitude - Golden ✨  -->
                                 <VerticalStackLayout
                                     Grid.Row="0"
@@ -104,7 +104,7 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate EnlemFormatsiz}"
-                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                        TextColor="{AppThemeBinding Light=#3A2E1C,
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
@@ -124,7 +124,7 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate BoylamFormatsiz}"
-                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                        TextColor="{AppThemeBinding Light=#3A2E1C,
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
@@ -144,7 +144,7 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate YukseklikFormatsiz}"
-                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                        TextColor="{AppThemeBinding Light=#3A2E1C,
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
@@ -164,7 +164,7 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate Aci}"
-                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                        TextColor="{AppThemeBinding Light=#3A2E1C,
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
@@ -185,7 +185,7 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource TitleMediumStyle}"
                                         Text="{localization:Translate Adres}"
-                                        TextColor="{AppThemeBinding Light={StaticResource GoldDeep},
+                                        TextColor="{AppThemeBinding Light=#3A2E1C,
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
@@ -199,8 +199,8 @@
                             <!--  Action Button - Golden Glass ✨  -->
                             <Button
                                 Margin="12,0,12,12"
-                                Style="{StaticResource GlassButtonPillTertiary}"
-                                TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldLight}}"
+                                Style="{StaticResource GlassButtonPrimaryIntense}"
+                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldLight}}"
                                 Command="{Binding GoToMapCommand}"
                                 Text="{localization:Translate HaritadaGoster}" />
                         </VerticalStackLayout>
@@ -208,14 +208,11 @@
                 </VerticalStackLayout>
             </ScrollView>
 
-            <!--  Busy overlay  -->
-            <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}" IsVisible="{Binding IsBusy}">
-                <ActivityIndicator
-                    Style="{StaticResource ActivityIndicator}"
-                    HorizontalOptions="Center"
-                    IsRunning="True"
-                    VerticalOptions="Center"
-                    Color="{StaticResource PrimaryColor}" />
+            <!-- 🎨 PHASE 15: Busy overlay with ElevatedPrimaryCard + GoldenActivityIndicator -->
+            <Grid BackgroundColor="#80000000" IsVisible="{Binding IsBusy}">
+                <Border Style="{StaticResource ElevatedPrimaryCard}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="40" HeightRequest="40" />
+                </Border>
             </Grid>
         </Grid>
     </ContentPage.Content>

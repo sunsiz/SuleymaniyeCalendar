@@ -177,6 +177,9 @@
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>今日礼拜时间</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>今天</value>
+  </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>闹钟</value>
   </data>
