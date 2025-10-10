@@ -83,26 +83,18 @@
                         <StackLayout x:DataType="viewModels:MainViewModel">
                             <!-- 🌙 PHASE 15: Remaining Time Card using IntensePrimaryCard -->
                             <Border
-                                Style="{StaticResource IntensePrimaryCard}"
+                                Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
+                                Stroke="{AppThemeBinding Light={StaticResource OutlineColorLight}, Dark={StaticResource OutlineColorDark}}"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 12"
+                                Shadow="{StaticResource CardShadow}"
                                 Margin="12,8"
                                 Padding="0"
                                 HorizontalOptions="Fill">
-                                <!-- 🎨 PHASE 17: Animated progress gradient background -->
-                                <!-- 🌙 PHASE 19: Dark mode optimization - reduced gradient brightness -->
-                                <Border.Background>
-                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                                        <!-- Remaining time portion (light gold) -->
-                                        <GradientStop Color="{AppThemeBinding Light=#FFFFAA00, Dark=#80885511}" Offset="0" />
-                                        <GradientStop Color="{AppThemeBinding Light=#70FFCC44, Dark=#60664410}" Offset="{Binding TimeProgress}" />
-                                        <!-- Sharp transition zone (clear boundary) -->
-                                        <GradientStop Color="{AppThemeBinding Light=#1AFFD700, Dark=#40775520}" Offset="{Binding TimeProgress}" />
-                                        <!-- Consumed time portion (saturated golden orange) -->
-                                        <GradientStop Color="{AppThemeBinding Light=#0AFFD700, Dark=#20443308}" Offset="1" />
-                                    </LinearGradientBrush>
-                                </Border.Background>
+                                <!-- 🎨 PHASE 21: Clean glass card with subtle progress indicator -->
                                 
                                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="12,10">
-                                    <!-- Golden clock icon -->
+                                    <!-- Brown clock icon (brand color) -->
                                     <Border
                                         Grid.Column="0"
                                         WidthRequest="44"
@@ -114,7 +106,7 @@
                                             FontFamily="{StaticResource IconFontFamily}"
                                             FontSize="24"
                                             Text="&#xf017;"
-                                            TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark=#D0FFD700}"
+                                            TextColor="{AppThemeBinding Light={StaticResource PrimaryBase}, Dark={StaticResource PrimaryLight}}"
                                             VerticalOptions="Center"
                                             HorizontalTextAlignment="Center" />
                                     </Border>
@@ -155,96 +147,43 @@
                                     </MultiTrigger>
                                 </ContentView.Triggers>
                                 <Grid>
-                                <!-- 🎨 PHASE 15: Prayer Card using Phase 14 card hierarchy -->
+                                <!-- 🎨 PHASE 21: Clean glass morphism prayer cards -->
                                 <Border
-                                    Style="{StaticResource StandardCard}">
+                                    Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource OutlineColorLight}, Dark={StaticResource OutlineColorDark}}"
+                                    StrokeThickness="1"
+                                    StrokeShape="RoundRectangle 12"
+                                    Shadow="{StaticResource CardShadow}">
                                     <Border.Triggers>
-                                        <!-- 🎨 PHASE 16: Past prayer - Compact FlatContentCard style -->
+                                        <!-- 🎨 PHASE 21: Past prayer - Reduced opacity, compact size -->
                                         <DataTrigger
                                             Binding="{Binding IsPast}"
                                             TargetType="Border"
                                             Value="True">
-                                            <Setter Property="Background">
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFF5F5F0, Dark=#FF232120}" />
-                                                        <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFEEEEE8, Dark=#FF1E1C1B}" />
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="Stroke">
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                        <GradientStop Offset="0" Color="#30A8896F" />
-                                                        <GradientStop Offset="0.5" Color="#50C8A05F" />
-                                                        <GradientStop Offset="1" Color="#30A8896F" />
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="StrokeThickness" Value="1" />
-                                            <Setter Property="Opacity" Value="0.7" />
+                                            <Setter Property="Opacity" Value="0.5" />
                                             <Setter Property="MinimumHeightRequest" Value="56" />
                                             <Setter Property="HeightRequest" Value="56" />
                                             <Setter Property="MaximumHeightRequest" Value="56" />
                                             <Setter Property="Padding" Value="8,4" />
-                                            <Setter Property="Shadow">
-                                                <Shadow Brush="#30FFD700" Opacity="0.06" Radius="4" Offset="0,1" />
-                                            </Setter>
                                         </DataTrigger>
-                                        <!-- 🎨 PHASE 15: Current prayer - HeroPrimaryCard style -->
+                                        <!-- 🎨 PHASE 21: Current prayer - Brown left accent (brand color) -->
                                         <DataTrigger
                                             Binding="{Binding IsActive}"
                                             TargetType="Border"
                                             Value="True">
-                                            <Setter Property="Background">
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <!-- 🌙 PHASE 19: Dark mode optimization - reduced brightness -->
-                                                        <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFCC44, Dark=#B0996622}" />
-                                                        <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFC020, Dark=#C0AA7718}" />
-                                                        <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFBB33, Dark=#B0885511}" />
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource GoldPure}, Dark=#80FFD700}" />
-                                            <Setter Property="StrokeThickness" Value="3" />
-                                            <Setter Property="Shadow">
-                                                <Shadow Brush="{AppThemeBinding Light={StaticResource GoldOrange}, Dark=#50FFA500}" Radius="32" Offset="0,12" Opacity="0.45" />
-                                            </Setter>
+                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrimaryBase}, Dark={StaticResource PrimaryLight}}" />
+                                            <Setter Property="StrokeThickness" Value="4,0,0,0" />
+                                            <Setter Property="Shadow" Value="{StaticResource CardShadow}" />
                                             <Setter Property="HeightRequest" Value="120" />
                                             <Setter Property="Padding" Value="20,16" />
                                         </DataTrigger>
-                                        <!-- 🎨 PHASE 15: Upcoming prayer - ElevatedPrimaryCard style -->
+                                        <!-- 🎨 PHASE 21: Upcoming prayer - Standard glass card -->
                                         <MultiTrigger TargetType="Border">
                                             <MultiTrigger.Conditions>
                                                 <BindingCondition Binding="{Binding IsActive}" Value="False" />
                                                 <BindingCondition Binding="{Binding IsPast}" Value="False" />
                                             </MultiTrigger.Conditions>
-                                            <Setter Property="Background">
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <!-- 🌙 PHASE 19: Dark mode optimization - much more subtle -->
-                                                        <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFEDB8, Dark=#60775520}" />
-                                                        <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFD875, Dark=#70886615}" />
-                                                        <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFCC66, Dark=#60664410}" />
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="Stroke">
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                        <!-- 🌙 PHASE 19: Dark mode optimization - subtle golden border -->
-                                                        <GradientStop Offset="0" Color="{AppThemeBinding Light=#60FFD700, Dark=#40664410}" />
-                                                        <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#90FFD700, Dark=#50775520}" />
-                                                        <GradientStop Offset="1" Color="{AppThemeBinding Light=#60FFD700, Dark=#40664410}" />
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="StrokeThickness" Value="2" />
                                             <Setter Property="Opacity" Value="0.95" />
-                                            <Setter Property="Shadow">
-                                                <Shadow Brush="{AppThemeBinding Light={StaticResource GoldOrange}, Dark=#30FFA500}" Radius="18" Offset="0,6" Opacity="0.25" />
-                                            </Setter>
                                         </MultiTrigger>
                                     </Border.Triggers>
 

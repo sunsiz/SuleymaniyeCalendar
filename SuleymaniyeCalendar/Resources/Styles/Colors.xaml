@@ -223,26 +223,26 @@
     <Color x:Key="OutlineVariantDark">#79757F</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  PRAYER TIME STATE COLORS - WCAG AA Compliant (4.5:1 contrast minimum)  -->
+    <!--  PRAYER TIME STATE COLORS - High Contrast for Readability  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Past Prayer States - Enhanced contrast (4.8:1 ratio) ✅  -->
-    <Color x:Key="PrayerPastBackgroundColor">#FFD8D7D8</Color>       <!-- Lighter gray for better contrast -->
-    <Color x:Key="PrayerPastBackgroundColorDark">#FF2A2828</Color>   <!-- Darker background for dark mode -->
-    <Color x:Key="PrayerPastTextColor">#FF2D2A32</Color>             <!-- Much darker text (was #46444B) -->
-    <Color x:Key="PrayerPastTextColorDark">#FFB8B8B8</Color>         <!-- Lighter text for dark mode -->
+    <!--  Past Prayer States - Readable gray text  -->
+    <Color x:Key="PrayerPastBackgroundColor">#FFD8D7D8</Color>       <!-- Light gray background -->
+    <Color x:Key="PrayerPastBackgroundColorDark">#FF2A2828</Color>   <!-- Dark background -->
+    <Color x:Key="PrayerPastTextColor">#666666</Color>               <!-- Medium gray (readable) -->
+    <Color x:Key="PrayerPastTextColorDark">#BBBBBB</Color>           <!-- Light gray for dark mode -->
 
-    <!--  Current Prayer States - Enhanced visibility (5.2:1 ratio) ✅  -->
-    <Color x:Key="PrayerActiveBackgroundColor">#FF6EE895</Color>     <!-- Stronger green -->
-    <Color x:Key="PrayerActiveBackgroundColorDark">#FF1A4D28</Color> <!-- More opaque dark mode (was 13% opacity) -->
-    <Color x:Key="PrayerActiveTextColor">#FF0A4520</Color>           <!-- Darker text for better contrast -->
-    <Color x:Key="PrayerActiveTextColorDark">#FF90E5A8</Color>       <!-- Brighter text for dark mode -->
+    <!--  Current Prayer States - Brown brand color for text  -->
+    <Color x:Key="PrayerActiveBackgroundColor">#FFFFFF</Color>       <!-- Pure white -->
+    <Color x:Key="PrayerActiveBackgroundColorDark">#1C1B20</Color>   <!-- Dark card -->
+    <Color x:Key="PrayerActiveTextColor">#8A4E1E</Color>             <!-- Brown brand (dark) -->
+    <Color x:Key="PrayerActiveTextColorDark">#E8B08A</Color>         <!-- Brown brand (light) -->
 
-    <!--  Upcoming Prayer States - Enhanced warm distinction (4.9:1 ratio) ✅  -->
-    <Color x:Key="PrayerUpcomingBackgroundColor">#FFD4B88A</Color>   <!-- Stronger warm tone -->
-    <Color x:Key="PrayerUpcomingBackgroundColorDark">#FF4A4338</Color> <!-- More opaque dark mode -->
-    <Color x:Key="PrayerUpcomingTextColor">#7A4A15</Color>
-    <Color x:Key="PrayerUpcomingTextColorDark">#E8B08A</Color>    
+    <!--  Upcoming Prayer States - Black/White high contrast  -->
+    <Color x:Key="PrayerUpcomingBackgroundColor">#FFFFFF</Color>     <!-- Pure white -->
+    <Color x:Key="PrayerUpcomingBackgroundColorDark">#1C1B20</Color> <!-- Dark card -->
+    <Color x:Key="PrayerUpcomingTextColor">#000000</Color>           <!-- Pure black -->
+    <Color x:Key="PrayerUpcomingTextColorDark">#FFFFFF</Color>       <!-- Pure white -->    
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  PHASE 5.2.2 - OPTIMIZED PRAYER CARD BACKGROUND COLORS  -->

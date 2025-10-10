@@ -3,95 +3,50 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  PHASE 21: CLEAN MODERN DESIGN - Glass Morphism System 🪟  -->
+    <!--  PHASE 21: CLEAN MODERN DESIGN - Solid Backgrounds, No Gradients ✨  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  1. GLASS MORPHISM - Frosted Card Backgrounds (iOS/Material You Style)  -->
+    <!--  1. SOLID CARD BACKGROUNDS - Clear & Readable  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Glass Card - Light Mode (Pure frosted white)  -->
-    <LinearGradientBrush x:Key="GlassCardBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#F8FFFFFF" />      <!-- 97% white top -->
-        <GradientStop Offset="1.0" Color="#F0FFFFFF" />      <!-- 94% white bottom -->
-    </LinearGradientBrush>
-
-    <!--  Glass Card - Dark Mode (Subtle frosted dark)  -->
-    <LinearGradientBrush x:Key="GlassCardBrushDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#E81C1B20" />      <!-- 91% dark top -->
-        <GradientStop Offset="1.0" Color="#E0141218" />      <!-- 88% dark bottom -->
-    </LinearGradientBrush>
-
-    <!--  Glass Card - Theme-Aware  -->
-    <LinearGradientBrush x:Key="GlassCardBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="{AppThemeBinding Light=#F8FFFFFF, Dark=#E81C1B20}" />
-        <GradientStop Offset="1.0" Color="{AppThemeBinding Light=#F0FFFFFF, Dark=#E0141218}" />
-    </LinearGradientBrush>
+    <!--  Standard Card - SOLID WHITE/DARK (100% opaque)  -->
+    <SolidColorBrush x:Key="GlassCardBrushLight" Color="#FFFFFF" />           <!-- Pure white -->
+    <SolidColorBrush x:Key="GlassCardBrushDark" Color="#1C1B20" />            <!-- Clean dark -->
+    <SolidColorBrush x:Key="GlassCardBrush" Color="{AppThemeBinding Light=#FFFFFF, Dark=#1C1B20}" />
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  2. CURRENT PRAYER GLASS (Brown Accent + White Frosted)  -->
+    <!--  2. CURRENT PRAYER CARD - White/Dark with Brown Left Border  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Current Prayer - Light Mode (Pure white with subtle warm tint)  -->
-    <LinearGradientBrush x:Key="CurrentPrayerGlassBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#FFFFFFFF" />      <!-- Pure white top -->
-        <GradientStop Offset="1.0" Color="#FFFFFCF8" />      <!-- Subtle warm bottom -->
-    </LinearGradientBrush>
-
-    <!--  Current Prayer - Dark Mode (Dark with brown tint)  -->
-    <LinearGradientBrush x:Key="CurrentPrayerGlassBrushDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#F02F2D32" />      <!-- 94% dark top -->
-        <GradientStop Offset="1.0" Color="#E8332F2F" />      <!-- 91% dark with brown tint -->
-    </LinearGradientBrush>
-
-    <!--  Current Prayer - Theme-Aware  -->
-    <LinearGradientBrush x:Key="CurrentPrayerGlassBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="{AppThemeBinding Light=#FFFFFFFF, Dark=#F02F2D32}" />
-        <GradientStop Offset="1.0" Color="{AppThemeBinding Light=#FFFFFCF8, Dark=#E8332F2F}" />
-    </LinearGradientBrush>
+    <!--  Current Prayer - SOLID (same as standard, brown border added in style)  -->
+    <SolidColorBrush x:Key="CurrentPrayerGlassBrushLight" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="CurrentPrayerGlassBrushDark" Color="#1C1B20" />
+    <SolidColorBrush x:Key="CurrentPrayerGlassBrush" Color="{AppThemeBinding Light=#FFFFFF, Dark=#1C1B20}" />
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  3. GLASS BUTTONS (Frosted Appearance)  -->
+    <!--  3. BUTTONS - Solid Colors, No Gradients  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Glass Button - Light Mode  -->
-    <LinearGradientBrush x:Key="GlassButtonBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#F0FFFFFF" />      <!-- 94% white -->
-        <GradientStop Offset="1.0" Color="#E8FFFFFF" />      <!-- 91% white -->
-    </LinearGradientBrush>
-
-    <!--  Glass Button - Dark Mode  -->
-    <LinearGradientBrush x:Key="GlassButtonBrushDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#E0201F24" />      <!-- 88% dark -->
-        <GradientStop Offset="1.0" Color="#D81C1B20" />      <!-- 85% dark -->
-    </LinearGradientBrush>
-
-    <!--  Glass Button - Theme-Aware  -->
-    <LinearGradientBrush x:Key="GlassButtonBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="{AppThemeBinding Light=#F0FFFFFF, Dark=#E0201F24}" />
-        <GradientStop Offset="1.0" Color="{AppThemeBinding Light=#E8FFFFFF, Dark=#D81C1B20}" />
-    </LinearGradientBrush>
-
-    <!--  Primary Button - Brown Brand (Solid, no gradient)  -->
+    <!--  Primary Button - Brown Brand  -->
     <SolidColorBrush x:Key="PrimaryButtonBrush" Color="{StaticResource BrandBase}" />
     <SolidColorBrush x:Key="PrimaryButtonBrushLight" Color="{StaticResource BrandBase}" />
     <SolidColorBrush x:Key="PrimaryButtonBrushDark" Color="{StaticResource BrandDark}" />
 
+    <!--  Glass Button - Subtle Gray  -->
+    <SolidColorBrush x:Key="GlassButtonBrushLight" Color="#F5F5F5" />        <!-- Very light gray -->
+    <SolidColorBrush x:Key="GlassButtonBrushDark" Color="#2F2D32" />         <!-- Subtle dark -->
+    <SolidColorBrush x:Key="GlassButtonBrush" Color="{AppThemeBinding Light=#F5F5F5, Dark=#2F2D32}" />
+
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  4. APP BACKGROUNDS (Simple, Clean)  -->
+    <!--  4. APP BACKGROUNDS - Solid, Clean  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  App Background - Light Mode (Warm white with subtle tint)  -->
-    <LinearGradientBrush x:Key="AppBackgroundBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#FFFFFCF8" />      <!-- Very light warm white -->
-        <GradientStop Offset="1.0" Color="#FFF5F1ED" />      <!-- Subtle beige tint -->
-    </LinearGradientBrush>
+    <!--  App Background - Light Mode (Soft warm gray)  -->
+    <SolidColorBrush x:Key="AppBackgroundBrushLight" Color="#F5F1ED" />      <!-- Warm light gray -->
 
-    <!--  App Background - Dark Mode (Clean dark gray)  -->
-    <LinearGradientBrush x:Key="AppBackgroundBrushDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#141218" />        <!-- Dark surface -->
-        <GradientStop Offset="1.0" Color="#1C1B20" />        <!-- Slightly lighter bottom -->
-    </LinearGradientBrush>
+    <!--  App Background - Dark Mode (Clean dark)  -->
+    <SolidColorBrush x:Key="AppBackgroundBrushDark" Color="#141218" />       <!-- Dark surface -->
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  5. LEGACY COMPATIBILITY BRUSHES (Simplified)  -->
