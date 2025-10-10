@@ -28,10 +28,18 @@
     <Color x:Key="Neutral99">#0F0F11</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  BRAND COLORS - Golden Hour Palette (Redesign)  -->
+    <!--  BRAND COLORS - Clean Modern Palette (Phase 21)  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Primary - Golden copper gradient inspired by mosque domes at sunset  -->
+    <!--  Primary - Warm Brown Brand Identity (5 essential tones)  -->
+    <Color x:Key="BrandContainer">#FFF8F0</Color>    <!--  Very light container background  -->
+    <Color x:Key="BrandLight">#E8B08A</Color>        <!--  Light tint for accents  -->
+    <Color x:Key="BrandBase">#C67B3B</Color>         <!--  Main brand color (logo, primary actions)  -->
+    <Color x:Key="BrandDark">#A8632A</Color>         <!--  Dark emphasis  -->
+    <Color x:Key="BrandDarkest">#8A4E1E</Color>      <!--  Darkest for contrast  -->
+    <Color x:Key="OnBrand">#FFFFFF</Color>           <!--  Text/icons on brand background  -->
+    
+    <!--  Legacy Primary mappings (backward compatibility)  -->
     <Color x:Key="Primary10">#FFF8F0</Color>
     <Color x:Key="Primary20">#F4CEB5</Color>
     <Color x:Key="Primary30">#E8B08A</Color>
@@ -44,24 +52,37 @@
     <Color x:Key="Primary95">#321607</Color>
     <Color x:Key="Primary99">#190A03</Color>
 
-    <!--  Golden Hour - Special colors for current prayer hero card  -->
-    <Color x:Key="GoldHighlight">#FFFEF8</Color>
-    <Color x:Key="GoldLight">#FFF4E0</Color>
-    <Color x:Key="GoldBase">#FFE8B8</Color>
-    <Color x:Key="GoldMedium">#FFD18A</Color>
-    <Color x:Key="GoldDeep">#FFC870</Color>
-    <Color x:Key="GoldPure">#FFD700</Color>
-    <Color x:Key="GoldOrange">#FFA500</Color>
+    <!--  Glass Morphism Colors - Frosted Effects  -->
+    <Color x:Key="GlassFrost">#F5FFFFFF</Color>          <!--  96% white - frosted cards (light mode)  -->
+    <Color x:Key="GlassFrostDark">#E6000000</Color>      <!--  90% black - frosted cards (dark mode)  -->
+    <Color x:Key="GlassAccent">#1AC67B3B</Color>         <!--  10% brand tint overlay  -->
+    <Color x:Key="GlassAccentDark">#26C67B3B</Color>     <!--  15% brand tint (dark mode)  -->
+    <Color x:Key="GlassBorder">#20000000</Color>         <!--  12% black - subtle borders  -->
+    <Color x:Key="GlassBorderLight">#10000000</Color>    <!--  6% black - lighter borders  -->
+    <Color x:Key="GlassShadow">#10000000</Color>         <!--  6% black - soft shadows  -->
 
-    <!--  Prayer State Colors (Enhanced differentiation)  -->
-    <Color x:Key="CurrentPrayerStart">#FFD700</Color>
-    <Color x:Key="CurrentPrayerEnd">#FFA500</Color>
-    <Color x:Key="UpcomingPrayerStart">#FFE8B8</Color>
-    <Color x:Key="UpcomingPrayerEnd">#FFD18A</Color>
-    <Color x:Key="PastPrayerStart">#E8E4E0</Color>
-    <Color x:Key="PastPrayerEnd">#D0C8C0</Color>
+    <!--  Prayer State Colors (Simplified - No Gradients)  -->
+    <Color x:Key="CurrentPrayerAccent">#C67B3B</Color>   <!--  Brown left border for current prayer  -->
+    <Color x:Key="CurrentPrayerGlass">#FFFFFFFF</Color>  <!--  Pure white glass background  -->
+    <Color x:Key="UpcomingPrayerTint">#FFFFF8F0</Color>  <!--  Very subtle brown wash  -->
+    <Color x:Key="PastPrayerOpacity">#80FFFFFF</Color>   <!--  50% opacity white  -->
+    
+    <!--  Legacy gradient color mappings (for compatibility during transition)  -->
+    <Color x:Key="GoldPure">#C67B3B</Color>              <!--  Map to brand brown  -->
+    <Color x:Key="GoldBase">#E8B08A</Color>              <!--  Map to brand light  -->
+    <Color x:Key="CurrentPrayerStart">#C67B3B</Color>
+    <Color x:Key="CurrentPrayerEnd">#A8632A</Color>
+    <Color x:Key="UpcomingPrayerStart">#FFF8F0</Color>
+    <Color x:Key="UpcomingPrayerEnd">#FFF8F0</Color>
+    <Color x:Key="PastPrayerStart">#F5F5F5</Color>
+    <Color x:Key="PastPrayerEnd">#F0F0F0</Color>
 
-    <!--  Secondary - Teal accent for Qibla compass and special features  -->
+    <!--  Secondary - Teal accent for Qibla compass (5 essential tones)  -->
+    <Color x:Key="SecondaryLight">#B8E6E9</Color>
+    <Color x:Key="SecondaryBase">#2E9FA8</Color>
+    <Color x:Key="SecondaryDark">#218187</Color>
+    
+    <!--  Legacy Secondary mappings  -->
     <Color x:Key="Secondary10">#E8F7F8</Color>
     <Color x:Key="Secondary20">#B8E6E9</Color>
     <Color x:Key="Secondary30">#4DB8C4</Color>
@@ -74,13 +95,18 @@
     <Color x:Key="Secondary95">#051013</Color>
     <Color x:Key="Secondary99">#020608</Color>
 
-    <!--  Tertiary - Vibrant green for success states and notifications  -->
+    <!--  Tertiary - Green for success states (5 essential tones)  -->
+    <Color x:Key="TertiaryLight">#C8E6C8</Color>
+    <Color x:Key="TertiaryBase">#4CAE4C</Color>
+    <Color x:Key="TertiaryDark">#3D8B3D</Color>
+    
+    <!--  Legacy Tertiary mappings  -->
     <Color x:Key="Tertiary10">#E8F5E8</Color>
     <Color x:Key="Tertiary20">#C8E6C8</Color>
     <Color x:Key="Tertiary30">#A8D7A8</Color>
     <Color x:Key="Tertiary40">#88C888</Color>
-    <Color x:Key="Tertiary50">#2D8B57</Color>
-    <Color x:Key="Tertiary60">#4F8B4F</Color>
+    <Color x:Key="Tertiary50">#4CAE4C</Color>
+    <Color x:Key="Tertiary60">#3D8B3D</Color>
     <Color x:Key="Tertiary70">#3F6E3F</Color>
     <Color x:Key="Tertiary80">#2F512F</Color>
     <Color x:Key="Tertiary90">#1F341F</Color>

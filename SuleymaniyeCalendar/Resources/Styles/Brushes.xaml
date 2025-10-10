@@ -3,281 +3,236 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  GOLDEN HOUR REDESIGN - Hero Current Prayer Gradients (Theme-Aware) 🌟  -->
+    <!--  PHASE 21: CLEAN MODERN DESIGN - Glass Morphism System 🪟  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Hero Current Prayer - Light Mode: Radiant Golden Gradient  -->
-    <LinearGradientBrush x:Key="HeroCurrentPrayerBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="{StaticResource GoldHighlight}" />
-        <GradientStop Offset="0.25" Color="{StaticResource GoldLight}" />
-        <GradientStop Offset="0.5" Color="{StaticResource GoldBase}" />
-        <GradientStop Offset="0.75" Color="{StaticResource GoldMedium}" />
-        <GradientStop Offset="1.0" Color="{StaticResource GoldDeep}" />
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  1. GLASS MORPHISM - Frosted Card Backgrounds (iOS/Material You Style)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  Glass Card - Light Mode (Pure frosted white)  -->
+    <LinearGradientBrush x:Key="GlassCardBrushLight" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#F8FFFFFF" />      <!-- 97% white top -->
+        <GradientStop Offset="1.0" Color="#F0FFFFFF" />      <!-- 94% white bottom -->
     </LinearGradientBrush>
 
-    <!--  Hero Current Prayer - Dark Mode: Subtle Golden Glow (Darker) 🌙  -->
-    <LinearGradientBrush x:Key="HeroCurrentPrayerBrushDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="#3D3528" />
-        <!-- Dark brown-gold -->
-        <GradientStop Offset="0.25" Color="#4A3F2E" />
-        <!-- Subtle gold tint -->
-        <GradientStop Offset="0.5" Color="#574934" />
-        <!-- Warm dark gold -->
-        <GradientStop Offset="0.75" Color="#5E4D35" />
-        <!-- Muted gold -->
-        <GradientStop Offset="1.0" Color="#655038" />
-        <!-- Rich dark gold -->
+    <!--  Glass Card - Dark Mode (Subtle frosted dark)  -->
+    <LinearGradientBrush x:Key="GlassCardBrushDark" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#E81C1B20" />      <!-- 91% dark top -->
+        <GradientStop Offset="1.0" Color="#E0141218" />      <!-- 88% dark bottom -->
     </LinearGradientBrush>
 
-    <!--  Theme-Aware Wrapper (Auto-switches based on theme)  -->
-    <LinearGradientBrush x:Key="HeroCurrentPrayerBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="{AppThemeBinding Light={StaticResource GoldHighlight}, Dark=#3D3528}" />
-        <GradientStop Offset="0.25" Color="{AppThemeBinding Light={StaticResource GoldLight}, Dark=#4A3F2E}" />
-        <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource GoldBase}, Dark=#574934}" />
-        <GradientStop Offset="0.75" Color="{AppThemeBinding Light={StaticResource GoldMedium}, Dark=#5E4D35}" />
-        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource GoldDeep}, Dark=#655038}" />
+    <!--  Glass Card - Theme-Aware  -->
+    <LinearGradientBrush x:Key="GlassCardBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{AppThemeBinding Light=#F8FFFFFF, Dark=#E81C1B20}" />
+        <GradientStop Offset="1.0" Color="{AppThemeBinding Light=#F0FFFFFF, Dark=#E0141218}" />
     </LinearGradientBrush>
 
-    <!--  Hero Current Prayer - Border Radial Gradient (Gold to Copper)  -->
-    <RadialGradientBrush x:Key="HeroCurrentPrayerBorderBrush" Center="0.5,0.5" Radius="1.0">
-        <GradientStop Offset="0.0" Color="{StaticResource GoldPure}" />
-        <GradientStop Offset="0.5" Color="{StaticResource Primary50}" />
-        <GradientStop Offset="1.0" Color="{StaticResource Primary70}" />
-    </RadialGradientBrush>
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  2. CURRENT PRAYER GLASS (Brown Accent + White Frosted)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Upcoming Prayer - Theme-Aware Soft Amber Glow 🌅  -->
-    <LinearGradientBrush x:Key="UpcomingPrayerBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="{AppThemeBinding Light={StaticResource UpcomingPrayerStart}, Dark=#3A3430}" />
-        <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource GoldBase}, Dark=#423C34}" />
-        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource UpcomingPrayerEnd}, Dark=#4A4238}" />
+    <!--  Current Prayer - Light Mode (Pure white with subtle warm tint)  -->
+    <LinearGradientBrush x:Key="CurrentPrayerGlassBrushLight" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#FFFFFFFF" />      <!-- Pure white top -->
+        <GradientStop Offset="1.0" Color="#FFFFFCF8" />      <!-- Subtle warm bottom -->
     </LinearGradientBrush>
 
-    <!--  Past Prayer - Theme-Aware Elegant Gray-Copper 🌑  -->
-    <LinearGradientBrush x:Key="PastPrayerBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0.0" Color="{AppThemeBinding Light={StaticResource PastPrayerStart}, Dark=#2A2828}" />
-        <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#DCD8D4, Dark=#2F2D2D}" />
-        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource PastPrayerEnd}, Dark=#333131}" />
+    <!--  Current Prayer - Dark Mode (Dark with brown tint)  -->
+    <LinearGradientBrush x:Key="CurrentPrayerGlassBrushDark" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#F02F2D32" />      <!-- 94% dark top -->
+        <GradientStop Offset="1.0" Color="#E8332F2F" />      <!-- 91% dark with brown tint -->
     </LinearGradientBrush>
 
-    <!--  App Background - Golden Dawn (Light Mode)  -->
+    <!--  Current Prayer - Theme-Aware  -->
+    <LinearGradientBrush x:Key="CurrentPrayerGlassBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{AppThemeBinding Light=#FFFFFFFF, Dark=#F02F2D32}" />
+        <GradientStop Offset="1.0" Color="{AppThemeBinding Light=#FFFFFCF8, Dark=#E8332F2F}" />
+    </LinearGradientBrush>
+
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  3. GLASS BUTTONS (Frosted Appearance)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  Glass Button - Light Mode  -->
+    <LinearGradientBrush x:Key="GlassButtonBrushLight" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#F0FFFFFF" />      <!-- 94% white -->
+        <GradientStop Offset="1.0" Color="#E8FFFFFF" />      <!-- 91% white -->
+    </LinearGradientBrush>
+
+    <!--  Glass Button - Dark Mode  -->
+    <LinearGradientBrush x:Key="GlassButtonBrushDark" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#E0201F24" />      <!-- 88% dark -->
+        <GradientStop Offset="1.0" Color="#D81C1B20" />      <!-- 85% dark -->
+    </LinearGradientBrush>
+
+    <!--  Glass Button - Theme-Aware  -->
+    <LinearGradientBrush x:Key="GlassButtonBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{AppThemeBinding Light=#F0FFFFFF, Dark=#E0201F24}" />
+        <GradientStop Offset="1.0" Color="{AppThemeBinding Light=#E8FFFFFF, Dark=#D81C1B20}" />
+    </LinearGradientBrush>
+
+    <!--  Primary Button - Brown Brand (Solid, no gradient)  -->
+    <SolidColorBrush x:Key="PrimaryButtonBrush" Color="{StaticResource BrandBase}" />
+    <SolidColorBrush x:Key="PrimaryButtonBrushLight" Color="{StaticResource BrandBase}" />
+    <SolidColorBrush x:Key="PrimaryButtonBrushDark" Color="{StaticResource BrandDark}" />
+
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  4. APP BACKGROUNDS (Simple, Clean)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  App Background - Light Mode (Warm white with subtle tint)  -->
     <LinearGradientBrush x:Key="AppBackgroundBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="{StaticResource Primary10}" />
-        <GradientStop Offset="1" Color="#FFF5E3D9" />
+        <GradientStop Offset="0.0" Color="#FFFFFCF8" />      <!-- Very light warm white -->
+        <GradientStop Offset="1.0" Color="#FFF5F1ED" />      <!-- Subtle beige tint -->
     </LinearGradientBrush>
 
+    <!--  App Background - Dark Mode (Clean dark gray)  -->
     <LinearGradientBrush x:Key="AppBackgroundBrushDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#141218" />
-        <GradientStop Offset="1" Color="#1C1B20" />
+        <GradientStop Offset="0.0" Color="#141218" />        <!-- Dark surface -->
+        <GradientStop Offset="1.0" Color="#1C1B20" />        <!-- Slightly lighter bottom -->
     </LinearGradientBrush>
 
-    <!--  Frosted glass brushes (MD3-friendly)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  5. LEGACY COMPATIBILITY BRUSHES (Simplified)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  Legacy: Hero Current Prayer (now uses glass + brown accent)  -->
+    <LinearGradientBrush x:Key="HeroCurrentPrayerBrushLight" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#FFFFFFFF" />
+        <GradientStop Offset="1.0" Color="#FFFFFCF8" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="HeroCurrentPrayerBrushDark" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#F02F2D32" />
+        <GradientStop Offset="1.0" Color="#E8332F2F" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="HeroCurrentPrayerBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{AppThemeBinding Light=#FFFFFFFF, Dark=#F02F2D32}" />
+        <GradientStop Offset="1.0" Color="{AppThemeBinding Light=#FFFFFCF8, Dark=#E8332F2F}" />
+    </LinearGradientBrush>
+
+    <!--  Legacy: Hero Border (now solid brown)  -->
+    <SolidColorBrush x:Key="HeroCurrentPrayerBorderBrush" Color="{StaticResource BrandBase}" />
+
+    <!--  Legacy: Upcoming Prayer (subtle tint)  -->
+    <LinearGradientBrush x:Key="UpcomingPrayerBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{AppThemeBinding Light=#FFFFFCF8, Dark=#1F1C1B20}" />
+        <GradientStop Offset="1.0" Color="{AppThemeBinding Light=#FFF8F0, Dark=#1A1C1B20}" />
+    </LinearGradientBrush>
+
+    <!--  Legacy: Past Prayer (neutral gray)  -->
+    <LinearGradientBrush x:Key="PastPrayerBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{AppThemeBinding Light=#F8F5F5F5, Dark=#E01C1B20}" />
+        <GradientStop Offset="1.0" Color="{AppThemeBinding Light=#F0F0F0F0, Dark=#D8141218}" />
+    </LinearGradientBrush>
+
+    <!--  Legacy: Primary Glass Brush  -->
     <LinearGradientBrush x:Key="PrimaryGlassBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#E6FFFFFF" />
-        <GradientStop Offset="0.4" Color="{StaticResource Primary10}" />
-        <GradientStop Offset="1" Color="#CCFFFFFF" />
+        <GradientStop Offset="0.0" Color="#F0FFFFFF" />
+        <GradientStop Offset="1.0" Color="#E8FFFFFF" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="SecondaryGlassBrush" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#E6FFFFFF" />
-        <GradientStop Offset="0.4" Color="{StaticResource Secondary10}" />
-        <GradientStop Offset="1" Color="#CCFFFFFF" />
+        <GradientStop Offset="0.0" Color="#F0FFFFFF" />
+        <GradientStop Offset="1.0" Color="#E8FFFFFF" />
     </LinearGradientBrush>
 
-    <!--  Theme-aware glass container brushes  -->
     <LinearGradientBrush x:Key="SurfaceGlassBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#F2FFFBFB" />
-        <GradientStop Offset="0.5" Color="{StaticResource SurfaceContainerLight}" />
-        <GradientStop Offset="1" Color="#E0F8F1F1" />
+        <GradientStop Offset="0.0" Color="#F8FFFFFF" />
+        <GradientStop Offset="1.0" Color="#F0FFFFFF" />
     </LinearGradientBrush>
 
-    <!--  Intense button backgrounds (darker, more saturated, less white)  -->
-    <LinearGradientBrush x:Key="ButtonPrimaryIntenseLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#E6FFFFFF" />
-        <GradientStop Offset="0.55" Color="{StaticResource Primary40}" />
-        <GradientStop Offset="1" Color="#D0FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonPrimaryIntenseDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#24FFFFFF" />
-        <GradientStop Offset="0.55" Color="{StaticResource Primary80}" />
-        <GradientStop Offset="1" Color="#14FFFFFF" />
-    </LinearGradientBrush>
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  6. SIMPLIFIED BUTTON BRUSHES (Solid Colors + Glass)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <LinearGradientBrush x:Key="ButtonSecondaryIntenseLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#E6FFFFFF" />
-        <GradientStop Offset="0.55" Color="{StaticResource Secondary40}" />
-        <GradientStop Offset="1" Color="#D0FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonSecondaryIntenseDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#24FFFFFF" />
-        <GradientStop Offset="0.55" Color="{StaticResource Secondary80}" />
-        <GradientStop Offset="1" Color="#14FFFFFF" />
-    </LinearGradientBrush>
+    <!--  Primary Buttons (Brown Brand)  -->
+    <SolidColorBrush x:Key="ButtonPrimaryFlatLight" Color="{StaticResource BrandBase}" />
+    <SolidColorBrush x:Key="ButtonPrimaryFlatDark" Color="{StaticResource BrandDark}" />
+    <SolidColorBrush x:Key="ButtonPrimaryIntenseLight" Color="{StaticResource BrandBase}" />
+    <SolidColorBrush x:Key="ButtonPrimaryIntenseDark" Color="{StaticResource BrandDark}" />
+    <SolidColorBrush x:Key="ButtonPrimarySuperIntenseLight" Color="{StaticResource BrandBase}" />
+    <SolidColorBrush x:Key="ButtonPrimarySuperIntenseDark" Color="{StaticResource BrandDark}" />
 
-    <LinearGradientBrush x:Key="ButtonSuccessIntenseLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#E6FFFFFF" />
-        <GradientStop Offset="0.55" Color="{StaticResource Success40}" />
-        <GradientStop Offset="1" Color="#D0FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonSuccessIntenseDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#24FFFFFF" />
-        <GradientStop Offset="0.55" Color="{StaticResource Success80}" />
-        <GradientStop Offset="1" Color="#14FFFFFF" />
-    </LinearGradientBrush>
+    <!--  Secondary Buttons (Teal)  -->
+    <SolidColorBrush x:Key="ButtonSecondaryFlatLight" Color="{StaticResource SecondaryBase}" />
+    <SolidColorBrush x:Key="ButtonSecondaryFlatDark" Color="{StaticResource SecondaryDark}" />
+    <SolidColorBrush x:Key="ButtonSecondaryIntenseLight" Color="{StaticResource SecondaryBase}" />
+    <SolidColorBrush x:Key="ButtonSecondaryIntenseDark" Color="{StaticResource SecondaryDark}" />
+    <SolidColorBrush x:Key="ButtonSecondarySuperIntenseLight" Color="{StaticResource SecondaryBase}" />
+    <SolidColorBrush x:Key="ButtonSecondarySuperIntenseDark" Color="{StaticResource SecondaryDark}" />
 
-    <LinearGradientBrush x:Key="ButtonWarningIntenseLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#F0FFFFFF" />
-        <GradientStop Offset="0.55" Color="{StaticResource Warning50}" />
-        <GradientStop Offset="1" Color="#D8FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonWarningIntenseDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#24FFFFFF" />
-        <GradientStop Offset="0.55" Color="{StaticResource Warning80}" />
-        <GradientStop Offset="1" Color="#14FFFFFF" />
-    </LinearGradientBrush>
+    <!--  Success Buttons (Green)  -->
+    <SolidColorBrush x:Key="ButtonSuccessFlatLight" Color="{StaticResource TertiaryBase}" />
+    <SolidColorBrush x:Key="ButtonSuccessFlatDark" Color="{StaticResource TertiaryDark}" />
+    <SolidColorBrush x:Key="ButtonSuccessIntenseLight" Color="{StaticResource TertiaryBase}" />
+    <SolidColorBrush x:Key="ButtonSuccessIntenseDark" Color="{StaticResource TertiaryDark}" />
+    <SolidColorBrush x:Key="ButtonSuccessSuperIntenseLight" Color="{StaticResource TertiaryBase}" />
+    <SolidColorBrush x:Key="ButtonSuccessSuperIntenseDark" Color="{StaticResource TertiaryDark}" />
 
-    <LinearGradientBrush x:Key="ButtonDangerIntenseLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#F0FFFFFF" />
-        <GradientStop Offset="0.55" Color="{StaticResource Error50}" />
-        <GradientStop Offset="1" Color="#D8FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonDangerIntenseDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#24FFFFFF" />
-        <GradientStop Offset="0.55" Color="{StaticResource Error80}" />
-        <GradientStop Offset="1" Color="#14FFFFFF" />
-    </LinearGradientBrush>
-
-    <!--  Super-Intense button backgrounds (minimal white, stronger mid-tones)  -->
-    <LinearGradientBrush x:Key="ButtonPrimarySuperIntenseLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#F4FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Primary50}" />
-        <GradientStop Offset="1" Color="#E0FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonPrimarySuperIntenseDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#18FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Primary80}" />
-        <GradientStop Offset="1" Color="#0EFFFFFF" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="ButtonSecondarySuperIntenseLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#F4FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Secondary50}" />
-        <GradientStop Offset="1" Color="#E0FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonSecondarySuperIntenseDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#18FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Secondary80}" />
-        <GradientStop Offset="1" Color="#0EFFFFFF" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="ButtonSuccessSuperIntenseLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#F4FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Success50}" />
-        <GradientStop Offset="1" Color="#E0FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonSuccessSuperIntenseDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#18FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Success80}" />
-        <GradientStop Offset="1" Color="#0EFFFFFF" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="ButtonWarningSuperIntenseLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#F6FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Warning60}" />
-        <GradientStop Offset="1" Color="#E4FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonWarningSuperIntenseDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#18FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Warning80}" />
-        <GradientStop Offset="1" Color="#0EFFFFFF" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="ButtonDangerSuperIntenseLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#F6FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Error60}" />
-        <GradientStop Offset="1" Color="#E4FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="ButtonDangerSuperIntenseDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#18FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Error80}" />
-        <GradientStop Offset="1" Color="#0EFFFFFF" />
-    </LinearGradientBrush>
-
-    <!--  Flat (solid) button backgrounds per variant  -->
-    <SolidColorBrush x:Key="ButtonPrimaryFlatLight" Color="{StaticResource Primary40}" />
-    <SolidColorBrush x:Key="ButtonPrimaryFlatDark" Color="{StaticResource Primary80}" />
-    <SolidColorBrush x:Key="ButtonSecondaryFlatLight" Color="{StaticResource Secondary40}" />
-    <SolidColorBrush x:Key="ButtonSecondaryFlatDark" Color="{StaticResource Secondary80}" />
-    <SolidColorBrush x:Key="ButtonSuccessFlatLight" Color="{StaticResource Success40}" />
-    <SolidColorBrush x:Key="ButtonSuccessFlatDark" Color="{StaticResource Success80}" />
+    <!--  Warning Buttons (Simplified)  -->
     <SolidColorBrush x:Key="ButtonWarningFlatLight" Color="{StaticResource Warning50}" />
     <SolidColorBrush x:Key="ButtonWarningFlatDark" Color="{StaticResource Warning80}" />
+    <SolidColorBrush x:Key="ButtonWarningIntenseLight" Color="{StaticResource Warning50}" />
+    <SolidColorBrush x:Key="ButtonWarningIntenseDark" Color="{StaticResource Warning80}" />
+    <SolidColorBrush x:Key="ButtonWarningSuperIntenseLight" Color="{StaticResource Warning60}" />
+    <SolidColorBrush x:Key="ButtonWarningSuperIntenseDark" Color="{StaticResource Warning80}" />
+
+    <!--  Danger Buttons (Simplified)  -->
     <SolidColorBrush x:Key="ButtonDangerFlatLight" Color="{StaticResource Error50}" />
     <SolidColorBrush x:Key="ButtonDangerFlatDark" Color="{StaticResource Error80}" />
-    <LinearGradientBrush x:Key="SurfaceGlassBrushDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#26FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource SurfaceContainerDark}" />
-        <GradientStop Offset="1" Color="#80FFFFFF" />
+    <SolidColorBrush x:Key="ButtonDangerIntenseLight" Color="{StaticResource Error50}" />
+    <SolidColorBrush x:Key="ButtonDangerIntenseDark" Color="{StaticResource Error80}" />
+    <SolidColorBrush x:Key="ButtonDangerSuperIntenseLight" Color="{StaticResource Error60}" />
+    <SolidColorBrush x:Key="ButtonDangerSuperIntenseDark" Color="{StaticResource Error80}" />
+
+    <LinearGradientBrush x:Key="GlassStrongLight" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#FFFFFFFF" />
+        <GradientStop Offset="1" Color="#F8FFFFFF" />
     </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="GlassStrongDark" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#28FFFFFF" />
+        <GradientStop Offset="1" Color="#24FFFFFF" />
+    </LinearGradientBrush>
+
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  8. ADDITIONAL GLASS EFFECTS & OVERLAYS  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  Subtle radial halo for hero cards  -->
     <RadialGradientBrush x:Key="PrimaryHaloBrush" Center="0.5,0.2" Radius="0.8">
-        <GradientStop Offset="0" Color="#22DC925E" />
+        <GradientStop Offset="0" Color="#15C67B3B" />
         <GradientStop Offset="1" Color="Transparent" />
     </RadialGradientBrush>
 
     <!--  Elevated shadows as semi-transparent overlays  -->
-    <SolidColorBrush x:Key="ShadowOverlayBrush" Color="#20000000" />
-    <SolidColorBrush x:Key="StrongShadowOverlayBrush" Color="#33000000" />
+    <SolidColorBrush x:Key="ShadowOverlayBrush" Color="#15000000" />
+    <SolidColorBrush x:Key="StrongShadowOverlayBrush" Color="#25000000" />
 
-    <!--  Enhanced glass card outlines (40% opacity for better visibility) ✅  -->
-    <SolidColorBrush x:Key="GlassStrokeBrush" Color="{AppThemeBinding Light=#65EBE7EC, Dark=#5579757F}" />
+    <!--  Glass stroke for borders  -->
+    <SolidColorBrush x:Key="GlassStrokeBrush" Color="{AppThemeBinding Light=#20000000, Dark=#30FFFFFF}" />
 
-    <!--  MD3 container overlays with translucency for glass effect  -->
-    <SolidColorBrush x:Key="GlassContainerBrush" Color="#E6FFFFFF" />
-    <SolidColorBrush x:Key="GlassContainerBrushDark" Color="#1AFFFFFF" />
+    <!--  Glass container overlays  -->
+    <SolidColorBrush x:Key="GlassContainerBrush" Color="#F0FFFFFF" />
+    <SolidColorBrush x:Key="GlassContainerBrushDark" Color="#20FFFFFF" />
 
-    <!--  Reusable linear gradient brushes  -->
+    <!--  Simplified gradients for legacy compatibility  -->
     <LinearGradientBrush x:Key="PrimaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Offset="0" Color="{StaticResource GradientPrimaryStart}" />
-        <GradientStop Offset="0.6" Color="#FFC67B3B" />
-        <GradientStop Offset="1" Color="{StaticResource GradientPrimaryEnd}" />
+        <GradientStop Offset="0" Color="{StaticResource BrandLight}" />
+        <GradientStop Offset="1" Color="{StaticResource BrandDark}" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="SecondaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Offset="0" Color="{StaticResource GradientSecondaryStart}" />
-        <GradientStop Offset="0.5" Color="#7FF0FFFF" />
-        <GradientStop Offset="1" Color="{StaticResource GradientSecondaryEnd}" />
+        <GradientStop Offset="0" Color="{StaticResource SecondaryLight}" />
+        <GradientStop Offset="1" Color="{StaticResource SecondaryDark}" />
     </LinearGradientBrush>
 
-    <!--  Additional glass variants for showcase (soft blur simulation via lighter alphas)  -->
-    <!-- Light outline gradient for outline buttons -->
-    <LinearGradientBrush x:Key="GlassOutlineLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#F8FFFFFF" />
-        <GradientStop Offset="1" Color="#ECFFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="GlassSoftLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#FAFFFFFF" />
-        <GradientStop Offset="0.5" Color="#E8FFFFFF" />
-        <GradientStop Offset="1" Color="#F5FFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="GlassSoftDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#10FFFFFF" />
-        <GradientStop Offset="0.5" Color="#18FFFFFF" />
-        <GradientStop Offset="1" Color="#12FFFFFF" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="GlassStrongLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#FFFFFFFF" />
-        <GradientStop Offset="0.6" Color="#F0FFFFFF" />
-        <GradientStop Offset="1" Color="#FFFFFFFF" />
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="GlassStrongDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#28FFFFFF" />
-        <GradientStop Offset="0.6" Color="#33FFFFFF" />
-        <GradientStop Offset="1" Color="#24FFFFFF" />
-    </LinearGradientBrush>
-
-    <!--  Frosted glass transparency scale (increasing diffusion)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  9. FROSTED GLASS VARIANTS (Ultra Thin → Heavy)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  Ultra Thin: barely-there film, almost fully transparent  -->
     <LinearGradientBrush x:Key="FrostGlassUltraThinLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#06FFFFFF" />

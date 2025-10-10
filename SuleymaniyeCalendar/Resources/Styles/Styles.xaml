@@ -192,44 +192,35 @@
     
 
     <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
-    <!-- ENHANCED CARD SYSTEM - Premium design with sophisticated elevation -->
-    <!-- Optional: runtime-selectable visual fidelity alias. Default to glass. -->
-    <x:String x:Key="CardVisualStyleKey">GlassCard</x:String>
+    <!-- PHASE 21: CLEAN MODERN CARD SYSTEM - Simplified & Elegant -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+    <!--  SHADOW DEFINITIONS - 3 Elevation Levels Only (Flat, Raised, Floating)  -->
+    <Shadow x:Key="ShadowFlat" Brush="#10000000" Opacity="0.06" Radius="4" Offset="0,1" />
+    <Shadow x:Key="ShadowRaised" Brush="#15000000" Opacity="0.12" Radius="12" Offset="0,4" />
+    <Shadow x:Key="ShadowFloating" Brush="#20000000" Opacity="0.18" Radius="24" Offset="0,8" />
 
     <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
 
-    <!--  Base Card - Foundation for all cards with premium styling  -->
+    <!--  Base Card - Clean foundation with glass morphism  -->
     <Style x:Key="Card" TargetType="Border">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLight}, Dark={StaticResource SurfaceContainerDark}}" />
-        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource OutlineVariantLight}, Dark={StaticResource OutlineVariantDark}}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="Background" Value="{StaticResource GlassCardBrush}" />
+        <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
         <Setter Property="StrokeThickness" Value="0.5" />
-        <Setter Property="StrokeShape" Value="RoundRectangle 16" />
-        <Setter Property="Padding" Value="16,12" />
-        <Setter Property="Margin" Value="4,3" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="Margin" Value="8,4" />
         <Setter Property="HorizontalOptions" Value="Fill" />
-        <Setter Property="Shadow">
-            <Setter.Value>
-                <Shadow
-                    Brush="#12000000"
-                    Opacity="0.08"
-                    Radius="16"
-                    Offset="0,2" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Shadow" Value="{StaticResource ShadowFlat}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
-                            <Setter Property="Shadow">
-                                <Shadow
-                                    Brush="#16000000"
-                                    Opacity="0.12"
-                                    Radius="20"
-                                    Offset="0,4" />
-                            </Setter>
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowLight}, Dark={StaticResource SurfaceContainerLowDark}}" />
+                            <Setter Property="Shadow" Value="{StaticResource ShadowRaised}" />
+                            <Setter Property="Scale" Value="1.01" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -238,96 +229,58 @@
     </Style>
 
     <!--  Settings Card - Enhanced configuration card with better differentiation  -->
-    <!--  Glass Card - Translucent card effect (defined BEFORE first use to avoid forward StaticResource)  -->
+    <!--  Glass Card - Translucent card effect  -->
     <Style x:Key="GlassCard" TargetType="Border" BasedOn="{StaticResource Card}">
-        <!-- Maximize glass effect: theme-aware brush, transparent color, subtle stroke -->
-        <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}" />
-        <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
-        <Setter Property="StrokeThickness" Value="0.75" />
-        <Setter Property="Shadow">
-            <Setter.Value>
-                <Shadow
-                    Brush="{StaticResource StrongShadowOverlayBrush}"
-                    Opacity="0.35"
-                    Radius="26"
-                    Offset="0,10" />
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Shadow" Value="{StaticResource ShadowRaised}" />
     </Style>
 
-    <!--  Prayer Time Card - Mobile accessible with 8px grid spacing ✅  -->
-    <!--  Placed AFTER GlassCard definition to avoid forward StaticResource lookups  -->
-    <Style x:Key="PrayerCard" TargetType="Border" BasedOn="{StaticResource GlassCard}">
-        <!-- 8px grid system for consistency -->
-        <Setter Property="Padding" Value="{StaticResource CardPaddingTight}" />       <!-- Was "10,6" → now "12,8" -->
-        <Setter Property="Margin" Value="{StaticResource CardMarginList}" />          <!-- Was "4,2" → now "8,4" -->
-        <Setter Property="StrokeShape" Value="RoundRectangle 14" />
-        <!-- Increased to 60px minimum for accessibility (WCAG AA) -->
+    <!--  Prayer Card - Clean & Modern with Brown Accent for Current Prayer  -->
+    <Style x:Key="PrayerCard" TargetType="Border" BasedOn="{StaticResource Card}">
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="Margin" Value="8,4" />
         <Setter Property="MinimumHeightRequest" Value="60" />
-        <Setter Property="StrokeThickness" Value="0.8" />
-        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource iOSGlassStrokeLight}, Dark={StaticResource iOSGlassStrokeDark}}" />
-        <Setter Property="Shadow">
-            <Setter.Value>
-                <!-- Slightly lighter shadow to reduce perceived bulk -->
-                <Shadow Brush="#1A000000" Radius="2" Offset="0,3" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="PrayerStates">
+                    <!-- Past Prayer - Subtle opacity -->
                     <VisualState x:Name="Past">
                         <VisualState.Setters>
-                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassPrayerPastLight}, Dark={StaticResource GlassPrayerPastDark}}" />
-                            <Setter Property="StrokeThickness" Value="0.75" />
-                            <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
+                            <Setter Property="Opacity" Value="0.7" />
                         </VisualState.Setters>
                     </VisualState>
+                    
+                    <!-- Current Prayer - Bold Brown Left Border + Clean White Glass -->
                     <VisualState x:Name="Current">
                         <VisualState.Setters>
-                            <!-- 🎨 Phase 5.2.1: STRONGER green background for current prayer -->
-                            <!-- MORE VIBRANT - impossible to miss! -->
-                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#C8F3D0, Dark=#F02D4A2D}" />
-                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassSoftLight}, Dark={StaticResource GlassSoftDark}}" />
-                            <Setter Property="Stroke" Value="{AppThemeBinding Light=#FF6EE895, Dark=#FF4CAF50}" />
-                            <Setter Property="StrokeThickness" Value="2.5" />
-                            <!-- Enhanced shadow with green glow -->
-                            <Setter Property="Shadow">
-                                <Shadow Brush="{AppThemeBinding Light=#50388E3C, Dark=#504CAF50}" Radius="6" Offset="0,3" />
-                            </Setter>
+                            <Setter Property="Background" Value="{StaticResource CurrentPrayerGlassBrush}" />
+                            <!-- 4px Brown left border for emphasis -->
+                            <Setter Property="Stroke" Value="{StaticResource BrandBase}" />
+                            <Setter Property="StrokeThickness" Value="4,0,0,0" />
+                            <Setter Property="Shadow" Value="{StaticResource ShadowRaised}" />
                         </VisualState.Setters>
                     </VisualState>
+                    
+                    <!-- Future Prayer - Default glass -->
                     <VisualState x:Name="Future">
                         <VisualState.Setters>
-                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassPrayerUpcomingLight}, Dark={StaticResource GlassPrayerUpcomingDark}}" />
-                            <Setter Property="StrokeThickness" Value="0.75" />
-                            <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
+                            <!-- Default Card appearance -->
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
+                
                 <VisualStateGroup x:Name="InteractionStates">
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <!-- 🎯 Phase 6: Enhanced mobile press feedback -->
-                            <!-- Stronger visual response for premium tactile feel -->
-                            <Setter Property="Opacity" Value="0.82" />               <!-- Was 0.88 → stronger -->
-                            <Setter Property="Scale" Value="0.96" />                 <!-- Was 0.97 → more pronounced -->
-                            <Setter Property="TranslationY" Value="2" />             <!-- NEW: Push-down effect -->
+                            <Setter Property="Opacity" Value="0.85" />
+                            <Setter Property="Scale" Value="0.98" />
                         </VisualState.Setters>
                     </VisualState>
-                    <!-- Focused state for keyboard/assistive navigation ✅ -->
                     <VisualState x:Name="Focused">
                         <VisualState.Setters>
-                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}" />
-                            <Setter Property="StrokeThickness" Value="3" />
-                            <Setter Property="Shadow">
-                                <Shadow
-                                    Brush="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
-                                    Opacity="0.5"
-                                    Radius="24"
-                                    Offset="0,0" />
-                            </Setter>
+                            <Setter Property="Stroke" Value="{StaticResource BrandBase}" />
+                            <Setter Property="StrokeThickness" Value="2" />
+                            <Setter Property="Shadow" Value="{StaticResource ShadowRaised}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
