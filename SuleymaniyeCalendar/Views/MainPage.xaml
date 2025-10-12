@@ -197,9 +197,10 @@
                                             Grid.Column="0"
                                             WidthRequest="40"
                                             HeightRequest="40"
-                                            BackgroundColor="Transparent"
-                                            Background="{AppThemeBinding Light={StaticResource PrimaryGradientBrush}, Dark={StaticResource SurfaceGlassBrushDark}}"
-        									Stroke="{StaticResource GlassStrokeBrush}"
+                                            Background="{AppThemeBinding Light={StaticResource BrandLight}, Dark={StaticResource SurfaceColorDark}}"
+        									Stroke="{AppThemeBinding Light={StaticResource OutlineColorLight}, Dark={StaticResource OutlineColorDark}}"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 20"
                                             VerticalOptions="Center">
                                             <Border.Triggers>
                                                 <!-- 🎨 PHASE 16: Compact icon for past prayers -->
@@ -332,14 +333,13 @@
                                             </Label.Triggers>
                                         </Label>
 
-                                        <!-- Enhanced Notification Bell with Better Visual Distinction -->
+                                        <!-- Enhanced Notification Bell with Clean Design -->
                                         <Border
                                             Grid.Column="3"
-                                            BackgroundColor="Transparent"
-                                            Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
-        									Stroke="{StaticResource GlassStrokeBrush}"
-                                            StrokeThickness="0.75"
-                                            StrokeShape="RoundRectangle 16"
+                                            Background="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceColorDark}}"
+        									Stroke="{AppThemeBinding Light={StaticResource OutlineColorLight}, Dark={StaticResource OutlineColorDark}}"
+                                            StrokeThickness="1"
+                                            StrokeShape="RoundRectangle 18"
                                             WidthRequest="36"
                                             HeightRequest="36"
                                             VerticalOptions="Center">
