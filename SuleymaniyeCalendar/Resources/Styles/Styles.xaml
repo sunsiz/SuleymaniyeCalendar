@@ -1486,24 +1486,17 @@
         </Setter>
     </Style>
 
-    <!--  City/Location Card - Mobile-optimized with 8px grid ?  -->
-    <Style x:Key="LocationCard" TargetType="Border" BasedOn="{StaticResource GlassCardSecondaryTint}">
-        <Setter Property="Padding" Value="{StaticResource CardPaddingTight}" />       <!-- Was "12,8" ? already aligned -->
+    <!--  City/Location Card - Clean solid brown/white button  -->
+    <Style x:Key="LocationCard" TargetType="Border" BasedOn="{StaticResource Card}">
+        <Setter Property="Padding" Value="{StaticResource CardPaddingTight}" />
         <Setter Property="HorizontalOptions" Value="Center" />
         <Setter Property="StrokeShape" Value="RoundRectangle 20" />
-        <Setter Property="StrokeThickness" Value="0.75" />
+        <!-- Solid brown background (brand color) -->
+        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource BrandBase}, Dark={StaticResource BrandMedium}}" />
+        <!-- No stroke per Phase 21 -->
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.35" Radius="3" Offset="0,4" />
-            </Setter.Value>
-        </Setter>
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Offset="0" Color="{AppThemeBinding Light={StaticResource Primary10}, Dark={StaticResource Primary70}}" />
-                    <GradientStop Offset="0.55" Color="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary95}}" />
-                    <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource Primary20}, Dark={StaticResource Primary80}}" />
-                </LinearGradientBrush>
+                <Shadow Brush="Black" Opacity="0.12" Radius="8" Offset="0,3" />
             </Setter.Value>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -2126,56 +2119,19 @@
         </Setter>
     </Style>
 
-    <!--  ?? PHASE 13: Primary Glass Button - Golden gradient background  -->
+    <!--  PHASE 21: Primary Glass Button - Solid brown background  -->
     <Style x:Key="GlassButtonPrimary" TargetType="Button" BasedOn="{StaticResource GlassButtonBase}">
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFEDB8, Dark=#FF4A3D28}" />
-                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFD875, Dark=#FF3A2E1C}" />
-                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFCC66, Dark=#FF4A3D28}" />
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="BorderColor">
-            <Setter.Value>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#C0B8935D, Dark=#C0FFCC80}" />
-                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#E0FFD700, Dark=#E0FFD700}" />
-                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#C0C8A05F, Dark=#C0D4AF37}" />
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="BorderWidth" Value="2" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldLight}}" />
+        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource BrandBase}, Dark={StaticResource BrandMedium}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextOnBrandLight}, Dark={StaticResource TextOnBrandDark}}" />
         <Setter Property="Shadow">
-            <Shadow Brush="{StaticResource GoldOrange}" Radius="8" Offset="0,2" Opacity="0.25" />
+            <Shadow Brush="Black" Radius="8" Offset="0,2" Opacity="0.12" />
         </Setter>
     </Style>
 
-    <!--  ?? PHASE 13: Secondary Glass Button - Cream/golden background with dark text  -->
+    <!--  PHASE 21: Secondary Glass Button - Solid surface background  -->
     <Style x:Key="GlassButtonSecondary" TargetType="Button" BasedOn="{StaticResource GlassButtonBase}">
-        <Setter Property="Background">
-            <Setter.Value>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <!-- Cream/golden backgrounds - VISIBLE! -->
-                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFFBF0, Dark=#FF3A3530}" />
-                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFF4D9, Dark=#FF2D2A25}" />
-                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFF8E8, Dark=#FF35322D}" />
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="BorderColor">
-            <Setter.Value>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#80C8A05F, Dark=#80FFCC80}" />
-                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#AAFFD700, Dark=#AAFFD700}" />
-                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#80B8935D, Dark=#80D4AF37}" />
-                </LinearGradientBrush>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="BorderWidth" Value="1.5" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldLight}}" />
+        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource SurfaceBrushLight}, Dark={StaticResource SurfaceBrushDark}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextPrimaryLight}, Dark={StaticResource TextPrimaryDark}}" />
     </Style>
 
     <!--  Success Glass Button  -->

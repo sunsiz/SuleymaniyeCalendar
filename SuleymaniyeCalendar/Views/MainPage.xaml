@@ -196,9 +196,7 @@
                                             Grid.Column="0"
                                             WidthRequest="40"
                                             HeightRequest="40"
-                                            BackgroundColor="Transparent"
-                                            Background="{AppThemeBinding Light={StaticResource PrimaryGradientBrush}, Dark={StaticResource SurfaceGlassBrushDark}}"
-        									Stroke="{StaticResource GlassStrokeBrush}"
+                                            Background="{AppThemeBinding Light={StaticResource BrandBase}, Dark={StaticResource BrandMedium}}"
                                             VerticalOptions="Center">
                                             <Border.Triggers>
                                                 <!-- 🎨 PHASE 16: Compact icon for past prayers -->
