@@ -127,13 +127,8 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Prayer">
                             <ContentView Padding="0">
-                                <!-- 🐛 FIX: Hide prayers with empty time -->
+                                <!-- 🎨 PHASE 16: Pure DataTrigger margin system - NO ItemSpacing conflicts -->
                                 <ContentView.Triggers>
-                                    <DataTrigger Binding="{Binding Time}" TargetType="ContentView" Value="">
-                                        <Setter Property="IsVisible" Value="False" />
-                                        <Setter Property="HeightRequest" Value="0" />
-                                    </DataTrigger>
-                                    <!-- 🎨 PHASE 16: Pure DataTrigger margin system - NO ItemSpacing conflicts -->
                                     <!-- 🎨 PHASE 16: Ultra-compact past prayers - zero vertical, minimal horizontal -->
                                     <DataTrigger Binding="{Binding IsPast}" TargetType="ContentView" Value="True">
                                         <Setter Property="Margin" Value="8,0,8,0" />
@@ -171,17 +166,11 @@
                                             <Setter Property="MaximumHeightRequest" Value="56" />
                                             <Setter Property="Padding" Value="8,4" />
                                         </DataTrigger>
-                                        <!-- 🎨 PHASE 21: Current prayer - Brown left accent (brand color) + enhanced background -->
+                                        <!-- 🎨 PHASE 21: Current prayer - Brown left accent (brand color) -->
                                         <DataTrigger
                                             Binding="{Binding IsActive}"
                                             TargetType="Border"
                                             Value="True">
-                                            <Setter Property="Background">
-                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFF8F0, Dark=#FF2D2520}" />
-                                                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFF2E8, Dark=#FF251F1C}" />
-                                                </LinearGradientBrush>
-                                            </Setter>
                                             <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrimaryBase}, Dark={StaticResource PrimaryLight}}" />
                                             <Setter Property="StrokeThickness" Value="4,0,0,0" />
                                             <Setter Property="Shadow" Value="{StaticResource CardShadow}" />
@@ -201,19 +190,15 @@
                                     <Grid
                                         ColumnDefinitions="Auto,*,Auto,Auto"
                                         ColumnSpacing="8">
-                                        <Grid.Triggers>
-                                            <DataTrigger Binding="{Binding IsActive}" TargetType="Grid" Value="True">
-                                                <Setter Property="BackgroundColor" Value="#40FF0000" />
-                                            </DataTrigger>
-                                        </Grid.Triggers>
 
                                         <!-- Animated Prayer Icon -->
                                         <Border
                                             Grid.Column="0"
                                             WidthRequest="40"
                                             HeightRequest="40"
-                                            Background="{AppThemeBinding Light={StaticResource BrandBase}, Dark={StaticResource BrandMedium}}"
-                                            StrokeShape="RoundRectangle 20"
+                                            BackgroundColor="Transparent"
+                                            Background="{AppThemeBinding Light={StaticResource PrimaryGradientBrush}, Dark={StaticResource SurfaceGlassBrushDark}}"
+        									Stroke="{StaticResource GlassStrokeBrush}"
                                             VerticalOptions="Center">
                                             <Border.Triggers>
                                                 <!-- 🎨 PHASE 16: Compact icon for past prayers -->
@@ -224,12 +209,7 @@
                                                 </DataTrigger>
                                                 <!-- 🦸 PHASE 9 HERO: Enhanced golden glow for current prayer icon container -->
                                                 <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
-                                                    <Setter Property="Background">
-                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                            <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFEDB8, Dark=#FF5A4A30}" />
-                                                            <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFD875, Dark=#FF4A3A22}" />
-                                                        </LinearGradientBrush>
-                                                    </Setter>
+                                                    <Setter Property="Background" Value="{StaticResource GoldLight}" />
                                                     <Setter Property="Stroke" Value="{StaticResource GoldPure}" />
                                                     <Setter Property="StrokeThickness" Value="2.5" />
                                                     <Setter Property="WidthRequest" Value="52" />
@@ -299,9 +279,9 @@
                                                     Binding="{Binding IsActive}"
                                                     TargetType="Label"
                                                     Value="True">
-                                                    <Setter Property="TextColor" Value="#FF000000" />
+                                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
                                                     <Setter Property="FontAttributes" Value="Bold" />
-                                                    <Setter Property="FontSize" Value="24" />
+                                                    <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
                                                     <Setter Property="CharacterSpacing" Value="1.0" />
                                                 </DataTrigger>
                                                 <MultiTrigger TargetType="Label">
@@ -336,9 +316,9 @@
                                                     Binding="{Binding IsActive}"
                                                     TargetType="Label"
                                                     Value="True">
-                                                    <Setter Property="TextColor" Value="#FF000000" />
+                                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
                                                     <Setter Property="FontAttributes" Value="Bold" />
-                                                    <Setter Property="FontSize" Value="24" />
+                                                    <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
                                                     <Setter Property="CharacterSpacing" Value="1.0" />
                                                 </DataTrigger>
                                                 <MultiTrigger TargetType="Label">
