@@ -81,13 +81,13 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.Header>
                         <StackLayout x:DataType="viewModels:MainViewModel">
-                            <!-- 🌙 PHASE 15: Remaining Time Card using IntensePrimaryCard -->
+                            <!-- 🌙 PHASE 21: Clean Remaining Time Card with Visible Brown Gradient -->
                             <Border
-                                Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
-                                Stroke="{AppThemeBinding Light={StaticResource OutlineColorLight}, Dark={StaticResource OutlineColorDark}}"
-                                StrokeThickness="1"
+                                Background="{AppThemeBinding Light={StaticResource BrandLightest}, Dark={StaticResource BrandDarker}}"
+                                Stroke="{AppThemeBinding Light={StaticResource BrandBase}, Dark={StaticResource BrandLight}}"
+                                StrokeThickness="2"
                                 StrokeShape="RoundRectangle 12"
-                                Shadow="{StaticResource CardShadow}"
+                                Shadow="{StaticResource ShadowFlat}"
                                 Margin="12,8"
                                 Padding="0"
                                 HorizontalOptions="Fill">
@@ -153,7 +153,7 @@
                                     Stroke="{AppThemeBinding Light={StaticResource OutlineColorLight}, Dark={StaticResource OutlineColorDark}}"
                                     StrokeThickness="1"
                                     StrokeShape="RoundRectangle 12"
-                                    Shadow="{StaticResource CardShadow}">
+                                    Shadow="{StaticResource ShadowFlat}">
                                     <Border.Triggers>
                                         <!-- 🎨 PHASE 21: Past prayer - Reduced opacity, compact size -->
                                         <DataTrigger
@@ -174,7 +174,7 @@
                                             <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource BrandLight}, Dark={StaticResource BrandDarker}}" />
                                             <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrimaryBase}, Dark={StaticResource PrimaryLight}}" />
                                             <Setter Property="StrokeThickness" Value="3" />
-                                            <Setter Property="Shadow" Value="{StaticResource CardShadow}" />
+                                            <Setter Property="Shadow" Value="{StaticResource ShadowRaised}" />
                                             <Setter Property="HeightRequest" Value="120" />
                                             <Setter Property="Padding" Value="20,16" />
                                         </DataTrigger>
