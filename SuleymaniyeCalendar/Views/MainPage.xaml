@@ -166,11 +166,17 @@
                                             <Setter Property="MaximumHeightRequest" Value="56" />
                                             <Setter Property="Padding" Value="8,4" />
                                         </DataTrigger>
-                                        <!-- 🎨 PHASE 21: Current prayer - Brown left accent (brand color) -->
+                                        <!-- 🎨 PHASE 21: Current prayer - Brown left accent (brand color) + enhanced background -->
                                         <DataTrigger
                                             Binding="{Binding IsActive}"
                                             TargetType="Border"
                                             Value="True">
+                                            <Setter Property="Background">
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFF8F0, Dark=#FF2D2520}" />
+                                                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFF2E8, Dark=#FF251F1C}" />
+                                                </LinearGradientBrush>
+                                            </Setter>
                                             <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrimaryBase}, Dark={StaticResource PrimaryLight}}" />
                                             <Setter Property="StrokeThickness" Value="4,0,0,0" />
                                             <Setter Property="Shadow" Value="{StaticResource CardShadow}" />
