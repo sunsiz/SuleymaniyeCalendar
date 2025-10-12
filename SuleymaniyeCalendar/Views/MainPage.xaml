@@ -197,6 +197,7 @@
                                             WidthRequest="40"
                                             HeightRequest="40"
                                             Background="{AppThemeBinding Light={StaticResource BrandBase}, Dark={StaticResource BrandMedium}}"
+                                            StrokeShape="RoundRectangle 20"
                                             VerticalOptions="Center">
                                             <Border.Triggers>
                                                 <!-- 🎨 PHASE 16: Compact icon for past prayers -->
@@ -207,7 +208,12 @@
                                                 </DataTrigger>
                                                 <!-- 🦸 PHASE 9 HERO: Enhanced golden glow for current prayer icon container -->
                                                 <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
-                                                    <Setter Property="Background" Value="{StaticResource GoldLight}" />
+                                                    <Setter Property="Background">
+                                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                            <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFEDB8, Dark=#FF5A4A30}" />
+                                                            <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFD875, Dark=#FF4A3A22}" />
+                                                        </LinearGradientBrush>
+                                                    </Setter>
                                                     <Setter Property="Stroke" Value="{StaticResource GoldPure}" />
                                                     <Setter Property="StrokeThickness" Value="2.5" />
                                                     <Setter Property="WidthRequest" Value="52" />
