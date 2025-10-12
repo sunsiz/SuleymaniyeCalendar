@@ -99,6 +99,12 @@
         <GradientStop Offset="1.0" Color="#F0FFFFFF" />
     </LinearGradientBrush>
 
+    <!-- 🌙 Dark Mode Glass Surface - Lighter for better visibility -->
+    <LinearGradientBrush x:Key="SurfaceGlassBrushDark" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#2B2A2F" />
+        <GradientStop Offset="1.0" Color="#36343A" />
+    </LinearGradientBrush>
+
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  6. SIMPLIFIED BUTTON BRUSHES (Solid Colors + Glass)  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->

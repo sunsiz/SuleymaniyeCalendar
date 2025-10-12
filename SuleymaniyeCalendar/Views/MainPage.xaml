@@ -206,7 +206,7 @@
                                             Grid.Column="0"
                                             WidthRequest="40"
                                             HeightRequest="40"
-                                            Background="{AppThemeBinding Light={StaticResource BrandLight}, Dark={StaticResource SurfaceColorDark}}"
+                                            Background="{AppThemeBinding Light={StaticResource BrandLight}, Dark={StaticResource SurfaceContainerHighDark}}"
         									Stroke="{AppThemeBinding Light={StaticResource OutlineColorLight}, Dark={StaticResource OutlineColorDark}}"
                                             StrokeThickness="1"
                                             StrokeShape="RoundRectangle 20"
@@ -345,7 +345,7 @@
                                         <!-- Enhanced Notification Bell with Clean Design -->
                                         <Border
                                             Grid.Column="3"
-                                            Background="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceColorDark}}"
+                                            Background="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceContainerHighDark}}"
         									Stroke="{AppThemeBinding Light={StaticResource OutlineColorLight}, Dark={StaticResource OutlineColorDark}}"
                                             StrokeThickness="1"
                                             StrokeShape="RoundRectangle 18"

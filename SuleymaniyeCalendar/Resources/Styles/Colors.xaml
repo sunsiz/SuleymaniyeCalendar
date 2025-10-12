@@ -218,9 +218,9 @@
 
     <!--  Outline Colors  -->
     <Color x:Key="OutlineColor">#C8C5CA</Color>
-    <Color x:Key="OutlineColorDark">#79757F</Color>
+    <Color x:Key="OutlineColorDark">#938F99</Color>           <!-- Brightened for better visibility -->
     <Color x:Key="OutlineVariantLight">#EBE7EC</Color>
-    <Color x:Key="OutlineVariantDark">#79757F</Color>
+    <Color x:Key="OutlineVariantDark">#938F99</Color>         <!-- Brightened to match OutlineColorDark -->
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  PRAYER TIME STATE COLORS - High Contrast for Readability  -->
