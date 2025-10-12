@@ -81,46 +81,55 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.Header>
                         <StackLayout x:DataType="viewModels:MainViewModel">
-                            <!-- 🌙 PHASE 21: Clean Remaining Time Card with Visible Brown Gradient -->
-                            <Border
-                                Background="{AppThemeBinding Light={StaticResource BrandLightest}, Dark={StaticResource BrandDarker}}"
-                                Stroke="{AppThemeBinding Light={StaticResource BrandBase}, Dark={StaticResource BrandLight}}"
-                                StrokeThickness="2"
-                                StrokeShape="RoundRectangle 12"
-                                Shadow="{StaticResource ShadowFlat}"
-                                Margin="12,8"
-                                Padding="0"
-                                HorizontalOptions="Fill">
-                                <!-- 🎨 PHASE 21: Clean glass card with subtle progress indicator -->
-                                
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="12,10">
-                                    <!-- Brown clock icon (brand color) -->
-                                    <Border
-                                        Grid.Column="0"
-                                        WidthRequest="44"
-                                        HeightRequest="44"
-                                        Background="{AppThemeBinding Light={StaticResource SurfaceContainerLowestLight}, Dark={StaticResource SurfaceContainerDark}}"
-                                        StrokeShape="RoundRectangle 22"
-                                        VerticalOptions="Center">
-                                        <Label
-                                            FontFamily="{StaticResource IconFontFamily}"
-                                            FontSize="24"
-                                            Text="&#xf017;"
-                                            TextColor="{AppThemeBinding Light={StaticResource PrimaryBase}, Dark={StaticResource PrimaryLight}}"
-                                            VerticalOptions="Center"
-                                            HorizontalTextAlignment="Center" />
-                                    </Border>
+                            <!-- 🌙 PHASE 21: Clean Remaining Time Card with Animated Progress Gradient -->
+                            <!-- 🌙 PHASE 21: Clean Remaining Time Card with Animated Progress -->
+                            <Grid Margin="12,8" HorizontalOptions="Fill">
+                                <!-- Base card -->
+                                <Border
+                                    Background="{AppThemeBinding Light={StaticResource BrandLightest}, Dark={StaticResource BrandDarker}}"
+                                    Stroke="{AppThemeBinding Light={StaticResource BrandBase}, Dark={StaticResource BrandLight}}"
+                                    StrokeThickness="2"
+                                    StrokeShape="RoundRectangle 12"
+                                    Shadow="{StaticResource ShadowFlat}">
                                     
-                                    <Label
-                                        Grid.Column="1"
-                                        AutomationProperties.IsInAccessibleTree="True"
-                                        FontSize="{DynamicResource SubHeaderFontSize}"
-                                        FontAttributes="Bold"
-                                        Text="{Binding RemainingTime}"
-                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
-                                        VerticalOptions="Center" />
-                                </Grid>
-                            </Border>
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="12,10">
+                                        <!-- Brown clock icon (brand color) -->
+                                        <Border
+                                            Grid.Column="0"
+                                            WidthRequest="44"
+                                            HeightRequest="44"
+                                            Background="{AppThemeBinding Light={StaticResource SurfaceContainerLowestLight}, Dark={StaticResource SurfaceContainerDark}}"
+                                            StrokeShape="RoundRectangle 22"
+                                            VerticalOptions="Center">
+                                            <Label
+                                                FontFamily="{StaticResource IconFontFamily}"
+                                                FontSize="24"
+                                                Text="&#xf017;"
+                                                TextColor="{AppThemeBinding Light={StaticResource PrimaryBase}, Dark={StaticResource PrimaryLight}}"
+                                                VerticalOptions="Center"
+                                                HorizontalTextAlignment="Center" />
+                                        </Border>
+                                        
+                                        <Label
+                                            Grid.Column="1"
+                                            AutomationProperties.IsInAccessibleTree="True"
+                                            FontSize="{DynamicResource SubHeaderFontSize}"
+                                            FontAttributes="Bold"
+                                            Text="{Binding RemainingTime}"
+                                            TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
+                                            VerticalOptions="Center" />
+                                    </Grid>
+                                </Border>
+                                
+                                <!-- 🎨 Animated Progress Bar at bottom - Shows time elapsed -->
+                                <ProgressBar
+                                    Progress="{Binding TimeProgress}"
+                                    ProgressColor="{AppThemeBinding Light={StaticResource BrandBase}, Dark={StaticResource BrandLight}}"
+                                    BackgroundColor="Transparent"
+                                    VerticalOptions="End"
+                                    HeightRequest="4"
+                                    Margin="2,0,2,2" />
+                            </Grid>
                         </StackLayout>
                     </CollectionView.Header>
 
