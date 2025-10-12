@@ -171,8 +171,9 @@
                                             Binding="{Binding IsActive}"
                                             TargetType="Border"
                                             Value="True">
+                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource BrandLight}, Dark={StaticResource BrandDarker}}" />
                                             <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrimaryBase}, Dark={StaticResource PrimaryLight}}" />
-                                            <Setter Property="StrokeThickness" Value="4,0,0,0" />
+                                            <Setter Property="StrokeThickness" Value="3" />
                                             <Setter Property="Shadow" Value="{StaticResource CardShadow}" />
                                             <Setter Property="HeightRequest" Value="120" />
                                             <Setter Property="Padding" Value="20,16" />
