@@ -923,15 +923,33 @@ namespace SuleymaniyeCalendar.Services
 			if (day is null)
 				return list;
 
+			// Helper to add prayer only if it has a valid time
+			void AddPrayerIfValid(string id, string name, string time, string enabledKey)
+			{
+				if (!string.IsNullOrWhiteSpace(time))
+				{
+					list.Add(new Prayer { 
+						Id = id, 
+						Name = name, 
+						Time = time, 
+						Enabled = Preferences.Get(enabledKey, false) 
+					});
+				}
+				else
+				{
+					Debug.WriteLine($"[DataService] Skipping prayer '{id}' - time is empty");
+				}
+			}
+
 			// Create prayers with persisted Enabled flags; State is UI-time-dependent and set by ViewModels
-			list.Add(new Prayer { Id = "falsefajr", Name = AppResources.FecriKazip, Time = day.FalseFajr, Enabled = Preferences.Get("falsefajrEnabled", false) });
-			list.Add(new Prayer { Id = "fajr",      Name = AppResources.FecriSadik, Time = day.Fajr,       Enabled = Preferences.Get("fajrEnabled", false) });
-			list.Add(new Prayer { Id = "sunrise",   Name = AppResources.SabahSonu, Time = day.Sunrise,    Enabled = Preferences.Get("sunriseEnabled", false) });
-			list.Add(new Prayer { Id = "dhuhr",     Name = AppResources.Ogle,      Time = day.Dhuhr,      Enabled = Preferences.Get("dhuhrEnabled", false) });
-			list.Add(new Prayer { Id = "asr",       Name = AppResources.Ikindi,    Time = day.Asr,        Enabled = Preferences.Get("asrEnabled", false) });
-			list.Add(new Prayer { Id = "maghrib",   Name = AppResources.Aksam,     Time = day.Maghrib,    Enabled = Preferences.Get("maghribEnabled", false) });
-			list.Add(new Prayer { Id = "isha",      Name = AppResources.Yatsi,     Time = day.Isha,       Enabled = Preferences.Get("ishaEnabled", false) });
-			list.Add(new Prayer { Id = "endofisha", Name = AppResources.YatsiSonu, Time = day.EndOfIsha,  Enabled = Preferences.Get("endofishaEnabled", false) });
+			AddPrayerIfValid("falsefajr", AppResources.FecriKazip, day.FalseFajr, "falsefajrEnabled");
+			AddPrayerIfValid("fajr", AppResources.FecriSadik, day.Fajr, "fajrEnabled");
+			AddPrayerIfValid("sunrise", AppResources.SabahSonu, day.Sunrise, "sunriseEnabled");
+			AddPrayerIfValid("dhuhr", AppResources.Ogle, day.Dhuhr, "dhuhrEnabled");
+			AddPrayerIfValid("asr", AppResources.Ikindi, day.Asr, "asrEnabled");
+			AddPrayerIfValid("maghrib", AppResources.Aksam, day.Maghrib, "maghribEnabled");
+			AddPrayerIfValid("isha", AppResources.Yatsi, day.Isha, "ishaEnabled");
+			AddPrayerIfValid("endofisha", AppResources.YatsiSonu, day.EndOfIsha, "endofishaEnabled");
 
 			// Assign animated weather icons based on prayer ID (not localized name)
 			foreach (var prayer in list)
