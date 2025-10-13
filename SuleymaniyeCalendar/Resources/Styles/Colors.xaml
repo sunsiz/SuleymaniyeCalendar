@@ -180,6 +180,12 @@
     <Color x:Key="ShadowColorLight">#000000</Color>
     <Color x:Key="ShadowColorDark">#000000</Color>
 
+    <!-- Glass Effect Colors -->
+    <Color x:Key="GlassStrokeLight">#80FFFFFF</Color>
+    <Color x:Key="GlassStrokeDark">#80FFFFFF</Color>
+    <Color x:Key="ScrimLight">#80000000</Color>
+    <Color x:Key="ScrimDark">#80000000</Color>
+
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  PRAYER TIME STATE COLORS - WCAG AA Compliant (4.5:1 contrast minimum)  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
