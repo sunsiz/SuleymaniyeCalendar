@@ -34,10 +34,21 @@
     <!--  Primary - Warm Brown Brand Identity (5 essential tones)  -->
     <Color x:Key="BrandContainer">#FFF8F0</Color>    <!--  Very light container background  -->
     <Color x:Key="BrandLight">#E8B08A</Color>        <!--  Light tint for accents  -->
+    <Color x:Key="BrandLighter">#F4CEB5</Color>      <!--  Light container background  -->
+    <Color x:Key="BrandLightest">#F4D3C4</Color>  <!--  Extra light brand color  -->
     <Color x:Key="BrandBase">#C67B3B</Color>         <!--  Main brand color (logo, primary actions)  -->
     <Color x:Key="BrandDark">#A8632A</Color>         <!--  Dark emphasis  -->
+    <Color x:Key="BrandDarker">#4F280E</Color>      <!--  Very dark container background  -->
     <Color x:Key="BrandDarkest">#8A4E1E</Color>      <!--  Darkest for contrast  -->
     <Color x:Key="OnBrand">#FFFFFF</Color>           <!--  Text/icons on brand background  -->
+    <Color x:Key="OnBrandDark">#321607</Color>       <!--  Text/icons on dark brand background  -->
+    <Color x:Key="OnBrandMedium">#FFFFFF</Color>     <!--  Text/icons on medium brand background  -->
+    <Color x:Key="OnBrandLight">#321607</Color>      <!--  Text/icons on light brand background  -->
+    <Color x:Key="TextOnBrandLight">#4F280E</Color> <!--  Very dark container background  -->
+    <Color x:Key="TextOnBrandDark">#FFFFF8FE</Color> <!--  Very dark container background  -->
+    <Color x:Key="BrandMedium">#C67B3B</Color>       <!--  Text/icons on light brand background  -->
+    <Color x:Key="TextPrimaryLight">#FFF8F0</Color> <!--  Very dark container background  -->
+    <Color x:Key="TextPrimaryDark">#321607</Color>  <!--  Very dark container background  -->
     
     <!--  Legacy Primary mappings (backward compatibility)  -->
     <Color x:Key="Primary10">#FFF8F0</Color>
@@ -51,6 +62,9 @@
     <Color x:Key="Primary90">#4F280E</Color>
     <Color x:Key="Primary95">#321607</Color>
     <Color x:Key="Primary99">#190A03</Color>
+    <Color x:Key="PrimaryBase">#C67B3B</Color>
+    <Color x:Key="PrimaryLight">#DC925E</Color>
+    <Color x:Key="PrimaryDark">#6D3A16</Color>
 
     <!--  Glass Morphism Colors - Frosted Effects  -->
     <Color x:Key="GlassFrost">#F5FFFFFF</Color>          <!--  96% white - frosted cards (light mode)  -->
@@ -60,6 +74,8 @@
     <Color x:Key="GlassBorder">#20000000</Color>         <!--  12% black - subtle borders  -->
     <Color x:Key="GlassBorderLight">#10000000</Color>    <!--  6% black - lighter borders  -->
     <Color x:Key="GlassShadow">#10000000</Color>         <!--  6% black - soft shadows  -->
+    <Color x:Key="GlassSoftLight">#F8FFFFFF</Color>     <!--  50% black - stronger shadows (dark mode)  -->
+    <Color x:Key="GlassSoftDark">#80000000</Color>       <!--  50% black - stronger shadows (dark mode)  -->
 
     <!--  Prayer State Colors (Simplified - No Gradients)  -->
     <Color x:Key="CurrentPrayerAccent">#C67B3B</Color>   <!--  Brown left border for current prayer  -->
@@ -68,8 +84,14 @@
     <Color x:Key="PastPrayerOpacity">#80FFFFFF</Color>   <!--  50% opacity white  -->
     
     <!--  Legacy gradient color mappings (for compatibility during transition)  -->
-    <Color x:Key="GoldPure">#C67B3B</Color>              <!--  Map to brand brown  -->
+    <Color x:Key="GoldPure">#FFF6CB8B</Color>              <!--  Map to brand brown  -->
     <Color x:Key="GoldBase">#E8B08A</Color>              <!--  Map to brand light  -->
+    <Color x:Key="GoldOrange">#FFCC60</Color>              <!--  Map to brand dark  -->
+    <Color x:Key="GoldDeep">#FFB84D</Color>            <!--  Map to brand container  -->
+    <Color x:Key="GoldLight">#FFF8F0</Color>            <!--  Map to brand container  -->
+    <Color x:Key="GoldDark">#A8632A</Color>              <!--  Map to brand dark  -->
+    <Color x:Key="GoldMedium">#C67B3B</Color>            <!--  Map to brand darkest  -->
+    <Color x:Key="GoldHighlight">#FFFACE6E</Color>            <!--  Map to brand darkest  -->
     <Color x:Key="CurrentPrayerStart">#C67B3B</Color>
     <Color x:Key="CurrentPrayerEnd">#A8632A</Color>
     <Color x:Key="UpcomingPrayerStart">#FFF8F0</Color>
@@ -171,6 +193,7 @@
     <Color x:Key="SurfaceContainerHighLight">#E6E0E5</Color>
     <Color x:Key="SurfaceContainerHighestLight">#E1DBE0</Color>
     <Color x:Key="SurfaceVariantLight">#E1DBE0</Color>
+    <Color x:Key="SurfaceBrushLight">#F8FFFFFF</Color>
 
     <!--  Dark Theme Surfaces  -->
     <Color x:Key="SurfaceDark">#141218</Color>
@@ -182,6 +205,7 @@
     <Color x:Key="SurfaceContainerHighDark">#2B2A2F</Color>
     <Color x:Key="SurfaceContainerHighestDark">#36343A</Color>
     <Color x:Key="SurfaceVariantDark">#49454F</Color>
+    <Color x:Key="SurfaceBrushDark">#E6000000</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  APPLICATION THEME COLORS - Semantic assignments  -->
@@ -387,6 +411,10 @@
     <Color x:Key="ShadowSecondary">#60218187</Color>
     <Color x:Key="ShadowGeneral">#40000000</Color>
     <Color x:Key="ShadowElevated">#60000000</Color>
+    <Color x:Key="ShadowFocus">#80000000</Color>
+    <Color x:Key="CardShadow">#40000000</Color>
+    <Color x:Key="CardShadowDark">#80000000</Color>
+    <Color x:Key="FloatingShadow">#80000000</Color>
 
     <!--  High contrast colors for improved accessibility  -->
     <Color x:Key="HighContrastPrimary">#6B3410</Color>
