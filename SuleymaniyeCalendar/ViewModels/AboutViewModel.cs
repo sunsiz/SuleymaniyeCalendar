@@ -31,8 +31,12 @@ namespace SuleymaniyeCalendar.ViewModels
 			}
 		}
 
-		[ObservableProperty]
-		private bool _showDesignShowcase = false;
+        private bool _showDesignShowcase;
+        public bool ShowDesignShowcase
+        {
+            get => _showDesignShowcase;
+            set => SetProperty(ref _showDesignShowcase, value);
+        }
 
 		[RelayCommand]
 		private void ToggleShowcase()

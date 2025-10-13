@@ -372,7 +372,7 @@ public partial class MonthViewModel : BaseViewModel
             var currentMonth = CurrentMonth;
 
             // 🚀 PHASE 20.1C: Heavy work on background thread
-            var (days, monthYearDisplay, autoSelectDate) = await Task.Run(() =>
+            (List<CalendarDay> days, string monthYearDisplay, DateTime autoSelectDate) = await Task.Run(() =>
             {
                 using (_perf?.StartTimer("Month.BuildCalendarGrid.Background"))
                 {
@@ -401,10 +401,8 @@ public partial class MonthViewModel : BaseViewModel
                         var dateKey = date.ToString("yyyy-MM-dd");
                         var hasPrayerData = prayerDataLookup.ContainsKey(dateKey);
 
-                        daysList.Add(new CalendarDay
+                        daysList.Add(new CalendarDay(date, isCurrentMonth)
                         {
-                            Date = date,
-                            IsCurrentMonth = isCurrentMonth,
                             IsSelected = false, // Will be set later in SelectDay
                             HasData = hasPrayerData,
                             PrayerData = hasPrayerData ? prayerDataLookup[dateKey] : null

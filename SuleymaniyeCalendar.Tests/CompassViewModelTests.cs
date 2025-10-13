@@ -13,7 +13,6 @@ namespace SuleymaniyeCalendar.Tests
     {
         private Mock<DataService> _dataServiceMock;
         private Mock<IRtlService> _rtlServiceMock;
-        private CompassViewModel _viewModel;
 
         [TestInitialize]
         public void Setup()

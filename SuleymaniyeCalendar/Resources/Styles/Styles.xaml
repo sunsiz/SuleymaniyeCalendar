@@ -3,7 +3,8 @@
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls">
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:models="clr-namespace:SuleymaniyeCalendar.Models">
 
     <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
     <!-- SPACING & SIZING - Consistent spacing and sizing values -->
@@ -430,7 +431,7 @@
 
     <!--  Weekday Label Style (for Calendar)  -->
     <Style x:Key="WeekdayLabelStyle" TargetType="Label">
-        <Setter Property="Style" Value="{StaticResource LabelMediumStyle}" />
+        <Setter Property="Style" Value="{StaticResource BodyMedium}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="HorizontalTextAlignment" Value="Center" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}" />
@@ -441,8 +442,9 @@
         <Setter Property="StrokeShape" Value="RoundRectangle 8" />
         <Setter Property="HeightRequest" Value="48" />
         <Setter Property="Content">
-            <Grid>
+            <Grid x:DataType="models:CalendarDay">
                 <Label Text="{Binding Day}"
+                       x:DataType="models:CalendarDay"
                        FontSize="14"
                        HorizontalTextAlignment="Center"
                        VerticalTextAlignment="Center"
@@ -453,13 +455,14 @@
                         </DataTrigger>
                     </Label.Triggers>
                 </Label>
-                <Ellipse WidthRequest="4"
+                 <Ellipse WidthRequest="4"
                          HeightRequest="4"
                          HorizontalOptions="Center"
                          VerticalOptions="End"
                          Margin="0,0,0,4"
                          Fill="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
-                         IsVisible="{Binding HasData}" />
+                         IsVisible="{Binding HasData}" 
+                         x:DataType="models:CalendarDay"/>
             </Grid>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -500,6 +503,16 @@
         <Setter Property="HeightRequest" Value="1" />
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource OutlineVariantLight}, Dark={StaticResource OutlineVariantDark}}" />
         <Setter Property="Margin" Value="0,4" />
+    </Style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+    <!-- TYPOGRAPHY - Label styles -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="BodyMedium" TargetType="Label">
+        <Setter Property="FontFamily" Value="MontserratRegular" />
+        <Setter Property="FontSize" Value="{StaticResource BodyMediumSize}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurface}, Dark={StaticResource OnSurfaceDark}}" />
     </Style>
 
 </ResourceDictionary>

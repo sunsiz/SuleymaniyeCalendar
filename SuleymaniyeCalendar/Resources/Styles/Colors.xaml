@@ -148,29 +148,49 @@
     <Color x:Key="AppBackgroundColorDark">#101418</Color>
 
     <!--  Primary Theme Colors  -->
+    <Color x:Key="Primary">#0D47A1</Color>
+    <Color x:Key="PrimaryDark">#B0C4FF</Color>
+    <Color x:Key="OnPrimary">#FFFFFF</Color>
+    <Color x:Key="OnPrimaryDark">#001A54</Color>
     <Color x:Key="PrimaryColor">#0D47A1</Color>
     <Color x:Key="PrimaryLightColor">#5F87FF</Color>
     <Color x:Key="PrimaryDarkColor">#002B7A</Color>
     <Color x:Key="PrimaryTextColor">#FFFFFF</Color>
 
     <!--  Primary Container Colors  -->
+    <Color x:Key="OnSecondaryContainer">#001F25</Color>
+    <Color x:Key="OnSecondaryContainerDark">#97F0FF</Color>
+    <Color x:Key="OnSecondaryContainerLight">#001F25</Color>
+    <Color x:Key="SecondaryContainer">#C4E7F3</Color>
+    <Color x:Key="SecondaryContainerDark">#004E5A</Color>
+    <Color x:Key="SecondaryContainerLight">#C4E7F3</Color>
     <Color x:Key="PrimaryContainerLight">#D8E2FF</Color>
     <Color x:Key="PrimaryContainerDark">#001A54</Color>
     <Color x:Key="OnPrimaryContainerLight">#001A54</Color>
     <Color x:Key="OnPrimaryContainerDark">#D8E2FF</Color>
 
     <!--  Secondary Theme Colors  -->
+    <Color x:Key="Secondary">#00BCD4</Color>
+    <Color x:Key="SecondaryDark">#80DEEA</Color>
+    <Color x:Key="OnSecondary">#003739</Color>
+    <Color x:Key="OnSecondaryDark">#B2EBF2</Color>
     <Color x:Key="SecondaryColor">#00BCD4</Color>
     <Color x:Key="SecondaryLightColor">#80DEEA</Color>
     <Color x:Key="SecondaryDarkColor">#00838F</Color>
 
     <!--  On-Surface Colors  -->
+    <Color x:Key="OnSurface">#191C20</Color>
+    <Color x:Key="OnSurfaceDark">#E3E8EE</Color>
+    <Color x:Key="OnSurfaceLight">#191C20</Color>
     <Color x:Key="OnSurfaceColor">#191C20</Color>
     <Color x:Key="OnSurfaceColorDark">#E3E8EE</Color>
     <Color x:Key="OnSurfaceVariantLight">#41474D</Color>
     <Color x:Key="OnSurfaceVariantDark">#C0C9D4</Color>
 
     <!--  Outline Colors  -->
+    <Color x:Key="Outline">#747E88</Color>
+    <Color x:Key="OutlineDark">#8D97A1</Color>
+    <Color x:Key="OutlineLight">#747E88</Color>
     <Color x:Key="OutlineColor">#747E88</Color>
     <Color x:Key="OutlineColorDark">#8D97A1</Color>
     <Color x:Key="OutlineVariantLight">#C0C9D4</Color>
