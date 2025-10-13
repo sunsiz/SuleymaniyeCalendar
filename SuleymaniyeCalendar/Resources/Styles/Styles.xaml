@@ -18,6 +18,16 @@
     <Thickness x:Key="CardPaddingTight">12</Thickness>
     <Thickness x:Key="CardMarginDefault">12,8</Thickness>
     <Thickness x:Key="CardMarginList">8,4</Thickness>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+    <!-- TYPOGRAPHY - Label styles -->
+    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+    <Style x:Key="BodyMedium" TargetType="Label">
+        <Setter Property="FontFamily" Value="MontserratRegular" />
+        <Setter Property="FontSize" Value="{StaticResource BodyMediumSize}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurface}, Dark={StaticResource OnSurfaceDark}}" />
+    </Style>
     
     <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
     <!-- CARD SYSTEM - A modern, consistent design for all card-based UI -->
@@ -503,16 +513,6 @@
         <Setter Property="HeightRequest" Value="1" />
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource OutlineVariantLight}, Dark={StaticResource OutlineVariantDark}}" />
         <Setter Property="Margin" Value="0,4" />
-    </Style>
-
-    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
-    <!-- TYPOGRAPHY - Label styles -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
-
-    <Style x:Key="BodyMedium" TargetType="Label">
-        <Setter Property="FontFamily" Value="MontserratRegular" />
-        <Setter Property="FontSize" Value="{StaticResource BodyMediumSize}" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurface}, Dark={StaticResource OnSurfaceDark}}" />
     </Style>
 
 </ResourceDictionary>

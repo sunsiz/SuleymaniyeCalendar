@@ -61,7 +61,7 @@
                                 </Border.GestureRecognizers>
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" Style="{StaticResource IconStyle}" FontSize="16" Text="&#xf185;" />
-                                    <Label Grid.Column="1" Text="{localization:Translate AcikTema}" Style="{StaticResource BodyMediumStyle}" VerticalOptions="Center" />
+                                     <Label Grid.Column="1" Text="{localization:Translate AcikTema}" Style="{StaticResource BodyMedium}" VerticalOptions="Center" />
                                     <RadioButton Grid.Column="2" GroupName="ThemeGroup" Value="1" IsChecked="{Binding LightChecked}" />
                                 </Grid>
                             </Border>
@@ -72,7 +72,7 @@
                                 </Border.GestureRecognizers>
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" Style="{StaticResource IconStyle}" FontSize="16" Text="&#xf186;" />
-                                    <Label Grid.Column="1" Text="{localization:Translate KoyuTema}" Style="{StaticResource BodyMediumStyle}" VerticalOptions="Center" />
+                                     <Label Grid.Column="1" Text="{localization:Translate KoyuTema}" Style="{StaticResource BodyMedium}" VerticalOptions="Center" />
                                     <RadioButton Grid.Column="2" GroupName="ThemeGroup" Value="0" IsChecked="{Binding DarkChecked}" />
                                 </Grid>
                             </Border>
@@ -83,7 +83,7 @@
                                 </Border.GestureRecognizers>
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" Style="{StaticResource IconStyle}" FontSize="16" Text="&#xf3ce;" />
-                                    <Label Grid.Column="1" Text="{localization:Translate SistemTemasi}" Style="{StaticResource BodyMediumStyle}" VerticalOptions="Center" />
+                                     <Label Grid.Column="1" Text="{localization:Translate SistemTemasi}" Style="{StaticResource BodyMedium}" VerticalOptions="Center" />
                                     <RadioButton Grid.Column="2" GroupName="ThemeGroup" Value="2" IsChecked="{Binding SystemChecked}" />
                                 </Grid>
                             </Border>
