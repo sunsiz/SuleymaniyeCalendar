@@ -10,175 +10,60 @@
     Title="{Binding Title}"
     x:DataType="viewModels:RadioViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
+    Background="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}">
 
     <Shell.TitleView>
-        <StackLayout
-            Margin="10"
-            HeightRequest="34"
-            Orientation="Horizontal">
-            <Label
-                AutomationProperties.IsInAccessibleTree="True"
-                Style="{StaticResource LabelSectionHeader}"
-                Text="{localization:Translate FitratinSesi}" />
-        </StackLayout>
+        <Label Text="{localization:Translate FitratinSesi}" Style="{StaticResource TitleLargeStyle}" VerticalTextAlignment="Center" />
     </Shell.TitleView>
 
     <ContentPage.Content>
-        <Grid Margin="0" RowDefinitions="5*,*">
-            <Border
+        <Grid RowDefinitions="*,Auto">
+            <Image
                 Grid.Row="0"
-                Margin="0"
-                Padding="0"
-                StrokeThickness="0"
-                Stroke="Transparent">
-                <!-- BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
-                                                  Dark={StaticResource AppBackgroundColorDark}}" -->
-                <Image
-                    Aspect="AspectFit"
-                    Opacity="0.7"
-                    Source="radyofitrat.png" />
-            </Border>
+                Aspect="AspectFit"
+                Opacity="0.7"
+                Source="radyofitrat.png" />
 
-            <Border
-                Style="{StaticResource NeoGlassCard}"
-                Grid.Row="1"
-                Margin="0,-25,0,-15">
-                <Grid
-                    Padding="{StaticResource CardPaddingDefault}"
-                    ColumnDefinitions="*, Auto, *"
-                    RowDefinitions="Auto"
-                    ColumnSpacing="{StaticResource SpacingLG}"
-                    VerticalOptions="Center">
-                    <StackLayout
-                        Grid.Row="0"
-                        Grid.Column="0"
-                        VerticalOptions="Center">
-                        <Label Style="{DynamicResource LabelStyle}" VerticalTextAlignment="Center">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span
-                                        FontFamily="{StaticResource IconFontFamily}"
-                                        FontSize="{DynamicResource IconLargeFontSize}"
-                                        Text="&#xf0ae; "
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource GoldMedium}}" />
-                                    <Span 
-                                        Text="{localization:Translate YayinAkisi}" 
-                                        FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                        <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding TapCommand}" CommandParameter="https://www.instagram.com/radyofitrat/" />
-                        </StackLayout.GestureRecognizers>
-                    </StackLayout>
+            <Border Grid.Row="1" Style="{StaticResource MediaCard}">
+                <Grid ColumnDefinitions="*, Auto, *" ColumnSpacing="12" VerticalOptions="Center">
+                    <!-- Broadcast Stream Link -->
+                    <Button Grid.Column="0" Style="{StaticResource TextButton}" Text="{localization:Translate YayinAkisi}" Command="{Binding TapCommand}" CommandParameter="https://www.instagram.com/radyofitrat/" />
 
-                    <!--  Enhanced Play / Pause control with golden circular design ✨  -->
-                    <Border
-                        Grid.Row="0"
-                        Grid.Column="1"
-                        Style="{StaticResource LuminousCircularIcon}"
-                        Stroke="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
-                        StrokeThickness="2"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Center">                        
-                        <Border.Shadow>
-                            <Shadow Brush="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}"
-                                    Radius="16"
-                                    Opacity="0.3"
-                                    Offset="0,2" />
-                        </Border.Shadow>
-                        <Label
-                            Padding="0"
-                            AutomationProperties.IsInAccessibleTree="True"
-                            FontAttributes="Bold"
-                            FontFamily="{StaticResource IconFontFamily}"
-                            FontSize="{DynamicResource IconXLFontSize}"
-                            HorizontalOptions="Center"
-                            SemanticProperties.Description="{localization:Translate RadyoCal}"
-                            Text="&#xf144;"
-                            TextColor="{AppThemeBinding Light={StaticResource GoldOrange}, Dark={StaticResource GoldDeep}}"
-                            VerticalOptions="Center">
-                            <Label.Triggers>
-                                <DataTrigger
-                                    Binding="{Binding IsPlaying}"
-                                    TargetType="Label"
-                                    Value="False">
-                                    <Setter Property="Text" Value="&#xf144;" />
-                                    <Setter Property="SemanticProperties.Description" Value="{localization:Translate Oynat}" />
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource GoldOrange}, Dark={StaticResource GoldDeep}}" />
-                                </DataTrigger>
-                                <DataTrigger
-                                    Binding="{Binding IsPlaying}"
-                                    TargetType="Label"
-                                    Value="True">
-                                    <Setter Property="Text" Value="&#xf28b;" />
-                                    <Setter Property="SemanticProperties.Description" Value="{localization:Translate Durdur}" />
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Warning60}, Dark={StaticResource Warning30}}" />
-                                </DataTrigger>
-                            </Label.Triggers>
-                        </Label>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding PlayCommand}" NumberOfTapsRequired="1" />
-                        </Border.GestureRecognizers>
-                    </Border>
+                    <!-- Play/Pause Button -->
+                    <ImageButton Grid.Column="1" Style="{StaticResource LargeIconButton}" Command="{Binding PlayCommand}">
+                        <ImageButton.Source>
+                            <FontImageSource FontFamily="IconFont"
+                                             Size="48"
+                                             Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
+                                <FontImageSource.Glyph>
+                                    <Binding Path="IsPlaying">
+                                        <Binding.Converter>
+                                            <toolkit:BoolToObjectConverter x:Key="PlayPauseIconConverter" TrueObject="&#xf28b;" FalseObject="&#xf144;" />
+                                        </Binding.Converter>
+                                    </Binding>
+                                </FontImageSource.Glyph>
+                            </FontImageSource>
+                        </ImageButton.Source>
+                    </ImageButton>
 
-                    <StackLayout
-                        Grid.Row="0"
-                        Grid.Column="2"
-                        VerticalOptions="Center">
-                        <Label
-                            HorizontalTextAlignment="End"
-                            Style="{DynamicResource LabelStyle}"
-                            VerticalTextAlignment="Center">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span
-                                        FontFamily="{StaticResource IconFontFamily}"
-                                        FontSize="{DynamicResource IconLargeFontSize}"
-                                        Text="&#xf0ac; "
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource GoldMedium}}" />
-                                    <Span 
-                                        Text="{localization:Translate WebSayfa}" 
-                                        FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                        <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding TapCommand}" CommandParameter="https://www.radyofitrat.com/" />
-                        </StackLayout.GestureRecognizers>
-                    </StackLayout>
+                    <!-- Website Link -->
+                    <Button Grid.Column="2" Style="{StaticResource TextButton}" Text="{localization:Translate WebSayfa}" Command="{Binding TapCommand}" CommandParameter="https://www.radyofitrat.com/" />
                 </Grid>
             </Border>
 
             <toolkit:MediaElement
                 x:Name="RadioPlayer"
                 Grid.Row="1"
-                Margin="0"
-                AndroidViewType="TextureView"
-                HeightRequest="1"
-                HorizontalOptions="Fill"
                 IsVisible="False"
-                MetadataArtist="{localization:Translate SuleymaniyeVakfi}"
-                MetadataArtworkUrl="https://www.radyofitrat.com/img/radyo-fitrat.png"
-                MetadataTitle="{localization:Translate RadyoFitrat}"
                 ShouldAutoPlay="False"
-                ShouldMute="False" CurrentState="Buffering"
-                ShouldShowPlaybackControls="False"
-                Source="https://www.suleymaniyevakfi.org/radio.mp3"
-                VerticalOptions="End" />
+                Source="https://www.suleymaniyevakfi.org/radio.mp3" />
 
-            <!-- 🎨 PHASE 15: Busy overlay with ElevatedPrimaryCard + GoldenActivityIndicator -->
-            <Grid BackgroundColor="#80000000" IsVisible="{Binding IsBusy}">
-                <Border Style="{StaticResource ElevatedPrimaryCard}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
-                    <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="40" HeightRequest="40" />
+            <!-- Busy overlay -->
+            <Grid Grid.RowSpan="2" BackgroundColor="{AppThemeBinding Light=#80FFFFFF, Dark=#80000000}" IsVisible="{Binding IsBusy}">
+                <Border Style="{StaticResource Card}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}" />
                 </Border>
             </Grid>
         </Grid>
     </ContentPage.Content>
-
 </ContentPage>

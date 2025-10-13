@@ -28,275 +28,179 @@
     <Color x:Key="Neutral99">#0F0F11</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  BRAND COLORS - Golden Hour Palette (Redesign)  -->
+    <!--  BRAND COLORS - Celestial Twilight Palette  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Primary - Golden copper gradient inspired by mosque domes at sunset  -->
-    <Color x:Key="Primary10">#FFF8F0</Color>
-    <Color x:Key="Primary20">#F4CEB5</Color>
-    <Color x:Key="Primary30">#E8B08A</Color>
-    <Color x:Key="Primary40">#DC925E</Color>
-    <Color x:Key="Primary50">#C67B3B</Color>
-    <Color x:Key="Primary60">#A8632A</Color>
-    <Color x:Key="Primary70">#8A4E1E</Color>
-    <Color x:Key="Primary80">#6D3A16</Color>
-    <Color x:Key="Primary90">#4F280E</Color>
-    <Color x:Key="Primary95">#321607</Color>
-    <Color x:Key="Primary99">#190A03</Color>
+    <!--  Primary - Deep space blue, evoking twilight and serenity -->
+    <Color x:Key="Primary10">#F0F4FF</Color>
+    <Color x:Key="Primary20">#D8E2FF</Color>
+    <Color x:Key="Primary30">#B0C4FF</Color>
+    <Color x:Key="Primary40">#88A6FF</Color>
+    <Color x:Key="Primary50">#5F87FF</Color>
+    <Color x:Key="Primary60">#3668FF</Color>
+    <Color x:Key="Primary70">#0D47A1</Color> <!-- Main Primary -->
+    <Color x:Key="Primary80">#002B7A</Color>
+    <Color x:Key="Primary90">#001A54</Color>
+    <Color x:Key="Primary95">#000E2D</Color>
+    <Color x:Key="Primary99">#000716</Color>
 
-    <!--  Golden Hour - Special colors for current prayer hero card  -->
-    <Color x:Key="GoldHighlight">#FFFEF8</Color>
-    <Color x:Key="GoldLight">#FFF4E0</Color>
-    <Color x:Key="GoldBase">#FFE8B8</Color>
-    <Color x:Key="GoldMedium">#FFD18A</Color>
-    <Color x:Key="GoldDeep">#FFC870</Color>
-    <Color x:Key="GoldPure">#FFD700</Color>
-    <Color x:Key="GoldOrange">#FFA500</Color>
+    <!--  Secondary - Vibrant Cyan/Teal, for accents and interactive elements -->
+    <Color x:Key="Secondary10">#E0F7FA</Color>
+    <Color x:Key="Secondary20">#B2EBF2</Color>
+    <Color x:Key="Secondary30">#80DEEA</Color>
+    <Color x:Key="Secondary40">#4DD0E1</Color>
+    <Color x:Key="Secondary50">#26C6DA</Color>
+    <Color x:Key="Secondary60">#00BCD4</Color> <!-- Main Secondary -->
+    <Color x:Key="Secondary70">#00ACC1</Color>
+    <Color x:Key="Secondary80">#00838F</Color>
+    <Color x:Key="Secondary90">#006064</Color>
+    <Color x:Key="Secondary95">#003739</Color>
+    <Color x:Key="Secondary99">#001C1D</Color>
 
-    <!--  Prayer State Colors (Enhanced differentiation)  -->
-    <Color x:Key="CurrentPrayerStart">#FFD700</Color>
-    <Color x:Key="CurrentPrayerEnd">#FFA500</Color>
-    <Color x:Key="UpcomingPrayerStart">#FFE8B8</Color>
-    <Color x:Key="UpcomingPrayerEnd">#FFD18A</Color>
-    <Color x:Key="PastPrayerStart">#E8E4E0</Color>
-    <Color x:Key="PastPrayerEnd">#D0C8C0</Color>
-
-    <!--  Secondary - Teal accent for Qibla compass and special features  -->
-    <Color x:Key="Secondary10">#E8F7F8</Color>
-    <Color x:Key="Secondary20">#B8E6E9</Color>
-    <Color x:Key="Secondary30">#4DB8C4</Color>
-    <Color x:Key="Secondary40">#58C4CB</Color>
-    <Color x:Key="Secondary50">#2E9FA8</Color>
-    <Color x:Key="Secondary60">#218187</Color>
-    <Color x:Key="Secondary70">#186265</Color>
-    <Color x:Key="Secondary80">#114244</Color>
-    <Color x:Key="Secondary90">#0B2527</Color>
-    <Color x:Key="Secondary95">#051013</Color>
-    <Color x:Key="Secondary99">#020608</Color>
-
-    <!--  Tertiary - Vibrant green for success states and notifications  -->
-    <Color x:Key="Tertiary10">#E8F5E8</Color>
-    <Color x:Key="Tertiary20">#C8E6C8</Color>
-    <Color x:Key="Tertiary30">#A8D7A8</Color>
-    <Color x:Key="Tertiary40">#88C888</Color>
-    <Color x:Key="Tertiary50">#2D8B57</Color>
-    <Color x:Key="Tertiary60">#4F8B4F</Color>
-    <Color x:Key="Tertiary70">#3F6E3F</Color>
-    <Color x:Key="Tertiary80">#2F512F</Color>
-    <Color x:Key="Tertiary90">#1F341F</Color>
-    <Color x:Key="Tertiary95">#0F1A0F</Color>
-    <Color x:Key="Tertiary99">#050805</Color>
+    <!--  Tertiary - Cool Gray, for backgrounds and surfaces -->
+    <Color x:Key="Tertiary10">#F5F7FA</Color>
+    <Color x:Key="Tertiary20">#E8EDF2</Color>
+    <Color x:Key="Tertiary30">#DAE3EC</Color>
+    <Color x:Key="Tertiary40">#C0C9D4</Color>
+    <Color x:Key="Tertiary50">#A7B0BA</Color>
+    <Color x:Key="Tertiary60">#8D97A1</Color>
+    <Color x:Key="Tertiary70">#747E88</Color>
+    <Color x:Key="Tertiary80">#5B656F</Color>
+    <Color x:Key="Tertiary90">#424C55</Color>
+    <Color x:Key="Tertiary95">#29333C</Color>
+    <Color x:Key="Tertiary99">#141A1E</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  SEMANTIC COLORS - Status and feedback colors  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Error Colors - Warmer, softer error states  -->
-    <Color x:Key="Error10">#FFEDE9</Color>
-    <Color x:Key="Error20">#FFD7D0</Color>
-    <Color x:Key="Error30">#FFBAB1</Color>
-    <Color x:Key="Error40">#FF9C8E</Color>
-    <Color x:Key="Error50">#E85D35</Color>
-    <Color x:Key="Error60">#DC362E</Color>
-    <Color x:Key="Error70">#B91E1E</Color>
-    <Color x:Key="Error80">#990F0F</Color>
-    <Color x:Key="Error90">#7A0606</Color>
-    <Color x:Key="Error95">#5C0303</Color>
-    <Color x:Key="Error99">#3E0101</Color>
+    <!--  Error Colors - A softer, less jarring red -->
+    <Color x:Key="Error10">#FFEBEE</Color>
+    <Color x:Key="Error20">#FFCDD2</Color>
+    <Color x:Key="Error30">#EF9A9A</Color>
+    <Color x:Key="Error40">#E57373</Color>
+    <Color x:Key="Error50">#EF5350</Color>
+    <Color x:Key="Error60">#F44336</Color> <!-- Main Error -->
+    <Color x:Key="Error70">#E53935</Color>
+    <Color x:Key="Error80">#C62828</Color>
+    <Color x:Key="Error90">#B71C1C</Color>
+    <Color x:Key="Error95">#8C1414</Color>
+    <Color x:Key="Error99">#460A0A</Color>
 
-    <!--  Warning Colors  -->
-    <Color x:Key="Warning10">#FFF8E5</Color>
-    <Color x:Key="Warning20">#FFEDB5</Color>
-    <Color x:Key="Warning30">#FFE085</Color>
-    <Color x:Key="Warning40">#FFD355</Color>
-    <Color x:Key="Warning50">#F0B429</Color>
-    <Color x:Key="Warning60">#CC9A1D</Color>
-    <Color x:Key="Warning70">#A87F15</Color>
-    <Color x:Key="Warning80">#85640F</Color>
-    <Color x:Key="Warning90">#634B0A</Color>
-    <Color x:Key="Warning95">#423306</Color>
-    <Color x:Key="Warning99">#211A03</Color>
+    <!--  Warning Colors - A muted, elegant amber -->
+    <Color x:Key="Warning10">#FFF8E1</Color>
+    <Color x:Key="Warning20">#FFECB3</Color>
+    <Color x:Key="Warning30">#FFE082</Color>
+    <Color x:Key="Warning40">#FFD54F</Color>
+    <Color x:Key="Warning50">#FFCA28</Color>
+    <Color x:Key="Warning60">#FFC107</Color> <!-- Main Warning -->
+    <Color x:Key="Warning70">#FFB300</Color>
+    <Color x:Key="Warning80">#FFA000</Color>
+    <Color x:Key="Warning90">#FF8F00</Color>
+    <Color x:Key="Warning95">#664B00</Color>
+    <Color x:Key="Warning99">#332500</Color>
 
-    <!--  Success Colors  -->
-    <Color x:Key="Success10">#E8F5E8</Color>
-    <Color x:Key="Success20">#C1E8C1</Color>
-    <Color x:Key="Success30">#9ADB9A</Color>
-    <Color x:Key="Success40">#73CE73</Color>
-    <Color x:Key="Success50">#4CAE4C</Color>
-    <Color x:Key="Success60">#3D8B3D</Color>
-    <Color x:Key="Success70">#2E682E</Color>
-    <Color x:Key="Success80">#1F451F</Color>
-    <Color x:Key="Success90">#142614</Color>
-    <Color x:Key="Success95">#0A130A</Color>
-    <Color x:Key="Success99">#050805</Color>
+    <!--  Success Colors - A calm, reassuring green -->
+    <Color x:Key="Success10">#E8F5E9</Color>
+    <Color x:Key="Success20">#C8E6C9</Color>
+    <Color x:Key="Success30">#A5D6A7</Color>
+    <Color x:Key="Success40">#81C784</Color>
+    <Color x:Key="Success50">#66BB6A</Color>
+    <Color x:Key="Success60">#4CAF50</Color> <!-- Main Success -->
+    <Color x:Key="Success70">#43A047</Color>
+    <Color x:Key="Success80">#388E3C</Color>
+    <Color x:Key="Success90">#2E7D32</Color>
+    <Color x:Key="Success95">#1B4A1E</Color>
+    <Color x:Key="Success99">#0D250F</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  SURFACE COLORS - Background and container colors  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Light Theme Surfaces  -->
-    <!-- Slightly deepened and softly tinted for better card/page separation in light mode -->
-    <Color x:Key="SurfaceLight">#FBF9FD</Color>
-    <Color x:Key="SurfaceDimLight">#DBD5DE</Color>
-    <Color x:Key="SurfaceBrightLight">#FBF9FD</Color>
+    <!--  Light Theme Surfaces -->
+    <Color x:Key="SurfaceLight">#FBFCFF</Color>
+    <Color x:Key="SurfaceDimLight">#F0F4F9</Color>
+    <Color x:Key="SurfaceBrightLight">#FBFCFF</Color>
     <Color x:Key="SurfaceContainerLowestLight">#FFFFFF</Color>
-    <Color x:Key="SurfaceContainerLowLight">#F1ECEF</Color>
-    <Color x:Key="SurfaceContainerLight">#ECE6EB</Color>
-    <Color x:Key="SurfaceContainerHighLight">#E6E0E5</Color>
-    <Color x:Key="SurfaceContainerHighestLight">#E1DBE0</Color>
-    <Color x:Key="SurfaceVariantLight">#E1DBE0</Color>
+    <Color x:Key="SurfaceContainerLowLight">#F5F9FF</Color>
+    <Color x:Key="SurfaceContainerLight">#EFF3FA</Color>
+    <Color x:Key="SurfaceContainerHighLight">#E9EEF5</Color>
+    <Color x:Key="SurfaceContainerHighestLight">#E3E8EE</Color>
+    <Color x:Key="SurfaceVariantLight">#DDE3EA</Color>
 
     <!--  Dark Theme Surfaces  -->
-    <Color x:Key="SurfaceDark">#141218</Color>
-    <Color x:Key="SurfaceDimDark">#141218</Color>
-    <Color x:Key="SurfaceBrightDark">#3A3740</Color>
-    <Color x:Key="SurfaceContainerLowestDark">#0F0E13</Color>
-    <Color x:Key="SurfaceContainerLowDark">#1C1B20</Color>
-    <Color x:Key="SurfaceContainerDark">#201F24</Color>
-    <Color x:Key="SurfaceContainerHighDark">#2B2A2F</Color>
-    <Color x:Key="SurfaceContainerHighestDark">#36343A</Color>
-    <Color x:Key="SurfaceVariantDark">#49454F</Color>
+    <Color x:Key="SurfaceDark">#101418</Color>
+    <Color x:Key="SurfaceDimDark">#101418</Color>
+    <Color x:Key="SurfaceBrightDark">#363A3F</Color>
+    <Color x:Key="SurfaceContainerLowestDark">#0B0F13</Color>
+    <Color x:Key="SurfaceContainerLowDark">#191C20</Color>
+    <Color x:Key="SurfaceContainerDark">#1D2024</Color>
+    <Color x:Key="SurfaceContainerHighDark">#272B2F</Color>
+    <Color x:Key="SurfaceContainerHighestDark">#32353A</Color>
+    <Color x:Key="SurfaceVariantDark">#41474D</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  APPLICATION THEME COLORS - Semantic assignments  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  App Backgrounds - Softer, less bright (reduced glare)  -->
-    <Color x:Key="AppBackgroundColor">#F2EFF7</Color>
-    <Color x:Key="AppBackgroundColorDark">#141218</Color>
-
-    <Color x:Key="CardBackgroundColorGrey">#f9f9f9</Color>
+    <!--  App Backgrounds - Clean, cool, and modern -->
+    <Color x:Key="AppBackgroundColor">#F5F9FF</Color>
+    <Color x:Key="AppBackgroundColorDark">#101418</Color>
 
     <!--  Primary Theme Colors  -->
-    <Color x:Key="PrimaryColor">#8A4E1E</Color>
-    <Color x:Key="PrimaryLightColor">#DC925E</Color>
-    <Color x:Key="PrimaryDarkColor">#6D3A16</Color>
-    <Color x:Key="PrimaryTextColor">#321607</Color>
+    <Color x:Key="PrimaryColor">#0D47A1</Color>
+    <Color x:Key="PrimaryLightColor">#5F87FF</Color>
+    <Color x:Key="PrimaryDarkColor">#002B7A</Color>
+    <Color x:Key="PrimaryTextColor">#FFFFFF</Color>
 
     <!--  Primary Container Colors  -->
-    <Color x:Key="PrimaryContainerLight">#F4CEB5</Color>
-    <Color x:Key="PrimaryContainerDark">#4F280E</Color>
-    <Color x:Key="OnPrimaryContainerLight">#321607</Color>
-    <Color x:Key="OnPrimaryContainerDark">#F4CEB5</Color>
+    <Color x:Key="PrimaryContainerLight">#D8E2FF</Color>
+    <Color x:Key="PrimaryContainerDark">#001A54</Color>
+    <Color x:Key="OnPrimaryContainerLight">#001A54</Color>
+    <Color x:Key="OnPrimaryContainerDark">#D8E2FF</Color>
 
     <!--  Secondary Theme Colors  -->
-    <Color x:Key="SecondaryColor">#218187</Color>
-    <Color x:Key="SecondaryLightColor">#58C4CB</Color>
-    <Color x:Key="SecondaryDarkColor">#114244</Color>
+    <Color x:Key="SecondaryColor">#00BCD4</Color>
+    <Color x:Key="SecondaryLightColor">#80DEEA</Color>
+    <Color x:Key="SecondaryDarkColor">#00838F</Color>
 
     <!--  On-Surface Colors  -->
-    <Color x:Key="OnSurfaceColor">#2F2D32</Color>
-    <Color x:Key="OnSurfaceColorDark">#F5F1F6</Color>
-    <Color x:Key="OnSurfaceVariantLight">#605D64</Color>
-    <Color x:Key="OnSurfaceVariantDark">#EBE7EC</Color>
+    <Color x:Key="OnSurfaceColor">#191C20</Color>
+    <Color x:Key="OnSurfaceColorDark">#E3E8EE</Color>
+    <Color x:Key="OnSurfaceVariantLight">#41474D</Color>
+    <Color x:Key="OnSurfaceVariantDark">#C0C9D4</Color>
 
     <!--  Outline Colors  -->
-    <Color x:Key="OutlineColor">#C8C5CA</Color>
-    <Color x:Key="OutlineColorDark">#79757F</Color>
-    <Color x:Key="OutlineVariantLight">#EBE7EC</Color>
-    <Color x:Key="OutlineVariantDark">#79757F</Color>
+    <Color x:Key="OutlineColor">#747E88</Color>
+    <Color x:Key="OutlineColorDark">#8D97A1</Color>
+    <Color x:Key="OutlineVariantLight">#C0C9D4</Color>
+    <Color x:Key="OutlineVariantDark">#424C55</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  PRAYER TIME STATE COLORS - WCAG AA Compliant (4.5:1 contrast minimum)  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Past Prayer States - Enhanced contrast (4.8:1 ratio) ✅  -->
-    <Color x:Key="PrayerPastBackgroundColor">#FFD8D7D8</Color>       <!-- Lighter gray for better contrast -->
-    <Color x:Key="PrayerPastBackgroundColorDark">#FF2A2828</Color>   <!-- Darker background for dark mode -->
-    <Color x:Key="PrayerPastTextColor">#FF2D2A32</Color>             <!-- Much darker text (was #46444B) -->
-    <Color x:Key="PrayerPastTextColorDark">#FFB8B8B8</Color>         <!-- Lighter text for dark mode -->
+    <!--  Past Prayer States - Muted and clear -->
+    <Color x:Key="PrayerPastBackgroundColor">#E3E8EE</Color>
+    <Color x:Key="PrayerPastBackgroundColorDark">#272B2F</Color>
+    <Color x:Key="PrayerPastTextColor">#424C55</Color>
+    <Color x:Key="PrayerPastTextColorDark">#A7B0BA</Color>
 
-    <!--  Current Prayer States - Enhanced visibility (5.2:1 ratio) ✅  -->
-    <Color x:Key="PrayerActiveBackgroundColor">#FF6EE895</Color>     <!-- Stronger green -->
-    <Color x:Key="PrayerActiveBackgroundColorDark">#FF1A4D28</Color> <!-- More opaque dark mode (was 13% opacity) -->
-    <Color x:Key="PrayerActiveTextColor">#FF0A4520</Color>           <!-- Darker text for better contrast -->
-    <Color x:Key="PrayerActiveTextColorDark">#FF90E5A8</Color>       <!-- Brighter text for dark mode -->
+    <!--  Current Prayer States - Vibrant and active -->
+    <Color x:Key="PrayerActiveBackgroundColor">#80DEEA</Color>
+    <Color x:Key="PrayerActiveBackgroundColorDark">#006064</Color>
+    <Color x:Key="PrayerActiveTextColor">#003739</Color>
+    <Color x:Key="PrayerActiveTextColorDark">#B2EBF2</Color>
 
-    <!--  Upcoming Prayer States - Enhanced warm distinction (4.9:1 ratio) ✅  -->
-    <Color x:Key="PrayerUpcomingBackgroundColor">#FFD4B88A</Color>   <!-- Stronger warm tone -->
-    <Color x:Key="PrayerUpcomingBackgroundColorDark">#FF4A4338</Color> <!-- More opaque dark mode -->
-    <Color x:Key="PrayerUpcomingTextColor">#7A4A15</Color>
-    <Color x:Key="PrayerUpcomingTextColorDark">#E8B08A</Color>    
+    <!--  Upcoming Prayer States - Soft and anticipatory -->
+    <Color x:Key="PrayerUpcomingBackgroundColor">#B0C4FF</Color>
+    <Color x:Key="PrayerUpcomingBackgroundColorDark">#002B7A</Color>
+    <Color x:Key="PrayerUpcomingTextColor">#001A54</Color>
+    <Color x:Key="PrayerUpcomingTextColorDark">#D8E2FF</Color>    
 
-    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  PHASE 5.2.2 - OPTIMIZED PRAYER CARD BACKGROUND COLORS  -->
-    <!--  Ultra-saturated solid colors for maximum visual differentiation  -->
-    <!--  Used by MainPage.xaml DataTriggers for automatic state management  -->
-    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Past Prayer - Opaque matte gray (clearly "done")  -->
-    <Color x:Key="PrayerCardPastBackgroundLight">#E0DEDEDE</Color>
-    <Color x:Key="PrayerCardPastBackgroundDark">#F0252525</Color>
-    <Color x:Key="PrayerCardPastBorderLight">#FFA8A5A7</Color>
-    <Color x:Key="PrayerCardPastBorderDark">#FF444444</Color>
 
-    <!--  Current Prayer - Ultra vibrant green (impossible to miss!)  -->
-    <Color x:Key="PrayerCardCurrentBackgroundLight">#B8F0C5</Color>
-    <Color x:Key="PrayerCardCurrentBackgroundDark">#F02D4A2D</Color>
-    <Color x:Key="PrayerCardCurrentBorderLight">#FF6EE895</Color>
-    <Color x:Key="PrayerCardCurrentBorderDark">#FF4CAF50</Color>
-    <Color x:Key="PrayerCardCurrentShadowLight">#50388E3C</Color>
-    <Color x:Key="PrayerCardCurrentShadowDark">#504CAF50</Color>
 
-    <!--  Upcoming Prayer - Ultra warm amber (inviting, clearly different)  -->
-    <Color x:Key="PrayerCardUpcomingBackgroundLight">#FFE8A0</Color>
-    <Color x:Key="PrayerCardUpcomingBackgroundDark">#E03A3320</Color>
-    <Color x:Key="PrayerCardUpcomingBorderLight">#FFDC925E</Color>
-    <Color x:Key="PrayerCardUpcomingBorderDark">#FF6B5C3F</Color>
-
-    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  PHASE 5.2.4 - GLASSMORPHISM GRADIENT BRUSHES  -->
-    <!--  Material Design 3 + Glassmorphism: Subtle gradients with top highlight  -->
-    <!--  Combines vibrant solid colors with premium glass depth effect  -->
-    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-
-    <!--  Past Prayer - Complex matte gray with multiple depth layers  -->
-    <LinearGradientBrush x:Key="PrayerCardPastGradientLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#F0EDED" Offset="0" />      <!-- Brilliant top glass highlight -->
-        <GradientStop Color="#ECE9E9" Offset="0.15" />   <!-- Upper reflection layer -->
-        <GradientStop Color="#E0DEDEDE" Offset="0.4" />  <!-- Base gray (core color) -->
-        <GradientStop Color="#D8D5D5" Offset="0.75" />   <!-- Mid depth transition -->
-        <GradientStop Color="#D0CDCD" Offset="1" />      <!-- Deep matte shadow -->
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PrayerCardPastGradientDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#454040" Offset="0" />      <!-- Brilliant top glass highlight -->
-        <GradientStop Color="#3A3535" Offset="0.15" />   <!-- Upper reflection layer -->
-        <GradientStop Color="#252525" Offset="0.4" />    <!-- Base dark gray (core color) -->
-        <GradientStop Color="#1A1818" Offset="0.75" />   <!-- Mid depth transition -->
-        <GradientStop Color="#121010" Offset="1" />      <!-- Deep shadow -->
-    </LinearGradientBrush>
-
-    <!--  Current Prayer - Ultra green with intense glass reflection and multiple depth layers  -->
-    <LinearGradientBrush x:Key="PrayerCardCurrentGradientLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#E0F8E7" Offset="0" />      <!-- Brilliant top highlight (intense glass) -->
-        <GradientStop Color="#D0F5DA" Offset="0.12" />   <!-- Upper glass reflection layer -->
-        <GradientStop Color="#B8F0C5" Offset="0.35" />   <!-- Base ultra green (core color) -->
-        <GradientStop Color="#A8E8B5" Offset="0.7" />    <!-- Mid depth transition -->
-        <GradientStop Color="#98E0A5" Offset="1" />      <!-- Deep rich green shadow -->
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PrayerCardCurrentGradientDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#507050" Offset="0" />      <!-- Brilliant top highlight (intense glass) -->
-        <GradientStop Color="#3F5F42" Offset="0.12" />   <!-- Upper glass reflection layer -->
-        <GradientStop Color="#2D4A2D" Offset="0.35" />   <!-- Base dark green (core color) -->
-        <GradientStop Color="#1F3A1F" Offset="0.7" />    <!-- Mid depth transition -->
-        <GradientStop Color="#152A15" Offset="1" />      <!-- Deep shadow -->
-    </LinearGradientBrush>
-
-    <!--  Upcoming Prayer - Ultra amber with intense warm glass glow and multiple depth layers  -->
-    <LinearGradientBrush x:Key="PrayerCardUpcomingGradientLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#FFFCF0" Offset="0" />      <!-- Brilliant warm highlight (intense glow) -->
-        <GradientStop Color="#FFF5D0" Offset="0.12" />   <!-- Upper glass glow layer -->
-        <GradientStop Color="#FFE8A0" Offset="0.35" />   <!-- Base ultra amber (core color) -->
-        <GradientStop Color="#FFD980" Offset="0.7" />    <!-- Mid warm depth transition -->
-        <GradientStop Color="#FFCC60" Offset="1" />      <!-- Deep rich golden shadow -->
-    </LinearGradientBrush>
-    <LinearGradientBrush x:Key="PrayerCardUpcomingGradientDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#6A5A45" Offset="0" />      <!-- Brilliant warm highlight (intense glow) -->
-        <GradientStop Color="#5A4A35" Offset="0.12" />   <!-- Upper glass glow layer -->
-        <GradientStop Color="#3A3320" Offset="0.35" />   <!-- Base dark amber (core color) -->
-        <GradientStop Color="#2A2318" Offset="0.7" />    <!-- Mid warm depth transition -->
-        <GradientStop Color="#1A1810" Offset="1" />      <!-- Deep shadow -->
-    </LinearGradientBrush>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  COMPONENT COLORS - Specific UI component colors  -->
