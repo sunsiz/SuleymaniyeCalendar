@@ -176,6 +176,10 @@
     <Color x:Key="OutlineVariantLight">#C0C9D4</Color>
     <Color x:Key="OutlineVariantDark">#424C55</Color>
 
+    <!--  Shadow Colors -->
+    <Color x:Key="ShadowColorLight">#000000</Color>
+    <Color x:Key="ShadowColorDark">#000000</Color>
+
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  PRAYER TIME STATE COLORS - WCAG AA Compliant (4.5:1 contrast minimum)  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
