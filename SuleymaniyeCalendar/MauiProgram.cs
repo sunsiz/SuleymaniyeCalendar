@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using LocalizationResourceManager.Maui;
 using Microsoft.Extensions.Logging;
+
 using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.Services;
 using SuleymaniyeCalendar.ViewModels;
@@ -36,6 +37,10 @@ public static class MauiProgram
             // occasionally fails to bind to <MauiFont> aliases alone (observed missing glyphs).
             .ConfigureFonts(fonts =>
             {
+                fonts.AddFont("Montserrat-Medium.ttf", "MontserratMedium");
+                fonts.AddFont("Montserrat-Regular.ttf", "MontserratRegular");
+                fonts.AddFont("FontAwesome6Brands-Regular-400.otf", "FontAwesomeBrands");
+                fonts.AddFont("FontAwesome6-Regular-400.otf", "FontAwesomeRegular");
                 fonts.AddFont("FontAwesome6FreeSolid.otf", "FontAwesomeSolid");
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
@@ -60,6 +65,15 @@ public static class MauiProgram
                 nsv.NestedScrollingEnabled = true;
                 ViewCompat.SetNestedScrollingEnabled(nsv, true);
                 nsv.FillViewport = true; // improves child measurement in nested scenarios
+            }
+        });
+
+        // Custom handler to fix Button CornerRadius on Android
+        Microsoft.Maui.Handlers.ButtonHandler.Mapper.AppendToMapping(nameof(Button.CornerRadius), (handler, view) =>
+        {
+            if (handler.PlatformView is Google.Android.Material.Button.MaterialButton materialButton)
+            {
+                materialButton.CornerRadius = (int)(view.CornerRadius * handler.PlatformView.Context.Resources.DisplayMetrics.Density);
             }
         });
 #endif
@@ -94,9 +108,9 @@ public static class MauiProgram
         builder.Services.AddSingleton<CompassPage>();
 
         // Transient Month page/VM
-    builder.Services.AddTransient<MonthViewModel>();
+        builder.Services.AddTransient<MonthViewModel>();
         builder.Services.AddTransient<MonthPage>();
-
+        
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

@@ -181,7 +181,7 @@
     <!--  On-Surface Colors  -->
     <Color x:Key="OnSurface">#191C20</Color>
     <Color x:Key="OnSurfaceDark">#E3E8EE</Color>
-    <Color x:Key="OnSurfaceLight">#191C20</Color>
+    <Color x:Key="OnSurfaceLight">#FFE9F3FF</Color>
     <Color x:Key="OnSurfaceColor">#191C20</Color>
     <Color x:Key="OnSurfaceColorDark">#E3E8EE</Color>
     <Color x:Key="OnSurfaceVariantLight">#41474D</Color>
@@ -227,10 +227,6 @@
     <Color x:Key="PrayerUpcomingBackgroundColorDark">#002B7A</Color>
     <Color x:Key="PrayerUpcomingTextColor">#001A54</Color>
     <Color x:Key="PrayerUpcomingTextColorDark">#D8E2FF</Color>    
-
-
-
-
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  COMPONENT COLORS - Specific UI component colors  -->

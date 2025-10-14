@@ -86,6 +86,7 @@
 
                 <!-- Settings Button -->
                 <Button Style="{StaticResource FilledButton}"
+                    IsVisible="{Binding ShowButtons}"
                         Command="{Binding SettingsCommand}"
                         Text="{localization:Translate UygulamaAyarlari}"
                         HorizontalOptions="Fill" />

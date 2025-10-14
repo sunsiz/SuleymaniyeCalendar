@@ -22,10 +22,10 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="{FontImageSource FontFamily=IconFont, Glyph='&#xf013;', Color={AppThemeBinding Light={StaticResource OnSurfaceLight}, Dark={StaticResource OnSurfaceDark}}}"
+        <ToolbarItem IconImageSource="{FontImageSource FontFamily={StaticResource IconFontFamily}, Glyph='&#xf013;', Color={AppThemeBinding Light={StaticResource OnSurfaceLight}, Dark={StaticResource OnSurfaceDark}}}"
                      Command="{Binding SettingsCommand}"
                      Text="{localization:Translate UygulamaAyarlari}" />
-        <ToolbarItem IconImageSource="{FontImageSource FontFamily=IconFont, Glyph='&#xf2f1;', Color={AppThemeBinding Light={StaticResource OnSurfaceLight}, Dark={StaticResource OnSurfaceDark}}}"
+        <ToolbarItem IconImageSource="{FontImageSource FontFamily={StaticResource IconFontFamily}, Glyph='&#xf2f1;', Color={AppThemeBinding Light={StaticResource OnSurfaceLight}, Dark={StaticResource OnSurfaceDark}}}"
                      Command="{Binding RefreshLocationCommand}"
                      Text="{localization:Translate Yenile}" />
     </ContentPage.ToolbarItems>
@@ -69,7 +69,7 @@
                                            FontSize="{DynamicResource SubHeaderFontSize}"
                                            FontAttributes="Bold"
                                            Text="{Binding RemainingTime}"
-                                           TextColor="{AppThemeBinding Light={StaticResource OnSurfaceLight}, Dark={StaticResource OnSurfaceDark}}"
+                                           TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource PrimaryTextColor}}"
                                            VerticalOptions="Center" />
                                 </Grid>
                             </Border>
@@ -95,7 +95,7 @@
                                     <Label Grid.Column="2" Text="{Binding Time}" Style="{StaticResource BodyLargeStyle}" FontAttributes="Bold" VerticalOptions="Center" />
                                     <ImageButton Grid.Column="3" Style="{StaticResource IconButton}" Command="{Binding NavigateCommand}">
                                         <ImageButton.Source>
-                                            <FontImageSource FontFamily="IconFont"
+                                            <FontImageSource FontFamily="{StaticResource IconFontFamily}"
                                                              Glyph="{Binding Enabled, Converter={StaticResource BoolToBellIconConverter}}"
                                                              Color="{Binding Enabled, Converter={StaticResource BoolToBellColorConverter}}" />
                                         </ImageButton.Source>
@@ -127,7 +127,7 @@
                                     <TapGestureRecognizer Command="{Binding GoToMapCommand}" NumberOfTapsRequired="1" />
                                 </Border.GestureRecognizers>
                                 <Label
-                                    Padding="12,6"
+                                    Padding="12,1"
                                     HorizontalOptions="Center"
                                     VerticalTextAlignment="Center">
                                     <Label.FormattedText>
@@ -135,7 +135,7 @@
                                             <Span
                                                 FontFamily="{StaticResource IconFontFamily}"
                                                 Text="&#xf3c5; " 
-                                                TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariant}, Dark={StaticResource OnSurfaceVariantDark}}"/>
+                                                TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}"/>
                                             <Span Text="{Binding City}" 
                                                   TextColor="{AppThemeBinding Light={StaticResource OnSurface}, Dark={StaticResource OnSurfaceDark}}"
                                                   FontAttributes="Bold"

@@ -7,7 +7,8 @@ namespace SuleymaniyeCalendar.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (Application.Current.Resources.TryGetValue((bool)value ? "Success" : "OnSurfaceVariant", out var colorResource))
+            var colorKey = (bool)value ? "Success" : "OnSurfaceVariantLight";
+            if (Application.Current.Resources.TryGetValue(colorKey, out var colorResource))
             {
                 return (Color)colorResource;
             }

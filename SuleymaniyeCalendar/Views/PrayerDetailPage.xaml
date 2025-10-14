@@ -12,6 +12,12 @@
     FlowDirection="{DynamicResource FlowDirection}"
     Title="{Binding Title}">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:BoolToObjectConverter x:Key="PlayPauseConverter" TrueObject="&#xf04d;" FalseObject="&#xf04b;" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <Shell.TitleView>
         <Label Text="{Binding Title}" Style="{StaticResource TitleLargeStyle}" VerticalTextAlignment="Center" />
     </Shell.TitleView>
@@ -70,16 +76,9 @@
                                     SelectedItem="{Binding SelectedSound}" />
                                 <ImageButton Grid.Column="1" Style="{StaticResource IconButton}" Command="{Binding TestButtonClickedCommand}">
                                     <ImageButton.Source>
-                                        <FontImageSource FontFamily="IconFont"
-                                                         Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
-                                            <FontImageSource.Glyph>
-                                                <Binding Path="IsPlaying">
-                                                    <Binding.Converter>
-                                                        <toolkit:BoolToObjectConverter x:Key="PlayPauseConverter" TrueObject="&#xf04d;" FalseObject="&#xf04b;" />
-                                                    </Binding.Converter>
-                                                </Binding>
-                                            </FontImageSource.Glyph>
-                                        </FontImageSource>
+                                        <FontImageSource FontFamily="{StaticResource IconFontFamily}"
+                                                         Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"
+                                                         Glyph="{Binding IsPlaying, Converter={StaticResource PlayPauseConverter}}"/>
                                     </ImageButton.Source>
                                 </ImageButton>
                             </Grid>

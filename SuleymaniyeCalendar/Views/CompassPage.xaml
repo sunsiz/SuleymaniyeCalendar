@@ -15,7 +15,7 @@
     </Shell.TitleView>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="{FontImageSource FontFamily=IconFont, Glyph='&#xf2f1;', Color={AppThemeBinding Light={StaticResource OnSurfaceLight}, Dark={StaticResource OnSurfaceDark}}}"
+        <ToolbarItem IconImageSource="{FontImageSource FontFamily={StaticResource IconFontFamily}, Glyph='&#xf2f1;', Color={AppThemeBinding Light={StaticResource OnSurfaceLight}, Dark={StaticResource OnSurfaceDark}}}"
                      Command="{Binding RefreshLocationCommand}"
                      Text="{localization:Translate Yenile}" />
     </ContentPage.ToolbarItems>

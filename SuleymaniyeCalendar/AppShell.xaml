@@ -14,7 +14,7 @@
         <Label
             Text="Suleymaniye Calendar"
             TextColor="{AppThemeBinding Light={StaticResource OnSurfaceLight}, Dark={StaticResource OnSurfaceDark}}"
-            FontFamily="MontserratBold"
+            FontFamily="MontserratMedium"
             FontSize="20"
             VerticalTextAlignment="Center"
             HorizontalTextAlignment="Center" />

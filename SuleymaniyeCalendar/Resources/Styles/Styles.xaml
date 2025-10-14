@@ -23,6 +23,44 @@
     <!-- TYPOGRAPHY - Label styles -->
     <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
 
+    <x:String x:Key="IconFontFamily">FontAwesomeSolid</x:String>
+
+    <Style x:Key="IconStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="{StaticResource IconFontFamily}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}" />
+        <Setter Property="VerticalTextAlignment" Value="Center" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="20" />
+    </Style>
+
+    <Style x:Key="TitleLargeStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="MontserratMedium" />
+        <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurface}, Dark={StaticResource OnSurfaceDark}}" />
+    </Style>
+
+    <Style x:Key="HeadlineSmallStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="MontserratMedium" />
+        <Setter Property="FontSize" Value="{DynamicResource SubHeaderFontSize}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurface}, Dark={StaticResource OnSurfaceDark}}" />
+    </Style>
+
+    <Style x:Key="BodyLargeStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="MontserratRegular" />
+        <Setter Property="FontSize" Value="{StaticResource BodyLargeSize}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurface}, Dark={StaticResource OnSurfaceDark}}" />
+    </Style>
+
+    <Style x:Key="BodySmallStyle" TargetType="Label">
+        <Setter Property="FontFamily" Value="MontserratRegular" />
+        <Setter Property="FontSize" Value="{StaticResource BodySmallSize}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}" />
+    </Style>
+
+    <Style x:Key="LabelLargeStyle" TargetType="Label" BasedOn="{StaticResource BodyLargeStyle}">
+        <Setter Property="FontFamily" Value="MontserratMedium" />
+    </Style>
+
     <Style x:Key="BodyMedium" TargetType="Label">
         <Setter Property="FontFamily" Value="MontserratRegular" />
         <Setter Property="FontSize" Value="{StaticResource BodyMediumSize}" />
@@ -126,6 +164,19 @@
                     Radius="8"
                     Opacity="{AppThemeBinding Light=0.10, Dark=0.20}" />
         </Setter>
+    </Style>
+    
+    <Style x:Key="SettingsCard" TargetType="Border" BasedOn="{StaticResource Card}">
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+
+    <Style x:Key="Chip" TargetType="Border">
+        <Setter Property="StrokeShape" Value="RoundRectangle 12" />
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource OutlineVariantLight}, Dark={StaticResource OutlineVariantDark}}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowLight}, Dark={StaticResource SurfaceContainerLowDark}}" />
     </Style>
 
     <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
@@ -260,6 +311,19 @@
         </Setter>
     </Style>
 
+    <Style x:Key="LargeIconButton" TargetType="ImageButton" BasedOn="{StaticResource IconButton}">
+        <Setter Property="HeightRequest" Value="64" />
+        <Setter Property="WidthRequest" Value="64" />
+        <Setter Property="CornerRadius" Value="32" />
+        <Setter Property="Padding" Value="16" />
+    </Style>
+
+    <Style x:Key="MediaCard" TargetType="Border" BasedOn="{StaticResource GlassCard}">
+        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Margin" Value="16" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 24" />
+    </Style>
+
     <!--  Floating Action Button (FAB) - For primary, screen-level actions  -->
     <Style x:Key="FabButton" TargetType="Button" BasedOn="{StaticResource FilledButton}">
         <Setter Property="HeightRequest" Value="56" />
@@ -267,7 +331,7 @@
         <Setter Property="CornerRadius" Value="28" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="FontSize" Value="24" />
-        <Setter Property="FontFamily" Value="IconFont" />
+        <Setter Property="FontFamily" Value="{StaticResource IconFontFamily}" />
         <Setter Property="Shadow">
             <Shadow Brush="{AppThemeBinding Light={StaticResource ShadowColorLight}, Dark={StaticResource ShadowColorDark}}"
                     Offset="0,6"

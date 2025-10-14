@@ -141,7 +141,8 @@
                         </Grid>
 
                         <Button
-                            Style="{StaticResource FilledButton}"
+                            Style="{StaticResource TextButton}"
+                            HorizontalOptions="End"
                             Command="{Binding GotoSettingsCommand}"
                             Text="{localization:Translate GotoSettings}" />
                     </VerticalStackLayout>

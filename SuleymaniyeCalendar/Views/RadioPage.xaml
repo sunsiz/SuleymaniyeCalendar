@@ -12,6 +12,12 @@
     FlowDirection="{DynamicResource FlowDirection}"
     Background="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:BoolToObjectConverter x:Key="PlayPauseIconConverter" TrueObject="&#xf28b;" FalseObject="&#xf144;" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <Shell.TitleView>
         <Label Text="{localization:Translate FitratinSesi}" Style="{StaticResource TitleLargeStyle}" VerticalTextAlignment="Center" />
     </Shell.TitleView>
@@ -32,15 +38,11 @@
                     <!-- Play/Pause Button -->
                     <ImageButton Grid.Column="1" Style="{StaticResource LargeIconButton}" Command="{Binding PlayCommand}">
                         <ImageButton.Source>
-                            <FontImageSource FontFamily="IconFont"
+                            <FontImageSource FontFamily="{StaticResource IconFontFamily}"
                                              Size="48"
                                              Color="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}">
                                 <FontImageSource.Glyph>
-                                    <Binding Path="IsPlaying">
-                                        <Binding.Converter>
-                                            <toolkit:BoolToObjectConverter x:Key="PlayPauseIconConverter" TrueObject="&#xf28b;" FalseObject="&#xf144;" />
-                                        </Binding.Converter>
-                                    </Binding>
+                                    <Binding Path="IsPlaying" Converter="{StaticResource PlayPauseIconConverter}" />
                                 </FontImageSource.Glyph>
                             </FontImageSource>
                         </ImageButton.Source>

@@ -30,86 +30,65 @@ namespace SuleymaniyeCalendar.ViewModels
 		// Original simple placeholder; real selection loaded in constructor via LoadLanguagesInternal.
 		private Language selectedLanguage = new Language(AppResources.English, "en");
 		// (Reverted) Simplified language change logic – advanced debounce removed due to hang issues.
+		private bool _isUpdatingLanguageList;
 		public Language SelectedLanguage
 		{
 			get => selectedLanguage;
 			set
 			{
-				// Prevent infinite recursion when we rebuild SupportedLanguages or set selection programmatically
-				if (_updatingLanguages)
-				{
-					selectedLanguage = value;
-					OnPropertyChanged(nameof(SelectedLanguage));
-					return;
-				}
+				if (_isUpdatingLanguageList || selectedLanguage == value || value is null) return;
 
 				if (SetProperty(ref selectedLanguage, value))
 				{
-					if (value is null) return;
 					// Skip if already active culture
 					if (string.Equals(resourceManager?.CurrentCulture?.TwoLetterISOLanguageName, value.CI, StringComparison.OrdinalIgnoreCase))
 						return;
-					_updatingLanguages = true;
-					try
+					
+					using (_perf.StartTimer("Settings.ChangeLanguage"))
 					{
-						using (_perf.StartTimer("Settings.ChangeLanguage"))
-						{
-							var ci = CultureInfo.GetCultureInfo(value.CI);
-							resourceManager.CurrentCulture = ci;
-							AppResources.Culture = ci;
-							Preferences.Set("SelectedLanguage", value.CI);
-							rtlService.ApplyFlowDirection(value.CI);
-							Title = AppResources.UygulamaAyarlari;
-	#if ANDROID
-							UpdateWidget();
-	#endif
-						}
-					}
-					finally
-					{
-						_updatingLanguages = false;
+						var ci = CultureInfo.GetCultureInfo(value.CI);
+						resourceManager.CurrentCulture = ci;
+						AppResources.Culture = ci;
+						Preferences.Set("SelectedLanguage", value.CI);
+						rtlService.ApplyFlowDirection(value.CI);
+						Title = AppResources.UygulamaAyarlari;
+#if ANDROID
+						UpdateWidget();
+#endif
 					}
 
-					// OPTIONAL: Refresh displayed language names asynchronously without rebuilding the list structure.
-					_ = Task.Run(() =>
+					// Asynchronously refresh language names without blocking the UI
+					Task.Run(() =>
 					{
-						try
+						var updatedNames = new Dictionary<string, string>
 						{
-							// Capture localized names after culture switch
-							var updated = new Dictionary<string, string>
+							{"ar", AppResources.Arabic}, {"az", AppResources.Azerbaijani},
+							{"zh", AppResources.Chinese}, {"de", AppResources.Deutsch},
+							{"en", AppResources.English}, {"fa", AppResources.Farsi},
+							{"fr", AppResources.French}, {"ru", AppResources.Russian},
+							{"tr", AppResources.Turkish}, {"ug", AppResources.Uyghur},
+							{"uz", AppResources.Uzbek}
+						};
+
+						MainThread.BeginInvokeOnMainThread(() =>
+						{
+							_isUpdatingLanguageList = true;
+							try
 							{
-								{"ar", AppResources.Arabic},
-								{"az", AppResources.Azerbaijani},
-								{"zh", AppResources.Chinese},
-								{"de", AppResources.Deutsch},
-								{"en", AppResources.English},
-								{"fa", AppResources.Farsi},
-								{"fr", AppResources.French},
-								{"ru", AppResources.Russian},
-								{"tr", AppResources.Turkish},
-								{"ug", AppResources.Uyghur},
-								{"uz", AppResources.Uzbek}
-							};
-							MainThread.BeginInvokeOnMainThread(() =>
+								var newLangs = SupportedLanguages.Select(lang => 
+									new Language(updatedNames.TryGetValue(lang.CI, out var newName) ? newName : lang.Name, lang.CI)
+								).ToList();
+								
+								SupportedLanguages = newLangs;
+								
+								// Ensure the picker's selected item reflects the new object instance
+								SelectedLanguage = newLangs.FirstOrDefault(l => l.CI == value.CI);
+							}
+							finally
 							{
-								bool anyChanged = false;
-								foreach (var lang in SupportedLanguages)
-								{
-									if (updated.TryGetValue(lang.CI, out var newName) && lang.Name != newName)
-									{
-										lang.Name = newName;
-										anyChanged = true;
-									}
-								}
-								if (anyChanged)
-								{
-									OnPropertyChanged(nameof(SupportedLanguages));
-									// Also trigger SelectedLanguage PropertyChanged so Picker refreshes display
-									OnPropertyChanged(nameof(SelectedLanguage));
-								}
-							});
-						}
-						catch { /* ignore background refresh issues */ }
+								_isUpdatingLanguageList = false;
+							}
+						});
 					});
 				}
 			}
