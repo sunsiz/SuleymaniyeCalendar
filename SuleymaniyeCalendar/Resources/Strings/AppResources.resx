@@ -157,6 +157,9 @@
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Today's Prayer Times</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Today</value>
+  </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>Alarm Clock</value>
   </data>

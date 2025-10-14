@@ -177,6 +177,9 @@
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>بۈگۈنكى ناماز ۋاقىتلىرى</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>بۈگۈن</value>
+  </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>قوڭغۇراقلىق سائەت</value>
   </data>

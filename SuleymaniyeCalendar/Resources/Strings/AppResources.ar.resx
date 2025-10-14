@@ -211,6 +211,9 @@
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>مواقيت الصلاة اليوم</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>منبه الساعة</value>
   </data>

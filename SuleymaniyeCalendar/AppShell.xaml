@@ -11,22 +11,22 @@
     <TabBar>
         <ShellContent Title="{localization:Translate Takvim}" ContentTemplate="{DataTemplate views:MainPage}" >
             <ShellContent.Icon>
-                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf073;" Size="28" Color="{AppThemeBinding Light=#8B4513, Dark=#EFEBE9}" />
+                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf073;" Size="28" Color="{StaticResource PrimaryColor}" />
             </ShellContent.Icon>
         </ShellContent>
         <ShellContent Title="{localization:Translate Kible}" ContentTemplate="{DataTemplate views:CompassPage}" >
             <ShellContent.Icon>
-                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf66b;" Size="28" Color="{AppThemeBinding Light=#8B4513, Dark=#EFEBE9}" />
+                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf66b;" Size="28" Color="{StaticResource PrimaryColor}" />
             </ShellContent.Icon>
         </ShellContent>
         <ShellContent Title="{localization:Translate Radyo}" ContentTemplate="{DataTemplate views:RadioPage}" >
             <ShellContent.Icon>
-                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf8d7;" Size="28" Color="{AppThemeBinding Light=#8B4513, Dark=#EFEBE9}" />
+                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf8d7;" Size="28" Color="{StaticResource PrimaryColor}" />
             </ShellContent.Icon>
         </ShellContent>
         <ShellContent Title="{localization:Translate Hakkinda}" ContentTemplate="{DataTemplate views:AboutPage}" >
             <ShellContent.Icon>
-                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf66f;" Size="28" Color="{AppThemeBinding Light=#8B4513, Dark=#EFEBE9}" />
+                <FontImageSource FontFamily="{StaticResource IconFontFamily}" Glyph="&#xf66f;" Size="28" Color="{StaticResource PrimaryColor}" />
             </ShellContent.Icon>
         </ShellContent>
     </TabBar>

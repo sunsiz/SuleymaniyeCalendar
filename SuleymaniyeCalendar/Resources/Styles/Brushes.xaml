@@ -2,10 +2,67 @@
 <?xaml-comp compile="true" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!--  App Background Brushes (subtle gradients)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  GOLDEN HOUR REDESIGN - Hero Current Prayer Gradients (Theme-Aware) 🌟  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+
+    <!--  Hero Current Prayer - Light Mode: Radiant Golden Gradient  -->
+    <LinearGradientBrush x:Key="HeroCurrentPrayerBrushLight" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{StaticResource GoldHighlight}" />
+        <GradientStop Offset="0.25" Color="{StaticResource GoldLight}" />
+        <GradientStop Offset="0.5" Color="{StaticResource GoldBase}" />
+        <GradientStop Offset="0.75" Color="{StaticResource GoldMedium}" />
+        <GradientStop Offset="1.0" Color="{StaticResource GoldDeep}" />
+    </LinearGradientBrush>
+
+    <!--  Hero Current Prayer - Dark Mode: Subtle Golden Glow (Darker) 🌙  -->
+    <LinearGradientBrush x:Key="HeroCurrentPrayerBrushDark" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="#3D3528" />
+        <!-- Dark brown-gold -->
+        <GradientStop Offset="0.25" Color="#4A3F2E" />
+        <!-- Subtle gold tint -->
+        <GradientStop Offset="0.5" Color="#574934" />
+        <!-- Warm dark gold -->
+        <GradientStop Offset="0.75" Color="#5E4D35" />
+        <!-- Muted gold -->
+        <GradientStop Offset="1.0" Color="#655038" />
+        <!-- Rich dark gold -->
+    </LinearGradientBrush>
+
+    <!--  Theme-Aware Wrapper (Auto-switches based on theme)  -->
+    <LinearGradientBrush x:Key="HeroCurrentPrayerBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{AppThemeBinding Light={StaticResource GoldHighlight}, Dark=#3D3528}" />
+        <GradientStop Offset="0.25" Color="{AppThemeBinding Light={StaticResource GoldLight}, Dark=#4A3F2E}" />
+        <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource GoldBase}, Dark=#574934}" />
+        <GradientStop Offset="0.75" Color="{AppThemeBinding Light={StaticResource GoldMedium}, Dark=#5E4D35}" />
+        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource GoldDeep}, Dark=#655038}" />
+    </LinearGradientBrush>
+
+    <!--  Hero Current Prayer - Border Radial Gradient (Gold to Copper)  -->
+    <RadialGradientBrush x:Key="HeroCurrentPrayerBorderBrush" Center="0.5,0.5" Radius="1.0">
+        <GradientStop Offset="0.0" Color="{StaticResource GoldPure}" />
+        <GradientStop Offset="0.5" Color="{StaticResource Primary50}" />
+        <GradientStop Offset="1.0" Color="{StaticResource Primary70}" />
+    </RadialGradientBrush>
+
+    <!--  Upcoming Prayer - Theme-Aware Soft Amber Glow 🌅  -->
+    <LinearGradientBrush x:Key="UpcomingPrayerBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{AppThemeBinding Light={StaticResource UpcomingPrayerStart}, Dark=#3A3430}" />
+        <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource GoldBase}, Dark=#423C34}" />
+        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource UpcomingPrayerEnd}, Dark=#4A4238}" />
+    </LinearGradientBrush>
+
+    <!--  Past Prayer - Theme-Aware Elegant Gray-Copper 🌑  -->
+    <LinearGradientBrush x:Key="PastPrayerBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0.0" Color="{AppThemeBinding Light={StaticResource PastPrayerStart}, Dark=#2A2828}" />
+        <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#DCD8D4, Dark=#2F2D2D}" />
+        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource PastPrayerEnd}, Dark=#333131}" />
+    </LinearGradientBrush>
+
+    <!--  App Background - Suleymaniye Inspired (Light Mode) - Neutral with subtle brand tint  -->
     <LinearGradientBrush x:Key="AppBackgroundBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#FFF3F2F5" />
-        <GradientStop Offset="1" Color="#FFF5E3D9" />
+        <GradientStop Offset="0" Color="{StaticResource Neutral10}" />
+        <GradientStop Offset="1" Color="{StaticResource Primary10}" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="AppBackgroundBrushDark" StartPoint="0,0" EndPoint="0,1">
