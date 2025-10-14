@@ -30,11 +30,6 @@ namespace SuleymaniyeCalendar.ViewModels
         private DateTimeOffset _lastUiRefresh = DateTimeOffset.MinValue;
         private static readonly TimeSpan UiRefreshThrottle = TimeSpan.FromSeconds(2);
 
-        // 🔄 PHASE 18: Track date for midnight rollover detection
-        private DateTime _lastKnownDate = DateTime.Today;
-        // Track last minute to detect prayer window changes (optimize performance)
-        private int _lastMinute = DateTime.Now.Minute;
-
         // Single-flight guard for UI refresh
         private int _refreshing; // 0 = idle, 1 = running
     // Single-flight guard for manual location refresh pipeline (pull-to-refresh and refresh button)
@@ -45,10 +40,6 @@ namespace SuleymaniyeCalendar.ViewModels
 
     private string remainingTime;
     public string RemainingTime { get => remainingTime; set => SetProperty(ref remainingTime, value); }
-
-    // 🎨 PHASE 17: Progress percentage for animated gradient (0.0 to 1.0)
-    private double timeProgress;
-    public double TimeProgress { get => timeProgress; set => SetProperty(ref timeProgress, value); }
 
     private string city;
     public string City { get => city; set => SetProperty(ref city, value); }
@@ -608,13 +599,6 @@ namespace SuleymaniyeCalendar.ViewModels
                 Application.Current?.Dispatcher.Dispatch(() => IsRefreshing = false);
             }
 
-            // 🔄 PHASE 18: Always recalculate prayer states from cached data
-            // This ensures correct "current prayer" when system time changes
-            Application.Current?.Dispatcher.Dispatch(() =>
-            {
-                LoadPrayers(); // Recalculate states immediately
-            });
-
             // Schedule refresh on the next loop so the first frame can render immediately
             Application.Current?.Dispatcher.Dispatch(() =>
             {
@@ -625,35 +609,7 @@ namespace SuleymaniyeCalendar.ViewModels
             {
                 _ticker = Application.Current.Dispatcher.CreateTimer();
                 _ticker.Interval = TimeSpan.FromSeconds(1);
-                // 🎨 PHASE 17: Update both RemainingTime and TimeProgress for animated gradient
-                // 🔄 PHASE 18: Detect date changes + recalculate states when minute changes
-                _tickHandler = (s, e) => 
-                {
-                    // Always update remaining time and progress (text updates every second)
-                    RemainingTime = GetRemainingTime();
-                    
-                    var now = DateTime.Now;
-                    var today = now.Date;
-                    var currentMinute = now.Minute;
-                    
-                    // Check if date has changed (midnight crossed or system date changed)
-                    if (today != _lastKnownDate)
-                    {
-                        Debug.WriteLine($"[MainViewModel] Date changed from {_lastKnownDate:yyyy-MM-dd} to {today:yyyy-MM-dd} - fetching new day's data");
-                        _lastKnownDate = today;
-                        _lastMinute = currentMinute;
-                        // Date changed - need to fetch new day's prayer times from server
-                        _ = LoadPrayers();
-                    }
-                    // 🔄 PHASE 18: Recalculate prayer states when minute changes
-                    // This ensures "current prayer" updates correctly (e.g., when crossing prayer boundaries)
-                    // Only recalculate once per minute to optimize performance
-                    else if (currentMinute != _lastMinute)
-                    {
-                        _lastMinute = currentMinute;
-                        Application.Current?.Dispatcher.Dispatch(() => LoadPrayers());
-                    }
-                };
+                _tickHandler = (s, e) => RemainingTime = GetRemainingTime();
                 _ticker.Tick += _tickHandler;
                 _ticker.Start();
             }
@@ -728,86 +684,41 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
-        // 🎨 PHASE 17: Helper method to calculate progress percentage (0.0 to 1.0)
-        private void CalculateTimeProgress(TimeSpan startTime, TimeSpan endTime, TimeSpan currentTime)
-        {
-            var totalDuration = endTime - startTime;
-            var elapsed = currentTime - startTime;
-            
-            if (totalDuration.TotalSeconds > 0)
-            {
-                TimeProgress = Math.Clamp(elapsed.TotalSeconds / totalDuration.TotalSeconds, 0.0, 1.0);
-            }
-            else
-            {
-                TimeProgress = 0.0;
-            }
-        }
-
         private string GetRemainingTime()
         {
             var currentTime = DateTime.Now.TimeOfDay;
             try
             {
                 if (currentTime < TimeSpan.Parse(_calendar.FalseFajr))
-                {
-                    CalculateTimeProgress(TimeSpan.Zero, TimeSpan.Parse(_calendar.FalseFajr), currentTime);
                     return AppResources.FecriKazibingirmesinekalanvakit +
                               (TimeSpan.Parse(_calendar.FalseFajr) - currentTime).ToString(@"hh\:mm\:ss");
-                }
                 if (currentTime >= TimeSpan.Parse(_calendar.FalseFajr) && currentTime <= TimeSpan.Parse(_calendar.Fajr))
-                {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.FalseFajr), TimeSpan.Parse(_calendar.Fajr), currentTime);
                     return AppResources.FecriSadikakalanvakit +
                            (TimeSpan.Parse(_calendar.Fajr) - currentTime).ToString(@"hh\:mm\:ss");
-                }
                 if (currentTime >= TimeSpan.Parse(_calendar.Fajr) && currentTime <= TimeSpan.Parse(_calendar.Sunrise))
-                {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Fajr), TimeSpan.Parse(_calendar.Sunrise), currentTime);
                     return AppResources.SabahSonunakalanvakit +
                            (TimeSpan.Parse(_calendar.Sunrise) - currentTime).ToString(@"hh\:mm\:ss");
-                }
                 if (currentTime >= TimeSpan.Parse(_calendar.Sunrise) && currentTime <= TimeSpan.Parse(_calendar.Dhuhr))
-                {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Sunrise), TimeSpan.Parse(_calendar.Dhuhr), currentTime);
                     return AppResources.Ogleningirmesinekalanvakit +
                            (TimeSpan.Parse(_calendar.Dhuhr) - currentTime).ToString(@"hh\:mm\:ss");
-                }
                 if (currentTime >= TimeSpan.Parse(_calendar.Dhuhr) && currentTime <= TimeSpan.Parse(_calendar.Asr))
-                {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Dhuhr), TimeSpan.Parse(_calendar.Asr), currentTime);
                     return AppResources.Oglenincikmasinakalanvakit +
                            (TimeSpan.Parse(_calendar.Asr) - currentTime).ToString(@"hh\:mm\:ss");
-                }
                 if (currentTime >= TimeSpan.Parse(_calendar.Asr) && currentTime <= TimeSpan.Parse(_calendar.Maghrib))
-                {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Asr), TimeSpan.Parse(_calendar.Maghrib), currentTime);
                     return AppResources.Ikindinincikmasinakalanvakit +
                            (TimeSpan.Parse(_calendar.Maghrib) - currentTime).ToString(@"hh\:mm\:ss");
-                }
                 if (currentTime >= TimeSpan.Parse(_calendar.Maghrib) && currentTime <= TimeSpan.Parse(_calendar.Isha))
-                {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Maghrib), TimeSpan.Parse(_calendar.Isha), currentTime);
                     return AppResources.Aksamincikmasnakalanvakit +
                            (TimeSpan.Parse(_calendar.Isha) - currentTime).ToString(@"hh\:mm\:ss");
-                }
                 if (currentTime >= TimeSpan.Parse(_calendar.Isha) && currentTime <= TimeSpan.Parse(_calendar.EndOfIsha))
-                {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Isha), TimeSpan.Parse(_calendar.EndOfIsha), currentTime);
                     return AppResources.Yatsinincikmasinakalanvakit +
                            (TimeSpan.Parse(_calendar.EndOfIsha) - currentTime).ToString(@"hh\:mm\:ss");
-                }
                 if (currentTime >= TimeSpan.Parse(_calendar.EndOfIsha))
-                {
-                    // After EndOfIsha, show full progress (100%)
-                    TimeProgress = 1.0;
                     return AppResources.Yatsininciktigindangecenvakit +
                            (currentTime - TimeSpan.Parse(_calendar.EndOfIsha)).ToString(@"hh\:mm\:ss");
-                }
             }
             catch (Exception exception)
             {
-                TimeProgress = 0.0;
                 System.Diagnostics.Debug.WriteLine(
                     $"GetFormattedRemainingTime exception: {exception.Message}. Location: {_calendar.Latitude}, {_calendar.Longitude}");
             }

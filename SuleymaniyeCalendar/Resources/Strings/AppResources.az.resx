@@ -210,9 +210,6 @@
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Bu günkü namaz vaxtları</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>Bu gün</value>
-  </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>Zəng saat</value>
   </data>

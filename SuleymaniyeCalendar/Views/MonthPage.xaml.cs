@@ -53,11 +53,11 @@ public partial class MonthPage : ContentPage
 
     private void CreateTableImmediately()
     {
-        // 🗓️ PHASE 20: Create beautiful calendar grid instead of table
+        // Create table structure immediately, even if data is empty
         if (!_tableBuilt)
         {
-            var calendarView = new MonthCalendarView { BindingContext = BindingContext };
-            ListHost.Content = calendarView;
+            var table = new MonthTableView { BindingContext = BindingContext };
+            ListHost.Content = table;
             _tableBuilt = true;
         }
     }

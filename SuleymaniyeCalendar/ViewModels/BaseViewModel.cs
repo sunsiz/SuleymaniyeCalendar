@@ -82,17 +82,17 @@ namespace SuleymaniyeCalendar.ViewModels
 						Application.Current.Resources["BodySmallFontSize"] = R(clampedValue * 1.0);       // Body Small
 						Application.Current.Resources["CaptionFontSize"] = R(clampedValue * 0.86);        // Caption/Label Small
 
-					// Icons scale proportionally with text; keep a slight bias to avoid oversized icons (rounded)
-					Application.Current.Resources["IconSmallFontSize"] = R(clampedValue * 1.1);
-					Application.Current.Resources["IconMediumFontSize"] = R(clampedValue * 1.25);
-					Application.Current.Resources["IconLargeFontSize"] = R(clampedValue * 1.6);
-					Application.Current.Resources["IconXLFontSize"] = R(clampedValue * 3.6);
-					Application.Current.Resources["PlayButtonContainerSize"] = R(clampedValue * 4.0); // Container for IconXL with padding
-					Application.Current.Resources["PlayButtonCornerRadius"] = R(clampedValue * 2.0); // Half of container (4.0/2=2.0) for perfect circle
+						// Icons scale proportionally with text; keep a slight bias to avoid oversized icons (rounded)
+						Application.Current.Resources["IconSmallFontSize"] = R(clampedValue * 1.1);
+						Application.Current.Resources["IconMediumFontSize"] = R(clampedValue * 1.25);
+						Application.Current.Resources["IconLargeFontSize"] = R(clampedValue * 1.6);
+						Application.Current.Resources["IconXLFontSize"] = R(clampedValue * 3.6);
+					}
 				}
 			}
 		}
-	}		public int HeaderFontSize => (int)(FontSize * 1.35);
+
+		public int HeaderFontSize => (int)(FontSize * 1.35);
 		public int SubHeaderFontSize => (int)(FontSize * 1.2);
 		public int TitleSmallFontSize => (int)(FontSize * 1.29);
 		public int BodyLargeFontSize => (int)(FontSize * 1.14);
@@ -153,15 +153,15 @@ namespace SuleymaniyeCalendar.ViewModels
 				Application.Current.Resources["BodySmallFontSize"] = R(clampedValue * 1.0);       // Body Small
 				Application.Current.Resources["CaptionFontSize"] = R(clampedValue * 0.86);        // Caption/Label Small
 
-			// Icons scale proportionally with text; keep a slight bias to avoid oversized icons (rounded)
-			Application.Current.Resources["IconSmallFontSize"] = R(clampedValue * 1.1);
-			Application.Current.Resources["IconMediumFontSize"] = R(clampedValue * 1.25);
-			Application.Current.Resources["IconLargeFontSize"] = R(clampedValue * 1.6);
-			Application.Current.Resources["IconXLFontSize"] = R(clampedValue * 3.6);
-			Application.Current.Resources["PlayButtonContainerSize"] = R(clampedValue * 4.0); // Container for IconXL with padding
-			Application.Current.Resources["PlayButtonCornerRadius"] = R(clampedValue * 2.0); // Half of container (4.0/2=2.0) for perfect circle
+				// Icons scale proportionally with text; keep a slight bias to avoid oversized icons (rounded)
+				Application.Current.Resources["IconSmallFontSize"] = R(clampedValue * 1.1);
+				Application.Current.Resources["IconMediumFontSize"] = R(clampedValue * 1.25);
+				Application.Current.Resources["IconLargeFontSize"] = R(clampedValue * 1.6);
+				Application.Current.Resources["IconXLFontSize"] = R(clampedValue * 3.6);
+			}
 		}
-	}		public static void Alert(string title, string message)
+
+		public static void Alert(string title, string message)
 		{
 			MainThread.BeginInvokeOnMainThread(async () =>
 			{

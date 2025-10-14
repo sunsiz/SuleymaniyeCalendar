@@ -221,9 +221,6 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Bugungi namoz vaqtlari</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>Bugun</value>
-  </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>Uyg'otuvchi soat</value>
   </data>

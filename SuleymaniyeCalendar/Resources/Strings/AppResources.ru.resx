@@ -209,9 +209,6 @@
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Времена намаза на сегодня</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>Сегодня</value>
-  </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>Будильник</value>
   </data>

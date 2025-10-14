@@ -208,9 +208,6 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Horaires de prière d'aujourd'hui</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>Aujourd'hui</value>
-  </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>Alarme</value>
   </data>

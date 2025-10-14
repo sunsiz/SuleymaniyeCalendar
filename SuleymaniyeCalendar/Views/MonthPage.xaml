@@ -7,8 +7,7 @@
              xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
              Title="{Binding Title}" 
              x:DataType="viewModels:MonthViewModel"
-             FlowDirection="{DynamicResource FlowDirection}"
-             Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
+             FlowDirection="{DynamicResource FlowDirection}">
 
 <ContentPage.Content>
     <Grid RowDefinitions="*,Auto" Padding="{StaticResource SpacingXS}" RowSpacing="{StaticResource SpacingXS}">
@@ -18,17 +17,17 @@
             <!-- Lightweight host; we will inject the heavy table after first frame -->
             <ContentView x:Name="ListHost" />
 
-            <!--  🎨 PHASE 15: Loading Indicator Overlay with ElevatedPrimaryCard  -->
+            <!-- Loading Indicator Overlay - shows above everything when loading -->
             <Grid IsVisible="{Binding IsBusy}" 
                   BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}"
                   InputTransparent="False">
-        <Border Style="{StaticResource ElevatedPrimaryCard}" 
+        <Border Style="{StaticResource GlassCardSoft}" 
             VerticalOptions="Center" 
             HorizontalOptions="Center"
             Padding="40,24">
                     <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
                         <ActivityIndicator IsRunning="{Binding IsBusy}"
-                                           Style="{StaticResource GoldenActivityIndicator}"
+                                           Color="{StaticResource PrimaryColor}"
                                            HeightRequest="48"
                                            WidthRequest="48" />
                         <Label Text="{localization:Translate IcerikYukleniyor}"
@@ -39,38 +38,30 @@
                 </Border>
             </Grid>
 
-            <!--  🎨 PHASE 15: Extended overlay with ElevatedPrimaryCard  -->
+            <!-- Optional overlay (reserved for future extended operations) -->
             <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
-                <Border Style="{StaticResource ElevatedPrimaryCard}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                <Border Style="{StaticResource GlassCardSoft}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
                     <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
-                        <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="40" HeightRequest="40" />
+                        <ActivityIndicator IsRunning="True" Color="{StaticResource PrimaryColor}" WidthRequest="40" HeightRequest="40" />
                         <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>
         </Grid>
 
-        <!-- 🎨 PHASE 20.2: Action Buttons with Share for Monthly Data Table -->
+        <!-- Action Buttons with Border (Android CornerRadius Workaround) -->
         <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="12">
-            <!-- Close Button -->
             <Button Grid.Column="0"
                     Style="{StaticResource GlassButtonOutline}"
-                    TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldLight}}"
                     Text="{localization:Translate Kapat}"
                     Command="{Binding GoBackCommand}" />
-            
-            <!-- Share Monthly Table Button (opens original website table) -->
             <Button Grid.Column="1"
                     Style="{StaticResource GlassButtonWarning}"
                     IsVisible="{Binding ShowShare}"
-                    TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldLight}}"
                     Text="{localization:Translate Paylas}"
                     Command="{Binding ShareCommand}" />
-            
-            <!-- Refresh Location Button -->
             <Button Grid.Column="2"
                     Style="{StaticResource GlassButtonPrimary}"
-                    TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldLight}}"
                     Text="{localization:Translate KonumYenileButton}"
                     Command="{Binding RefreshCommand}"
                     IsEnabled="{Binding IsNotBusy}" />
