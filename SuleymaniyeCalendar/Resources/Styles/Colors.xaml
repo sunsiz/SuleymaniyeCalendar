@@ -44,48 +44,48 @@
     <Color x:Key="Primary95">#4A2418</Color>
     <Color x:Key="Primary99">#2A1510</Color>
 
-    <!--  Golden Hour - Islamic gold for highlights and current prayer  -->
-    <Color x:Key="GoldHighlight">#FFFEF8</Color>
-    <Color x:Key="GoldLight">#FFF4E0</Color>
-    <Color x:Key="GoldBase">#FFE8B8</Color>
-    <Color x:Key="GoldMedium">#FFD18A</Color>
-    <Color x:Key="GoldDeep">#FFC870</Color>
-    <Color x:Key="GoldPure">#FFD700</Color>
-    <Color x:Key="GoldOrange">#FFA500</Color>
+    <!--  Coral Hour - Special colors for current prayer hero card  -->
+    <Color x:Key="GoldHighlight">#FCE4EC</Color>
+    <Color x:Key="GoldLight">#F8BBD9</Color>
+    <Color x:Key="GoldBase">#F48FB1</Color>
+    <Color x:Key="GoldMedium">#F06292</Color>
+    <Color x:Key="GoldDeep">#E91E63</Color>
+    <Color x:Key="GoldPure">#C2185B</Color>
+    <Color x:Key="GoldOrange">#AD1457</Color>
 
     <!--  Prayer State Colors (Enhanced differentiation)  -->
-    <Color x:Key="CurrentPrayerStart">#FFD700</Color>
-    <Color x:Key="CurrentPrayerEnd">#FFA500</Color>
-    <Color x:Key="UpcomingPrayerStart">#FFE8B8</Color>
-    <Color x:Key="UpcomingPrayerEnd">#FFD18A</Color>
+    <Color x:Key="CurrentPrayerStart">#E91E63</Color>
+    <Color x:Key="CurrentPrayerEnd">#C2185B</Color>
+    <Color x:Key="UpcomingPrayerStart">#FCE4EC</Color>
+    <Color x:Key="UpcomingPrayerEnd">#F8BBD9</Color>
     <Color x:Key="PastPrayerStart">#E8E4E0</Color>
     <Color x:Key="PastPrayerEnd">#D0C8C0</Color>
 
-    <!--  Secondary - Islamic green for Qibla and nature elements  -->
-    <Color x:Key="Secondary10">#E8F5E8</Color>
-    <Color x:Key="Secondary20">#C8E6C8</Color>
-    <Color x:Key="Secondary30">#A8D7A8</Color>
-    <Color x:Key="Secondary40">#88C888</Color>
-    <Color x:Key="Secondary50">#4CAF50</Color>
-    <Color x:Key="Secondary60">#45A049</Color>
-    <Color x:Key="Secondary70">#3D8B40</Color>
-    <Color x:Key="Secondary80">#357A35</Color>
-    <Color x:Key="Secondary90">#2E682E</Color>
-    <Color x:Key="Secondary95">#245624</Color>
-    <Color x:Key="Secondary99">#0F2A0F</Color>
+    <!--  Secondary - Modern blue for Qibla and special features  -->
+    <Color x:Key="Secondary10">#E3F2FD</Color>
+    <Color x:Key="Secondary20">#BBDEFB</Color>
+    <Color x:Key="Secondary30">#90CAF9</Color>
+    <Color x:Key="Secondary40">#64B5F6</Color>
+    <Color x:Key="Secondary50">#2196F3</Color>
+    <Color x:Key="Secondary60">#1E88E5</Color>
+    <Color x:Key="Secondary70">#1976D2</Color>
+    <Color x:Key="Secondary80">#1565C0</Color>
+    <Color x:Key="Secondary90">#0D47A1</Color>
+    <Color x:Key="Secondary95">#0D47A1</Color>
+    <Color x:Key="Secondary99">#0D47A1</Color>
 
-    <!--  Tertiary - Warm gold for accents and special features  -->
-    <Color x:Key="Tertiary10">#FFF8E1</Color>
-    <Color x:Key="Tertiary20">#FFECB3</Color>
-    <Color x:Key="Tertiary30">#FFE082</Color>
-    <Color x:Key="Tertiary40">#FFD54F</Color>
-    <Color x:Key="Tertiary50">#D4AF37</Color>
-    <Color x:Key="Tertiary60">#C49A2F</Color>
-    <Color x:Key="Tertiary70">#B38629</Color>
-    <Color x:Key="Tertiary80">#A27323</Color>
-    <Color x:Key="Tertiary90">#91601D</Color>
-    <Color x:Key="Tertiary95">#7A4F17</Color>
-    <Color x:Key="Tertiary99">#3D270B</Color>
+    <!--  Tertiary - Warm coral for accents and special features  -->
+    <Color x:Key="Tertiary10">#FCE4EC</Color>
+    <Color x:Key="Tertiary20">#F8BBD9</Color>
+    <Color x:Key="Tertiary30">#F48FB1</Color>
+    <Color x:Key="Tertiary40">#F06292</Color>
+    <Color x:Key="Tertiary50">#E91E63</Color>
+    <Color x:Key="Tertiary60">#D81B60</Color>
+    <Color x:Key="Tertiary70">#C2185B</Color>
+    <Color x:Key="Tertiary80">#AD1457</Color>
+    <Color x:Key="Tertiary90">#880E4F</Color>
+    <Color x:Key="Tertiary95">#880E4F</Color>
+    <Color x:Key="Tertiary99">#880E4F</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  SEMANTIC COLORS - Status and feedback colors  -->
