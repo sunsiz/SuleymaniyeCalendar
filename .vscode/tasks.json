@@ -1,0 +1,19 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "dotnet build SuleymaniyeCalendar",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"build",
+				"SuleymaniyeCalendar.sln",
+				"-c",
+				"Debug"
+			],
+			"problemMatcher": [
+				"$mscompile"
+			]
+		}
+	]
+}

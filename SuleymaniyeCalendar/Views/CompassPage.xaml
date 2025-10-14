@@ -51,13 +51,13 @@
                     <!-- BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
                                                       Dark={StaticResource AppBackgroundColorDark}}" -->
 
-                    <!--  🎨 PHASE 15: Compass Section - ElevatedPrimaryCard  -->
-                    <Border Style="{StaticResource AeroVistaCard}">
+                    <!-- Compass Section: flattened to StandardCard -->
+                    <Border Style="{StaticResource StandardCard}">
                         <VerticalStackLayout Spacing="4">
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
-                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource GoldMedium}}"
                                 Text="{localization:Translate KibleGostergesi}" />
 
                             <Grid HeightRequest="260" HorizontalOptions="Center">
@@ -78,14 +78,13 @@
                             </Grid>
                         </VerticalStackLayout>
                     </Border>
-
-                    <!--  🎨 PHASE 15: Location Information - StandardCard  -->
-                    <Border Style="{StaticResource ElevatedSecondaryCard}">
+                    <!--  🎨 PHASE 15: Location Information - flattened to StandardCard  -->
+                    <Border Style="{StaticResource StandardCard}">
                         <VerticalStackLayout Spacing="4">
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
-                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource GoldMedium}}"
                                 Text="{localization:Translate KonumBilgileri}" />
 
                             <!--  Coordinates Grid  -->
@@ -104,7 +103,7 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate EnlemFormatsiz}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
@@ -124,7 +123,7 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate BoylamFormatsiz}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
@@ -144,7 +143,7 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate YukseklikFormatsiz}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
@@ -164,7 +163,7 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate Aci}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
@@ -185,7 +184,7 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource TitleMediumStyle}"
                                         Text="{localization:Translate Adres}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
                                                                     Dark={StaticResource GoldMedium}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
@@ -199,8 +198,8 @@
                             <!--  Action Button - Golden Glass ✨  -->
                             <Button
                                 Margin="12,0,12,12"
-                                Style="{StaticResource GlassButtonPrimaryIntense}"
-                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldLight}}"
+                                Style="{StaticResource GlassButtonPrimaryFlat}"
+                                TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource GoldLight}}"
                                 Command="{Binding GoToMapCommand}"
                                 Text="{localization:Translate HaritadaGoster}" />
                         </VerticalStackLayout>

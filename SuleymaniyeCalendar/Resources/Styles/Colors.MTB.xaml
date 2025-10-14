@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<?xaml-comp compile="true" ?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Material Theme Builder (MTB) palette mapped to app keys -->
+
+    <!-- Light theme values (primary/secondary/tertiary) -->
+    <Color x:Key="PrimaryColor">#904B3F</Color>
+    <Color x:Key="OnPrimaryColor">#FFFFFF</Color>
+    <Color x:Key="PrimaryContainerLight">#FFDAD4</Color>
+    <Color x:Key="OnPrimaryContainerLight">#733429</Color>
+
+    <Color x:Key="SecondaryColor">#775651</Color>
+    <Color x:Key="OnSecondaryColor">#FFFFFF</Color>
+    <Color x:Key="SecondaryContainerLight">#FFDAD4</Color>
+    <Color x:Key="OnSecondaryContainerLight">#5D3F3A</Color>
+
+    <Color x:Key="TertiaryColor">#6F5C2E</Color>
+    <Color x:Key="OnTertiaryColor">#FFFFFF</Color>
+    <Color x:Key="TertiaryContainerLight">#FAE0A6</Color>
+    <Color x:Key="OnTertiaryContainerLight">#564519</Color>
+
+    <Color x:Key="Error50">#BA1A1A</Color>
+    <Color x:Key="OnErrorColor">#FFFFFF</Color>
+    <Color x:Key="ErrorContainerLight">#FFDAD6</Color>
+    <Color x:Key="OnErrorContainerLight">#93000A</Color>
+
+    <!-- Background/surface/outline for light -->
+    <Color x:Key="AppBackgroundColor">#FFF8F6</Color>
+    <Color x:Key="OnSurfaceColor">#231918</Color>
+    <Color x:Key="SurfaceLight">#FFF8F6</Color>
+    <Color x:Key="OnSurfaceVariantLight">#534340</Color>
+    <Color x:Key="OutlineColor">#857370</Color>
+    <Color x:Key="OutlineVariantLight">#D8C2BE</Color>
+
+    <Color x:Key="SurfaceDimLight">#E8D6D3</Color>
+    <Color x:Key="SurfaceBrightLight">#FFF8F6</Color>
+    <Color x:Key="SurfaceContainerLowestLight">#FFFFFF</Color>
+    <Color x:Key="SurfaceContainerLowLight">#FFF0EE</Color>
+    <Color x:Key="SurfaceContainerLight">#FCEAE7</Color>
+    <Color x:Key="SurfaceContainerHighLight">#F7E4E1</Color>
+    <Color x:Key="SurfaceContainerHighestLight">#F1DFDB</Color>
+    <Color x:Key="SurfaceVariantLight">#F5DDD9</Color>
+
+    <!-- Dark theme overrides -->
+    <Color x:Key="PrimaryDarkColor">#733429</Color>
+    <Color x:Key="OnPrimaryColorDark">#FFDAD4</Color>
+
+    <Color x:Key="SecondaryDarkColor">#5D3F3A</Color>
+    <Color x:Key="OnSecondaryColorDark">#FFDAD4</Color>
+
+    <Color x:Key="TertiaryDarkColor">#564519</Color>
+    <Color x:Key="OnTertiaryColorDark">#FAE0A6</Color>
+
+    <Color x:Key="AppBackgroundColorDark">#1A1110</Color>
+    <Color x:Key="OnSurfaceColorDark">#F1DFDB</Color>
+    <Color x:Key="SurfaceDark">#1A1110</Color>
+    <Color x:Key="OnSurfaceVariantDark">#D8C2BE</Color>
+    <Color x:Key="OutlineColorDark">#A08C89</Color>
+    <Color x:Key="OutlineVariantDark">#534340</Color>
+
+    <Color x:Key="SurfaceDimDark">#1A1110</Color>
+    <Color x:Key="SurfaceBrightDark">#423735</Color>
+    <Color x:Key="SurfaceContainerLowestDark">#140C0B</Color>
+    <Color x:Key="SurfaceContainerLowDark">#231918</Color>
+    <Color x:Key="SurfaceContainerDark">#271D1C</Color>
+    <Color x:Key="SurfaceContainerHighDark">#322826</Color>
+    <Color x:Key="SurfaceContainerHighestDark">#3D3230</Color>
+    <Color x:Key="SurfaceVariantDark">#534340</Color>
+
+    <!-- Map app-specific tokens that depend on primary to maintain behavior -->
+    <Color x:Key="PrimaryTextColor">#733429</Color>
+    <Color x:Key="TabBarBgColor">#733429</Color>
+    <Color x:Key="TabBarBackgroundColorDark">#271D1C</Color>
+    <Color x:Key="TabBarSelectedColor">#FFFFFF</Color>
+    <Color x:Key="TabBarUnselectedColor">#FFB4A7</Color>
+
+    <!-- Keep prayer state colors from the base unless you explicitly want MTB variants -->
+
+</ResourceDictionary>

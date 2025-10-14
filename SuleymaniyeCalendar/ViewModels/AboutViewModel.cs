@@ -31,8 +31,18 @@ namespace SuleymaniyeCalendar.ViewModels
 			}
 		}
 
-		[ObservableProperty]
-		private bool _showDesignShowcase = false;
+		// AOT-safe explicit property instead of [ObservableProperty]
+		private bool showDesignShowcase = false;
+
+		/// <summary>
+		/// Whether to show the design showcase section on the About page.
+		/// Using explicit property for AOT compatibility in WinUI scenarios.
+		/// </summary>
+		public bool ShowDesignShowcase
+		{
+			get => showDesignShowcase;
+			set => SetProperty(ref showDesignShowcase, value);
+		}
 
 		[RelayCommand]
 		private void ToggleShowcase()

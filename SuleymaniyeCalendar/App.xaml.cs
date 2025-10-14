@@ -6,6 +6,7 @@ using Microsoft.Maui.Storage;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.ViewModels;
+using SuleymaniyeCalendar.Services;
 
 namespace SuleymaniyeCalendar;
 
@@ -21,6 +22,8 @@ public partial class App : Application
 
         // Initialize complete font scaling system at app startup
         BaseViewModel.InitializeFontSize();
+        // Apply selected color palette (default or MTB overrides)
+        ThemePaletteManager.ApplyCurrentPalette();
         // Do not set MainPage here (deprecated in .NET 9)
     }
 

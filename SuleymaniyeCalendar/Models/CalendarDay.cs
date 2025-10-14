@@ -34,10 +34,30 @@ public partial class CalendarDay : ObservableObject
 
     /// <summary>
     /// 🎯 PHASE 20.1: Whether this day is currently selected by the user.
-    /// 🚀 PHASE 20.1C: Observable property for automatic UI updates.
+    /// AOT-safe explicit property (WinUI/WinRT) instead of [ObservableProperty].
+    /// Triggers updates for dependent UI properties when changed.
     /// </summary>
-    [ObservableProperty]
-    private bool _isSelected;
+    private bool isSelected;
+
+    /// <summary>
+    /// Gets or sets whether this day is currently selected by the user.
+    /// </summary>
+    public bool IsSelected
+    {
+        get => isSelected;
+        set
+        {
+            if (SetProperty(ref isSelected, value))
+            {
+                // Notify dependent computed properties
+                OnPropertyChanged(nameof(BackgroundColor));
+                OnPropertyChanged(nameof(TextColor));
+                OnPropertyChanged(nameof(BorderColor));
+                OnPropertyChanged(nameof(BorderThickness));
+                OnPropertyChanged(nameof(FontAttributesValue));
+            }
+        }
+    }
 
     /// <summary>
     /// Whether this day has prayer time data available.
@@ -67,17 +87,7 @@ public partial class CalendarDay : ObservableObject
         }
     }
 
-    /// <summary>
-    /// Called when IsSelected changes to notify UI about color changes.
-    /// </summary>
-    partial void OnIsSelectedChanged(bool value)
-    {
-        OnPropertyChanged(nameof(BackgroundColor));
-        OnPropertyChanged(nameof(TextColor));
-        OnPropertyChanged(nameof(BorderColor));
-        OnPropertyChanged(nameof(BorderThickness));
-        OnPropertyChanged(nameof(FontAttributes));
-    }
+    // Note: Removed generated partial OnIsSelectedChanged handler in favor of explicit SetProperty + manual notifications above.
 
     /// <summary>
     /// Text color for the day number.

@@ -59,16 +59,9 @@
         <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource PastPrayerEnd}, Dark=#333131}" />
     </LinearGradientBrush>
 
-    <!--  App Background - Golden Dawn (Light Mode)  -->
-    <LinearGradientBrush x:Key="AppBackgroundBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="{StaticResource Primary10}" />
-        <GradientStop Offset="1" Color="#FFF5E3D9" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="AppBackgroundBrushDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#141218" />
-        <GradientStop Offset="1" Color="#1C1B20" />
-    </LinearGradientBrush>
+    <!--  App Background Brushes - flattened to solids for a cleaner, modern look  -->
+    <SolidColorBrush x:Key="AppBackgroundBrushLight" Color="{StaticResource AppBackgroundColor}" />
+    <SolidColorBrush x:Key="AppBackgroundBrushDark" Color="{StaticResource AppBackgroundColorDark}" />
 
     <!--  Frosted glass brushes (MD3-friendly)  -->
     <LinearGradientBrush x:Key="PrimaryGlassBrush" StartPoint="0,0" EndPoint="0,1">
@@ -229,6 +222,10 @@
     <SolidColorBrush x:Key="ShadowOverlayBrush" Color="#20000000" />
     <SolidColorBrush x:Key="StrongShadowOverlayBrush" Color="#33000000" />
 
+    <!--  Theme-aware soft shadow brush used by elevated cards  -->
+    <!--  Uses neutral semi-transparent black for both themes to avoid hue shifts  -->
+    <SolidColorBrush x:Key="ShadowSoft" Color="#33000000" />
+
     <!--  Enhanced glass card outlines (40% opacity for better visibility) ✅  -->
     <SolidColorBrush x:Key="GlassStrokeBrush" Color="{AppThemeBinding Light=#65EBE7EC, Dark=#5579757F}" />
 
@@ -236,18 +233,9 @@
     <SolidColorBrush x:Key="GlassContainerBrush" Color="#E6FFFFFF" />
     <SolidColorBrush x:Key="GlassContainerBrushDark" Color="#1AFFFFFF" />
 
-    <!--  Reusable linear gradient brushes  -->
-    <LinearGradientBrush x:Key="PrimaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Offset="0" Color="{StaticResource GradientPrimaryStart}" />
-        <GradientStop Offset="0.6" Color="#FFC67B3B" />
-        <GradientStop Offset="1" Color="{StaticResource GradientPrimaryEnd}" />
-    </LinearGradientBrush>
-
-    <LinearGradientBrush x:Key="SecondaryGradientBrush" StartPoint="0,0" EndPoint="1,1">
-        <GradientStop Offset="0" Color="{StaticResource GradientSecondaryStart}" />
-        <GradientStop Offset="0.5" Color="#7FF0FFFF" />
-        <GradientStop Offset="1" Color="{StaticResource GradientSecondaryEnd}" />
-    </LinearGradientBrush>
+    <!--  Reusable solid brushes (flattened)  -->
+    <SolidColorBrush x:Key="PrimaryGradientBrush" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="SecondaryGradientBrush" Color="{StaticResource SecondaryColor}" />
 
     <!--  Additional glass variants for showcase (soft blur simulation via lighter alphas)  -->
     <!-- Light outline gradient for outline buttons -->

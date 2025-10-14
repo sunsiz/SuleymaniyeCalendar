@@ -28,36 +28,36 @@
     <Color x:Key="Neutral99">#0F0F11</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
-    <!--  BRAND COLORS - Golden Hour Palette (Redesign)  -->
+    <!--  BRAND COLORS - Cocoa Primary Palette (Updated for logo color #5C3021)  -->
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
-    <!--  Primary - Golden copper gradient inspired by mosque domes at sunset  -->
-    <Color x:Key="Primary10">#FFF8F0</Color>
-    <Color x:Key="Primary20">#F4CEB5</Color>
-    <Color x:Key="Primary30">#E8B08A</Color>
-    <Color x:Key="Primary40">#DC925E</Color>
-    <Color x:Key="Primary50">#C67B3B</Color>
-    <Color x:Key="Primary60">#A8632A</Color>
-    <Color x:Key="Primary70">#8A4E1E</Color>
-    <Color x:Key="Primary80">#6D3A16</Color>
-    <Color x:Key="Primary90">#4F280E</Color>
-    <Color x:Key="Primary95">#321607</Color>
-    <Color x:Key="Primary99">#190A03</Color>
+    <!--  Primary - Warm taupe gradient (slightly warmer than neutral)  -->
+    <Color x:Key="Primary10">#F7F2EF</Color>
+    <Color x:Key="Primary20">#EEE4DE</Color>
+    <Color x:Key="Primary30">#E2D1C8</Color>
+    <Color x:Key="Primary40">#CDB5A8</Color>
+    <Color x:Key="Primary50">#B39787</Color>
+    <Color x:Key="Primary60">#987C6E</Color>
+    <Color x:Key="Primary70">#7E6559</Color>
+    <Color x:Key="Primary80">#635045</Color>
+    <Color x:Key="Primary90">#473B33</Color>
+    <Color x:Key="Primary95">#302823</Color>
+    <Color x:Key="Primary99">#1A1512</Color>
 
-    <!--  Golden Hour - Special colors for current prayer hero card  -->
-    <Color x:Key="GoldHighlight">#FFFEF8</Color>
-    <Color x:Key="GoldLight">#FFF4E0</Color>
-    <Color x:Key="GoldBase">#FFE8B8</Color>
-    <Color x:Key="GoldMedium">#FFD18A</Color>
-    <Color x:Key="GoldDeep">#FFC870</Color>
-    <Color x:Key="GoldPure">#FFD700</Color>
-    <Color x:Key="GoldOrange">#FFA500</Color>
+    <!--  Warm taupe accents (kept under Gold* keys for backward compatibility)  -->
+    <Color x:Key="GoldHighlight">#F7F2EF</Color>
+    <Color x:Key="GoldLight">#EEE4DE</Color>
+    <Color x:Key="GoldBase">#E2D1C8</Color>
+    <Color x:Key="GoldMedium">#CDB5A8</Color>
+    <Color x:Key="GoldDeep">#B39787</Color>
+    <Color x:Key="GoldPure">#635045</Color>
+    <Color x:Key="GoldOrange">#987C6E</Color>
 
-    <!--  Prayer State Colors (Enhanced differentiation)  -->
-    <Color x:Key="CurrentPrayerStart">#FFD700</Color>
-    <Color x:Key="CurrentPrayerEnd">#FFA500</Color>
-    <Color x:Key="UpcomingPrayerStart">#FFE8B8</Color>
-    <Color x:Key="UpcomingPrayerEnd">#FFD18A</Color>
+    <!--  Prayer State Colors (Enhanced differentiation, de-golded)  -->
+    <Color x:Key="CurrentPrayerStart">#4F93FF</Color>
+    <Color x:Key="CurrentPrayerEnd">#4F6BED</Color>
+    <Color x:Key="UpcomingPrayerStart">#D6E3FF</Color>
+    <Color x:Key="UpcomingPrayerEnd">#AFC8FF</Color>
     <Color x:Key="PastPrayerStart">#E8E4E0</Color>
     <Color x:Key="PastPrayerEnd">#D0C8C0</Color>
 
@@ -162,22 +162,22 @@
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  App Backgrounds - Softer, less bright (reduced glare)  -->
-    <Color x:Key="AppBackgroundColor">#F2EFF7</Color>
+    <Color x:Key="AppBackgroundColor">#F4F2F1</Color>
     <Color x:Key="AppBackgroundColorDark">#141218</Color>
 
     <Color x:Key="CardBackgroundColorGrey">#f9f9f9</Color>
 
     <!--  Primary Theme Colors  -->
-    <Color x:Key="PrimaryColor">#8A4E1E</Color>
-    <Color x:Key="PrimaryLightColor">#DC925E</Color>
-    <Color x:Key="PrimaryDarkColor">#6D3A16</Color>
-    <Color x:Key="PrimaryTextColor">#321607</Color>
+    <Color x:Key="PrimaryColor">#B39787</Color>
+    <Color x:Key="PrimaryLightColor">#7E6559</Color>
+    <Color x:Key="PrimaryDarkColor">#473B33</Color>
+    <Color x:Key="PrimaryTextColor">#302823</Color>
 
     <!--  Primary Container Colors  -->
-    <Color x:Key="PrimaryContainerLight">#F4CEB5</Color>
-    <Color x:Key="PrimaryContainerDark">#4F280E</Color>
-    <Color x:Key="OnPrimaryContainerLight">#321607</Color>
-    <Color x:Key="OnPrimaryContainerDark">#F4CEB5</Color>
+    <Color x:Key="PrimaryContainerLight">#EEE4DE</Color>
+    <Color x:Key="PrimaryContainerDark">#302823</Color>
+    <Color x:Key="OnPrimaryContainerLight">#302823</Color>
+    <Color x:Key="OnPrimaryContainerDark">#EEE4DE</Color>
 
     <!--  Secondary Theme Colors  -->
     <Color x:Key="SecondaryColor">#218187</Color>
@@ -213,10 +213,10 @@
     <Color x:Key="PrayerActiveTextColorDark">#FF90E5A8</Color>       <!-- Brighter text for dark mode -->
 
     <!--  Upcoming Prayer States - Enhanced warm distinction (4.9:1 ratio) ✅  -->
-    <Color x:Key="PrayerUpcomingBackgroundColor">#FFD4B88A</Color>   <!-- Stronger warm tone -->
-    <Color x:Key="PrayerUpcomingBackgroundColorDark">#FF4A4338</Color> <!-- More opaque dark mode -->
-    <Color x:Key="PrayerUpcomingTextColor">#7A4A15</Color>
-    <Color x:Key="PrayerUpcomingTextColorDark">#E8B08A</Color>    
+    <Color x:Key="PrayerUpcomingBackgroundColor">#D6E3FF</Color>   <!-- Soft cool tone -->
+    <Color x:Key="PrayerUpcomingBackgroundColorDark">#FF28345A</Color> <!-- Cool dark mode tint -->
+    <Color x:Key="PrayerUpcomingTextColor">#1D2A73</Color>
+    <Color x:Key="PrayerUpcomingTextColorDark">#AFC8FF</Color>    
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  PHASE 5.2.2 - OPTIMIZED PRAYER CARD BACKGROUND COLORS  -->
@@ -239,10 +239,10 @@
     <Color x:Key="PrayerCardCurrentShadowDark">#504CAF50</Color>
 
     <!--  Upcoming Prayer - Ultra warm amber (inviting, clearly different)  -->
-    <Color x:Key="PrayerCardUpcomingBackgroundLight">#FFE8A0</Color>
-    <Color x:Key="PrayerCardUpcomingBackgroundDark">#E03A3320</Color>
-    <Color x:Key="PrayerCardUpcomingBorderLight">#FFDC925E</Color>
-    <Color x:Key="PrayerCardUpcomingBorderDark">#FF6B5C3F</Color>
+    <Color x:Key="PrayerCardUpcomingBackgroundLight">#EEE4DE</Color>
+    <Color x:Key="PrayerCardUpcomingBackgroundDark">#E0302823</Color>
+    <Color x:Key="PrayerCardUpcomingBorderLight">#CDB5A8</Color>
+    <Color x:Key="PrayerCardUpcomingBorderDark">#635045</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  PHASE 5.2.4 - GLASSMORPHISM GRADIENT BRUSHES  -->
@@ -303,7 +303,7 @@
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  Card Colors - Better contrast with background  -->
-    <Color x:Key="CardBackgroundColor">#FFC0B9BF</Color>
+    <Color x:Key="CardBackgroundColor">#FFF5F2F0</Color>
     <Color x:Key="CardBackgroundColorDark">#0F0E13</Color>
     
     <!--  Optional card flavor variants (light) for subtle visual variety  -->
@@ -317,10 +317,10 @@
     <Color x:Key="CardBackgroundNeutralDark">#222126</Color>
 
     <!--  Tab Bar Colors  -->
-    <Color x:Key="TabBarBgColor">#8A4E1E</Color>
+    <Color x:Key="TabBarBgColor">#473B33</Color>
     <Color x:Key="TabBarBackgroundColorDark">#201F24</Color>
     <Color x:Key="TabBarSelectedColor">#FFFFFF</Color>
-    <Color x:Key="TabBarUnselectedColor">#F4CEB5</Color>
+    <Color x:Key="TabBarUnselectedColor">#E2D1C8</Color>
 
     <!--  Interactive States  -->
     <Color x:Key="InteractiveHoverColor">#EDE6E8</Color>
@@ -329,8 +329,8 @@
     <Color x:Key="InteractivePressedColorDark">#201F24</Color>
 
     <!--  Focus and Accessibility  -->
-    <Color x:Key="FocusRingColor">#C67B3B</Color>
-    <Color x:Key="FocusRingColorDark">#E8B08A</Color>
+    <Color x:Key="FocusRingColor">#B7AAA3</Color>
+    <Color x:Key="FocusRingColorDark">#CDB5A8</Color>
     <Color x:Key="HighContrastTextColor">#000000</Color>
     <Color x:Key="HighContrastTextColorDark">#FFFFFF</Color>
 
@@ -347,24 +347,24 @@
     <Color x:Key="BusyOverlayColorDark">#80000000</Color>
 
     <!--  Enhanced gradient colors for premium design  -->
-    <Color x:Key="GradientPrimaryStart">#8A4E1E</Color>
-    <Color x:Key="GradientPrimaryEnd">#A8632A</Color>
+    <Color x:Key="GradientPrimaryStart">#635045</Color>
+    <Color x:Key="GradientPrimaryEnd">#473B33</Color>
     <Color x:Key="GradientSecondaryStart">#218187</Color>
     <Color x:Key="GradientSecondaryEnd">#2E9FA8</Color>
 
     <!--  Interactive state colors - enhanced ripple effects  -->
-    <Color x:Key="InteractiveRippleColor">#20218187</Color>
-    <Color x:Key="InteractiveRippleColorDark">#302E9FA8</Color>
+    <Color x:Key="InteractiveRippleColor">#20635045</Color>
+    <Color x:Key="InteractiveRippleColorDark">#30473B33</Color>
 
     <!--  Enhanced shadow colors  -->
-    <Color x:Key="ShadowPrimary">#808A4E1E</Color>
+    <Color x:Key="ShadowPrimary">#80635045</Color>
     <Color x:Key="ShadowSecondary">#60218187</Color>
     <Color x:Key="ShadowGeneral">#40000000</Color>
     <Color x:Key="ShadowElevated">#60000000</Color>
 
     <!--  High contrast colors for improved accessibility  -->
-    <Color x:Key="HighContrastPrimary">#6B3410</Color>
-    <Color x:Key="HighContrastPrimaryDark">#F4CEB5</Color>
+    <Color x:Key="HighContrastPrimary">#211A18</Color>
+    <Color x:Key="HighContrastPrimaryDark">#EEE4DE</Color>
     <Color x:Key="HighContrastOnSurface">#1A1A1A</Color>
     <Color x:Key="HighContrastOnSurfaceDark">#FFFFFF</Color>
     <Color x:Key="HighContrastOutline">#999999</Color>
@@ -391,18 +391,18 @@
     <Color x:Key="InteractivePressedStrongDark">#2E2E2E</Color>
 
     <!--  Enhanced focus indicator colors  -->
-    <Color x:Key="FocusIndicatorPrimary">#8A4E1E</Color>
-    <Color x:Key="FocusIndicatorPrimaryDark">#E8B08A</Color>
+    <Color x:Key="FocusIndicatorPrimary">#635045</Color>
+    <Color x:Key="FocusIndicatorPrimaryDark">#CDB5A8</Color>
     <Color x:Key="FocusIndicatorSecondary">#218187</Color>
     <Color x:Key="FocusIndicatorSecondaryDark">#88D5DA</Color>
 
     <!--  Primary accent colors for backward compatibility  -->
-    <Color x:Key="PrimaryAccent50Color">#FFEDE5</Color>
-    <Color x:Key="PrimaryAccent100Color">#F4CEB5</Color>
-    <Color x:Key="PrimaryAccent400Color">#C67B3B</Color>
-    <Color x:Key="PrimaryAccent600Color">#A8632A</Color>
-    <Color x:Key="PrimaryAccent800Color">#4F280E</Color>
-    <Color x:Key="PrimaryAccent900Color">#321607</Color>
+    <Color x:Key="PrimaryAccent50Color">#EEE4DE</Color>
+    <Color x:Key="PrimaryAccent100Color">#E2D1C8</Color>
+    <Color x:Key="PrimaryAccent400Color">#CDB5A8</Color>
+    <Color x:Key="PrimaryAccent600Color">#987C6E</Color>
+    <Color x:Key="PrimaryAccent800Color">#635045</Color>
+    <Color x:Key="PrimaryAccent900Color">#473B33</Color>
     <Color x:Key="TertiaryDarkColor">#2F512F</Color>
 
     <!--  Dark elevation surfaces for backward compatibility  -->
@@ -427,8 +427,8 @@
     <Color x:Key="OnSecondaryColorDark">#1A1C1E</Color>
 
     <!--  State Layer Colors (M3 Interactive States)  -->
-    <Color x:Key="StateLayerPrimary">#6750A4</Color>
-    <Color x:Key="StateLayerPrimaryDark">#D0BCFF</Color>
+    <Color x:Key="StateLayerPrimary">#B7AAA3</Color>
+    <Color x:Key="StateLayerPrimaryDark">#CDB5A8</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  COMPATIBILITY ALIASES - Keys referenced in legacy/new XAML mapped to current palette  -->

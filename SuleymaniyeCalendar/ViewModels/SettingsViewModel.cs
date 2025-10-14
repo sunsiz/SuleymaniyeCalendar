@@ -179,6 +179,22 @@ namespace SuleymaniyeCalendar.ViewModels
 			}
 		}
 
+		private bool useMtbPalette;
+		public bool UseMtbPalette
+		{
+			get => useMtbPalette;
+			set
+			{
+				if (!SetProperty(ref useMtbPalette, value)) return;
+				// Persist and apply palette override
+				ThemePaletteManager.UseMtbPalette = value;
+				// Optional: let user know full effect may require restart
+				ToastAndDialogService.ShowSuccessToast(value
+					? "MTB palette enabled"
+					: "MTB palette disabled");
+			}
+		}
+
 		//private int alarmDuration;
 		//public int AlarmDuration { get => alarmDuration; set => SetProperty(ref alarmDuration, value); }
 
@@ -317,6 +333,7 @@ namespace SuleymaniyeCalendar.ViewModels
 			ForegroundServiceEnabled = Preferences.Get("ForegroundServiceEnabled", true);
 			NotificationPrayerTimesEnabled = Preferences.Get("NotificationPrayerTimesEnabled", false);
 			AlwaysRenewLocationEnabled = Preferences.Get("AlwaysRenewLocationEnabled", false);
+			UseMtbPalette = Preferences.Get("UseMtbPalette", false);
 			IsBusy = false;
 		}
 		// Property change side-effects are applied in SelectedLanguage setter
