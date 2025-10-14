@@ -1793,9 +1793,9 @@
         <Setter Property="Stroke">
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#40C8A05F, Dark=#40FFCC80}" />
-                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" />
-                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#40B8935D, Dark=#40D4AF37}" />
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light=#40B08968, Dark=#40C09B7E}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#60D4AF37, Dark=#60D4AF37}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light=#409B7350, Dark=#40B08968}" />
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>

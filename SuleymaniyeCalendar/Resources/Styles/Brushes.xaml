@@ -59,10 +59,10 @@
         <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource PastPrayerEnd}, Dark=#333131}" />
     </LinearGradientBrush>
 
-    <!--  App Background - Golden Dawn (Light Mode)  -->
+    <!--  App Background - Suleymaniye Inspired (Light Mode) - Neutral with subtle brand tint  -->
     <LinearGradientBrush x:Key="AppBackgroundBrushLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="{StaticResource Primary10}" />
-        <GradientStop Offset="1" Color="#FFF5E3D9" />
+        <GradientStop Offset="0" Color="{StaticResource Neutral10}" />
+        <GradientStop Offset="1" Color="{StaticResource Primary10}" />
     </LinearGradientBrush>
 
     <LinearGradientBrush x:Key="AppBackgroundBrushDark" StartPoint="0,0" EndPoint="0,1">
