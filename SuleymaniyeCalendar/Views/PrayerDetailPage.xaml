@@ -19,7 +19,7 @@
             Spacing="{StaticResource SpacingDefault}">
             
             <!--  🎨 PHASE 15: Prayer Title Card - HeroPrimaryCard for maximum impact  -->
-            <Border Style="{StaticResource HeroPrimaryCard}">
+            <Border Style="{StaticResource iOSLiquidGlassCard}">
                 <VerticalStackLayout Spacing="12">
                     <Label
                         FontAttributes="Bold"
@@ -32,8 +32,8 @@
                         HeightRequest="2"
                         HorizontalOptions="Center"
                         WidthRequest="90"
-                        Color="{AppThemeBinding Light={StaticResource GoldPure},
-                                                Dark={StaticResource GoldMedium}}" />
+                        Color="{AppThemeBinding Light={StaticResource Primary50},
+                                                Dark={StaticResource Primary40}}" />
                 </VerticalStackLayout>
             </Border>
 
@@ -46,12 +46,12 @@
                             FontSize="{DynamicResource DefaultFontSize}"
                             FontAttributes="Bold"
                             Text="{localization:Translate Vakti}"
-                            TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource GoldLight}}" />
+                            TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource Primary30}}" />
                         <Label
                             FontAttributes="Bold"
                             FontSize="{DynamicResource SubHeaderFontSize}"
                             Text="{Binding Time}"
-                            TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}" />
+                            TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}" />
                     </VerticalStackLayout>
                     
                     <!-- Enable Switch Section -->
@@ -61,7 +61,7 @@
                             FontSize="{DynamicResource DefaultFontSize}"
                             FontAttributes="Bold"
                             Text="{localization:Translate EtkinlestirSwitch}"
-                            TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource GoldLight}}" />
+                            TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource Primary30}}" />
                         <Switch
                             HorizontalOptions="Center"
                             Style="{StaticResource GoldenSwitch}"
@@ -126,8 +126,8 @@
                                 FontSize="{DynamicResource DefaultFontSize}"
                                 FontAttributes="Bold"
                                 Text="{localization:Translate BildirmeZamani}" 
-                                TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource GoldLight}}" />
-                            <Label TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}">
+                                TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource Primary30}}" />
+                            <Label TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}">
                                 <Label.FormattedText>
                                     <FormattedString>
                                         <Span
@@ -162,7 +162,7 @@
                             FontSize="{DynamicResource DefaultFontSize}"
                             FontAttributes="Bold"
                             Text="{localization:Translate Birsessecin}" 
-                            TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource GoldLight}}" />
+                            TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource Primary30}}" />
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
                             <Picker
                                 Grid.Column="0"
@@ -174,9 +174,9 @@
                                 <Button Grid.Column="1"
                                     x:DataType="viewModels:PrayerDetailViewModel"
                                     Margin="6"
-                                        Style="{StaticResource VistaAeroGlassButton}"
+                                        Style="{StaticResource GlassButtonPrimaryIntense}"
                                         TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                Dark={StaticResource GoldMedium}}"
+                                                                Dark={StaticResource Primary40}}"
                                         Command="{Binding TestButtonClickedCommand}"
                                         WidthRequest="52" HeightRequest="48">
                                     <Button.Triggers>
@@ -185,7 +185,7 @@
                                                 <Setter.Value>
                                                     <FontImageSource FontFamily="{StaticResource IconFontFamily}"
                                                                      Glyph="&#xf04b;" Size="{DynamicResource IconSmallFontSize}"
-                                                                     Color="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}" />
+                                                                     Color="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}" />
                                                 </Setter.Value>
                                             </Setter>
                                         </DataTrigger>
@@ -208,7 +208,7 @@
 
             <!--  🎨 PHASE 15: Close Button - GlassButtonPrimary  -->
             <Button
-                Style="{StaticResource GlassButtonPrimary}"
+                Style="{StaticResource GlassButtonPrimaryIntense}"
                 Command="{Binding GoBackCommand}"
                 Text="{localization:Translate Kapat}" />
         </VerticalStackLayout>

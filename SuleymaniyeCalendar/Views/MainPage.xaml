@@ -114,7 +114,7 @@
                                             FontFamily="{StaticResource IconFontFamily}"
                                             FontSize="24"
                                             Text="&#xf017;"
-                                            TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark=#D0FFD700}"
+                                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark=#D0FFD700}"
                                             VerticalOptions="Center"
                                             HorizontalTextAlignment="Center" />
                                     </Border>
@@ -181,8 +181,8 @@
                                                     </LinearGradientBrush>
                                                 </Setter.Value>
                                             </Setter>
-                                            <Setter Property="StrokeThickness" Value="1" />
-                                            <Setter Property="Opacity" Value="0.7" />
+                                            <Setter Property="StrokeThickness" Value="0.7" />
+                                            <Setter Property="Opacity" Value="0.9" />
                                             <Setter Property="MinimumHeightRequest" Value="56" />
                                             <Setter Property="HeightRequest" Value="56" />
                                             <Setter Property="MaximumHeightRequest" Value="56" />
@@ -206,10 +206,10 @@
                                                     </LinearGradientBrush>
                                                 </Setter.Value>
                                             </Setter>
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource GoldPure}, Dark=#80FFD700}" />
+                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary50}, Dark=#80FFD700}" />
                                             <Setter Property="StrokeThickness" Value="3" />
                                             <Setter Property="Shadow">
-                                                <Shadow Brush="{AppThemeBinding Light={StaticResource GoldOrange}, Dark=#50FFA500}" Radius="32" Offset="0,12" Opacity="0.45" />
+                                                <Shadow Brush="{AppThemeBinding Light={StaticResource Primary50}, Dark=#50FFA500}" Radius="32" Offset="0,12" Opacity="0.45" />
                                             </Setter>
                                             <Setter Property="HeightRequest" Value="120" />
                                             <Setter Property="Padding" Value="20,16" />
@@ -220,30 +220,19 @@
                                                 <BindingCondition Binding="{Binding IsActive}" Value="False" />
                                                 <BindingCondition Binding="{Binding IsPast}" Value="False" />
                                             </MultiTrigger.Conditions>
-                                            <Setter Property="Background">
-                                                <Setter.Value>
+                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassStrongLight}, Dark={StaticResource GlassStrongDark}}"/>
+                                                <!-- <Setter.Value>
                                                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <!-- 🌙 PHASE 19: Dark mode optimization - much more subtle -->
+                                                        <!- - 🌙 PHASE 19: Dark mode optimization - much more subtle - ->
                                                         <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFEDB8, Dark=#60775520}" />
                                                         <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFD875, Dark=#70886615}" />
                                                         <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFCC66, Dark=#60664410}" />
                                                     </LinearGradientBrush>
                                                 </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="Stroke">
-                                                <Setter.Value>
-                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
-                                                        <!-- 🌙 PHASE 19: Dark mode optimization - subtle golden border -->
-                                                        <GradientStop Offset="0" Color="{AppThemeBinding Light=#60FFD700, Dark=#40664410}" />
-                                                        <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#90FFD700, Dark=#50775520}" />
-                                                        <GradientStop Offset="1" Color="{AppThemeBinding Light=#60FFD700, Dark=#40664410}" />
-                                                    </LinearGradientBrush>
-                                                </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="StrokeThickness" Value="2" />
-                                            <Setter Property="Opacity" Value="0.95" />
+                                            </Setter> -->
+                                            <Setter Property="Opacity" Value="0.98" />
                                             <Setter Property="Shadow">
-                                                <Shadow Brush="{AppThemeBinding Light={StaticResource GoldOrange}, Dark=#30FFA500}" Radius="18" Offset="0,6" Opacity="0.25" />
+                                                <Shadow Brush="{AppThemeBinding Light={StaticResource Primary50}, Dark=#30FFA500}" Radius="3" Offset="0,6" Opacity="0.05" />
                                             </Setter>
                                         </MultiTrigger>
                                     </Border.Triggers>
@@ -270,13 +259,13 @@
                                                 </DataTrigger>
                                                 <!-- 🦸 PHASE 9 HERO: Enhanced golden glow for current prayer icon container -->
                                                 <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
-                                                    <Setter Property="Background" Value="{StaticResource GoldLight}" />
-                                                    <Setter Property="Stroke" Value="{StaticResource GoldPure}" />
+                                                    <Setter Property="Background" Value="{StaticResource Primary30}" />
+                                                    <Setter Property="Stroke" Value="{StaticResource Primary50}" />
                                                     <Setter Property="StrokeThickness" Value="2.5" />
                                                     <Setter Property="WidthRequest" Value="52" />
                                                     <Setter Property="HeightRequest" Value="52" />
                                                     <Setter Property="Shadow">
-                                                        <Shadow Brush="{StaticResource GoldOrange}" Radius="12" Offset="0,3" Opacity="0.4" />
+                                                        <Shadow Brush="{StaticResource Primary50}" Radius="12" Offset="0,3" Opacity="0.4" />
                                                     </Setter>
                                                 </DataTrigger>
                                             </Border.Triggers>
@@ -436,7 +425,7 @@
                                                             <BindingCondition Binding="{Binding IsActive}" Value="True" />
                                                             <BindingCondition Binding="{Binding Enabled}" Value="True" />
                                                         </MultiTrigger.Conditions>
-                                                        <Setter Property="TextColor" Value="{StaticResource GoldPure}" />
+                                                        <Setter Property="TextColor" Value="{StaticResource Primary50}" />
                                                         <Setter Property="Scale" Value="1.1" />
                                                     </MultiTrigger>
                                                 </Label.Triggers>
@@ -460,8 +449,8 @@
                                                         <BindingCondition Binding="{Binding IsActive}" Value="True" />
                                                         <BindingCondition Binding="{Binding Enabled}" Value="True" />
                                                     </MultiTrigger.Conditions>
-                                                    <Setter Property="Background" Value="{StaticResource GoldLight}" />
-                                                    <Setter Property="Stroke" Value="{StaticResource GoldPure}" />
+                                                    <Setter Property="Background" Value="{StaticResource Primary30}" />
+                                                    <Setter Property="Stroke" Value="{StaticResource Primary50}" />
                                                     <Setter Property="StrokeThickness" Value="1.5" />
                                                 </MultiTrigger>
                                                 <DataTrigger

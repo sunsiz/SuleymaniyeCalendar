@@ -178,7 +178,7 @@ public partial class MonthCalendarView : ContentView
             
             // Fix: Use SolidColorBrush instead of Color for Fill property
             var lightBrush = new SolidColorBrush((Color)Application.Current.Resources["PrimaryColor"]);
-            var darkBrush = new SolidColorBrush((Color)Application.Current.Resources["GoldPure"]);
+            var darkBrush = new SolidColorBrush((Color)Application.Current.Resources["Primary50"]);
             indicator.SetAppTheme(Ellipse.FillProperty, lightBrush, darkBrush);
             
             indicator.SetBinding(Ellipse.IsVisibleProperty, new Binding(nameof(CalendarDay.HasData), source: day));

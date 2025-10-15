@@ -44,7 +44,7 @@
                                Style="{StaticResource TitleLargeStyle}"
                                HorizontalTextAlignment="Center"
                                VerticalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource GoldPure}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}" />
                         
                         <!-- Next Month -->
                         <Button Grid.Column="2"
@@ -60,7 +60,7 @@
                         <!-- Today Button (Localized) -->
                         <Button Grid.Column="3"
                                 Text="{localization:Translate Bugun}"
-                                Style="{StaticResource GlassButtonFilled}"
+                                Style="{StaticResource iOSLiquidGlassButton}"
                                 FontSize="13"
                                 Padding="16,0"
                                 HeightRequest="36"
@@ -72,7 +72,7 @@
                     <!-- 🎨 Subtle Divider -->
                     <BoxView HeightRequest="1" 
                              Opacity="0.15"
-                             Color="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}" />
+                             Color="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
                     
                     <!-- 🌍 Weekday Headers -->
                     <Grid ColumnDefinitions="*,*,*,*,*,*,*" ColumnSpacing="4">
@@ -80,37 +80,37 @@
                                Style="{StaticResource LabelMediumStyle}"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
                         <Label Grid.Column="1" Text="{Binding WeekdayHeaders[1]}" 
                                Style="{StaticResource LabelMediumStyle}"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
                         <Label Grid.Column="2" Text="{Binding WeekdayHeaders[2]}" 
                                Style="{StaticResource LabelMediumStyle}"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
                         <Label Grid.Column="3" Text="{Binding WeekdayHeaders[3]}" 
                                Style="{StaticResource LabelMediumStyle}"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
                         <Label Grid.Column="4" Text="{Binding WeekdayHeaders[4]}" 
                                Style="{StaticResource LabelMediumStyle}"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
                         <Label Grid.Column="5" Text="{Binding WeekdayHeaders[5]}" 
                                Style="{StaticResource LabelMediumStyle}"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
                         <Label Grid.Column="6" Text="{Binding WeekdayHeaders[6]}" 
                                Style="{StaticResource LabelMediumStyle}"
                                FontAttributes="Bold"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
                     </Grid>
 
                     <!-- 🚀 PHASE 20.1D: Calendar Days Grid (Fast Grid instead of CollectionView) -->
@@ -137,13 +137,13 @@
                         <Label Text="{Binding SelectedDate, StringFormat='{0:dddd, dd MMMM yyyy}'}"
                                Style="{StaticResource TitleMediumStyle}"
                                VerticalOptions="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource GoldPure}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}" />
                     </HorizontalStackLayout>
                     
                     <!-- 🎨 Subtle Divider -->
                     <BoxView HeightRequest="1" 
                              Opacity="0.15"
-                             Color="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}" />
+                             Color="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
                     
                     <!-- 📖 Prayer Times Grid - Improved Visual Hierarchy -->
                     <Grid ColumnDefinitions="*,Auto" 
@@ -160,7 +160,7 @@
                                Text="{Binding SelectedDayData.FalseFajr}"
                                Style="{StaticResource TitleSmallStyle}"
                                VerticalOptions="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}"
+                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}"
                                HorizontalTextAlignment="End" />
                         
                         <!-- True Fajr -->
@@ -174,7 +174,7 @@
                                Style="{StaticResource TitleSmallStyle}"
                                FontAttributes="Bold"
                                VerticalOptions="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource GoldPure}}"
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}"
                                HorizontalTextAlignment="End" />
                         
                         <!-- Sunrise -->
@@ -186,7 +186,7 @@
                                Text="{Binding SelectedDayData.Sunrise}"
                                Style="{StaticResource TitleSmallStyle}"
                                VerticalOptions="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}"
+                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}"
                                HorizontalTextAlignment="End" />
                         
                         <!-- Dhuhr -->
@@ -200,7 +200,7 @@
                                Style="{StaticResource TitleSmallStyle}"
                                FontAttributes="Bold"
                                VerticalOptions="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource GoldPure}}"
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}"
                                HorizontalTextAlignment="End" />
                         
                         <!-- Asr -->
@@ -214,7 +214,7 @@
                                Style="{StaticResource TitleSmallStyle}"
                                FontAttributes="Bold"
                                VerticalOptions="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource GoldPure}}"
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}"
                                HorizontalTextAlignment="End" />
                         
                         <!-- Maghrib -->
@@ -228,7 +228,7 @@
                                Style="{StaticResource TitleSmallStyle}"
                                FontAttributes="Bold"
                                VerticalOptions="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource GoldPure}}"
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}"
                                HorizontalTextAlignment="End" />
                         
                         <!-- Isha -->
@@ -242,7 +242,7 @@
                                Style="{StaticResource TitleSmallStyle}"
                                FontAttributes="Bold"
                                VerticalOptions="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource GoldPure}}"
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}"
                                HorizontalTextAlignment="End" />
                         
                         <!-- End of Isha -->
@@ -254,7 +254,7 @@
                                Text="{Binding SelectedDayData.EndOfIsha}"
                                Style="{StaticResource TitleSmallStyle}"
                                VerticalOptions="Center"
-                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource GoldLight}}"
+                               TextColor="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}"
                                HorizontalTextAlignment="End" />
                     </Grid>
                 </VerticalStackLayout>

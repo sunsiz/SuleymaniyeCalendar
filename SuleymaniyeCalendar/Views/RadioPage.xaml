@@ -31,7 +31,8 @@
                 Margin="0"
                 Padding="0"
                 StrokeThickness="0"
-                Stroke="Transparent">
+                Stroke="Transparent"
+                Background="Transparent">
                 <!-- BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
                                                   Dark={StaticResource AppBackgroundColorDark}}" -->
                 <Image
@@ -62,11 +63,11 @@
                                         FontSize="{DynamicResource IconLargeFontSize}"
                                         Text="&#xf0ae; "
                                         TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource GoldMedium}}" />
+                                                                    Dark={StaticResource Primary40}}" />
                                     <Span 
                                         Text="{localization:Translate YayinAkisi}" 
                                         FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}" />
+                                        TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
@@ -80,14 +81,14 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         Style="{StaticResource LuminousCircularIcon}"
-                        Stroke="{AppThemeBinding Light={StaticResource GoldDeep}, Dark={StaticResource GoldMedium}}"
-                        StrokeThickness="2"
                         HorizontalOptions="Center"
-                        VerticalOptions="Center">                        
+                        VerticalOptions="Center">         
+                        <!-- Stroke="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}"
+                        StrokeThickness="3" -->               
                         <Border.Shadow>
-                            <Shadow Brush="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}"
+                            <Shadow Brush="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}"
                                     Radius="16"
-                                    Opacity="0.3"
+                                    Opacity="0.1"
                                     Offset="0,2" />
                         </Border.Shadow>
                         <Label
@@ -99,7 +100,7 @@
                             HorizontalOptions="Center"
                             SemanticProperties.Description="{localization:Translate RadyoCal}"
                             Text="&#xf144;"
-                            TextColor="{AppThemeBinding Light={StaticResource GoldOrange}, Dark={StaticResource GoldDeep}}"
+                            TextColor="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}"
                             VerticalOptions="Center">
                             <Label.Triggers>
                                 <DataTrigger
@@ -108,7 +109,7 @@
                                     Value="False">
                                     <Setter Property="Text" Value="&#xf144;" />
                                     <Setter Property="SemanticProperties.Description" Value="{localization:Translate Oynat}" />
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource GoldOrange}, Dark={StaticResource GoldDeep}}" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}" />
                                 </DataTrigger>
                                 <DataTrigger
                                     Binding="{Binding IsPlaying}"
@@ -140,11 +141,11 @@
                                         FontSize="{DynamicResource IconLargeFontSize}"
                                         Text="&#xf0ac; "
                                         TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource GoldMedium}}" />
+                                                                    Dark={StaticResource Primary40}}" />
                                     <Span 
                                         Text="{localization:Translate WebSayfa}" 
                                         FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource GoldMedium}}" />
+                                        TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>

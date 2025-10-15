@@ -9,10 +9,10 @@
     <!--  Hero Current Prayer - Light Mode: Radiant Golden Gradient  -->
     <LinearGradientBrush x:Key="HeroCurrentPrayerBrushLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.0" Color="{StaticResource GoldHighlight}" />
-        <GradientStop Offset="0.25" Color="{StaticResource GoldLight}" />
+        <GradientStop Offset="0.25" Color="{StaticResource Primary30}" />
         <GradientStop Offset="0.5" Color="{StaticResource GoldBase}" />
-        <GradientStop Offset="0.75" Color="{StaticResource GoldMedium}" />
-        <GradientStop Offset="1.0" Color="{StaticResource GoldDeep}" />
+        <GradientStop Offset="0.75" Color="{StaticResource Primary40}" />
+        <GradientStop Offset="1.0" Color="{StaticResource Primary60}" />
     </LinearGradientBrush>
 
     <!--  Hero Current Prayer - Dark Mode: Subtle Golden Glow (Darker) 🌙  -->
@@ -32,10 +32,10 @@
     <!--  Theme-Aware Wrapper (Auto-switches based on theme)  -->
     <LinearGradientBrush x:Key="HeroCurrentPrayerBrush" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.0" Color="{AppThemeBinding Light={StaticResource GoldHighlight}, Dark=#3D3528}" />
-        <GradientStop Offset="0.25" Color="{AppThemeBinding Light={StaticResource GoldLight}, Dark=#4A3F2E}" />
+        <GradientStop Offset="0.25" Color="{AppThemeBinding Light={StaticResource Primary30}, Dark=#4A3F2E}" />
         <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource GoldBase}, Dark=#574934}" />
-        <GradientStop Offset="0.75" Color="{AppThemeBinding Light={StaticResource GoldMedium}, Dark=#5E4D35}" />
-        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource GoldDeep}, Dark=#655038}" />
+        <GradientStop Offset="0.75" Color="{AppThemeBinding Light={StaticResource Primary40}, Dark=#5E4D35}" />
+        <GradientStop Offset="1.0" Color="{AppThemeBinding Light={StaticResource Primary60}, Dark=#655038}" />
     </LinearGradientBrush>
 
     <!--  Hero Current Prayer - Border Radial Gradient (Gold to Copper)  -->
