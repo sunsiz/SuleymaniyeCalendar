@@ -1161,22 +1161,23 @@ namespace SuleymaniyeCalendar.Services
 
 		public static void ShowToast(string message)
 		{
-			MainThread.BeginInvokeOnMainThread(() =>
-			{
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-				ToastDuration duration = ToastDuration.Long;
-				double fontSize = 14;
-				var toast = Toast.Make(message, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
-			});
+			   MainThread.BeginInvokeOnMainThread(() =>
+			   {
+				   CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+				   ToastDuration duration = ToastDuration.Long;
+				   double fontSize = Preferences.Get("FontSize", 16);
+				   var toast = Toast.Make($"🔔 {message}", duration, fontSize);
+				   toast.Show(cancellationTokenSource.Token);
+			   });
 		}
 
 		public static void Alert(string title, string message)
 		{
-			MainThread.BeginInvokeOnMainThread(async () =>
-			{
-				await Shell.Current.DisplayAlert(title, message, AppResources.Tamam);
-			});
+			   // ModernDialogService: All alerts now use the branded dialog
+			   MainThread.BeginInvokeOnMainThread(async () =>
+			   {
+				   await Services.ModernDialogService.ShowAsync(title, message, AppResources.Tamam);
+			   });
 		}
 
 		public async Task<PermissionStatus> CheckAndRequestLocationPermission()

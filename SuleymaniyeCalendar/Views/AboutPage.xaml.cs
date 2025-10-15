@@ -63,8 +63,11 @@ public partial class AboutPage : ContentPage
 
 	private async void OnInteractiveCardTapped(object sender, EventArgs e)
 	{
-		// Show feedback for interactive card tap
-		await DisplayAlert("Interactive Card", "You tapped the InteractiveCard!\n\nThis card has enhanced touch feedback with scale and shadow animations.", "OK");
+		   // Show feedback for interactive card tap using ModernDialogService
+		   await Services.ModernDialogService.ShowAsync(
+			   "Interactive Card",
+			   "You tapped the InteractiveCard!\n\nThis card has enhanced touch feedback with scale and shadow animations.",
+			   "OK");
 	}
 	
 }

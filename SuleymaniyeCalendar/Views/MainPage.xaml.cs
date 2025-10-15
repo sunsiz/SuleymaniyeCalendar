@@ -18,6 +18,11 @@ public partial class MainPage : ContentPage
 		BindingContext = _viewModel = viewModel;
 		_resourceManager = resourceManager;
 		_rtlService = rtlService;
+		// Register the global ModernDialog instance for use throughout the app
+		if (this.FindByName("GlobalModernDialog") is ModernDialog dialog)
+		{
+			ModernDialogService.Register(dialog);
+		}
 	}
 
 	protected override void OnAppearing()

@@ -31,4 +31,5 @@
         </ShellContent>
     </TabBar>
 
+    <!-- Global ModernDialog overlay for all pages -->
 </Shell>

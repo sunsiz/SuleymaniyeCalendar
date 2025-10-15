@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Modern Material 3 Card Styles -->
+    <Style x:Key="ModernCard" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource SurfaceVariantColor}" />
+        <Setter Property="Stroke" Value="{DynamicResource OutlineColor}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="Shadow">
+            <Shadow Brush="#33000000" Offset="0,4" Radius="12" Opacity="0.18" />
+        </Setter>
+        <Setter Property="Padding" Value="16" />
+        <Setter Property="Margin" Value="8,8,8,8" />
+    </Style>
+
+    <!-- Elevated Card for Hero/Current Prayer -->
+    <Style x:Key="HeroCard" TargetType="Border" BasedOn="{StaticResource ModernCard}">
+        <Setter Property="Background" Value="{DynamicResource GoldHighlight}" />
+        <Setter Property="Stroke" Value="{DynamicResource GoldDeep}" />
+        <Setter Property="Shadow">
+            <Shadow Brush="#66330000" Offset="0,8" Radius="24" Opacity="0.28" />
+        </Setter>
+    </Style>
+
+    <!-- Modern Button Style -->
+    <Style x:Key="ModernButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{DynamicResource Primary50}" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="CornerRadius" Value="24" />
+        <Setter Property="FontSize" Value="{DynamicResource SubHeaderFontSize}" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="Shadow">
+            <Shadow Brush="#22000000" Offset="0,2" Radius="8" Opacity="0.12" />
+        </Setter>
+    </Style>
+
+    <!-- Bento Grid Container -->
+    <Style x:Key="BentoGrid" TargetType="Grid">
+        <Setter Property="RowSpacing" Value="16" />
+        <Setter Property="ColumnSpacing" Value="16" />
+        <Setter Property="Margin" Value="8,8,8,8" />
+    </Style>
+
+    <!-- Modern ListView Style -->
+    <Style x:Key="ModernListView" TargetType="CollectionView">
+        <Setter Property="ItemsLayout">
+            <GridItemsLayout Orientation="Vertical" Span="1" />
+        </Setter>
+        <Setter Property="ItemSpacing" Value="12" />
+        <Setter Property="Margin" Value="0,8,0,8" />
+    </Style>
+
+</ResourceDictionary>

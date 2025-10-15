@@ -82,20 +82,20 @@ namespace SuleymaniyeCalendar.ViewModels
 
 		private static Task<bool> CheckInternetAsync()
 		{
-			var current = Connectivity.NetworkAccess;
-			if (current != NetworkAccess.Internet)
-			{
-				// Enhanced network feedback with contextual guidance
-				var message = $"{AppResources.RadyoIcinInternet} 📶";
-				
-				MainThread.BeginInvokeOnMainThread(() =>
-				{
-					CancellationTokenSource cancellationTokenSource = new();
-					var toast = Toast.Make(message, ToastDuration.Long, 16);
-					toast.Show(cancellationTokenSource.Token);
-				});
-				return Task.FromResult(false);
-			}
+			   var current = Connectivity.NetworkAccess;
+			   if (current != NetworkAccess.Internet)
+			   {
+				   // Enhanced network feedback with contextual guidance
+				   var message = $"{AppResources.RadyoIcinInternet}";
+				   MainThread.BeginInvokeOnMainThread(() =>
+				   {
+					   CancellationTokenSource cancellationTokenSource = new();
+					   double fontSize = Preferences.Get("FontSize", 16);
+					   var toast = Toast.Make($"📶 {message}", ToastDuration.Long, fontSize);
+					   toast.Show(cancellationTokenSource.Token);
+				   });
+				   return Task.FromResult(false);
+			   }
 
 			return Task.FromResult(true);
 		}

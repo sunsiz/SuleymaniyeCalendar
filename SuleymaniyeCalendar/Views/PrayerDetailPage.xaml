@@ -18,27 +18,31 @@
             x:DataType="viewModels:PrayerDetailViewModel"
             Spacing="{StaticResource SpacingDefault}">
             
-            <!--  🎨 PHASE 15: Prayer Title Card - HeroPrimaryCard for maximum impact  -->
-            <Border Style="{StaticResource HeroPrimaryCard}">
-                <VerticalStackLayout Spacing="12">
-                    <Label
-                        FontAttributes="Bold"
-                        HorizontalTextAlignment="Center"
-                        Style="{StaticResource HeadlineLargeStyle}"
-                        TextColor="{AppThemeBinding Light={StaticResource Neutral99},
-                                                    Dark={StaticResource Neutral10}}"
-                        Text="{Binding Title}" />
-                    <BoxView
-                        HeightRequest="2"
-                        HorizontalOptions="Center"
-                        WidthRequest="90"
-                        Color="{AppThemeBinding Light={StaticResource GoldPure},
-                                                Dark={StaticResource GoldMedium}}" />
-                </VerticalStackLayout>
+
+            <!-- Hero Card Header with Golden Icon -->
+            <Border Style="{StaticResource HeroCard}" Margin="0,0,0,12" Padding="20,18">
+                <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
+                    <Label Grid.Column="0"
+                           FontFamily="{StaticResource IconFontFamily}"
+                           FontSize="38"
+                           Text="&#xf684;"
+                           TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}"
+                           VerticalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           FontAttributes="Bold" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                        <Label Style="{StaticResource TitleLargeStyle}"
+                               Text="{Binding Title}" />
+                        <Label Style="{StaticResource BodyLargeStyle}"
+                               Text="{localization:Translate NamazDetayAciklama}" Opacity="0.8" />
+                    </VerticalStackLayout>
+                </Grid>
             </Border>
 
+            <BoxView Style="{StaticResource Divider}" Margin="0,0,0,8" />
+
             <!--  🎨 PHASE 15: Time & Enable Card - ElevatedPrimaryCard  -->
-            <Border Style="{StaticResource IntenseSecondaryCard}">
+            <Border Style="{StaticResource ModernCard}" Margin="0,0,0,8">
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6" RowDefinitions="Auto,Auto" RowSpacing="2">
                     <!-- Time Section -->
                     <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="4">
@@ -117,7 +121,7 @@
             </Border>-->
 
             <!--  🎨 PHASE 15: Notification Settings Card - StandardCard  -->
-            <Border IsVisible="{Binding Enabled}" Style="{StaticResource FrostGlassCardCrystal}">
+            <Border IsVisible="{Binding Enabled}" Style="{StaticResource ModernCard}" Margin="0,0,0,8">
                 <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="16">
                     <!--  Notification Time Section  -->
                     <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="12">
@@ -208,7 +212,7 @@
 
             <!--  🎨 PHASE 15: Close Button - GlassButtonPrimary  -->
             <Button
-                Style="{StaticResource GlassButtonPrimary}"
+                Style="{StaticResource ModernButton}"
                 Command="{Binding GoBackCommand}"
                 Text="{localization:Translate Kapat}" />
         </VerticalStackLayout>

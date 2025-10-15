@@ -169,11 +169,11 @@ namespace SuleymaniyeCalendar.ViewModels
 				}
 				catch (Exception ex)
 				{
-					CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-					ToastDuration duration = ToastDuration.Long;
-					double fontSize = 14;
-					var toast = Toast.Make(AppResources.HaritaHatasi, duration, fontSize);
-					await toast.Show(cancellationTokenSource.Token);
+					   CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+					   ToastDuration duration = ToastDuration.Long;
+					   double fontSize = Preferences.Get("FontSize", 16);
+					   var toast = Toast.Make($"❌ {AppResources.HaritaHatasi}", duration, fontSize);
+					   await toast.Show(cancellationTokenSource.Token);
 					//UserDialogs.Instance.Toast(AppResources.HaritaHatasi + ex.Message);
 					Debug.WriteLine(ex.Message);
 				}
@@ -199,21 +199,21 @@ namespace SuleymaniyeCalendar.ViewModels
 			catch (FeatureNotSupportedException fnsEx)
 			{
 				// Feature not supported on device
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-				ToastDuration duration = ToastDuration.Long;
-				double fontSize = 14;
-				var toast = Toast.Make(AppResources.CihazPusulaDesteklemiyor, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
+				   CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+				   ToastDuration duration = ToastDuration.Long;
+				   double fontSize = Preferences.Get("FontSize", 16);
+				   var toast = Toast.Make($"❌ {AppResources.CihazPusulaDesteklemiyor}", duration, fontSize);
+				   toast.Show(cancellationTokenSource.Token);
 				//UserDialogs.Instance.Toast(AppResources.CihazPusulaDesteklemiyor, TimeSpan.FromSeconds(4));
 				Debug.WriteLine($"**** {this.GetType().Name}.{nameof(Compass_ReadingChanged)}: {fnsEx.Message}");
 			}
 			catch (Exception ex)
 			{
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-				ToastDuration duration = ToastDuration.Long;
-				double fontSize = 14;
-				var toast = Toast.Make(ex.Message, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
+				   CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+				   ToastDuration duration = ToastDuration.Long;
+				   double fontSize = Preferences.Get("FontSize", 16);
+				   var toast = Toast.Make($"❌ {ex.Message}", duration, fontSize);
+				   toast.Show(cancellationTokenSource.Token);
 				//UserDialogs.Instance.Alert(ex.Message);
 				Debug.WriteLine(ex.Message);
 				LatitudeAltitude =
@@ -297,21 +297,21 @@ namespace SuleymaniyeCalendar.ViewModels
 			catch (FeatureNotSupportedException fnsEx)
 			{
 				// Feature not supported on device
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-				ToastDuration duration = ToastDuration.Long;
-				double fontSize = 14;
-				var toast = Toast.Make(AppResources.CihazPusulaDesteklemiyor, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
+				   CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+				   ToastDuration duration = ToastDuration.Long;
+				   double fontSize = Preferences.Get("FontSize", 16);
+				   var toast = Toast.Make($"❌ {AppResources.CihazPusulaDesteklemiyor}", duration, fontSize);
+				   toast.Show(cancellationTokenSource.Token);
 				//UserDialogs.Instance.Alert(AppResources.CihazPusulaDesteklemiyor, AppResources.CihazPusulaDesteklemiyor);
 				Debug.WriteLine($"**** {this.GetType().Name}.{nameof(Compass_ReadingChanged)}: {fnsEx.Message}");
 			}
 			catch (Exception ex)
 			{
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-				ToastDuration duration = ToastDuration.Long;
-				double fontSize = 14;
-				var toast = Toast.Make(ex.Message, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
+				   CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+				   ToastDuration duration = ToastDuration.Long;
+				   double fontSize = Preferences.Get("FontSize", 16);
+				   var toast = Toast.Make($"❌ {ex.Message}", duration, fontSize);
+				   toast.Show(cancellationTokenSource.Token);
 				//UserDialogs.Instance.Alert(ex.Message);
 				Debug.WriteLine(ex.Message);
 			}

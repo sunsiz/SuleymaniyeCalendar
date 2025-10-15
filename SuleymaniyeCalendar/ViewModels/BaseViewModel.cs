@@ -114,17 +114,25 @@ namespace SuleymaniyeCalendar.ViewModels
 			set => SetProperty(ref overlayMessage, value);
 		}
 
-		public static void ShowToast(string message)
-		{
-			MainThread.BeginInvokeOnMainThread(() =>
-			{
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-				ToastDuration duration = ToastDuration.Long;
-				double fontSize = 14;
-				var toast = Toast.Make(message, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
-			});
-		}
+		   public static void ShowToast(string message, string type = "info")
+		   {
+			   MainThread.BeginInvokeOnMainThread(() =>
+			   {
+				   CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+				   ToastDuration duration = ToastDuration.Long;
+				   double fontSize = Preferences.Get("FontSize", 16);
+				   string icon = type switch
+				   {
+					   "success" => "🌟", // gold star
+					   "warning" => "⚠️", // warning
+					   "error" => "❌", // red cross
+					   "network" => "📶", // network
+					   _ => "🔔" // bell/info
+				   };
+				   var toast = Toast.Make($"{icon} {message}", duration, fontSize);
+				   toast.Show(cancellationTokenSource.Token);
+			   });
+		   }
 
 		public static void InitializeFontSize()
 		{
@@ -163,10 +171,11 @@ namespace SuleymaniyeCalendar.ViewModels
 		}
 	}		public static void Alert(string title, string message)
 		{
-			MainThread.BeginInvokeOnMainThread(async () =>
-			{
-				await Shell.Current.DisplayAlert(title, message, AppResources.Tamam);
-			});
+			   // ModernDialogService: All alerts now use the branded dialog
+			   MainThread.BeginInvokeOnMainThread(async () =>
+			   {
+				   await Services.ModernDialogService.ShowAsync(title, message, AppResources.Tamam);
+			   });
 		}
 
 		public static bool IsVoiceOverRunning()

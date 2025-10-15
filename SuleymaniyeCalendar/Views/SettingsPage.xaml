@@ -26,9 +26,30 @@
             Padding="{StaticResource PagePaddingMobile}">
             <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="{StaticResource SpacingDefault}">
 
-                <!--  Language Selection - Compact  -->
-                <!--  🎨 PHASE 15: Using ElevatedPrimaryCard for featured settings  -->
-                <Border Style="{StaticResource FrostGlassCardCrystal}">
+                <!-- Hero Card Header -->
+                <Border Style="{StaticResource HeroCard}" Margin="0,0,0,12" Padding="20,18">
+                    <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
+                        <Label Grid.Column="0"
+                               FontFamily="{StaticResource IconFontFamily}"
+                               FontSize="38"
+                               Text="&#xf013;"
+                               TextColor="{AppThemeBinding Light={StaticResource GoldPure}, Dark={StaticResource GoldMedium}}"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               FontAttributes="Bold" />
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Style="{StaticResource TitleLargeStyle}"
+                                   Text="{localization:Translate UygulamaAyarlari}" />
+                            <Label Style="{StaticResource BodyLargeStyle}"
+                                   Text="{localization:Translate UygulamaAyarlari}" Opacity="0.8" />
+                        </VerticalStackLayout>
+                    </Grid>
+                </Border>
+
+                <BoxView Style="{StaticResource Divider}" Margin="0,0,0,8" />
+
+                <!--  Language Selection - ModernCard  -->
+                <Border Style="{StaticResource ModernCard}">
                     <Grid x:DataType="viewModels:SettingsViewModel" Padding="16,12" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <!--  Golden language icon with increased visibility  -->
                         <Label
@@ -72,9 +93,8 @@
                     ItemsSource="{Binding SupportedLanguages}"
                     SelectedItem="{Binding SelectedLanguage}" />
 
-                <!--  Theme Selection - Compact  -->
-                <!--  🎨 PHASE 15: Using ElevatedPrimaryCard for featured settings  -->
-                <Border Style="{StaticResource FrostGlassCardFrozen}">
+                <!--  Theme Selection - ModernCard  -->
+                <Border Style="{StaticResource ModernCard}">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Padding="16,12" Spacing="16">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                             <!--  Golden theme icon with increased visibility  -->
@@ -202,9 +222,8 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  Font Size - Simplified icon ✅  -->
-                <!--  🎨 PHASE 15: Using ElevatedPrimaryCard + GoldenSlider  -->
-                <Border Style="{StaticResource ElevatedSecondaryCard}" Padding="16,12">
+                <!--  Font Size - HeroCard + GoldenSlider  -->
+                <Border Style="{StaticResource HeroCard}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                             <!--  Golden font size icon with increased visibility  -->
@@ -256,9 +275,8 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  Location Settings - Simplified icon ✅  -->
-                <!--  🎨 PHASE 15: Using StandardCard for secondary settings  -->
-                <Border Style="{StaticResource AeroVistaCard}" Padding="16,12">
+                <!--  Location Settings - ModernCard  -->
+                <Border Style="{StaticResource ModernCard}" Padding="16,12">
                     <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <!--  Golden location icon with increased visibility  -->
                         <Label
@@ -291,9 +309,8 @@
                     </Grid>
                 </Border>
 
-                <!--  Android Notifications - Simplified icon ✅  -->
-                <!--  🎨 PHASE 15: Using StandardCard for secondary settings  -->
-                <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource LiquidGlassCard}" Padding="16,12">
+                <!--  Android Notifications - ModernCard  -->
+                <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource ModernCard}" Padding="16,12">
                     <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <!--  Golden notification icon with increased visibility  -->
                         <Label
@@ -318,8 +335,7 @@
                     </Grid>
                 </Border>
 
-                <!--  Android Foreground Service - Simplified icon ✅  -->
-                <!--  🎨 PHASE 15: Using StandardCard for secondary settings  -->
+                <!--  Android Foreground Service - ElevatedSecondaryCard  -->
                 <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource ElevatedSecondaryCard}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
@@ -353,11 +369,10 @@
                                 VerticalOptions="Center" />
                         </Grid>
 
-                        <!-- 🦸 PHASE 12: Settings button - golden primary for maximum contrast -->
+                        <!-- 🦸 PHASE 15: Settings button - ModernButton for maximum contrast -->
                         <Button
                             Margin="8,0,8,16"
-                            Style="{StaticResource GlassButtonPrimary}"
-                            TextColor="{AppThemeBinding Light={StaticResource OnPrimaryContainerLight}, Dark={StaticResource GoldLight}}"
+                            Style="{StaticResource ModernButton}"
                             Command="{Binding GotoSettingsCommand}"
                             Text="{localization:Translate GotoSettings}" />
                     </VerticalStackLayout>

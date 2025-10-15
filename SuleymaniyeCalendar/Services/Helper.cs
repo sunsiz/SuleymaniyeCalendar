@@ -15,12 +15,12 @@ namespace SuleymaniyeCalendar.Services
             {
                 if (!string.IsNullOrEmpty(primaryAction) && !string.IsNullOrEmpty(secondaryAction))
                 {
-                    var result = await Shell.Current.DisplayAlert(title, message, primaryAction, secondaryAction);
-                    // Handle result if needed
+                    // ModernDialogService does not support two-button dialogs yet; fallback to primary only
+                    await Services.ModernDialogService.ShowAsync(title, message, primaryAction);
                 }
                 else
                 {
-                    await Shell.Current.DisplayAlert(title, message, AppResources.Tamam);
+                    await Services.ModernDialogService.ShowAsync(title, message, AppResources.Tamam);
                 }
             });
         }
@@ -29,7 +29,8 @@ namespace SuleymaniyeCalendar.Services
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                var toast = Toast.Make($"✅ {message}", ToastDuration.Short, 16);
+                double fontSize = Preferences.Get("FontSize", 16);
+                var toast = Toast.Make($"🌟 {message}", ToastDuration.Short, fontSize); // Gold star for success
                 toast.Show(CancellationToken.None);
             });
         }
@@ -38,7 +39,8 @@ namespace SuleymaniyeCalendar.Services
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                var toast = Toast.Make($"⚠️ {message}", ToastDuration.Long, 16);
+                double fontSize = Preferences.Get("FontSize", 16);
+                var toast = Toast.Make($"⚠️ {message}", ToastDuration.Long, fontSize); // Warning icon
                 toast.Show(CancellationToken.None);
             });
         }
@@ -47,7 +49,8 @@ namespace SuleymaniyeCalendar.Services
         {
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                var toast = Toast.Make($"❌ {message}", ToastDuration.Long, 16);
+                double fontSize = Preferences.Get("FontSize", 16);
+                var toast = Toast.Make($"❌ {message}", ToastDuration.Long, fontSize); // Red cross for error
                 toast.Show(CancellationToken.None);
             });
         }
@@ -60,10 +63,10 @@ namespace SuleymaniyeCalendar.Services
             var message = string.IsNullOrEmpty(feature) 
                 ? AppResources.RadyoIcinInternet 
                 : $"{feature} {AppResources.TakvimIcinInternet}";
-            
             MainThread.BeginInvokeOnMainThread(() =>
             {
-                var toast = Toast.Make($"📶 {message}", ToastDuration.Long, 16);
+                double fontSize = Preferences.Get("FontSize", 16);
+                var toast = Toast.Make($"📶 {message}", ToastDuration.Long, fontSize); // Network icon
                 toast.Show(CancellationToken.None);
             });
         }
@@ -75,8 +78,8 @@ namespace SuleymaniyeCalendar.Services
         {
             await MainThread.InvokeOnMainThreadAsync(async () =>
             {
-                await Shell.Current.DisplayAlert(
-                    AppResources.KonumIzniBaslik, 
+                await Services.ModernDialogService.ShowAsync(
+                    AppResources.KonumIzniBaslik,
                     $"{AppResources.KonumIzniIcerik} {AppResources.UygulamaAyarlari}",
                     AppResources.Tamam);
             });
