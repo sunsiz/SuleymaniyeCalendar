@@ -15,7 +15,7 @@
             
             <!-- 🎯 PHASE 20.2: Unified Calendar Card with Integrated Navigation -->
             <!-- 🎨 PHASE 20.2C: Added swipe gestures for month navigation -->
-            <Border Style="{StaticResource ElevatedPrimaryCard}" Padding="12">
+            <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="12">
                 <Border.GestureRecognizers>
                     <!-- Swipe Left → Next Month -->
                     <SwipeGestureRecognizer Direction="Left" Command="{Binding NextMonthCommand}" />
@@ -127,7 +127,7 @@
             <!-- 📖 Selected Day Detail Card with Enhanced Design -->
             <!-- 🎨 PHASE 20.2C: Named for fade-in animation -->
             <Border x:Name="SelectedDayCard"
-                    Style="{StaticResource ElevatedPrimaryCard}" 
+                    Style="{StaticResource FrostGlassCardFrozen}" 
                     Padding="20,16"
                     IsVisible="{Binding HasSelectedDayData}">
                 <VerticalStackLayout Spacing="16">

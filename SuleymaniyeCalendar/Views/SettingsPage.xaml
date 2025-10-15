@@ -203,8 +203,8 @@
                 </Border>
 
                 <!--  Font Size - Simplified icon ✅  -->
-                <!--  🎨 PHASE 15: Using ElevatedPrimaryCard + GoldenSlider  -->
-                <Border Style="{StaticResource ElevatedSecondaryCard}" Padding="16,12">
+                <!--  🎨 PHASE 15: Using FrostGlassCardFrozen + GoldenSlider  -->
+                <Border Style="{StaticResource FrostGlassCardFrozen}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                             <!--  Golden font size icon with increased visibility  -->
@@ -319,8 +319,8 @@
                 </Border>
 
                 <!--  Android Foreground Service - Simplified icon ✅  -->
-                <!--  🎨 PHASE 15: Using StandardCard for secondary settings  -->
-                <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource ElevatedSecondaryCard}" Padding="16,12">
+                <!--  🎨 PHASE 15: Using FrostGlassCardFrozen for secondary settings  -->
+                <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource FrostGlassCardFrozen}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                             <!--  Golden service icon with increased visibility  -->

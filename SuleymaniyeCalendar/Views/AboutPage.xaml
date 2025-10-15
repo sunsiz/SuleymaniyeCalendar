@@ -169,7 +169,7 @@
                 </Border>
 
                 <!--  Action Section  -->
-                <Border Style="{StaticResource GlassCardSoft}" IsVisible="{Binding ShowButtons}" Padding="12,10">
+                <Border Style="{StaticResource FrostGlassCardCrystal}" IsVisible="{Binding ShowButtons}" Padding="12,10">
                     <Button
                         Style="{StaticResource PrimaryButton}"
                         Command="{Binding SettingsCommand}"
@@ -178,7 +178,7 @@
                 </Border>
 
                 <!--  Design Showcase Toggle Button  -->
-                <Border Style="{StaticResource GlassCardSoft}" Padding="16,12">
+                <Border Style="{StaticResource FrostGlassCardFrozen}" Padding="16,12">
                     <VerticalStackLayout Spacing="8">
                         <Label Text="🎨 Design System Showcase" 
                                Style="{StaticResource LabelLargeStyle}" 
@@ -208,7 +208,7 @@
                 <VerticalStackLayout IsVisible="{Binding ShowDesignShowcase}" Spacing="24">
 
                 <!--  SHOWCASE INTRODUCTION  -->
-                <Border Style="{StaticResource GlassCardPrimaryTint}" Padding="20,16">
+                <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="20,16">
                     <VerticalStackLayout Spacing="10">
                         <Label Text="📐 Design System Documentation" 
                                Style="{StaticResource HeadlineMediumStyle}" 

@@ -172,9 +172,9 @@
                 Source="https://www.suleymaniyevakfi.org/radio.mp3"
                 VerticalOptions="End" />
 
-            <!-- 🎨 PHASE 15: Busy overlay with ElevatedPrimaryCard + GoldenActivityIndicator -->
+            <!-- 🎨 PHASE 15: Busy overlay with FrostGlassCardCrystal + GoldenActivityIndicator -->
             <Grid BackgroundColor="#80000000" IsVisible="{Binding IsBusy}">
-                <Border Style="{StaticResource ElevatedPrimaryCard}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
                     <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="40" HeightRequest="40" />
                 </Border>
             </Grid>

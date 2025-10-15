@@ -37,8 +37,8 @@
                 </VerticalStackLayout>
             </Border>
 
-            <!--  🎨 PHASE 15: Time & Enable Card - ElevatedPrimaryCard  -->
-            <Border Style="{StaticResource IntenseSecondaryCard}">
+            <!--  🎨 PHASE 15: Time & Enable Card - FrostGlassCardFrozen  -->
+            <Border Style="{StaticResource FrostGlassCardFrozen}">
                 <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6" RowDefinitions="Auto,Auto" RowSpacing="2">
                     <!-- Time Section -->
                     <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="4">
@@ -214,9 +214,9 @@
         </VerticalStackLayout>
     </ScrollView>
 
-    <!--  🎨 PHASE 15: Scheduling overlay with ElevatedPrimaryCard  -->
+    <!--  🎨 PHASE 15: Scheduling overlay with FrostGlassCardCrystal  -->
     <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
-        <Border Style="{StaticResource ElevatedPrimaryCard}" Padding="36,24" HorizontalOptions="Center" VerticalOptions="Center">
+        <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="36,24" HorizontalOptions="Center" VerticalOptions="Center">
             <VerticalStackLayout Spacing="14" HorizontalOptions="Center">
                 <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="48" HeightRequest="48" />
                 <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />

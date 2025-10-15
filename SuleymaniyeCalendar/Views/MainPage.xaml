@@ -503,7 +503,7 @@
                                 Margin="32,0,32,8"
                                 HorizontalOptions="Fill"
                                 IsEnabled="{Binding IsNotBusy}"
-                                Style="{StaticResource LocationCard}">
+                                Style="{StaticResource FrostGlassCardCrystal}">
                                 <Label
                                     Margin="3,0"
                                     Padding="3"
@@ -531,9 +531,9 @@
                     </CollectionView.Footer>
                 </CollectionView>
 
-                <!-- 🎨 PHASE 15: Long running overlay with ElevatedPrimaryCard + GoldenActivityIndicator -->
+                <!-- 🎨 PHASE 15: Long running overlay with FrostGlassCardCrystal + GoldenActivityIndicator -->
                 <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
-                    <Border Style="{StaticResource ElevatedPrimaryCard}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
                         <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
                             <!-- 🎨 White activity indicator for visibility on golden card -->
                             <ActivityIndicator IsRunning="True" Color="White" WidthRequest="40" HeightRequest="40" />
