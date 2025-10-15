@@ -51,8 +51,8 @@
                     <!-- BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
                                                       Dark={StaticResource AppBackgroundColorDark}}" -->
 
-                    <!--  🎨 PHASE 15: Compass Section - ElevatedPrimaryCard  -->
-                    <Border Style="{StaticResource AeroVistaCard}">
+                    <!--  🎨 PHASE 15: Compass Section - FrostGlassCardCrystal  -->
+                    <Border Style="{StaticResource FrostGlassCardCrystal}">
                         <VerticalStackLayout Spacing="4">
                             <Label
                                 HorizontalTextAlignment="Center"
@@ -79,8 +79,8 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!--  🎨 PHASE 15: Location Information - StandardCard  -->
-                    <Border Style="{StaticResource ElevatedSecondaryCard}">
+                    <!--  🎨 PHASE 15: Location Information - FrostGlassCardFrozen  -->
+                    <Border Style="{StaticResource FrostGlassCardFrozen}">
                         <VerticalStackLayout Spacing="4">
                             <Label
                                 HorizontalTextAlignment="Center"

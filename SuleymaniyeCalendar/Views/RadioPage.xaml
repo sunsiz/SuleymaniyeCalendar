@@ -41,7 +41,7 @@
             </Border>
 
             <Border
-                Style="{StaticResource NeoGlassCard}"
+                Style="{StaticResource FrostGlassCardCrystal}"
                 Grid.Row="1"
                 Margin="0,-25,0,-15">
                 <Grid

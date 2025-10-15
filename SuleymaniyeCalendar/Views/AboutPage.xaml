@@ -34,7 +34,7 @@
                 <!--  Hero Section with App Description (with subtle halo)  -->
                 <Grid>
                     <BoxView Background="{StaticResource PrimaryHaloBrush}" />
-                    <Border Style="{StaticResource AeroVistaCard}">
+                    <Border Style="{StaticResource FrostGlassCardCrystal}">
                         <VerticalStackLayout Spacing="10">
                         <Label Style="{StaticResource HeadlineLargeStyle}"
                                Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
@@ -77,7 +77,7 @@
                 </Grid>
 
                 <!--  Social Media Section  -->
-                <Border Style="{StaticResource LiquidGlassCard}">
+                <Border Style="{StaticResource FrostGlassCardFrozen}">
                     <VerticalStackLayout Spacing="12">
                         <Label Text="{localization:Translate SosyalMedyaBaglantisi}"
                                Style="{StaticResource TitleLargeStyle}"
@@ -132,8 +132,8 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  🎨 PHASE 15: App Store Section with StandardCard  -->
-        <Border Style="{StaticResource NeoGlassCard}" Padding="16,12">
+                <!--  🎨 PHASE 15: App Store Section with FrostGlassCardCrystal  -->
+        <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="16,12">
                     <VerticalStackLayout Spacing="12">
                         <Label Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
                                Style="{StaticResource TitleLargeStyle}"

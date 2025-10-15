@@ -155,9 +155,9 @@
                                     </MultiTrigger>
                                 </ContentView.Triggers>
                                 <Grid>
-                                <!-- 🎨 PHASE 15: Prayer Card using Phase 14 card hierarchy -->
+                                <!-- 🎨 PHASE 15: Prayer Card using FrostGlassCardCrystal -->
                                 <Border
-                                    Style="{StaticResource StandardCard}">
+                                    Style="{StaticResource FrostGlassCardCrystal}">
                                     <Border.Triggers>
                                         <!-- 🎨 PHASE 16: Past prayer - Compact FlatContentCard style -->
                                         <DataTrigger

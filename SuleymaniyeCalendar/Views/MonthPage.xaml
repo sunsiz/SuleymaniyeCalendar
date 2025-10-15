@@ -18,11 +18,11 @@
             <!-- Lightweight host; we will inject the heavy table after first frame -->
             <ContentView x:Name="ListHost" />
 
-            <!--  🎨 PHASE 15: Loading Indicator Overlay with ElevatedPrimaryCard  -->
+            <!--  🎨 PHASE 15: Loading Indicator Overlay with FrostGlassCardCrystal  -->
             <Grid IsVisible="{Binding IsBusy}" 
                   BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}"
                   InputTransparent="False">
-        <Border Style="{StaticResource ElevatedPrimaryCard}" 
+        <Border Style="{StaticResource FrostGlassCardCrystal}" 
             VerticalOptions="Center" 
             HorizontalOptions="Center"
             Padding="40,24">
@@ -39,9 +39,9 @@
                 </Border>
             </Grid>
 
-            <!--  🎨 PHASE 15: Extended overlay with ElevatedPrimaryCard  -->
+            <!--  🎨 PHASE 15: Extended overlay with FrostGlassCardCrystal  -->
             <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
-                <Border Style="{StaticResource ElevatedPrimaryCard}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
                     <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
                         <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="40" HeightRequest="40" />
                         <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
