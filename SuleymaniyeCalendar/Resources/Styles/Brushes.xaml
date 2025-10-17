@@ -459,6 +459,30 @@
         <GradientStop Offset="1" Color="#10FFFFFF" />
     </LinearGradientBrush>
 
+    <!--  Neutral tinted glass variants  -->
+    <LinearGradientBrush x:Key="GlassNeutralTintLight" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#F2FFFFFF" />
+        <GradientStop Offset="0.5" Color="{StaticResource Neutral10}" />
+        <GradientStop Offset="1" Color="#E6FFFFFF" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="GlassNeutralTintDark" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#18FFFFFF" />
+        <GradientStop Offset="0.5" Color="{StaticResource Neutral95}" />
+        <GradientStop Offset="1" Color="#12FFFFFF" />
+    </LinearGradientBrush>
+
+    <!--  White tinted glass variants  -->
+    <LinearGradientBrush x:Key="GlassWhiteTintLight" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#F2FFFFFF" />
+        <GradientStop Offset="0.5" Color="#FFFFFFFF" />
+        <GradientStop Offset="1" Color="#E6FFFFFF" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="GlassWhiteTintDark" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#18FFFFFF" />
+        <GradientStop Offset="0.5" Color="#10FFFFFF" />
+        <GradientStop Offset="1" Color="#12FFFFFF" />
+    </LinearGradientBrush>
+
     <!--  Success / Warning / Error tinted glass variants  -->
     <LinearGradientBrush x:Key="GlassSuccessTintLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#F2FFFFFF" />

@@ -258,7 +258,7 @@
 
                 <!--  Location Settings - Simplified icon ✅  -->
                 <!--  🎨 PHASE 15: Using StandardCard for secondary settings  -->
-                <Border Style="{StaticResource AeroVistaCard}" Padding="16,12">
+                <Border Style="{StaticResource iOSLiquidGlassCard}" Padding="16,12">
                     <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <!--  Golden location icon with increased visibility  -->
                         <Label
@@ -293,7 +293,7 @@
 
                 <!--  Android Notifications - Simplified icon ✅  -->
                 <!--  🎨 PHASE 15: Using StandardCard for secondary settings  -->
-                <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource LiquidGlassCard}" Padding="16,12">
+                <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource iOSLiquidGlassCard}" Padding="16,12">
                     <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <!--  Golden notification icon with increased visibility  -->
                         <Label
@@ -356,7 +356,7 @@
                         <!-- 🦸 PHASE 12: Settings button - golden primary for maximum contrast -->
                         <Button
                             Margin="8,0,8,16"
-                            Style="{StaticResource GlassButtonPrimary}"
+                            Style="{StaticResource GlassButtonSuccess}"
                             TextColor="{AppThemeBinding Light={StaticResource OnPrimaryContainerLight}, Dark={StaticResource Primary30}}"
                             Command="{Binding GotoSettingsCommand}"
                             Text="{localization:Translate GotoSettings}" />

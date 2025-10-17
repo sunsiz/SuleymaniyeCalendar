@@ -83,7 +83,7 @@
                         <StackLayout x:DataType="viewModels:MainViewModel">
                             <!-- 🌙 PHASE 15: Remaining Time Card using IntensePrimaryCard -->
                             <Border
-                                Style="{StaticResource IntensePrimaryCard}"
+                                Style="{StaticResource Card}"
                                 Margin="12,8"
                                 Padding="0"
                                 HorizontalOptions="Fill">
@@ -92,12 +92,12 @@
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
                                         <!-- Remaining time portion (light gold) -->
-                                        <GradientStop Color="{AppThemeBinding Light=#FFFFAA00, Dark=#80885511}" Offset="0" />
-                                        <GradientStop Color="{AppThemeBinding Light=#70FFCC44, Dark=#60664410}" Offset="{Binding TimeProgress}" />
+                                        <GradientStop Color="{AppThemeBinding Light={StaticResource Primary30}, Dark=#80885511}" Offset="0" />
+                                        <GradientStop Color="{AppThemeBinding Light={StaticResource Primary30}, Dark=#60664410}" Offset="{Binding TimeProgress}" />
                                         <!-- Sharp transition zone (clear boundary) -->
-                                        <GradientStop Color="{AppThemeBinding Light=#1AFFD700, Dark=#40775520}" Offset="{Binding TimeProgress}" />
+                                        <GradientStop Color="{AppThemeBinding Light={StaticResource Primary40}, Dark=#40775520}" Offset="{Binding TimeProgress}" />
                                         <!-- Consumed time portion (saturated golden orange) -->
-                                        <GradientStop Color="{AppThemeBinding Light=#0AFFD700, Dark=#20443308}" Offset="1" />
+                                        <GradientStop Color="{AppThemeBinding Light={StaticResource Primary40}, Dark=#20443308}" Offset="1" />
                                     </LinearGradientBrush>
                                 </Border.Background>
                                 
@@ -196,22 +196,22 @@
                                             Binding="{Binding IsActive}"
                                             TargetType="Border"
                                             Value="True">
-                                            <Setter Property="Background">
-                                                <Setter.Value>
+                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowestLight}, Dark={StaticResource GlassSoftDark}}"/>
+                                                <!-- <Setter.Value>
                                                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                                                        <!-- 🌙 PHASE 19: Dark mode optimization - reduced brightness -->
-                                                        <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFCC44, Dark=#B0996622}" />
-                                                        <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFC020, Dark=#C0AA7718}" />
-                                                        <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFBB33, Dark=#B0885511}" />
+                                                        <!- - 🌙 PHASE 19: Dark mode optimization - reduced brightness - ->
+                                                        <GradientStop Offset="0" Color="{AppThemeBinding Light={StaticResource Secondary20}, Dark=#B0996622}" />
+                                                        <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource Secondary20}, Dark=#C0AA7718}" />
+                                                        <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource Secondary20}, Dark=#B0885511}" />
                                                     </LinearGradientBrush>
                                                 </Setter.Value>
-                                            </Setter>
-                                            <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary50}, Dark=#80FFD700}" />
-                                            <Setter Property="StrokeThickness" Value="3" />
+                                            </Setter> -->
+                                            <!-- <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary50}, Dark=#80FFD700}" />
+                                            <Setter Property="StrokeThickness" Value="3" /> -->
                                             <Setter Property="Shadow">
-                                                <Shadow Brush="{AppThemeBinding Light={StaticResource Primary50}, Dark=#50FFA500}" Radius="32" Offset="0,12" Opacity="0.45" />
+                                                <Shadow Brush="{AppThemeBinding Light={StaticResource Secondary20}, Dark=#50FFA500}" Radius="32" Offset="0,12" Opacity="0.05" />
                                             </Setter>
-                                            <Setter Property="HeightRequest" Value="120" />
+                                            <Setter Property="HeightRequest" Value="100" />
                                             <Setter Property="Padding" Value="20,16" />
                                         </DataTrigger>
                                         <!-- 🎨 PHASE 15: Upcoming prayer - ElevatedPrimaryCard style -->
@@ -220,7 +220,7 @@
                                                 <BindingCondition Binding="{Binding IsActive}" Value="False" />
                                                 <BindingCondition Binding="{Binding IsPast}" Value="False" />
                                             </MultiTrigger.Conditions>
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassStrongLight}, Dark={StaticResource GlassStrongDark}}"/>
+                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassSoftLight}, Dark={StaticResource GlassSoftDark}}"/>
                                                 <!-- <Setter.Value>
                                                     <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                                         <!- - 🌙 PHASE 19: Dark mode optimization - much more subtle - ->
@@ -247,7 +247,7 @@
                                             WidthRequest="40"
                                             HeightRequest="40"
                                             BackgroundColor="Transparent"
-                                            Background="{AppThemeBinding Light={StaticResource PrimaryGradientBrush}, Dark={StaticResource SurfaceGlassBrushDark}}"
+                                            Background="{AppThemeBinding Light={StaticResource NeoGlassSecondaryDark}, Dark={StaticResource FrostShowcaseBackdropDark}}"
         									Stroke="{StaticResource GlassStrokeBrush}"
                                             VerticalOptions="Center">
                                             <Border.Triggers>
@@ -259,13 +259,11 @@
                                                 </DataTrigger>
                                                 <!-- 🦸 PHASE 9 HERO: Enhanced golden glow for current prayer icon container -->
                                                 <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
-                                                    <Setter Property="Background" Value="{StaticResource Primary30}" />
-                                                    <Setter Property="Stroke" Value="{StaticResource Primary50}" />
-                                                    <Setter Property="StrokeThickness" Value="2.5" />
+                                                    <!-- <Setter Property="Background" Value="{StaticResource Primary30}" /> -->
                                                     <Setter Property="WidthRequest" Value="52" />
                                                     <Setter Property="HeightRequest" Value="52" />
                                                     <Setter Property="Shadow">
-                                                        <Shadow Brush="{StaticResource Primary50}" Radius="12" Offset="0,3" Opacity="0.4" />
+                                                        <Shadow Brush="{StaticResource Primary50}" Radius="12" Offset="0,3" Opacity="0.1" />
                                                     </Setter>
                                                 </DataTrigger>
                                             </Border.Triggers>
@@ -478,6 +476,8 @@
                                 Command="{Binding GoToMonthCommand}"
                                 HorizontalOptions="Fill"
                                 IsEnabled="{Binding IsNotBusy}">
+                                <!-- TextColor="{StaticResource White}"
+                                Background="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary60}}" -->
                                 <Button.ImageSource>
                                     <FontImageSource
                                         FontFamily="{StaticResource IconFontFamily}"
@@ -492,10 +492,12 @@
                                 Margin="32,0,32,8"
                                 HorizontalOptions="Fill"
                                 IsEnabled="{Binding IsNotBusy}"
-                                Style="{StaticResource FrostGlassCardCrystal}">
+                                Style="{StaticResource GlassCardSecondaryTint}"
+                                StrokeShape="RoundRectangle 18">
+                                <!-- Background="{AppThemeBinding Light={StaticResource Secondary30}, Dark={StaticResource Primary70}}" -->
                                 <Label
                                     Margin="3,0"
-                                    Padding="3"
+                                    Padding="0"
                                     x:DataType="viewModels:MainViewModel"
                                     AutomationProperties.IsInAccessibleTree="True"
                                     HorizontalOptions="Center"
@@ -525,7 +527,7 @@
                     <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
                         <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
                             <!-- 🎨 White activity indicator for visibility on golden card -->
-                            <ActivityIndicator IsRunning="True" Color="White" WidthRequest="40" HeightRequest="40" />
+                            <ActivityIndicator IsRunning="True" Color="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary40}}" WidthRequest="80" HeightRequest="80" />
                             <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
                     </Border>

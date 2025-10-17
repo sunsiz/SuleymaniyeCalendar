@@ -174,7 +174,7 @@
                                 <Button Grid.Column="1"
                                     x:DataType="viewModels:PrayerDetailViewModel"
                                     Margin="6"
-                                        Style="{StaticResource GlassButtonPrimaryIntense}"
+                                        Style="{StaticResource iOSLiquidGlassButton}"
                                         TextColor="{AppThemeBinding Light=#3A2E1C,
                                                                 Dark={StaticResource Primary40}}"
                                         Command="{Binding TestButtonClickedCommand}"
@@ -208,7 +208,7 @@
 
             <!--  🎨 PHASE 15: Close Button - GlassButtonPrimary  -->
             <Button
-                Style="{StaticResource GlassButtonPrimaryIntense}"
+                Style="{StaticResource GlassButtonWhite}"
                 Command="{Binding GoBackCommand}"
                 Text="{localization:Translate Kapat}" />
         </VerticalStackLayout>

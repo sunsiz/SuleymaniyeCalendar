@@ -60,8 +60,8 @@ public partial class CalendarDay : ObservableObject
     {
         get
         {
-            if (IsSelected) return Color.FromArgb("#90FFD700"); // Selected: 90% golden (highly visible)
-            if (IsToday) return Color.FromArgb("#50FFD700"); // Today: 50% golden glow (more visible)
+            if (IsSelected) return Color.FromArgb("#20FFD700"); // Selected: 90% golden (highly visible)
+            if (IsToday) return Color.FromArgb("#01FFD700"); // Today: 50% golden glow (more visible)
             if (!IsCurrentMonth) return Color.FromArgb("#10808080"); // Faded for other months
             return Colors.Transparent;
         }

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="SuleymaniyeCalendar.Views.AboutPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
+    xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
+    x:DataType="viewModels:AboutViewModel"
+    Title="{Binding Title}"
+    FlowDirection="{DynamicResource FlowDirection}"
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
+
+    <Shell.TitleView>
+        <StackLayout
+            Margin="10"
+            HeightRequest="34"
+            Orientation="Horizontal">
+            <Label
+                AutomationProperties.IsInAccessibleTree="True"
+                Style="{StaticResource LabelSectionHeader}"
+                Text="{localization:Translate SuleymaniyeVakfi}" />
+        </StackLayout>
+    </Shell.TitleView>
+
+    <ContentPage.Content>
+        <ScrollView
+            HorizontalOptions="Fill"
+            Orientation="Vertical"
+            VerticalOptions="Fill">
+            <VerticalStackLayout
+                Padding="{StaticResource CardPaddingTight}"
+                Spacing="{StaticResource SpacingTight}">
+
+                <!--  Hero Section with App Description (with subtle halo)  -->
+                <Grid>
+                    <BoxView Background="{StaticResource PrimaryHaloBrush}" />
+                    <Border Style="{StaticResource FrostGlassCardCrystal}">
+                        <VerticalStackLayout Spacing="10">
+                        <Label Style="{StaticResource HeadlineLargeStyle}"
+                               Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}" />
+                        
+                        <Label TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
+                               Style="{StaticResource BodyLargeStyle}"
+                               HorizontalTextAlignment="Center">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{localization:Translate AciklamaBas}" />
+                                    <Span
+                                        FontAttributes="Bold"
+                                        Text="{localization:Translate AciklamaLinkText}"
+                                        TextColor="{AppThemeBinding Light={StaticResource InfoColor}, Dark={StaticResource InfoColorDark}}"
+                                        TextDecorations="Underline">
+                                        <Span.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding LinkButtonClickedCommand}" CommandParameter="{localization:Translate AciklamaLinkURL}" />
+                                        </Span.GestureRecognizers>
+                                    </Span>
+                                    <Span Text="{localization:Translate AciklamaSon}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+
+                        <!-- Version Info -->
+                        <Label HorizontalTextAlignment="Center"
+                               Style="{StaticResource LabelLargeStyle}"
+                               TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding VersionNumber}" />
+                                    <Span Text="{localization:Translate Version}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <!--  Social Media Section  -->
+                <Border Style="{StaticResource FrostGlassCardFrozen}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{localization:Translate SosyalMedyaBaglantisi}"
+                               Style="{StaticResource TitleLargeStyle}"
+                               TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                               HorizontalTextAlignment="Center" />
+                               
+                        <Grid
+                            ColumnDefinitions="*,*,*,*"
+                            ColumnSpacing="12"
+                            RowDefinitions="Auto">
+
+                            <ImageButton
+                                Grid.Column="0"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://www.suleymaniyevakfi.org/"
+                                HeightRequest="48"
+                                WidthRequest="48"
+                                SemanticProperties.Description="{localization:Translate SuleymaniyeVakfi}"
+                                Source="app_logo.png" />
+
+                            <ImageButton
+                                Grid.Column="1"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://www.facebook.com/suleymaniyevakfi/"
+                                HeightRequest="48"
+                                WidthRequest="48"
+                                SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiFacebook}"
+                                Source="facebook.png" />
+
+                            <ImageButton
+                                Grid.Column="2"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://twitter.com/suleymaniye_vkf"
+                                HeightRequest="48"
+                                WidthRequest="48"
+                                SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiTwitter}"
+                                Source="twitter.png" />
+
+                            <ImageButton
+                                Grid.Column="3"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://www.instagram.com/suleymaniyevakfi"
+                                HeightRequest="48"
+                                WidthRequest="48"
+                                SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiInstagram}"
+                                Source="instagram.png" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!--  🎨 PHASE 15: App Store Section with FrostGlassCardCrystal  -->
+        <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="16,12">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
+                               Style="{StaticResource TitleLargeStyle}"
+                               TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                               HorizontalTextAlignment="Center" />
+                               
+                        <Grid
+                            ColumnDefinitions="*,*"
+                            ColumnSpacing="12"
+                            HorizontalOptions="Center">
+
+                            <ImageButton
+                                Grid.Column="0"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://play.google.com/store/apps/details?id=org.suleymaniyevakfi"
+                                HeightRequest="48"
+                                WidthRequest="48"
+                                SemanticProperties.Description="Google Play Store"
+                                Source="google_play.png" />
+
+                            <ImageButton
+                                Grid.Column="1"
+                                Style="{StaticResource ModernImageButton}"
+                                Command="{Binding LinkButtonClickedCommand}"
+                                CommandParameter="https://apps.apple.com/app/id688657265"
+                                HeightRequest="48"
+                                WidthRequest="48"
+                                SemanticProperties.Description="Apple App Store"
+                                Source="app_store.png" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!--  Action Section  -->
+                <Border Style="{StaticResource FrostGlassCardCrystal}" IsVisible="{Binding ShowButtons}" Padding="12,10">
+                    <Button
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding SettingsCommand}"
+                        SemanticProperties.Description="{localization:Translate UygulamaAyarlari}"
+                        Text="{localization:Translate UygulamaAyarlari}" />
+                </Border>
+
+                <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+                <!-- 🚧 DESIGN SHOWCASE REMOVED FOR PERFORMANCE -->
+                <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+                <!-- 
+                The 1200+ line design showcase section has been removed to dramatically improve 
+                AboutPage load performance. Even with IsVisible=False, XAML was instantiating all 
+                showcase UI elements, causing 2-3 second freeze on page load.
+                
+                If needed for design documentation, the showcase can be found in git history 
+                (commit before this change) or in PHASE_15_COMPLETE.md documentation files.
+                ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+
+</ContentPage> 
+                The 1200+ line design showcase section has been removed to dramatically improve 
+                AboutPage load performance. Even with IsVisible=False, XAML was instantiating all 
+                showcase UI elements, causing 2-3 second freeze on page load.
+                
+                If needed for design documentation, the showcase can be found in git history 
+                (commit before this change) or in PHASE_15_COMPLETE.md documentation files.
+                ═══════════════════════════════════════════════════════════════════════════════════ -->
+                
+                <!-- SHOWCASE CONTENT (1200+ lines) REMOVED - See git history if needed -->
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+
+</ContentPage>
+                        <Label Text="This showcase demonstrates the complete Material Design 3 implementation with premium glassmorphism effects used throughout the app."
