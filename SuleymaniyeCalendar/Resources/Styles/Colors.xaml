@@ -1,6 +1,8 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <?xaml-comp compile="true" ?>
-<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!--  Material Design 3 Color System - Optimized & Cleaned  -->
 
@@ -135,7 +137,7 @@
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  Light Theme Surfaces  -->
-    <!-- Slightly deepened and softly tinted for better card/page separation in light mode -->
+    <!--  Slightly deepened and softly tinted for better card/page separation in light mode  -->
     <Color x:Key="SurfaceLight">#FBF9FD</Color>
     <Color x:Key="SurfaceDimLight">#DBD5DE</Color>
     <Color x:Key="SurfaceBrightLight">#FBF9FD</Color>
@@ -201,22 +203,32 @@
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  Past Prayer States - Enhanced contrast (4.8:1 ratio) ✅  -->
-    <Color x:Key="PrayerPastBackgroundColor">#FFD8D7D8</Color>       <!-- Lighter gray for better contrast -->
-    <Color x:Key="PrayerPastBackgroundColorDark">#FF2A2828</Color>   <!-- Darker background for dark mode -->
-    <Color x:Key="PrayerPastTextColor">#FF2D2A32</Color>             <!-- Much darker text (was #46444B) -->
-    <Color x:Key="PrayerPastTextColorDark">#FFB8B8B8</Color>         <!-- Lighter text for dark mode -->
+    <Color x:Key="PrayerPastBackgroundColor">#FFD8D7D8</Color>
+    <!--  Lighter gray for better contrast  -->
+    <Color x:Key="PrayerPastBackgroundColorDark">#FF2A2828</Color>
+    <!--  Darker background for dark mode  -->
+    <Color x:Key="PrayerPastTextColor">#FF2D2A32</Color>
+    <!--  Much darker text (was #46444B)  -->
+    <Color x:Key="PrayerPastTextColorDark">#FFB8B8B8</Color>
+    <!--  Lighter text for dark mode  -->
 
     <!--  Current Prayer States - Enhanced visibility (5.2:1 ratio) ✅  -->
-    <Color x:Key="PrayerActiveBackgroundColor">#FF6EE895</Color>     <!-- Stronger green -->
-    <Color x:Key="PrayerActiveBackgroundColorDark">#FF1A4D28</Color> <!-- More opaque dark mode (was 13% opacity) -->
-    <Color x:Key="PrayerActiveTextColor">#FF0A4520</Color>           <!-- Darker text for better contrast -->
-    <Color x:Key="PrayerActiveTextColorDark">#FF90E5A8</Color>       <!-- Brighter text for dark mode -->
+    <Color x:Key="PrayerActiveBackgroundColor">#FF6EE895</Color>
+    <!--  Stronger green  -->
+    <Color x:Key="PrayerActiveBackgroundColorDark">#FF1A4D28</Color>
+    <!--  More opaque dark mode (was 13% opacity)  -->
+    <Color x:Key="PrayerActiveTextColor">#FF0A4520</Color>
+    <!--  Darker text for better contrast  -->
+    <Color x:Key="PrayerActiveTextColorDark">#FF90E5A8</Color>
+    <!--  Brighter text for dark mode  -->
 
     <!--  Upcoming Prayer States - Enhanced warm distinction (4.9:1 ratio) ✅  -->
-    <Color x:Key="PrayerUpcomingBackgroundColor">#FFD4B88A</Color>   <!-- Stronger warm tone -->
-    <Color x:Key="PrayerUpcomingBackgroundColorDark">#FF4A4338</Color> <!-- More opaque dark mode -->
+    <Color x:Key="PrayerUpcomingBackgroundColor">#FFD4B88A</Color>
+    <!--  Stronger warm tone  -->
+    <Color x:Key="PrayerUpcomingBackgroundColorDark">#FF4A4338</Color>
+    <!--  More opaque dark mode  -->
     <Color x:Key="PrayerUpcomingTextColor">#7A4A15</Color>
-    <Color x:Key="PrayerUpcomingTextColorDark">#E8B08A</Color>    
+    <Color x:Key="PrayerUpcomingTextColorDark">#E8B08A</Color>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  PHASE 5.2.2 - OPTIMIZED PRAYER CARD BACKGROUND COLORS  -->
@@ -252,50 +264,80 @@
 
     <!--  Past Prayer - Complex matte gray with multiple depth layers  -->
     <LinearGradientBrush x:Key="PrayerCardPastGradientLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#F0EDED" Offset="0" />      <!-- Brilliant top glass highlight -->
-        <GradientStop Color="#ECE9E9" Offset="0.15" />   <!-- Upper reflection layer -->
-        <GradientStop Color="#E0DEDEDE" Offset="0.4" />  <!-- Base gray (core color) -->
-        <GradientStop Color="#D8D5D5" Offset="0.75" />   <!-- Mid depth transition -->
-        <GradientStop Color="#D0CDCD" Offset="1" />      <!-- Deep matte shadow -->
+        <GradientStop Offset="0" Color="#F0EDED" />
+        <!--  Brilliant top glass highlight  -->
+        <GradientStop Offset="0.15" Color="#ECE9E9" />
+        <!--  Upper reflection layer  -->
+        <GradientStop Offset="0.4" Color="#E0DEDEDE" />
+        <!--  Base gray (core color)  -->
+        <GradientStop Offset="0.75" Color="#D8D5D5" />
+        <!--  Mid depth transition  -->
+        <GradientStop Offset="1" Color="#D0CDCD" />
+        <!--  Deep matte shadow  -->
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="PrayerCardPastGradientDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#454040" Offset="0" />      <!-- Brilliant top glass highlight -->
-        <GradientStop Color="#3A3535" Offset="0.15" />   <!-- Upper reflection layer -->
-        <GradientStop Color="#252525" Offset="0.4" />    <!-- Base dark gray (core color) -->
-        <GradientStop Color="#1A1818" Offset="0.75" />   <!-- Mid depth transition -->
-        <GradientStop Color="#121010" Offset="1" />      <!-- Deep shadow -->
+        <GradientStop Offset="0" Color="#454040" />
+        <!--  Brilliant top glass highlight  -->
+        <GradientStop Offset="0.15" Color="#3A3535" />
+        <!--  Upper reflection layer  -->
+        <GradientStop Offset="0.4" Color="#252525" />
+        <!--  Base dark gray (core color)  -->
+        <GradientStop Offset="0.75" Color="#1A1818" />
+        <!--  Mid depth transition  -->
+        <GradientStop Offset="1" Color="#121010" />
+        <!--  Deep shadow  -->
     </LinearGradientBrush>
 
     <!--  Current Prayer - Ultra green with intense glass reflection and multiple depth layers  -->
     <LinearGradientBrush x:Key="PrayerCardCurrentGradientLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#E0F8E7" Offset="0" />      <!-- Brilliant top highlight (intense glass) -->
-        <GradientStop Color="#D0F5DA" Offset="0.12" />   <!-- Upper glass reflection layer -->
-        <GradientStop Color="#B8F0C5" Offset="0.35" />   <!-- Base ultra green (core color) -->
-        <GradientStop Color="#A8E8B5" Offset="0.7" />    <!-- Mid depth transition -->
-        <GradientStop Color="#98E0A5" Offset="1" />      <!-- Deep rich green shadow -->
+        <GradientStop Offset="0" Color="#E0F8E7" />
+        <!--  Brilliant top highlight (intense glass)  -->
+        <GradientStop Offset="0.12" Color="#D0F5DA" />
+        <!--  Upper glass reflection layer  -->
+        <GradientStop Offset="0.35" Color="#B8F0C5" />
+        <!--  Base ultra green (core color)  -->
+        <GradientStop Offset="0.7" Color="#A8E8B5" />
+        <!--  Mid depth transition  -->
+        <GradientStop Offset="1" Color="#98E0A5" />
+        <!--  Deep rich green shadow  -->
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="PrayerCardCurrentGradientDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#507050" Offset="0" />      <!-- Brilliant top highlight (intense glass) -->
-        <GradientStop Color="#3F5F42" Offset="0.12" />   <!-- Upper glass reflection layer -->
-        <GradientStop Color="#2D4A2D" Offset="0.35" />   <!-- Base dark green (core color) -->
-        <GradientStop Color="#1F3A1F" Offset="0.7" />    <!-- Mid depth transition -->
-        <GradientStop Color="#152A15" Offset="1" />      <!-- Deep shadow -->
+        <GradientStop Offset="0" Color="#507050" />
+        <!--  Brilliant top highlight (intense glass)  -->
+        <GradientStop Offset="0.12" Color="#3F5F42" />
+        <!--  Upper glass reflection layer  -->
+        <GradientStop Offset="0.35" Color="#2D4A2D" />
+        <!--  Base dark green (core color)  -->
+        <GradientStop Offset="0.7" Color="#1F3A1F" />
+        <!--  Mid depth transition  -->
+        <GradientStop Offset="1" Color="#152A15" />
+        <!--  Deep shadow  -->
     </LinearGradientBrush>
 
     <!--  Upcoming Prayer - Ultra amber with intense warm glass glow and multiple depth layers  -->
     <LinearGradientBrush x:Key="PrayerCardUpcomingGradientLight" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#FFFCF0" Offset="0" />      <!-- Brilliant warm highlight (intense glow) -->
-        <GradientStop Color="#FFF5D0" Offset="0.12" />   <!-- Upper glass glow layer -->
-        <GradientStop Color="#FFE8A0" Offset="0.35" />   <!-- Base ultra amber (core color) -->
-        <GradientStop Color="#FFD980" Offset="0.7" />    <!-- Mid warm depth transition -->
-        <GradientStop Color="#FFCC60" Offset="1" />      <!-- Deep rich golden shadow -->
+        <GradientStop Offset="0" Color="#FFFCF0" />
+        <!--  Brilliant warm highlight (intense glow)  -->
+        <GradientStop Offset="0.12" Color="#FFF5D0" />
+        <!--  Upper glass glow layer  -->
+        <GradientStop Offset="0.35" Color="#FFE8A0" />
+        <!--  Base ultra amber (core color)  -->
+        <GradientStop Offset="0.7" Color="#FFD980" />
+        <!--  Mid warm depth transition  -->
+        <GradientStop Offset="1" Color="#FFCC60" />
+        <!--  Deep rich golden shadow  -->
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="PrayerCardUpcomingGradientDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Color="#6A5A45" Offset="0" />      <!-- Brilliant warm highlight (intense glow) -->
-        <GradientStop Color="#5A4A35" Offset="0.12" />   <!-- Upper glass glow layer -->
-        <GradientStop Color="#3A3320" Offset="0.35" />   <!-- Base dark amber (core color) -->
-        <GradientStop Color="#2A2318" Offset="0.7" />    <!-- Mid warm depth transition -->
-        <GradientStop Color="#1A1810" Offset="1" />      <!-- Deep shadow -->
+        <GradientStop Offset="0" Color="#6A5A45" />
+        <!--  Brilliant warm highlight (intense glow)  -->
+        <GradientStop Offset="0.12" Color="#5A4A35" />
+        <!--  Upper glass glow layer  -->
+        <GradientStop Offset="0.35" Color="#3A3320" />
+        <!--  Base dark amber (core color)  -->
+        <GradientStop Offset="0.7" Color="#2A2318" />
+        <!--  Mid warm depth transition  -->
+        <GradientStop Offset="1" Color="#1A1810" />
+        <!--  Deep shadow  -->
     </LinearGradientBrush>
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
@@ -305,12 +347,15 @@
     <!--  Card Colors - Better contrast with background  -->
     <Color x:Key="CardBackgroundColor">#FFC0B9BF</Color>
     <Color x:Key="CardBackgroundColorDark">#0F0E13</Color>
-    
+
     <!--  Optional card flavor variants (light) for subtle visual variety  -->
-    <Color x:Key="CardBackgroundWarmLight">#F4ECE6</Color>     <!-- warm beige tint -->
-    <Color x:Key="CardBackgroundCoolLight">#E8F2F4</Color>     <!-- cool teal tint  -->
-    <Color x:Key="CardBackgroundNeutralLight">#ECE8F1</Color>  <!-- neutral lavender -->
-    
+    <Color x:Key="CardBackgroundWarmLight">#F4ECE6</Color>
+    <!--  warm beige tint  -->
+    <Color x:Key="CardBackgroundCoolLight">#E8F2F4</Color>
+    <!--  cool teal tint  -->
+    <Color x:Key="CardBackgroundNeutralLight">#ECE8F1</Color>
+    <!--  neutral lavender  -->
+
     <!--  Optional card flavor variants (dark) to keep parity (unused by default)  -->
     <Color x:Key="CardBackgroundWarmDark">#28211D</Color>
     <Color x:Key="CardBackgroundCoolDark">#1C2426</Color>
@@ -421,7 +466,7 @@
 
     <Color x:Key="OnErrorColor">#FFFFFF</Color>
     <Color x:Key="OnErrorColorDark">#601410</Color>
-    
+
     <!--  On-Secondary Colors for text/icons placed on Secondary backgrounds  -->
     <Color x:Key="OnSecondaryColor">#FFFFFF</Color>
     <Color x:Key="OnSecondaryColorDark">#1A1C1E</Color>
@@ -436,20 +481,26 @@
 
     <!--  Surface aliases  -->
     <!--  Some views refer to SurfaceVariantColor/SurfaceVariantColorDark; map to M3 variant tokens  -->
-    <Color x:Key="SurfaceVariantColor">#E7E0E2</Color>         <!-- equals SurfaceVariantLight -->
-    <Color x:Key="SurfaceVariantColorDark">#49454F</Color>     <!-- equals SurfaceVariantDark  -->
+    <Color x:Key="SurfaceVariantColor">#E7E0E2</Color>
+    <!--  equals SurfaceVariantLight  -->
+    <Color x:Key="SurfaceVariantColorDark">#49454F</Color>
+    <!--  equals SurfaceVariantDark  -->
 
     <!--  Some views refer to SurfaceColor/SurfaceColorDark; use container surfaces  -->
-    <Color x:Key="SurfaceColor">#ECE6EB</Color>               <!-- equals SurfaceContainerLight -->
-    <Color x:Key="SurfaceColorDark">#201F24</Color>           <!-- equals SurfaceContainerDark  -->
+    <Color x:Key="SurfaceColor">#ECE6EB</Color>
+    <!--  equals SurfaceContainerLight  -->
+    <Color x:Key="SurfaceColorDark">#201F24</Color>
+    <!--  equals SurfaceContainerDark  -->
 
     <!--  Gray scale aliases used in some pages  -->
     <Color x:Key="Gray900">#1A1A1A</Color>
     <Color x:Key="Gray300">#E0E0E0</Color>
 
     <!--  Info semantic colors used in About page; align with Secondary palette  -->
-    <Color x:Key="InfoColor">#218187</Color>                  <!-- equals Secondary60 -->
-    <Color x:Key="InfoColorDark">#88D5DA</Color>              <!-- equals Secondary30 -->
+    <Color x:Key="InfoColor">#218187</Color>
+    <!--  equals Secondary60  -->
+    <Color x:Key="InfoColorDark">#88D5DA</Color>
+    <!--  equals Secondary30  -->
 
     <!--  OnWarningColor alias used in MonthPage buttons; on-color for Warning backgrounds  -->
     <Color x:Key="OnWarningColor">#000000</Color>

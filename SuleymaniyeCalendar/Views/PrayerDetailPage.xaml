@@ -218,7 +218,7 @@
     <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
         <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="36,24" HorizontalOptions="Center" VerticalOptions="Center">
             <VerticalStackLayout Spacing="14" HorizontalOptions="Center">
-                <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="48" HeightRequest="48" />
+                <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="80" HeightRequest="80" />
                 <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
             </VerticalStackLayout>
         </Border>

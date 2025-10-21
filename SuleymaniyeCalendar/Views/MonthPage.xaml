@@ -29,8 +29,8 @@
                     <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
                         <ActivityIndicator IsRunning="{Binding IsBusy}"
                                            Style="{StaticResource GoldenActivityIndicator}"
-                                           HeightRequest="48"
-                                           WidthRequest="48" />
+                                           HeightRequest="80"
+                                           WidthRequest="80" />
                         <Label Text="{localization:Translate IcerikYukleniyor}"
                                Style="{StaticResource TitleMediumStyle}"
                                HorizontalTextAlignment="Center"

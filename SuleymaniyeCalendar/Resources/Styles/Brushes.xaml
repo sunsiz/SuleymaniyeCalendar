@@ -1,6 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <?xaml-comp compile="true" ?>
-<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
     <!--  GOLDEN HOUR REDESIGN - Hero Current Prayer Gradients (Theme-Aware) 🌟  -->
@@ -18,15 +20,15 @@
     <!--  Hero Current Prayer - Dark Mode: Subtle Golden Glow (Darker) 🌙  -->
     <LinearGradientBrush x:Key="HeroCurrentPrayerBrushDark" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.0" Color="#3D3528" />
-        <!-- Dark brown-gold -->
+        <!--  Dark brown-gold  -->
         <GradientStop Offset="0.25" Color="#4A3F2E" />
-        <!-- Subtle gold tint -->
+        <!--  Subtle gold tint  -->
         <GradientStop Offset="0.5" Color="#574934" />
-        <!-- Warm dark gold -->
+        <!--  Warm dark gold  -->
         <GradientStop Offset="0.75" Color="#5E4D35" />
-        <!-- Muted gold -->
+        <!--  Muted gold  -->
         <GradientStop Offset="1.0" Color="#655038" />
-        <!-- Rich dark gold -->
+        <!--  Rich dark gold  -->
     </LinearGradientBrush>
 
     <!--  Theme-Aware Wrapper (Auto-switches based on theme)  -->
@@ -250,7 +252,7 @@
     </LinearGradientBrush>
 
     <!--  Additional glass variants for showcase (soft blur simulation via lighter alphas)  -->
-    <!-- Light outline gradient for outline buttons -->
+    <!--  Light outline gradient for outline buttons  -->
     <LinearGradientBrush x:Key="GlassOutlineLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#F8FFFFFF" />
         <GradientStop Offset="1" Color="#ECFFFFFF" />
@@ -338,7 +340,7 @@
         <GradientStop Offset="1" Color="#48FFFFFF" />
     </LinearGradientBrush>
 
-    <!--  Enhanced variants: Heavy Inner Edge, Opaque Inner Edge (simulated inner stroke via brighter edges) -->
+    <!--  Enhanced variants: Heavy Inner Edge, Opaque Inner Edge (simulated inner stroke via brighter edges)  -->
     <LinearGradientBrush x:Key="FrostGlassHeavyInnerLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#62FFFFFF" />
         <GradientStop Offset="0.45" Color="#48FFFFFF" />
@@ -360,7 +362,7 @@
         <GradientStop Offset="1" Color="#58FFFFFF" />
     </LinearGradientBrush>
 
-    <!--  New high-opacity 'Frozen' and 'Crystal' tiers -->
+    <!--  New high-opacity 'Frozen' and 'Crystal' tiers  -->
     <LinearGradientBrush x:Key="FrostGlassFrozenLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#B5FFFFFF" />
         <GradientStop Offset="0.55" Color="#B0FFFFFF" />
@@ -598,7 +600,7 @@
         <GradientStop Offset="1" Color="{StaticResource Secondary60}" />
     </LinearGradientBrush>
 
-    <!-- Edge highlight demo: strong bright edges, dim center -->
+    <!--  Edge highlight demo: strong bright edges, dim center  -->
     <LinearGradientBrush x:Key="GlassDemoEdgeLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#FFFFFFFF" />
         <GradientStop Offset="0.5" Color="#D8F0F0F0" />
@@ -667,7 +669,7 @@
     </LinearGradientBrush>
 
     <!--  iOS 17/18/19+ inspired layered acrylic glass (iOS 26 aesthetic approximation)  -->
-    <!--  Core idea: soft luminous top edge, subtle vertical fade, faint tint channel, elevated diffused inner light -->
+    <!--  Core idea: soft luminous top edge, subtle vertical fade, faint tint channel, elevated diffused inner light  -->
     <LinearGradientBrush x:Key="iOSGlassBaseLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#AAFFFFFF" />
         <GradientStop Offset="0.35" Color="#80FFFFFF" />
@@ -738,7 +740,7 @@
         <GradientStop Offset="0.65" Color="#24FFFFFF" />
         <GradientStop Offset="1" Color="#18FFFFFF" />
     </LinearGradientBrush>
-    <!-- Specular diagonal highlight band for the liquid effect (overlay) -->
+    <!--  Specular diagonal highlight band for the liquid effect (overlay)  -->
     <LinearGradientBrush x:Key="iOSLiquidSpecularLight" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Offset="0.00" Color="#00FFFFFF" />
         <GradientStop Offset="0.30" Color="#22FFFFFF" />
@@ -753,7 +755,7 @@
         <GradientStop Offset="0.60" Color="#12FFFFFF" />
         <GradientStop Offset="1.00" Color="#00FFFFFF" />
     </LinearGradientBrush>
-    <!-- Inner glow to emphasize top light pool -->
+    <!--  Inner glow to emphasize top light pool  -->
     <RadialGradientBrush x:Key="iOSLiquidInnerGlowLight" Center="0.5,0.08" Radius="0.9">
         <GradientStop Offset="0" Color="#30FFFFFF" />
         <GradientStop Offset="1" Color="#00FFFFFF" />
@@ -763,9 +765,9 @@
         <GradientStop Offset="1" Color="#00FFFFFF" />
     </RadialGradientBrush>
 
-    <!-- iOS 26 Icon-style glass (warm translucent tile) -->
+    <!--  iOS 26 Icon-style glass (warm translucent tile)  -->
     <LinearGradientBrush x:Key="iOS26IconGlassLight" StartPoint="0,0" EndPoint="0,1">
-        <!-- bright rim to warm creamy body -->
+        <!--  bright rim to warm creamy body  -->
         <GradientStop Offset="0.00" Color="#F4FFFFFF" />
         <GradientStop Offset="0.18" Color="#E8FFFFFF" />
         <GradientStop Offset="0.50" Color="#F0F0C8" />
@@ -779,7 +781,7 @@
         <GradientStop Offset="0.85" Color="#1A4A503C" />
         <GradientStop Offset="1.00" Color="#12FFFFFF" />
     </LinearGradientBrush>
-    <!-- top rim highlight for icon tiles -->
+    <!--  top rim highlight for icon tiles  -->
     <LinearGradientBrush x:Key="iOS26RimHighlightLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.00" Color="#66FFFFFF" />
         <GradientStop Offset="0.12" Color="#22FFFFFF" />
@@ -790,10 +792,10 @@
         <GradientStop Offset="0.12" Color="#18FFFFFF" />
         <GradientStop Offset="1.00" Color="#00FFFFFF" />
     </LinearGradientBrush>
-    <!-- faint inner stroke (inset border) -->
+    <!--  faint inner stroke (inset border)  -->
     <SolidColorBrush x:Key="iOS26InnerStrokeLight" Color="#33FFFFFF" />
     <SolidColorBrush x:Key="iOS26InnerStrokeDark" Color="#22FFFFFF" />
-    <!-- small top-left glow (icon tile) -->
+    <!--  small top-left glow (icon tile)  -->
     <RadialGradientBrush x:Key="iOS26IconGlowLight" Center="0.22,0.12" Radius="0.65">
         <GradientStop Offset="0" Color="#30FFFFFF" />
         <GradientStop Offset="1" Color="#00FFFFFF" />
@@ -802,7 +804,7 @@
         <GradientStop Offset="0" Color="#22FFFFFF" />
         <GradientStop Offset="1" Color="#00FFFFFF" />
     </RadialGradientBrush>
-    <!-- iOS 26 pill-style base & specular -->
+    <!--  iOS 26 pill-style base & specular  -->
     <LinearGradientBrush x:Key="iOS26PillGlassLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.00" Color="#F2FFFFFF" />
         <GradientStop Offset="0.45" Color="#E0FFFFFF" />
@@ -828,7 +830,7 @@
         <GradientStop Offset="1.00" Color="#00FFFFFF" />
     </LinearGradientBrush>
 
-    <!-- Vista/Aero rainbow diagonal overlay for colorful transparency feel -->
+    <!--  Vista/Aero rainbow diagonal overlay for colorful transparency feel  -->
     <LinearGradientBrush x:Key="VistaAeroRainbowLight" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Offset="0.00" Color="#18F2A4FF" />
         <GradientStop Offset="0.35" Color="#18A4E8FF" />
@@ -843,7 +845,7 @@
     </LinearGradientBrush>
     <!--  Windows Vista / Aero Glass inspired gradient and highlight overlays  -->
     <LinearGradientBrush x:Key="VistaAeroGlassLight" StartPoint="0,0" EndPoint="0,1">
-        <!-- Enhanced: crisper top gloss, richer blue core, soft fade to translucent base -->
+        <!--  Enhanced: crisper top gloss, richer blue core, soft fade to translucent base  -->
         <GradientStop Offset="0.00" Color="#CCFFFFFF" />
         <GradientStop Offset="0.10" Color="#A6FFFFFF" />
         <GradientStop Offset="0.32" Color="#9ADAF4FF" />
@@ -856,7 +858,7 @@
         <GradientStop Offset="0.75" Color="#335082B5" />
         <GradientStop Offset="1.00" Color="#20FFFFFF" />
     </LinearGradientBrush>
-    <!-- Aero stroke: brighter top edge fading to cooler bottom -->
+    <!--  Aero stroke: brighter top edge fading to cooler bottom  -->
     <LinearGradientBrush x:Key="VistaAeroStrokeLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.00" Color="#88FFFFFF" />
         <GradientStop Offset="0.55" Color="#6FA7D8FF" />
@@ -867,7 +869,7 @@
         <GradientStop Offset="0.6" Color="#3F5F96C8" />
         <GradientStop Offset="1.00" Color="#1F7AA1C6" />
     </LinearGradientBrush>
-    <!-- Aero top gloss strip overlay -->
+    <!--  Aero top gloss strip overlay  -->
     <LinearGradientBrush x:Key="VistaGlossHighlightLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.00" Color="#66FFFFFF" />
         <GradientStop Offset="0.08" Color="#22FFFFFF" />
@@ -880,7 +882,7 @@
         <GradientStop Offset="0.20" Color="#00FFFFFF" />
         <GradientStop Offset="1.00" Color="#00FFFFFF" />
     </LinearGradientBrush>
-    <!-- Soft blue glow center for Vista glass -->
+    <!--  Soft blue glow center for Vista glass  -->
     <RadialGradientBrush x:Key="VistaAeroGlowLight" Center="0.5,0.22" Radius="0.9">
         <GradientStop Offset="0" Color="#3380B4FF" />
         <GradientStop Offset="1" Color="#00FFFFFF" />
@@ -890,7 +892,7 @@
         <GradientStop Offset="1" Color="#00FFFFFF" />
     </RadialGradientBrush>
 
-    <!-- Vista/Aero button fills -->
+    <!--  Vista/Aero button fills  -->
     <LinearGradientBrush x:Key="VistaAeroButtonLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0.00" Color="#E0FFFFFF" />
         <GradientStop Offset="0.16" Color="#C8FFFFFF" />
@@ -905,7 +907,7 @@
         <GradientStop Offset="1.00" Color="#18FFFFFF" />
     </LinearGradientBrush>
 
-    <!-- iOS Liquid button fills (condensed specular) -->
+    <!--  iOS Liquid button fills (condensed specular)  -->
     <LinearGradientBrush x:Key="iOSLiquidButtonLight" StartPoint="0,0" EndPoint="1,1">
         <GradientStop Offset="0.00" Color="#E8FFFFFF" />
         <GradientStop Offset="0.35" Color="#B6FFFFFF" />
@@ -918,5 +920,4 @@
         <GradientStop Offset="0.55" Color="#1AFFFFFF" />
         <GradientStop Offset="1.00" Color="#14FFFFFF" />
     </LinearGradientBrush>
-
 </ResourceDictionary>

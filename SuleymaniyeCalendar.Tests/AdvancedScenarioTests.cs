@@ -437,7 +437,7 @@ namespace SuleymaniyeCalendar.Tests
                 .ThrowsAsync(new HttpRequestException("API endpoint not found"));
 
             // Act & Assert
-            var exception = await Assert.ThrowsExceptionAsync<HttpRequestException>(async () =>
+            var exception = await Assert.ThrowsAsync<HttpRequestException>(async () =>
             {
                 await _mockJsonApiService.Object.GetDailyPrayerTimesAsync(40.7589, -73.9851, DateTime.Now, 0);
             });

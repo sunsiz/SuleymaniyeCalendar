@@ -245,13 +245,13 @@
                                     <!-- Specular diagonal band overlay -->
                                     <BoxView Opacity="1">
                                         <BoxView.Background>
-                                            <AppThemeBinding Light="{StaticResource iOSLiquidSpecularLight}" Dark="{StaticResource iOSLiquidSpecularDark}" />
+                                                <SolidColorBrush Color="{AppThemeBinding Light={StaticResource iOSLiquidSpecularLight}, Dark={StaticResource iOSLiquidSpecularDark}}" />
                                         </BoxView.Background>
                                     </BoxView>
                                     <!-- optional inner glow accent -->
                                     <BoxView>
                                         <BoxView.Background>
-                                            <AppThemeBinding Light="{StaticResource iOSLiquidInnerGlowLight}" Dark="{StaticResource iOSLiquidInnerGlowDark}" />
+                                                <SolidColorBrush Color="{AppThemeBinding Light={StaticResource iOSLiquidInnerGlowLight}, Dark={StaticResource iOSLiquidInnerGlowDark}}" />
                                         </BoxView.Background>
                                     </BoxView>
                                     <VerticalStackLayout Spacing="4">
@@ -284,19 +284,19 @@
                                     <!-- Rim highlight at the very top edge (rounded to tile radius) -->
                                     <Border HeightRequest="16" VerticalOptions="Start" StrokeShape="RoundRectangle 26" InputTransparent="True">
                                         <Border.Background>
-                                            <AppThemeBinding Light="{StaticResource iOS26RimHighlightLight}" Dark="{StaticResource iOS26RimHighlightDark}" />
+                                                <SolidColorBrush Color="{AppThemeBinding Light={StaticResource iOS26RimHighlightLight}, Dark={StaticResource iOS26RimHighlightDark}}" />
                                         </Border.Background>
                                     </Border>
                                     <!-- Faint top-left icon glow (rounded to tile radius) -->
                                     <Border StrokeShape="RoundRectangle 26" InputTransparent="True">
                                         <Border.Background>
-                                            <AppThemeBinding Light="{StaticResource iOS26IconGlowLight}" Dark="{StaticResource iOS26IconGlowDark}" />
+                                                <SolidColorBrush Color="{AppThemeBinding Light={StaticResource iOS26IconGlowLight}, Dark={StaticResource iOS26IconGlowDark}}" />
                                         </Border.Background>
                                     </Border>
                                     <!-- Inset inner stroke illusion -->
                                     <Border StrokeShape="RoundRectangle 24" StrokeThickness="1">
                                         <Border.Stroke>
-                                            <AppThemeBinding Light="{StaticResource iOS26InnerStrokeLight}" Dark="{StaticResource iOS26InnerStrokeDark}" />
+                                                <SolidColorBrush Color="{AppThemeBinding Light={StaticResource iOS26InnerStrokeLight}, Dark={StaticResource iOS26InnerStrokeDark}}" />
                                         </Border.Stroke>
                                         <Border.Background>
                                             <SolidColorBrush Color="Transparent" />
@@ -314,7 +314,7 @@
                                     <!-- Specular band running diagonally across the pill -->
                                     <BoxView>
                                         <BoxView.Background>
-                                            <AppThemeBinding Light="{StaticResource iOS26PillSpecularLight}" Dark="{StaticResource iOS26PillSpecularDark}" />
+                                                <SolidColorBrush Color="{AppThemeBinding Light={StaticResource iOS26PillSpecularLight}, Dark={StaticResource iOS26PillSpecularDark}}" />
                                         </BoxView.Background>
                                     </BoxView>
                                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="6,0">
@@ -799,13 +799,13 @@
                                     <!-- Gloss band at the top (rounded to card radius) -->
                                     <Border HeightRequest="28" VerticalOptions="Start" StrokeShape="RoundRectangle 14" InputTransparent="True">
                                         <Border.Background>
-                                            <AppThemeBinding Light="{StaticResource VistaGlossHighlightLight}" Dark="{StaticResource VistaGlossHighlightDark}" />
+                                                <SolidColorBrush Color="{AppThemeBinding Light={StaticResource VistaGlossHighlightLight}, Dark={StaticResource VistaGlossHighlightDark}}" />
                                         </Border.Background>
                                     </Border>
                                     <!-- Soft blue glow across panel (rounded to card radius) -->
                                     <Border StrokeShape="RoundRectangle 14" InputTransparent="True">
                                         <Border.Background>
-                                            <AppThemeBinding Light="{StaticResource VistaAeroGlowLight}" Dark="{StaticResource VistaAeroGlowDark}" />
+                                                <SolidColorBrush Color="{AppThemeBinding Light={StaticResource VistaAeroGlowLight}, Dark={StaticResource VistaAeroGlowDark}}" />
                                         </Border.Background>
                                     </Border>
                                     <VerticalStackLayout Spacing="4">

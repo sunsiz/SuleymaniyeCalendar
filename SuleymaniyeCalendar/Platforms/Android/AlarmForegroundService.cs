@@ -10,7 +10,7 @@ using Application = Android.App.Application;
 
 namespace SuleymaniyeCalendar
 {
-	[Service]
+    [Service(Exported = false, ForegroundServiceType = Android.Content.PM.ForegroundService.TypeDataSync)]
 	public class AlarmForegroundService : Service, IAlarmService
 	{
 		internal NotificationManager _notificationManager;
@@ -169,7 +169,14 @@ namespace SuleymaniyeCalendar
             
             SetNotification();
 
-			if(Preferences.Get("ForegroundServiceEnabled",true))this.StartForeground(NOTIFICATION_ID, _notification);
+			if(Preferences.Get("ForegroundServiceEnabled",true))if (Build.VERSION.SdkInt >= BuildVersionCodes.UpsideDownCake) // API 34
+{
+    this.StartForeground(NOTIFICATION_ID, _notification, Android.Content.PM.ForegroundService.TypeDataSync);
+}
+else
+{
+    this.StartForeground(NOTIFICATION_ID, _notification);
+}
 
 			// This Action will run every 30 second as foreground service running.
 			_runnable = new Action(() =>

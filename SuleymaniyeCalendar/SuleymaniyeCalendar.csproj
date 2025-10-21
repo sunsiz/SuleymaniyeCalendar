@@ -22,6 +22,11 @@
   </PropertyGroup>
   <PropertyGroup>
 	<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.26100.0</TargetFrameworks>
+	<DefaultLanguage>tr-tr</DefaultLanguage>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
+    <PublishTrimmed>False</PublishTrimmed>
+    <RunAOTCompilation>False</RunAOTCompilation>
   </PropertyGroup>
   <ItemGroup>
 	<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#EFEBE9" />
@@ -41,8 +46,8 @@
 	<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.1.2" />
 	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 	<PackageReference Include="LocalizationResourceManager.Maui" Version="1.2.2" />
-	<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.9" />
-	<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.110" />
+	<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.10" />
+	<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.120" />
   </ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="Resources\Strings\AppResources.resx">
