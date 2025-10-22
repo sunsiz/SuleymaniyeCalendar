@@ -24,7 +24,7 @@ namespace SuleymaniyeCalendar.ViewModels
         private DataService _data;
         private Task _startupRefreshTask;
         private Task _weeklyAlarmsTask;
-    // (Removed legacy _skipWindowsGeocoding flag; Windows geocoding guarded by token check in GetCityAsync.)
+        // (Removed legacy _skipWindowsGeocoding flag; Windows geocoding guarded by token check in GetCityAsync.)
 
         // Throttle refreshes to avoid duplicate work during navigation churn
         private DateTimeOffset _lastUiRefresh = DateTimeOffset.MinValue;
@@ -37,31 +37,31 @@ namespace SuleymaniyeCalendar.ViewModels
 
         // Single-flight guard for UI refresh
         private int _refreshing; // 0 = idle, 1 = running
-    // Single-flight guard for manual location refresh pipeline (pull-to-refresh and refresh button)
-    private int _locationRefreshing; // 0 = idle, 1 = running
+                                 // Single-flight guard for manual location refresh pipeline (pull-to-refresh and refresh button)
+        private int _locationRefreshing; // 0 = idle, 1 = running
 
-    private ObservableCollection<Prayer> prayers;
-    public ObservableCollection<Prayer> Prayers { get => prayers; set => SetProperty(ref prayers, value); }
+        private ObservableCollection<Prayer> prayers;
+        public ObservableCollection<Prayer> Prayers { get => prayers; set => SetProperty(ref prayers, value); }
 
-    private string remainingTime;
-    public string RemainingTime { get => remainingTime; set => SetProperty(ref remainingTime, value); }
+        private string remainingTime;
+        public string RemainingTime { get => remainingTime; set => SetProperty(ref remainingTime, value); }
 
-    // 🎨 PHASE 17: Progress percentage for animated gradient (0.0 to 1.0)
-    private double timeProgress;
-    public double TimeProgress { get => timeProgress; set => SetProperty(ref timeProgress, value); }
+        // 🎨 PHASE 17: Progress percentage for animated gradient (0.0 to 1.0)
+        private double timeProgress;
+        public double TimeProgress { get => timeProgress; set => SetProperty(ref timeProgress, value); }
 
-    private string city;
-    public string City { get => city; set => SetProperty(ref city, value); }
+        private string city;
+        public string City { get => city; set => SetProperty(ref city, value); }
         private IDispatcherTimer _ticker;
         private EventHandler _tickHandler;
 
         // Dedicated flag for pull-to-refresh to avoid coupling with IsBusy
-    private bool isRefreshing;
-    public bool IsRefreshing { get => isRefreshing; set => SetProperty(ref isRefreshing, value); }
+        private bool isRefreshing;
+        public bool IsRefreshing { get => isRefreshing; set => SetProperty(ref isRefreshing, value); }
 
         // Bind CollectionView.SelectedItem to this
-    private Prayer selectedPrayer;
-    public Prayer SelectedPrayer { get => selectedPrayer; set => SetProperty(ref selectedPrayer, value); }
+        private Prayer selectedPrayer;
+        public Prayer SelectedPrayer { get => selectedPrayer; set => SetProperty(ref selectedPrayer, value); }
 
         // Prevent double navigation/reentrancy on fast taps/selection churn
         private bool _isNavigating;
@@ -90,13 +90,18 @@ namespace SuleymaniyeCalendar.ViewModels
             Prayers = new ObservableCollection<Prayer>();
             _data = dataService;
             _calendar = _data.calendar;
-
+            try
+            {
             // Lightweight initial population; deeper refresh is coalesced in OnAppearing
             LoadPrayers();
 
             // Fire and forget non-UI work
             _ = Task.Run(() => GetCity());
-
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"MainViewModel initialization error: {ex.Message}");
+            }
 #if WINDOWS
             // On Windows we run in MOCK mode: no permission prompts, no geolocation queries.
             // Ensure a mock/cached city is visible immediately and skip first-run auto location logic.
@@ -117,7 +122,7 @@ namespace SuleymaniyeCalendar.ViewModels
             if (lastAlarmDateStr != "Empty")
             {
                 DateTime lastAlarm;
-                if (DateTime.TryParse(lastAlarmDateStr, out lastAlarm) || DateTime.TryParseExact(lastAlarmDateStr, new[] {"dd/MM/yyyy","dd-MM-yyyy","yyyy-MM-dd"}, CultureInfo.InvariantCulture, DateTimeStyles.None, out lastAlarm))
+                if (DateTime.TryParse(lastAlarmDateStr, out lastAlarm) || DateTime.TryParseExact(lastAlarmDateStr, new[] { "dd/MM/yyyy", "dd-MM-yyyy", "yyyy-MM-dd" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out lastAlarm))
                 {
                     if ((lastAlarm - DateTime.Today).Days > 4)
                         _weeklyAlarmsTask = _data.SetMonthlyAlarmsAsync();
@@ -129,7 +134,7 @@ namespace SuleymaniyeCalendar.ViewModels
         }
 
         [RelayCommand]
-        public async Task GoToMap()
+        private async Task GoToMap()
         {
             try
             {
@@ -328,13 +333,13 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
-    private async Task GetCityAsync()
+        private async Task GetCityAsync()
         {
             try
             {
                 // Add timeout to prevent hanging
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-                
+
 #if WINDOWS
                 // Provide mock city immediately when no token; avoids any Geocoding API call (which crashes without token).
                 var mapToken = Preferences.Get("MapServiceToken", string.Empty);
@@ -627,15 +632,15 @@ namespace SuleymaniyeCalendar.ViewModels
                 _ticker.Interval = TimeSpan.FromSeconds(1);
                 // 🎨 PHASE 17: Update both RemainingTime and TimeProgress for animated gradient
                 // 🔄 PHASE 18: Detect date changes + recalculate states when minute changes
-                _tickHandler = (s, e) => 
+                _tickHandler = (s, e) =>
                 {
                     // Always update remaining time and progress (text updates every second)
                     RemainingTime = GetRemainingTime();
-                    
+
                     var now = DateTime.Now;
                     var today = now.Date;
                     var currentMinute = now.Minute;
-                    
+
                     // Check if date has changed (midnight crossed or system date changed)
                     if (today != _lastKnownDate)
                     {
@@ -733,7 +738,7 @@ namespace SuleymaniyeCalendar.ViewModels
         {
             var totalDuration = endTime - startTime;
             var elapsed = currentTime - startTime;
-            
+
             if (totalDuration.TotalSeconds > 0)
             {
                 TimeProgress = Math.Clamp(elapsed.TotalSeconds / totalDuration.TotalSeconds, 0.0, 1.0);

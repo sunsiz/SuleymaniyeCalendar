@@ -10,30 +10,38 @@ public class MainActivity : MauiAppCompatActivity
 {
 	protected override async void OnCreate(Bundle savedInstanceState)
 	{
-		base.OnCreate(savedInstanceState);
-        // Yield once to keep async signature purposeful (avoids analyzer warning after deferring tasks)
-        await Task.Yield();
-
-        // Defer notification permission so location permission (requested by first page ViewModel) can surface first
-        _ = Task.Run(async () =>
+        try
         {
-            await Task.Delay(2500); // allow initial UI + location permission
-            await MainThread.InvokeOnMainThreadAsync(async () => await EnsureNotificationPermissionAsync());
-        });
+            base.OnCreate(savedInstanceState);
+            System.Diagnostics.Debug.WriteLine("MainActivity.OnCreate: Starting initialization...");
+            // Yield once to keep async signature purposeful (avoids analyzer warning after deferring tasks)
+            await Task.Yield();
 
-        EnsureExactAlarmCapability();
+            // Defer notification permission so location permission (requested by first page ViewModel) can surface first
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(2500); // allow initial UI + location permission
+                await MainThread.InvokeOnMainThreadAsync(async () => await EnsureNotificationPermissionAsync());
+            });
 
-        if (Preferences.Get("ForegroundServiceEnabled", true))
-		{
-            var startServiceIntent = new Intent(this, typeof(AlarmForegroundService));
-            startServiceIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
+            EnsureExactAlarmCapability();
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                StartForegroundService(startServiceIntent);
-            else
-                StartService(startServiceIntent);
-		}
-	}
+            if (Preferences.Get("ForegroundServiceEnabled", true))
+            {
+                var startServiceIntent = new Intent(this, typeof(AlarmForegroundService));
+                startServiceIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    StartForegroundService(startServiceIntent);
+                else
+                    StartService(startServiceIntent);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"MainActivity.OnCreate: Exception - {ex.Message}");
+        }
+    }
 	
 
     async Task EnsureNotificationPermissionAsync()

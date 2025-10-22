@@ -1,4 +1,5 @@
-﻿using Android.App;
+﻿using System.Globalization;
+using Android.App;
 using Android.Content;
 using Android.Icu.Util;
 using Android.OS;
@@ -35,58 +36,66 @@ namespace SuleymaniyeCalendar
 
 		public void SetAlarm(DateTime date, TimeSpan triggerTimeSpan, int timeOffset, string name)
 		{
-            using (var alarmManager = (AlarmManager)Application.Context.GetSystemService(AlarmService))
-			using (var calendar = Calendar.Instance)
+			System.Diagnostics.Debug.WriteLine("TimeStamp-SetAlarm-Start", $"Setting alarm for {date} {triggerTimeSpan} {timeOffset} for {name} at {DateTime.Now:MM/dd/yyyy hh:mm:ss.fff tt}");
+			try
 			{
-				var prayerTimeSpan = triggerTimeSpan;
-				triggerTimeSpan -= TimeSpan.FromMinutes(timeOffset);
-				//Log.Info("SetAlarm", $"Before Alarm set the Calendar time is {calendar.Time} for {name}");
-				calendar.Set(date.Year, date.Month-1, date.Day, triggerTimeSpan.Hours, triggerTimeSpan.Minutes, 0);
-				//var activityIntent = new Intent(Application.Context, typeof(AlarmActivity))
-				//	.PutExtra("name", name)
-				//	.PutExtra("time", prayerTimeSpan.ToString())
-				//	.AddFlags(ActivityFlags.ReceiverForeground);
-				var intent = new Intent(Application.Context, typeof(NotificationChannelManager))
-					.PutExtra("name", name)
-					.PutExtra("time", prayerTimeSpan.ToString())
-					.AddFlags(ActivityFlags.IncludeStoppedPackages);
-				intent.AddFlags(ActivityFlags.ReceiverForeground);
-				//without the different reuestCode there will be only one pending intent and it updates every schedule, so only one alarm will be active at the end.
-				var requestCode = name switch
+				using (var alarmManager = (AlarmManager)Application.Context.GetSystemService(AlarmService))
+				using (var calendar = Java.Util.Calendar.Instance)
 				{
-					"Fecri Kazip" => date.DayOfYear + 1000,
-					"Fecri Sadık" => date.DayOfYear + 2000,
-					"Sabah Sonu" => date.DayOfYear + 3000,
-					"Öğle" => date.DayOfYear + 4000,
-					"İkindi" => date.DayOfYear + 5000,
-					"Akşam" => date.DayOfYear + 6000,
-					"Yatsı" => date.DayOfYear + 7000,
-					"Yatsı Sonu" => date.DayOfYear + 8000,
-					_ => 0
-				};
-				var pendingIntentFlags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
-					? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
-					: PendingIntentFlags.UpdateCurrent;
-				//var pendingActivityIntent = PendingIntent.GetActivity(Application.Context, requestCode, activityIntent, pendingIntentFlags);
-				var broadcastIntent = new Intent(Application.Context, typeof(AlarmNotificationReceiver))
-					.PutExtra("name", name)
-					.PutExtra("time", prayerTimeSpan.ToString())
-					.AddFlags(ActivityFlags.IncludeStoppedPackages | ActivityFlags.ReceiverForeground);
+					var prayerTimeSpan = triggerTimeSpan;
+					triggerTimeSpan -= TimeSpan.FromMinutes(timeOffset);
+					//Log.Info("SetAlarm", $"Before Alarm set the Calendar time is {calendar.Time} for {name}");
+					calendar.Set(date.Year, date.Month - 1, date.Day, triggerTimeSpan.Hours, triggerTimeSpan.Minutes, 0);
+					//var activityIntent = new Intent(Application.Context, typeof(AlarmActivity))
+					//	.PutExtra("name", name)
+					//	.PutExtra("time", prayerTimeSpan.ToString())
+					//	.AddFlags(ActivityFlags.ReceiverForeground);
+					// var intent = new Intent(Application.Context, typeof(NotificationChannelManager))
+					// 	.PutExtra("name", name)
+					// 	.PutExtra("time", prayerTimeSpan.ToString())
+					// 	.AddFlags(ActivityFlags.IncludeStoppedPackages);
+					// intent.AddFlags(ActivityFlags.ReceiverForeground);
+					//without the different reuestCode there will be only one pending intent and it updates every schedule, so only one alarm will be active at the end.
+					var requestCode = name switch
+					{
+						"Fecri Kazip" => date.DayOfYear + 1000,
+						"Fecri Sadık" => date.DayOfYear + 2000,
+						"Sabah Sonu" => date.DayOfYear + 3000,
+						"Öğle" => date.DayOfYear + 4000,
+						"İkindi" => date.DayOfYear + 5000,
+						"Akşam" => date.DayOfYear + 6000,
+						"Yatsı" => date.DayOfYear + 7000,
+						"Yatsı Sonu" => date.DayOfYear + 8000,
+						_ => 0
+					};
+					var pendingIntentFlags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
+						? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
+						: PendingIntentFlags.UpdateCurrent;
+					//var pendingActivityIntent = PendingIntent.GetActivity(Application.Context, requestCode, activityIntent, pendingIntentFlags);
+					var broadcastIntent = new Intent(Application.Context, typeof(AlarmNotificationReceiver))
+						.PutExtra("name", name)
+						.PutExtra("time", prayerTimeSpan.ToString())
+						.AddFlags(ActivityFlags.IncludeStoppedPackages | ActivityFlags.ReceiverForeground);
 
-				var flags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
-					? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
-					: PendingIntentFlags.UpdateCurrent;
+					var flags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
+						? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
+						: PendingIntentFlags.UpdateCurrent;
 
-				var pendingIntent = PendingIntent.GetBroadcast(Application.Context, requestCode, broadcastIntent, flags);
+					var pendingIntent = PendingIntent.GetBroadcast(Application.Context, requestCode, broadcastIntent, flags);
 
-				// Min SDK 26: Always use AlarmClockInfo for exact, doze-resilient delivery with system affordance.
-				var showIntent = PendingIntent.GetActivity(Application.Context, requestCode,
-					new Intent(Application.Context, typeof(MainActivity)), flags);
-				var info = new AlarmManager.AlarmClockInfo(calendar.TimeInMillis, showIntent);
-				alarmManager?.SetAlarmClock(info, pendingIntent);
-				//else
-				//    alarmManager?.SetExact(AlarmType.RtcWakeup, calendar.TimeInMillis, pendingIntent);
-				System.Diagnostics.Debug.WriteLine("SetAlarm", $"Alarm set for {calendar.Time} for {name}");
+					// Min SDK 26: Always use AlarmClockInfo for exact, doze-resilient delivery with system affordance.
+					var showIntent = PendingIntent.GetActivity(Application.Context, requestCode,
+						new Intent(Application.Context, Java.Lang.Class.FromType(typeof(MainActivity))), flags);
+					var info = new AlarmManager.AlarmClockInfo(calendar.TimeInMillis, showIntent);
+					alarmManager?.SetAlarmClock(info, pendingIntent);
+					//else
+					//    alarmManager?.SetExact(AlarmType.RtcWakeup, calendar.TimeInMillis, pendingIntent);
+					System.Diagnostics.Debug.WriteLine($"✅ Alarm scheduled: {name} on {date:dd/MM/yyyy} at {triggerTimeSpan} (request: {requestCode})");
+				}
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"❌ SetAlarm failed for {name} on {date:dd/MM/yyyy}: {ex.Message}\n{ex.StackTrace}");
 			}
 		}
 
@@ -170,13 +179,13 @@ namespace SuleymaniyeCalendar
             SetNotification();
 
 			if(Preferences.Get("ForegroundServiceEnabled",true))if (Build.VERSION.SdkInt >= BuildVersionCodes.UpsideDownCake) // API 34
-{
-    this.StartForeground(NOTIFICATION_ID, _notification, Android.Content.PM.ForegroundService.TypeDataSync);
-}
-else
-{
-    this.StartForeground(NOTIFICATION_ID, _notification);
-}
+				{
+					this.StartForeground(NOTIFICATION_ID, _notification, Android.Content.PM.ForegroundService.TypeDataSync);
+				}
+				else
+				{
+					this.StartForeground(NOTIFICATION_ID, _notification);
+				}
 
 			// This Action will run every 30 second as foreground service running.
 			_runnable = new Action(() =>
@@ -321,33 +330,33 @@ else
 			var currentTime = DateTime.Now.TimeOfDay;
 			try
 			{
-				if (currentTime < TimeSpan.Parse(calendar.FalseFajr))
+				if (currentTime < TimeSpan.Parse(calendar.FalseFajr, CultureInfo.InvariantCulture))
 					message = AppResources.FecriKazibingirmesinekalanvakit +
-							  (TimeSpan.Parse(calendar.FalseFajr) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
-				else if (currentTime >= TimeSpan.Parse(calendar.FalseFajr) && currentTime <= TimeSpan.Parse(calendar.Fajr))
+							  (TimeSpan.Parse(calendar.FalseFajr, CultureInfo.InvariantCulture) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
+				else if (currentTime >= TimeSpan.Parse(calendar.FalseFajr, CultureInfo.InvariantCulture) && currentTime <= TimeSpan.Parse(calendar.Fajr, CultureInfo.InvariantCulture))
 					message = AppResources.FecriSadikakalanvakit +
-							  (TimeSpan.Parse(calendar.Fajr) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
-				else if (currentTime >= TimeSpan.Parse(calendar.Fajr) && currentTime <= TimeSpan.Parse(calendar.Sunrise))
+							  (TimeSpan.Parse(calendar.Fajr, CultureInfo.InvariantCulture) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
+				else if (currentTime >= TimeSpan.Parse(calendar.Fajr, CultureInfo.InvariantCulture) && currentTime <= TimeSpan.Parse(calendar.Sunrise, CultureInfo.InvariantCulture))
 					message = AppResources.SabahSonunakalanvakit +
-							  (TimeSpan.Parse(calendar.Sunrise) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
-				else if (currentTime >= TimeSpan.Parse(calendar.Sunrise) && currentTime <= TimeSpan.Parse(calendar.Dhuhr))
+							  (TimeSpan.Parse(calendar.Sunrise, CultureInfo.InvariantCulture) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
+				else if (currentTime >= TimeSpan.Parse(calendar.Sunrise, CultureInfo.InvariantCulture) && currentTime <= TimeSpan.Parse(calendar.Dhuhr, CultureInfo.InvariantCulture))
 					message = AppResources.Ogleningirmesinekalanvakit +
-							  (TimeSpan.Parse(calendar.Dhuhr) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
-				else if (currentTime >= TimeSpan.Parse(calendar.Dhuhr) && currentTime <= TimeSpan.Parse(calendar.Asr))
+							  (TimeSpan.Parse(calendar.Dhuhr, CultureInfo.InvariantCulture) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
+				else if (currentTime >= TimeSpan.Parse(calendar.Dhuhr, CultureInfo.InvariantCulture) && currentTime <= TimeSpan.Parse(calendar.Asr, CultureInfo.InvariantCulture))
 					message = AppResources.Oglenincikmasinakalanvakit +
-							  (TimeSpan.Parse(calendar.Asr) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
-				else if (currentTime >= TimeSpan.Parse(calendar.Asr) && currentTime <= TimeSpan.Parse(calendar.Maghrib))
+							  (TimeSpan.Parse(calendar.Asr, CultureInfo.InvariantCulture) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
+				else if (currentTime >= TimeSpan.Parse(calendar.Asr, CultureInfo.InvariantCulture) && currentTime <= TimeSpan.Parse(calendar.Maghrib, CultureInfo.InvariantCulture))
 					message = AppResources.Ikindinincikmasinakalanvakit +
-							  (TimeSpan.Parse(calendar.Maghrib) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
-				else if (currentTime >= TimeSpan.Parse(calendar.Maghrib) && currentTime <= TimeSpan.Parse(calendar.Isha))
+							  (TimeSpan.Parse(calendar.Maghrib, CultureInfo.InvariantCulture) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
+				else if (currentTime >= TimeSpan.Parse(calendar.Maghrib, CultureInfo.InvariantCulture) && currentTime <= TimeSpan.Parse(calendar.Isha, CultureInfo.InvariantCulture))
 					message = AppResources.Aksamincikmasnakalanvakit +
-							  (TimeSpan.Parse(calendar.Isha) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
-				else if (currentTime >= TimeSpan.Parse(calendar.Isha) && currentTime <= TimeSpan.Parse(calendar.EndOfIsha))
+							  (TimeSpan.Parse(calendar.Isha, CultureInfo.InvariantCulture) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
+				else if (currentTime >= TimeSpan.Parse(calendar.Isha, CultureInfo.InvariantCulture) && currentTime <= TimeSpan.Parse(calendar.EndOfIsha, CultureInfo.InvariantCulture))
 					message = AppResources.Yatsinincikmasinakalanvakit +
-							  (TimeSpan.Parse(calendar.EndOfIsha) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
-				else if (currentTime >= TimeSpan.Parse(calendar.EndOfIsha))
+							  (TimeSpan.Parse(calendar.EndOfIsha, CultureInfo.InvariantCulture) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
+				else if (currentTime >= TimeSpan.Parse(calendar.EndOfIsha, CultureInfo.InvariantCulture))
 					message = AppResources.Yatsininciktigindangecenvakit +
-							  (currentTime - TimeSpan.Parse(calendar.EndOfIsha)).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
+							  (currentTime - TimeSpan.Parse(calendar.EndOfIsha, CultureInfo.InvariantCulture)).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
 			}
 			catch (Exception exception)
 			{
@@ -400,24 +409,24 @@ else
 					_isStarted = true;
 					
 					// Start alarm setup work in background (not blocking)
-					Task startupWork = new Task(async () =>
+					_ = Task.Run(async () =>
 					{
 						try
 						{
 							// Small delay to let the app finish startup
-							await Task.Delay(2000).ConfigureAwait(false);
-							System.Diagnostics.Debug.WriteLine("OnStartCommand: " + $"Starting Set Alarm at {DateTime.Now}");
+							await Task.Delay(7000).ConfigureAwait(false);
+							System.Diagnostics.Debug.WriteLine($"OnStartCommand: Starting Set Alarm at {DateTime.Now}");
+							
 							var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
 										?? new DataService(this);
-										await data.SetMonthlyAlarmsAsync();
+							
+							await data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
 						}
 						catch (Exception ex)
 						{
 							System.Diagnostics.Debug.WriteLine($"Error in alarm startup: {ex}");
 						}
-					});
-					startupWork.Start();
-					
+					});					
 				}
 			}
 			else if (intent.Action.Equals("SuleymaniyeTakvimi.action.STOP_SERVICE"))

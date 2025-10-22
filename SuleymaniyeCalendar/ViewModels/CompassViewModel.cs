@@ -48,21 +48,21 @@ namespace SuleymaniyeCalendar.ViewModels
 
 		private readonly DataService _dataService;
 
-		[RelayCommand]
-		private void Start()
-		{
-			Compass.ReadingChanged += Compass_ReadingChanged;
-		}
+		// [RelayCommand]
+		// private void Start()
+		// {
+		// 	Compass.ReadingChanged += Compass_ReadingChanged;
+		// }
 
-		[RelayCommand]
-		private void Stop()
-		{
-			if (!Compass.IsMonitoring)
-				return;
+		// [RelayCommand]
+		// private void Stop()
+		// {
+		// 	if (!Compass.IsMonitoring)
+		// 		return;
 
-			Compass.ReadingChanged -= Compass_ReadingChanged;
-			Compass.Stop();
-		}
+		// 	Compass.ReadingChanged -= Compass_ReadingChanged;
+		// 	Compass.Stop();
+		// }
 
 		[RelayCommand]
 		private async Task RefreshLocation()
@@ -193,6 +193,7 @@ namespace SuleymaniyeCalendar.ViewModels
 			{
 				if (!Compass.IsMonitoring)
 				{
+					Compass.ReadingChanged += Compass_ReadingChanged;
 					Compass.Start(Speed, applyLowPassFilter: true);
 				}
 			}

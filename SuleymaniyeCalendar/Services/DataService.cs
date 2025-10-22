@@ -148,7 +148,7 @@ namespace SuleymaniyeCalendar.Services
 
 		public async Task<Location> GetCurrentLocationAsync(bool refreshLocation)
 		{
-			var location = new Location(0, 0);
+			var location = new Location(0.0, 0.0);
 			// WINDOWS SAFEGUARD: Some Windows environments (missing capability or OS-level location disabled)
 			// have been observed to terminate the process (exit code 0xC000027B) when invoking Geolocation APIs.
 			// To prevent crash-at-start, we completely bypass runtime geolocation on WinUI and rely on the
@@ -670,73 +670,97 @@ namespace SuleymaniyeCalendar.Services
 		public async Task SetMonthlyAlarmsAsync()
 		{
 			Debug.WriteLine("TimeStamp-SetWeeklyAlarms-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
-			_alarmService.CancelAlarm();
-			if (CheckRemindersEnabledAny())
-			{
-				try
-				{
-					// Ensure we have 30 days of data starting today, potentially spanning next month/year
-					var location = await GetCurrentLocationAsync(false).ConfigureAwait(false);
-					if (location != null && location.Latitude != 0 && location.Longitude != 0)
-					{
-						var next30Days = await EnsureDaysRangeAsync(location, DateTime.Today, 30).ConfigureAwait(false);
-						if (next30Days == null || next30Days.Count == 0)
+            using (_perf.StartTimer("SetMonthlyAlarms"))
+            {
+			    _alarmService.CancelAlarm();
+			    if (CheckRemindersEnabledAny())
+			    {
+				    try
+				    {
+					    // Ensure we have 30 days of data starting today, potentially spanning next month/year
+					    var location = await GetCurrentLocationAsync(false).ConfigureAwait(false);
+						if (location != null && location.Latitude != 0 && location.Longitude != 0)
 						{
-							ShowToast(AppResources.AylikTakvimeErisemedi);
-							return;
-						}
-
-						int dayCounter = 0;
-						foreach (var todayCalendar in next30Days.OrderBy(d => ParseCalendarDateOrMin(d.Date)))
-						{
-							var todayDate = ParseCalendarDateOrMin(todayCalendar.Date);
-							if (todayDate >= DateTime.Today)
+							var next30Days = await EnsureDaysRangeAsync(location, DateTime.Today, 30).ConfigureAwait(false);
+							if (next30Days == null || next30Days.Count == 0)
 							{
+								ShowToast(AppResources.AylikTakvimeErisemedi);
+								Debug.WriteLine("⚠️ No days returned from EnsureDaysRangeAsync");
+								return;
+							}
+							Debug.WriteLine($"Setting alarms for {next30Days.Count} days starting {next30Days.First().Date}");
+							int dayCounter = 0;
+							var now = DateTime.Now;
+							foreach (var todayCalendar in next30Days.OrderBy(d => ParseCalendarDateOrMin(d.Date)))
+							{
+								var todayDate = ParseCalendarDateOrMin(todayCalendar.Date);
+								if (todayDate < DateTime.Today)
+								{
+									Debug.WriteLine($"⏭️ Skipping past date: {todayCalendar.Date}");
+									continue;
+								}
 								var baseDate = todayDate;
-								var falseFajrTime = TimeSpan.Parse(todayCalendar.FalseFajr);
-								var fajrTime = TimeSpan.Parse(todayCalendar.Fajr);
-								var sunriseTime = TimeSpan.Parse(todayCalendar.Sunrise);
-								var dhuhrTime = TimeSpan.Parse(todayCalendar.Dhuhr);
-								var asrTime = TimeSpan.Parse(todayCalendar.Asr);
-								var maghribTime = TimeSpan.Parse(todayCalendar.Maghrib);
-								var ishaTime = TimeSpan.Parse(todayCalendar.Isha);
-								var endOfIshaTime = TimeSpan.Parse(todayCalendar.EndOfIsha);
+								try
+								{
+									var falseFajrTime = TimeSpan.Parse(todayCalendar.FalseFajr);
+									var fajrTime = TimeSpan.Parse(todayCalendar.Fajr);
+									var sunriseTime = TimeSpan.Parse(todayCalendar.Sunrise);
+									var dhuhrTime = TimeSpan.Parse(todayCalendar.Dhuhr);
+									var asrTime = TimeSpan.Parse(todayCalendar.Asr);
+									var maghribTime = TimeSpan.Parse(todayCalendar.Maghrib);
+									var ishaTime = TimeSpan.Parse(todayCalendar.Isha);
+									var endOfIshaTime = TimeSpan.Parse(todayCalendar.EndOfIsha);
 
-								var falseFajr = baseDate + falseFajrTime - TimeSpan.FromMinutes(Preferences.Get("falsefajrNotificationTime", 0));
-								var fajr = baseDate + fajrTime - TimeSpan.FromMinutes(Preferences.Get("fajrNotificationTime", 0));
-								var sunrise = baseDate + sunriseTime - TimeSpan.FromMinutes(Preferences.Get("sunriseNotificationTime", 0));
-								var dhuhr = baseDate + dhuhrTime - TimeSpan.FromMinutes(Preferences.Get("dhuhrNotificationTime", 0));
-								var asr = baseDate + asrTime - TimeSpan.FromMinutes(Preferences.Get("asrNotificationTime", 0));
-								var maghrib = baseDate + maghribTime - TimeSpan.FromMinutes(Preferences.Get("maghribNotificationTime", 0));
-								var isha = baseDate + ishaTime - TimeSpan.FromMinutes(Preferences.Get("ishaNotificationTime", 0));
-								var endOfIsha = baseDate + endOfIshaTime - TimeSpan.FromMinutes(Preferences.Get("endofishaNotificationTime", 0));
+									Debug.WriteLine($"⏰ Processing alarms for {baseDate:dd/MM/yyyy} (day {dayCounter})");
 
-								// Use canonical Turkish names to match receiver/channel mappings and request-code strategy
-								if (DateTime.Now < falseFajr && Preferences.Get("falsefajrEnabled", false)) _alarmService.SetAlarm(baseDate, falseFajrTime, Preferences.Get("falsefajrNotificationTime", 0), "Fecri Kazip");
-								if (DateTime.Now < fajr && Preferences.Get("fajrEnabled", false)) _alarmService.SetAlarm(baseDate, fajrTime, Preferences.Get("fajrNotificationTime", 0), "Fecri Sadık");
-								if (DateTime.Now < sunrise && Preferences.Get("sunriseEnabled", false)) _alarmService.SetAlarm(baseDate, sunriseTime, Preferences.Get("sunriseNotificationTime", 0), "Sabah Sonu");
-								if (DateTime.Now < dhuhr && Preferences.Get("dhuhrEnabled", false)) _alarmService.SetAlarm(baseDate, dhuhrTime, Preferences.Get("dhuhrNotificationTime", 0), "Öğle");
-								if (DateTime.Now < asr && Preferences.Get("asrEnabled", false)) _alarmService.SetAlarm(baseDate, asrTime, Preferences.Get("asrNotificationTime", 0), "İkindi");
-								if (DateTime.Now < maghrib && Preferences.Get("maghribEnabled", false)) _alarmService.SetAlarm(baseDate, maghribTime, Preferences.Get("maghribNotificationTime", 0), "Akşam");
-								if (DateTime.Now < isha && Preferences.Get("ishaEnabled", false)) _alarmService.SetAlarm(baseDate, ishaTime, Preferences.Get("ishaNotificationTime", 0), "Yatsı");
-								if (DateTime.Now < endOfIsha && Preferences.Get("endofishaEnabled", false)) _alarmService.SetAlarm(baseDate, endOfIshaTime, Preferences.Get("endofishaNotificationTime", 0), "Yatsı Sonu");
-								dayCounter++;
-								if (dayCounter >= 30) break;
+									var falseFajr = baseDate + falseFajrTime - TimeSpan.FromMinutes(Preferences.Get("falsefajrNotificationTime", 0));
+									var fajr = baseDate + fajrTime - TimeSpan.FromMinutes(Preferences.Get("fajrNotificationTime", 0));
+									var sunrise = baseDate + sunriseTime - TimeSpan.FromMinutes(Preferences.Get("sunriseNotificationTime", 0));
+									var dhuhr = baseDate + dhuhrTime - TimeSpan.FromMinutes(Preferences.Get("dhuhrNotificationTime", 0));
+									var asr = baseDate + asrTime - TimeSpan.FromMinutes(Preferences.Get("asrNotificationTime", 0));
+									var maghrib = baseDate + maghribTime - TimeSpan.FromMinutes(Preferences.Get("maghribNotificationTime", 0));
+									var isha = baseDate + ishaTime - TimeSpan.FromMinutes(Preferences.Get("ishaNotificationTime", 0));
+									var endOfIsha = baseDate + endOfIshaTime - TimeSpan.FromMinutes(Preferences.Get("endofishaNotificationTime", 0));
+
+									// Schedule alarms only if they're in the future
+									// For today, check DateTime.Now; for future days, schedule all enabled prayers
+									bool isToday = todayDate.Date == DateTime.Today;
+
+									// Use canonical Turkish names to match receiver/channel mappings and request-code strategy
+									if ((!isToday || now < falseFajr) && Preferences.Get("falsefajrEnabled", false)) _alarmService.SetAlarm(baseDate, falseFajrTime, Preferences.Get("falsefajrNotificationTime", 0), "Fecri Kazip");
+									if ((!isToday || now < fajr) && Preferences.Get("fajrEnabled", false)) _alarmService.SetAlarm(baseDate, fajrTime, Preferences.Get("fajrNotificationTime", 0), "Fecri Sadık");
+									if ((!isToday || now < sunrise) && Preferences.Get("sunriseEnabled", false)) _alarmService.SetAlarm(baseDate, sunriseTime, Preferences.Get("sunriseNotificationTime", 0), "Sabah Sonu");
+									if ((!isToday || now < dhuhr) && Preferences.Get("dhuhrEnabled", false)) _alarmService.SetAlarm(baseDate, dhuhrTime, Preferences.Get("dhuhrNotificationTime", 0), "Öğle");
+									if ((!isToday || now < asr) && Preferences.Get("asrEnabled", false)) _alarmService.SetAlarm(baseDate, asrTime, Preferences.Get("asrNotificationTime", 0), "İkindi");
+									if ((!isToday || now < maghrib) && Preferences.Get("maghribEnabled", false)) _alarmService.SetAlarm(baseDate, maghribTime, Preferences.Get("maghribNotificationTime", 0), "Akşam");
+									if ((!isToday || now < isha) && Preferences.Get("ishaEnabled", false)) _alarmService.SetAlarm(baseDate, ishaTime, Preferences.Get("ishaNotificationTime", 0), "Yatsı");
+									if ((!isToday || now < endOfIsha) && Preferences.Get("endofishaEnabled", false)) _alarmService.SetAlarm(baseDate, endOfIshaTime, Preferences.Get("endofishaNotificationTime", 0), "Yatsı Sonu");
+									dayCounter++;
+									Debug.WriteLine($"✅ Completed day {dayCounter}: {baseDate:dd/MM/yyyy} (alarms so far)");
+									if (dayCounter >= 30) break;
+								}
+								catch (Exception ex)
+								{
+									Debug.WriteLine($"❌ Error processing day {baseDate:dd/MM/yyyy}: {ex.Message}");
+									// Continue to next day instead of breaking entire loop
+								}
+								Debug.WriteLine($"✅ Alarm scheduling complete: alarms across {dayCounter} days");
 							}
 						}
-					}
-					else
-					{
-						ShowToast(AppResources.AylikTakvimeErisemedi);
-					}
-				}
-				catch (Exception exception)
-				{
-					Debug.WriteLine($"**** {this.GetType().Name}.{nameof(GetCurrentLocationAsync)}: {exception.Message}");
-				}
+						else
+						{
+							ShowToast(AppResources.AylikTakvimeErisemedi);
+							Debug.WriteLine("⚠️ Invalid location data");
+						}
+				    }
+				    catch (Exception exception)
+				    {
+						Debug.WriteLine($"❌ SetMonthlyAlarmsAsync failed: {exception.Message}\n{exception.StackTrace}");
+				    }
 
-				Preferences.Set("LastAlarmDate", DateTime.Today.AddDays(30).ToShortDateString());
-			}
+				    Preferences.Set("LastAlarmDate", DateTime.Today.AddDays(30).ToShortDateString());
+			    }
+            }
 			Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 		}
 
@@ -744,8 +768,9 @@ namespace SuleymaniyeCalendar.Services
 		// Uses unified yearly JSON cache keyed by location/year; fills gaps via JSON monthly (same year) or JSON daily (any date).
 		private async Task<List<Calendar>> EnsureDaysRangeAsync(Location location, DateTime startDate, int daysNeeded)
 		{
-			// Invalidate yearly caches if location changed meaningfully
-			ClearYearCachesIfLocationChanged(location);
+			Debug.WriteLine($"EnsureDaysRangeAsync: Ensuring {daysNeeded} days from {startDate:dd/MM/yyyy} for location {location.Latitude},{location.Longitude}");
+            // Invalidate yearly caches if location changed meaningfully
+            ClearYearCachesIfLocationChanged(location);
 
 			var result = new List<Calendar>();
 			var endDate = startDate.AddDays(daysNeeded - 1);
@@ -773,7 +798,8 @@ namespace SuleymaniyeCalendar.Services
 						var dd = ParseCalendarDateOrMin(d.Date);
 						return dd != DateTime.MinValue && dd.Year == year && dd.Month == month;
 					}).ToList();
-					if (monthDays.Count > 27) return monthDays; // assume month is sufficiently complete
+					Debug.WriteLine($"EnsureDaysRangeAsync: Year {year} Month {month} found {monthDays.Count} days in cache");
+                    if (monthDays.Count > 27) return monthDays; // assume month is sufficiently complete
 				}
 
 				// Fetch
@@ -798,8 +824,10 @@ namespace SuleymaniyeCalendar.Services
 					fetched = new ObservableCollection<Calendar>(list);
 				}
 
-				// Merge into cache and persist
-				if (fetched != null && fetched.Count > 0)
+				Debug.WriteLine($"EnsureDaysRangeAsync: Year {year} Month {month} fetched {fetched?.Count ?? 0} days from API");
+
+                // Merge into cache and persist
+                if (fetched != null && fetched.Count > 0)
 				{
 					var toAdd = fetched.ToList();
 					if (!yearCaches.ContainsKey(year)) yearCaches[year] = new List<Calendar>();
@@ -808,14 +836,17 @@ namespace SuleymaniyeCalendar.Services
 					{
 						await SaveYearCacheAsync(location, year, yearCaches[year]).ConfigureAwait(false);
 					}
-					return toAdd;
+					Debug.WriteLine($"EnsureDaysRangeAsync: Year {year} cache now has {yearCaches[year].Count} days after merge");
+                    return toAdd;
 				}
 
 				return new List<Calendar>();
 			}
 
-			// Collect days covering the requested span
-			var cursor = new DateTime(startDate.Year, startDate.Month, 1);
+			Debug.WriteLine($"EnsureDaysRangeAsync: Collecting days from {startDate:dd/MM/yyyy} to {endDate:dd/MM/yyyy}");
+
+            // Collect days covering the requested span
+            var cursor = new DateTime(startDate.Year, startDate.Month, 1);
 			while (cursor <= endDate)
 			{
 				List<Calendar> monthDays;
@@ -828,17 +859,17 @@ namespace SuleymaniyeCalendar.Services
 			}
 
 			// Filter to range and ensure order/distinct
-			var inRange = result
-				.Where(d =>
-				{
-					if (!DateTime.TryParse(d.Date, out var dd)) return false;
-					return dd >= startDate && dd <= endDate;
-				})
-				.GroupBy(d => d.Date)
-				.Select(g => g.First())
-				.OrderBy(d => ParseCalendarDateOrMin(d.Date))
-				.Take(daysNeeded)
-				.ToList();
+            var inRange = result
+                .Where(d =>
+                {
+                    if (!TryParseCalendarDate(d.Date, out var dd)) return false;
+                    return dd >= startDate && dd <= endDate;
+                })
+                .GroupBy(d => d.Date)
+                .Select(g => g.First())
+                .OrderBy(d => ParseCalendarDateOrMin(d.Date))
+                .Take(daysNeeded)
+                .ToList();
 
 			return inRange;
 		}
