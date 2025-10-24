@@ -52,31 +52,35 @@ namespace SuleymaniyeCalendar.Tests
             vm.Should().NotBeNull(); // Command completes successfully
         }
 
-        [TestMethod]
-        public void Start_Command_SetsCompassRunning()
-        {
-            // Arrange
-            var vm = CreateViewModel();
-
-            // Act
-            vm.StartCommand.Execute(null);
-
-            // Assert
-            vm.Should().NotBeNull();
-        }
-
-        [TestMethod]
-        public void Stop_Command_StopsCompass()
-        {
-            // Arrange
-            var vm = CreateViewModel();
-
-            // Act
-            vm.StopCommand.Execute(null);
-
-            // Assert
-            vm.Should().NotBeNull();
-        }
+        // Note: StartCommand and StopCommand have been removed from CompassViewModel
+        // The compass now starts automatically in the constructor and stops on Dispose
+        // These tests are commented out as they no longer apply
+        
+        // [TestMethod]
+        // public void Start_Command_SetsCompassRunning()
+        // {
+        //     // Arrange
+        //     var vm = CreateViewModel();
+        //
+        //     // Act
+        //     vm.StartCommand.Execute(null);
+        //
+        //     // Assert
+        //     vm.Should().NotBeNull();
+        // }
+        //
+        // [TestMethod]
+        // public void Stop_Command_StopsCompass()
+        // {
+        //     // Arrange
+        //     var vm = CreateViewModel();
+        //
+        //     // Act
+        //     vm.StopCommand.Execute(null);
+        //
+        //     // Assert
+        //     vm.Should().NotBeNull();
+        // }
 
         [TestMethod]
         public void Heading_Property_UpdatesCorrectly()

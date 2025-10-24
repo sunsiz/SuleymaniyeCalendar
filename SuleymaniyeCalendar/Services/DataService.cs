@@ -84,7 +84,7 @@ namespace SuleymaniyeCalendar.Services
 			try
 			{
 				// Use unified cache for today's data
-				var location = new Location()
+				var location = new Location
 				{
 					Latitude = Preferences.Get("LastLatitude", 0.0),
 					Longitude = Preferences.Get("LastLongitude", 0.0),
@@ -94,30 +94,30 @@ namespace SuleymaniyeCalendar.Services
 				if (location.Latitude != 0.0 && location.Longitude != 0.0)
 				{
 					var currentYear = DateTime.Today.Year;
-					var cachedYearData = LoadYearCacheAsync(location, currentYear).GetAwaiter().GetResult();
+					// Note: This is synchronous initialization - async loading happens later via PrepareMonthlyPrayerTimes
+					var cachedYearData = Task.Run(() => LoadYearCacheAsync(location, currentYear)).Result;
 					
-					if (cachedYearData != null)
+					if (cachedYearData?.Count > 0)
 					{
 						var todayData = cachedYearData.FirstOrDefault(d => 
 							ParseCalendarDateOrMin(d.Date) == DateTime.Today);
 						
 						if (todayData != null)
 						{
-							calendar = todayData;
-							calendar.Latitude = location.Latitude;
-							calendar.Longitude = location.Longitude;
-							calendar.Altitude = location.Altitude ?? 0;
-							return calendar;
+							todayData.Latitude = location.Latitude;
+							todayData.Longitude = location.Longitude;
+							todayData.Altitude = location.Altitude ?? 0;
+							return todayData;
 						}
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				Debug.WriteLine($"GetTakvimFromFile unified cache error: {ex.Message}");
+				Debug.WriteLine($"GetTakvimFromFile cache error: {ex.Message}");
 			}
 			
-			return calendar;
+			return null;
 		}
 
 		public async Task<Calendar> PrepareMonthlyPrayerTimes()
@@ -210,12 +210,6 @@ namespace SuleymaniyeCalendar.Services
 
 				if (location == null || refreshLocation)
 				{
-
-					//var request = new GeolocationRequest(GeolocationAccuracy.Low, TimeSpan.FromSeconds(10));
-					//CancellationTokenSource cts = new CancellationTokenSource();
-					//location = await Geolocation.GetLocationAsync(request, cts.Token).ConfigureAwait(false);
-					//var permissionService = new PermissionService();
-					//location = await permissionService.RequestLocationAsync(10).ConfigureAwait(false);
 					using (_perf.StartTimer("Location.Request"))
 					{
 						// Shorten initial wait to improve perceived performance; fallback path inside will extend slightly if needed.
@@ -258,24 +252,15 @@ namespace SuleymaniyeCalendar.Services
 					Preferences.Set("LastAltitude", location.Altitude ?? 0);
 					Preferences.Set("LocationSaved", true);
 				}
-				//else
-				//{
-				//    if (!DependencyService.Get<IPermissionService>().IsLocationServiceEnabled())
-				//        UserDialogs.Instance.Toast(AppResources.KonumKapaliBaslik, TimeSpan.FromSeconds(5));
-				//}
 			}
 			catch (FeatureNotSupportedException fnsEx)
 			{
-				// Handle not supported on device exception
-				//UserDialogs.Instance.Alert(AppResources.CihazGPSDesteklemiyor, AppResources.CihazGPSDesteklemiyor);
-				Debug.WriteLine($"**** {this.GetType().Name}.{nameof(GetCurrentLocationAsync)}: {fnsEx.Message}");
+				Debug.WriteLine($"Location not supported: {fnsEx.Message}");
 			}
 			catch (FeatureNotEnabledException fneEx)
 			{
-				// Handle not enabled on device exception
-				Debug.WriteLine($"**** {this.GetType().Name}.{nameof(GetCurrentLocationAsync)}: {fneEx.Message}");
-				//UserDialogs.Instance.Alert(AppResources.KonumKapali, AppResources.KonumKapaliBaslik);
-				//await App.Current.MainPage.DisplayAlert("Konum Servisi Hatası", "Cihazın konum servisi kapalı, Öce konum servisini açmanız lazım!", "Tamam");
+				Debug.WriteLine($"Location not enabled: {fneEx.Message}");
+				// Fallback to last known location when GPS is disabled
 				if (Preferences.Get("LastLatitude", 0.0) != 0.0 && Preferences.Get("LastLongitude", 0.0) != 0.0)
 				{
 					location ??= new Location();
@@ -286,13 +271,11 @@ namespace SuleymaniyeCalendar.Services
 			}
 			catch (PermissionException pEx)
 			{
-				// Handle permission exception
-				Debug.WriteLine($"**** {this.GetType().Name}.{nameof(GetCurrentLocationAsync)}: {pEx.Message}");
+				Debug.WriteLine($"Location permission denied: {pEx.Message}");
 			}
 			catch (Exception ex)
 			{
-				// Unable to get location
-				Debug.WriteLine($"**** {this.GetType().Name}.{nameof(GetCurrentLocationAsync)}: {ex.Message}");
+				Debug.WriteLine($"Location error: {ex.Message}");
 			}
 
 			return location;
@@ -300,12 +283,12 @@ namespace SuleymaniyeCalendar.Services
 
 		public ObservableCollection<Calendar> GetMonthlyPrayerTimes(Location location, bool forceRefresh = false)
 		{
-			// **UNIFIED CACHE APPROACH** - Use only the modern unified cache system
+			// Use unified cache system - synchronous wrapper for legacy callers
 			if (!forceRefresh)
 			{
 				var month = DateTime.Now.Month;
 				var year = DateTime.Now.Year;
-				var unified = TryGetMonthlyFromUnifiedCacheAsync(location, year, month).GetAwaiter().GetResult();
+				var unified = Task.Run(() => TryGetMonthlyFromUnifiedCacheAsync(location, year, month)).Result;
 				if (unified != null)
 				{
 					_monthlyCalendar = unified;
@@ -469,7 +452,6 @@ namespace SuleymaniyeCalendar.Services
 		{
 			calendar = new Calendar();
 			XDocument doc = XDocument.Parse(xmlResult);
-			//if(doc.Descendants("Takvim")!=null)
 			if (doc.Root == null) return calendar;
 			foreach (var item in doc.Root.Descendants())
 			{
@@ -713,28 +695,18 @@ namespace SuleymaniyeCalendar.Services
 
 									Debug.WriteLine($"⏰ Processing alarms for {baseDate:dd/MM/yyyy} (day {dayCounter})");
 
-									var falseFajr = baseDate + falseFajrTime - TimeSpan.FromMinutes(Preferences.Get("falsefajrNotificationTime", 0));
-									var fajr = baseDate + fajrTime - TimeSpan.FromMinutes(Preferences.Get("fajrNotificationTime", 0));
-									var sunrise = baseDate + sunriseTime - TimeSpan.FromMinutes(Preferences.Get("sunriseNotificationTime", 0));
-									var dhuhr = baseDate + dhuhrTime - TimeSpan.FromMinutes(Preferences.Get("dhuhrNotificationTime", 0));
-									var asr = baseDate + asrTime - TimeSpan.FromMinutes(Preferences.Get("asrNotificationTime", 0));
-									var maghrib = baseDate + maghribTime - TimeSpan.FromMinutes(Preferences.Get("maghribNotificationTime", 0));
-									var isha = baseDate + ishaTime - TimeSpan.FromMinutes(Preferences.Get("ishaNotificationTime", 0));
-									var endOfIsha = baseDate + endOfIshaTime - TimeSpan.FromMinutes(Preferences.Get("endofishaNotificationTime", 0));
-
-									// Schedule alarms only if they're in the future
-									// For today, check DateTime.Now; for future days, schedule all enabled prayers
 									bool isToday = todayDate.Date == DateTime.Today;
 
-									// Use canonical Turkish names to match receiver/channel mappings and request-code strategy
-									if ((!isToday || now < falseFajr) && Preferences.Get("falsefajrEnabled", false)) _alarmService.SetAlarm(baseDate, falseFajrTime, Preferences.Get("falsefajrNotificationTime", 0), "Fecri Kazip");
-									if ((!isToday || now < fajr) && Preferences.Get("fajrEnabled", false)) _alarmService.SetAlarm(baseDate, fajrTime, Preferences.Get("fajrNotificationTime", 0), "Fecri Sadık");
-									if ((!isToday || now < sunrise) && Preferences.Get("sunriseEnabled", false)) _alarmService.SetAlarm(baseDate, sunriseTime, Preferences.Get("sunriseNotificationTime", 0), "Sabah Sonu");
-									if ((!isToday || now < dhuhr) && Preferences.Get("dhuhrEnabled", false)) _alarmService.SetAlarm(baseDate, dhuhrTime, Preferences.Get("dhuhrNotificationTime", 0), "Öğle");
-									if ((!isToday || now < asr) && Preferences.Get("asrEnabled", false)) _alarmService.SetAlarm(baseDate, asrTime, Preferences.Get("asrNotificationTime", 0), "İkindi");
-									if ((!isToday || now < maghrib) && Preferences.Get("maghribEnabled", false)) _alarmService.SetAlarm(baseDate, maghribTime, Preferences.Get("maghribNotificationTime", 0), "Akşam");
-									if ((!isToday || now < isha) && Preferences.Get("ishaEnabled", false)) _alarmService.SetAlarm(baseDate, ishaTime, Preferences.Get("ishaNotificationTime", 0), "Yatsı");
-									if ((!isToday || now < endOfIsha) && Preferences.Get("endofishaEnabled", false)) _alarmService.SetAlarm(baseDate, endOfIshaTime, Preferences.Get("endofishaNotificationTime", 0), "Yatsı Sonu");
+									// Schedule each prayer using helper method
+									SchedulePrayerAlarmIfEnabled(baseDate, falseFajrTime, now, isToday, "falsefajr", "Fecri Kazip");
+									SchedulePrayerAlarmIfEnabled(baseDate, fajrTime, now, isToday, "fajr", "Fecri Sadık");
+									SchedulePrayerAlarmIfEnabled(baseDate, sunriseTime, now, isToday, "sunrise", "Sabah Sonu");
+									SchedulePrayerAlarmIfEnabled(baseDate, dhuhrTime, now, isToday, "dhuhr", "Öğle");
+									SchedulePrayerAlarmIfEnabled(baseDate, asrTime, now, isToday, "asr", "İkindi");
+									SchedulePrayerAlarmIfEnabled(baseDate, maghribTime, now, isToday, "maghrib", "Akşam");
+									SchedulePrayerAlarmIfEnabled(baseDate, ishaTime, now, isToday, "isha", "Yatsı");
+									SchedulePrayerAlarmIfEnabled(baseDate, endOfIshaTime, now, isToday, "endofisha", "Yatsı Sonu");
+
 									dayCounter++;
 									Debug.WriteLine($"✅ Completed day {dayCounter}: {baseDate:dd/MM/yyyy} (alarms so far)");
 									if (dayCounter >= 30) break;
@@ -882,6 +854,22 @@ namespace SuleymaniyeCalendar.Services
 				dict[a.Date] = a;
 			}
 			return dict.Values.OrderBy(c => ParseCalendarDateOrMin(c.Date)).ToList();
+		}
+
+		/// <summary>
+		/// Helper to schedule a single prayer alarm if enabled and in the future.
+		/// </summary>
+		private void SchedulePrayerAlarmIfEnabled(DateTime baseDate, TimeSpan prayerTime, DateTime now, bool isToday, 
+			string preferenceKey, string prayerName)
+		{
+			var notificationMinutes = Preferences.Get($"{preferenceKey}NotificationTime", 0);
+			var alarmDateTime = baseDate + prayerTime - TimeSpan.FromMinutes(notificationMinutes);
+			var isEnabled = Preferences.Get($"{preferenceKey}Enabled", false);
+			
+			if (isEnabled && (!isToday || now < alarmDateTime))
+			{
+				_alarmService.SetAlarm(baseDate, prayerTime, notificationMinutes, prayerName);
+			}
 		}
 
 		private string GetYearCachePath(Location location, int year)

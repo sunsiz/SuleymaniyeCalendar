@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using Android.App;
 using Android.Content;
-using Android.Icu.Util;
 using Android.OS;
 using Android.Util;
 using AndroidX.Core.App;
@@ -14,17 +13,24 @@ namespace SuleymaniyeCalendar
     [Service(Exported = false, ForegroundServiceType = Android.Content.PM.ForegroundService.TypeDataSync)]
 	public class AlarmForegroundService : Service, IAlarmService
 	{
-		internal NotificationManager _notificationManager;
-		private readonly int DELAY_BETWEEN_MESSAGES = 30000;
-		internal readonly int NOTIFICATION_ID = 1993;
-		private readonly string NOTIFICATION_CHANNEL_ID = "SuleymaniyeTakvimichannelId";
-		private readonly string channelName = AppResources.SuleymaniyeVakfiTakvimi;
-		private readonly string channelDescription = "The Suleymaniye Takvimi notification channel.";
-		internal Notification _notification;
+		// Notification constants
+		private const int NOTIFICATION_UPDATE_INTERVAL_MS = 30000; // 30 seconds
+		private const int WIDGET_REFRESH_CYCLES = 60; // 60 cycles = 30 minutes
+		private const int NOTIFICATION_ID = 1993;
+		private const string NOTIFICATION_CHANNEL_ID = "SuleymaniyeTakvimichannelId";
+		private const string CHANNEL_DESCRIPTION = "The Suleymaniye Takvimi notification channel.";
+		
+		// Reschedule protection
+		private static readonly TimeSpan MinRescheduleInterval = TimeSpan.FromHours(6);
+		private static readonly TimeSpan RescheduleThreshold = TimeSpan.FromDays(-3);
+		
+		private NotificationManager _notificationManager;
+		private readonly string _channelName = AppResources.SuleymaniyeVakfiTakvimi;
+		private Notification _notification;
 		private bool _isStarted;
 		private Handler _handler;
 		private Action _runnable;
-		private int _counter;
+		private int _updateCounter;
 		private DateTime _lastRescheduleAttemptUtc = DateTime.MinValue;
 		
 		public override IBinder OnBind(Intent intent)
@@ -44,18 +50,9 @@ namespace SuleymaniyeCalendar
 				{
 					var prayerTimeSpan = triggerTimeSpan;
 					triggerTimeSpan -= TimeSpan.FromMinutes(timeOffset);
-					//Log.Info("SetAlarm", $"Before Alarm set the Calendar time is {calendar.Time} for {name}");
 					calendar.Set(date.Year, date.Month - 1, date.Day, triggerTimeSpan.Hours, triggerTimeSpan.Minutes, 0);
-					//var activityIntent = new Intent(Application.Context, typeof(AlarmActivity))
-					//	.PutExtra("name", name)
-					//	.PutExtra("time", prayerTimeSpan.ToString())
-					//	.AddFlags(ActivityFlags.ReceiverForeground);
-					// var intent = new Intent(Application.Context, typeof(NotificationChannelManager))
-					// 	.PutExtra("name", name)
-					// 	.PutExtra("time", prayerTimeSpan.ToString())
-					// 	.AddFlags(ActivityFlags.IncludeStoppedPackages);
-					// intent.AddFlags(ActivityFlags.ReceiverForeground);
-					//without the different reuestCode there will be only one pending intent and it updates every schedule, so only one alarm will be active at the end.
+					
+					// Different request codes ensure multiple alarms can coexist
 					var requestCode = name switch
 					{
 						"Fecri Kazip" => date.DayOfYear + 1000,
@@ -71,7 +68,7 @@ namespace SuleymaniyeCalendar
 					var pendingIntentFlags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
 						? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
 						: PendingIntentFlags.UpdateCurrent;
-					//var pendingActivityIntent = PendingIntent.GetActivity(Application.Context, requestCode, activityIntent, pendingIntentFlags);
+					
 					var broadcastIntent = new Intent(Application.Context, typeof(AlarmNotificationReceiver))
 						.PutExtra("name", name)
 						.PutExtra("time", prayerTimeSpan.ToString())
@@ -83,13 +80,12 @@ namespace SuleymaniyeCalendar
 
 					var pendingIntent = PendingIntent.GetBroadcast(Application.Context, requestCode, broadcastIntent, flags);
 
-					// Min SDK 26: Always use AlarmClockInfo for exact, doze-resilient delivery with system affordance.
+					// Use AlarmClockInfo for exact, doze-resilient delivery with system affordance
 					var showIntent = PendingIntent.GetActivity(Application.Context, requestCode,
 						new Intent(Application.Context, Java.Lang.Class.FromType(typeof(MainActivity))), flags);
 					var info = new AlarmManager.AlarmClockInfo(calendar.TimeInMillis, showIntent);
 					alarmManager?.SetAlarmClock(info, pendingIntent);
-					//else
-					//    alarmManager?.SetExact(AlarmType.RtcWakeup, calendar.TimeInMillis, pendingIntent);
+					
 					System.Diagnostics.Debug.WriteLine($"✅ Alarm scheduled: {name} on {date:dd/MM/yyyy} at {triggerTimeSpan} (request: {requestCode})");
 				}
 			}
@@ -158,13 +154,58 @@ namespace SuleymaniyeCalendar
 					}
 				}
 
-				// Clear last scheduled date so auto-rescheduler in the service won't reschedule immediately.
+				// Clear last scheduled date so auto-rescheduler in the service won't reschedule immediately
 				Preferences.Set("LastAlarmDate", string.Empty);
 			}
 			catch (Exception ex)
 			{
 				System.Diagnostics.Debug.WriteLine($"CancelAlarm error: {ex.Message}");
 			}
+		}
+
+		private void TryRescheduleAlarms()
+		{
+			try
+			{
+				var lastStr = Preferences.Get("LastAlarmDate", string.Empty);
+				if (string.IsNullOrWhiteSpace(lastStr) || !DateTime.TryParse(lastStr, out var lastDate))
+					return;
+
+				var nowUtc = DateTime.UtcNow;
+				// Avoid reattempting too frequently
+				if (nowUtc - _lastRescheduleAttemptUtc <= MinRescheduleInterval)
+					return;
+
+				// Check if approaching the end of the alarm window
+				if (DateTime.Today < lastDate.Add(RescheduleThreshold))
+					return;
+
+				_lastRescheduleAttemptUtc = nowUtc;
+				
+				// Run rescheduling in background
+				_ = Task.Run(async () =>
+				{
+					try
+					{
+						var dataService = GetDataService();
+						await dataService.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+					}
+					catch (Exception ex)
+					{
+						System.Diagnostics.Debug.WriteLine($"Auto-reschedule error: {ex.Message}");
+					}
+				});
+			}
+			catch (Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"Reschedule check failed: {ex.Message}");
+			}
+		}
+
+		private DataService GetDataService()
+		{
+			return (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
+				?? new DataService(this);
 		}
 
 		public override void OnCreate()
@@ -178,23 +219,28 @@ namespace SuleymaniyeCalendar
             
             SetNotification();
 
-			if(Preferences.Get("ForegroundServiceEnabled",true))if (Build.VERSION.SdkInt >= BuildVersionCodes.UpsideDownCake) // API 34
+			if (Preferences.Get("ForegroundServiceEnabled", true))
+			{
+#pragma warning disable CA1416 // Platform compatibility
+				if (Build.VERSION.SdkInt >= BuildVersionCodes.Q) // API 29+
 				{
-					this.StartForeground(NOTIFICATION_ID, _notification, Android.Content.PM.ForegroundService.TypeDataSync);
+					StartForeground(NOTIFICATION_ID, _notification, Android.Content.PM.ForegroundService.TypeDataSync);
 				}
 				else
 				{
-					this.StartForeground(NOTIFICATION_ID, _notification);
+					StartForeground(NOTIFICATION_ID, _notification);
 				}
+#pragma warning restore CA1416
+			}
 
-			// This Action will run every 30 second as foreground service running.
+			// This Action will run every 30 seconds while foreground service is running
 			_runnable = new Action(() =>
 			{
-				_handler.PostDelayed(_runnable, DELAY_BETWEEN_MESSAGES);
+				_handler.PostDelayed(_runnable, NOTIFICATION_UPDATE_INTERVAL_MS);
 				SetNotification();
 				_notificationManager.Notify(NOTIFICATION_ID, _notification);
-				_counter++;
-				if (_counter != 60) return; //When the 60th time (30 minute) refresh widget manually.
+				_updateCounter++;
+				if (_updateCounter < WIDGET_REFRESH_CYCLES) return; // Refresh widget every 30 minutes
 				var intent = new Intent(ApplicationContext, typeof(WidgetService));
 				try
 				{
@@ -202,49 +248,15 @@ namespace SuleymaniyeCalendar
 				}
 				catch (Exception exception)
 				{
-					System.Diagnostics.Debug.WriteLine($"An exception occured when starting widget service, details: {exception.Message}");
+					System.Diagnostics.Debug.WriteLine($"Widget service start failed: {exception.Message}");
 				}
-				_counter = 0;
+				_updateCounter = 0;
 
-				// Auto-reschedule monthly alarms when approaching the end of the current window.
-				// This keeps alarms reliable even if the app isn't opened for a long time.
-				try
-				{
-					var lastStr = Preferences.Get("LastAlarmDate", string.Empty);
-					if (!string.IsNullOrWhiteSpace(lastStr) && DateTime.TryParse(lastStr, out var last))
-					{
-						var nowUtc = DateTime.UtcNow;
-						// Avoid reattempting too frequently
-						if (nowUtc - _lastRescheduleAttemptUtc > TimeSpan.FromHours(6))
-						{
-							if (DateTime.Today >= last.AddDays(-3))
-							{
-								_lastRescheduleAttemptUtc = nowUtc;
-								Task.Run(async () =>
-								{
-									try
-									{
-										var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-												?? new DataService(this);
-										await data.SetMonthlyAlarmsAsync();
-									}
-									catch (Exception ex)
-									{
-										System.Diagnostics.Debug.WriteLine($"Auto-reschedule error: {ex.Message}");
-									}
-								});
-							}
-						}
-					}
-				}
-				catch (Exception ex)
-				{
-					System.Diagnostics.Debug.WriteLine($"Reschedule check failed: {ex.Message}");
-				}
+				// Auto-reschedule monthly alarms when approaching the end of the current window
+				TryRescheduleAlarms();
 			});
-			_handler.PostDelayed(_runnable, DELAY_BETWEEN_MESSAGES);
+			_handler.PostDelayed(_runnable, NOTIFICATION_UPDATE_INTERVAL_MS);
 			_isStarted = true;
-			//CancelAlarm();
 		}
 
 		public override void OnDestroy()
@@ -267,10 +279,10 @@ namespace SuleymaniyeCalendar
 			
 			if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
 			{
-				var channelNameJava = new Java.Lang.String(channelName);
+				var channelNameJava = new Java.Lang.String(_channelName);
 				var channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelNameJava, NotificationImportance.Default)
 				{
-					Description = channelDescription,
+					Description = CHANNEL_DESCRIPTION,
 					LightColor = 1,
 					LockscreenVisibility = NotificationVisibility.Public
 				};
@@ -323,13 +335,13 @@ namespace SuleymaniyeCalendar
 
 		private string GetFormattedRemainingTime()
 		{
-			var message = "";
-			var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-						?? new DataService(this);
-			var calendar = data.calendar;
+			var dataService = GetDataService();
+			var calendar = dataService.calendar;
 			var currentTime = DateTime.Now.TimeOfDay;
+			
 			try
 			{
+				string message;
 				if (currentTime < TimeSpan.Parse(calendar.FalseFajr, CultureInfo.InvariantCulture))
 					message = AppResources.FecriKazibingirmesinekalanvakit +
 							  (TimeSpan.Parse(calendar.FalseFajr, CultureInfo.InvariantCulture) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
@@ -354,103 +366,95 @@ namespace SuleymaniyeCalendar
 				else if (currentTime >= TimeSpan.Parse(calendar.Isha, CultureInfo.InvariantCulture) && currentTime <= TimeSpan.Parse(calendar.EndOfIsha, CultureInfo.InvariantCulture))
 					message = AppResources.Yatsinincikmasinakalanvakit +
 							  (TimeSpan.Parse(calendar.EndOfIsha, CultureInfo.InvariantCulture) - currentTime).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
-				else if (currentTime >= TimeSpan.Parse(calendar.EndOfIsha, CultureInfo.InvariantCulture))
+				else // currentTime >= EndOfIsha
 					message = AppResources.Yatsininciktigindangecenvakit +
 							  (currentTime - TimeSpan.Parse(calendar.EndOfIsha, CultureInfo.InvariantCulture)).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
+				
+				return message;
 			}
 			catch (Exception exception)
 			{
 				System.Diagnostics.Debug.WriteLine($"GetFormattedRemainingTime exception: {exception.Message}. Location: {calendar.Latitude}, {calendar.Longitude}");
-				Log.Error("GetFormattedRemainingTime",$"GetFormattedRemainingTime exception: {exception.Message}. Location: {calendar.Latitude}, {calendar.Longitude}");
-				message = AppResources.KonumIzniIcerik;
+				Log.Error("GetFormattedRemainingTime", $"GetFormattedRemainingTime exception: {exception.Message}. Location: {calendar.Latitude}, {calendar.Longitude}");
+				return AppResources.KonumIzniIcerik;
 			}
-
-			return message;
 		}
 
 		private string GetTodaysPrayerTimes()
 		{
-			var message = "";
-			var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-						?? new DataService(this);
-			var calendar = data.calendar;
-			message += AppResources.FecriKazip + ": " + calendar.FalseFajr + "\n";
-			message += AppResources.FecriSadik + ": " + calendar.Fajr + "\n";
-			message += AppResources.SabahSonu + ": " + calendar.Sunrise + "\n";
-			message += AppResources.Ogle + ": " + calendar.Dhuhr + "\n";
-			message += AppResources.Ikindi + ": " + calendar.Asr + "\n";
-			message += AppResources.Aksam + ": " + calendar.Maghrib + "\n";
-			message += AppResources.Yatsi + ": " + calendar.Isha + "\n";
-			message += AppResources.YatsiSonu + ": " + calendar.EndOfIsha;
-			return message;
+			var dataService = GetDataService();
+			var calendar = dataService.calendar;
+			
+			return $"{AppResources.FecriKazip}: {calendar.FalseFajr}\n" +
+				   $"{AppResources.FecriSadik}: {calendar.Fajr}\n" +
+				   $"{AppResources.SabahSonu}: {calendar.Sunrise}\n" +
+				   $"{AppResources.Ogle}: {calendar.Dhuhr}\n" +
+				   $"{AppResources.Ikindi}: {calendar.Asr}\n" +
+				   $"{AppResources.Aksam}: {calendar.Maghrib}\n" +
+				   $"{AppResources.Yatsi}: {calendar.Isha}\n" +
+				   $"{AppResources.YatsiSonu}: {calendar.EndOfIsha}";
 		}
 
 		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
 		{
-			if (intent == null || intent.Action == null)
+			if (intent?.Action == null)
 			{
-				var source = null == intent ? "intent" : "action";
-				System.Diagnostics.Debug.WriteLine("OnStartCommand Null Intent Exception: " + source + " was null, flags=" + flags + " bits=" + flags);
+				var source = intent == null ? "intent" : "action";
+				System.Diagnostics.Debug.WriteLine($"OnStartCommand null {source}, flags={flags}");
 				return StartCommandResult.RedeliverIntent;
 			}
-			//Analytics.TrackEvent("OnStartCommand in the AlarmForegroundService Triggered: " + $" at {DateTime.Now}");
-			if (intent.Action.Equals("SuleymaniyeTakvimi.action.START_SERVICE"))
+			
+			switch (intent.Action)
 			{
-				if (_isStarted)
-				{
-					//Log.Info(TAG, "OnStartCommand: The service is already running.");
-				}
-				else
-				{
-					//Log.Info(TAG, "OnStartCommand: The service is starting.");
-					// Call StartForeground immediately to prevent ANR
-					this.StartForeground(NOTIFICATION_ID, _notification);
-					_handler.PostDelayed(_runnable, DELAY_BETWEEN_MESSAGES);
-					_isStarted = true;
-					
-					// Start alarm setup work in background (not blocking)
-					_ = Task.Run(async () =>
+				case "SuleymaniyeTakvimi.action.START_SERVICE":
+					if (!_isStarted)
 					{
-						try
+						// Call StartForeground immediately to prevent ANR
+						StartForeground(NOTIFICATION_ID, _notification);
+						_handler.PostDelayed(_runnable, NOTIFICATION_UPDATE_INTERVAL_MS);
+						_isStarted = true;
+						
+						// Start alarm setup work in background (non-blocking)
+						_ = Task.Run(async () =>
 						{
-							// Small delay to let the app finish startup
-							await Task.Delay(7000).ConfigureAwait(false);
-							System.Diagnostics.Debug.WriteLine($"OnStartCommand: Starting Set Alarm at {DateTime.Now}");
-							
-							var data = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-										?? new DataService(this);
-							
-							await data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
-						}
-						catch (Exception ex)
-						{
-							System.Diagnostics.Debug.WriteLine($"Error in alarm startup: {ex}");
-						}
-					});					
-				}
+							try
+							{
+								// Small delay to let the app finish startup
+								await Task.Delay(7000).ConfigureAwait(false);
+								System.Diagnostics.Debug.WriteLine($"OnStartCommand: Starting alarm scheduling at {DateTime.Now}");
+								
+								var dataService = GetDataService();
+								await dataService.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+							}
+							catch (Exception ex)
+							{
+								System.Diagnostics.Debug.WriteLine($"Alarm startup error: {ex.Message}");
+							}
+						});
+					}
+					break;
+					
+				case "SuleymaniyeTakvimi.action.STOP_SERVICE":
+					if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
+					{
+						StopForeground(StopForegroundFlags.Remove);
+					}
+					else
+					{
+#pragma warning disable CA1422 // Validate platform compatibility
+						StopForeground(true);
+#pragma warning restore CA1422
+					}
+					StopSelf(NOTIFICATION_ID);
+					_isStarted = false;
+					break;
+					
+				case "SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION":
+					// Rebuild notification based on latest Preferences and update immediately
+					SetNotification();
+					_notificationManager.Notify(NOTIFICATION_ID, _notification);
+					break;
 			}
-			else if (intent.Action.Equals("SuleymaniyeTakvimi.action.STOP_SERVICE"))
-			{
-				//Log.Info(TAG, "OnStartCommand: The service is stopping.");
-				if (Build.VERSION.SdkInt >= BuildVersionCodes.Tiramisu)
-				{
-					StopForeground(StopForegroundFlags.Remove);
-				}
-				else
-				{
-					#pragma warning disable CA1422
-					StopForeground(true);
-					#pragma warning restore CA1422
-				}
-				StopSelf(NOTIFICATION_ID);
-				_isStarted = false;
-			}
-            else if (intent.Action.Equals("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION"))
-            {
-                // Rebuild notification based on latest Preferences, and update immediately
-                SetNotification();
-                _notificationManager.Notify(NOTIFICATION_ID, _notification);
-            }
 
 			return StartCommandResult.Sticky;
 		}
