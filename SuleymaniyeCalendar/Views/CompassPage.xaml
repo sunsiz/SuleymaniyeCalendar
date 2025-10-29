@@ -8,21 +8,17 @@
     Title="{Binding Title}"
     x:DataType="viewModels:CompassViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <Grid
-            Margin="10"
-            ColumnDefinitions="*,Auto" ColumnSpacing="8"
-            HeightRequest="40">
+        <Grid Margin="8" ColumnDefinitions="*,Auto" ColumnSpacing="8" HeightRequest="48">
             <Label
                 Grid.Column="0"
-                FontSize="{DynamicResource HeaderFontSize}"
                 AutomationProperties.IsInAccessibleTree="True"
                 SemanticProperties.HeadingLevel="Level1"
                 Style="{StaticResource LabelSectionHeader}"
                 Text="{localization:Translate KibleGostergesi}"
-                VerticalOptions="Start" />
+                HorizontalTextAlignment="Start" />
             <ImageButton
                 Grid.Column="1"
                 Margin="10,0,12,0"
@@ -35,7 +31,7 @@
                         FontAutoScalingEnabled="True"
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="{DynamicResource IconLargeFontSize}"
+                        Size="{DynamicResource IconLargerFontSize}"
                         Color="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColorDark}}" />
                 </ImageButton.Source>
             </ImageButton>
@@ -45,22 +41,16 @@
     <ContentPage.Content>
         <Grid>
             <ScrollView>
-                <VerticalStackLayout
-                    Padding="{StaticResource PagePaddingMobile}"
-                    Spacing="{StaticResource SpacingTight}">
-                    <!-- BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
-                                                      Dark={StaticResource AppBackgroundColorDark}}" -->
-
+                <VerticalStackLayout Padding="{StaticResource CardMarginCompact}" Spacing="{StaticResource SpacingTight}">
                     <!--  🎨 PHASE 15: Compass Section - FrostGlassCardCrystal  -->
                     <Border Style="{StaticResource FrostGlassCardCrystal}">
-                        <VerticalStackLayout Spacing="4">
+                        <VerticalStackLayout Spacing="1">
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
                                 TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
                                 Text="{localization:Translate KibleGostergesi}" />
-
-                            <Grid HeightRequest="260" HorizontalOptions="Center">
+                            <Grid HeightRequest="360" HorizontalOptions="Center" Padding="-10">
                                 <Image
                                     x:Name="CompassImage"
                                     Aspect="AspectFit"
@@ -72,7 +62,7 @@
                                     Aspect="AspectFit"
                                     HorizontalOptions="Center"
                                     Rotation="{Binding Heading}"
-                                    Scale="0.72"
+                                    Scale="0.82"
                                     Source="isaretci.png"
                                     VerticalOptions="Center" />
                             </Grid>
@@ -80,7 +70,7 @@
                     </Border>
 
                     <!--  🎨 PHASE 15: Location Information - FrostGlassCardFrozen  -->
-                    <Border Style="{StaticResource FrostGlassCardFrozen}">
+                    <Border Style="{StaticResource FrostGlassCardCrystal}">
                         <VerticalStackLayout Spacing="4">
                             <Label
                                 HorizontalTextAlignment="Center"
@@ -198,8 +188,8 @@
 
                             <!--  Action Button - Golden Glass ✨  -->
                             <Button
-                                Margin="12,0,12,12"
-                                Style="{StaticResource GlassButtonSuccess}"
+                                Margin="12,4,12,12"
+                                Style="{StaticResource VistaAeroGlassButton}"
                                 TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary30}}"
                                 Command="{Binding GoToMapCommand}"
                                 Text="{localization:Translate HaritadaGoster}" />

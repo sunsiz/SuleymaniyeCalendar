@@ -92,11 +92,11 @@ namespace SuleymaniyeCalendar.ViewModels
             _calendar = _data.calendar;
             try
             {
-            // Lightweight initial population; deeper refresh is coalesced in OnAppearing
-            LoadPrayers();
+                // Lightweight initial population; deeper refresh is coalesced in OnAppearing
+                LoadPrayers();
 
-            // Fire and forget non-UI work
-            _ = Task.Run(() => GetCity());
+                // Fire and forget non-UI work
+                _ = Task.Run(() => GetCity());
             }
             catch (Exception ex)
             {
@@ -117,17 +117,20 @@ namespace SuleymaniyeCalendar.ViewModels
 
             if (DeviceInfo.Platform != DevicePlatform.WinUI && Preferences.Get("AlwaysRenewLocationEnabled", false))
                 _startupRefreshTask = RefreshLocationCommand.ExecuteAsync(null);
-
-            var lastAlarmDateStr = Preferences.Get("LastAlarmDate", "Empty");
-            if (lastAlarmDateStr != "Empty")
+            if (_data.CheckRemindersEnabledAny())
             {
-                DateTime lastAlarm;
-                if (DateTime.TryParse(lastAlarmDateStr, out lastAlarm) || DateTime.TryParseExact(lastAlarmDateStr, new[] { "dd/MM/yyyy", "dd-MM-yyyy", "yyyy-MM-dd" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out lastAlarm))
+                var lastAlarmDateStr = Preferences.Get("LastAlarmDate", "Empty");
+                if (lastAlarmDateStr != "Empty")
                 {
-                    if ((lastAlarm - DateTime.Today).Days > 4)
-                        _weeklyAlarmsTask = _data.SetMonthlyAlarmsAsync();
+                    DateTime lastAlarm;
+                    if (DateTime.TryParse(lastAlarmDateStr, out lastAlarm) || DateTime.TryParseExact(lastAlarmDateStr, new[] { "dd/MM/yyyy", "dd-MM-yyyy", "yyyy-MM-dd" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out lastAlarm))
+                    {
+                        if ((lastAlarm - DateTime.Today).Days > 4)
+                            _weeklyAlarmsTask = _data.SetMonthlyAlarmsAsync();
+                    }
                 }
             }
+
             Debug.WriteLine("TimeStamp-ItemsViewModel-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 
             // Icon/UI refresh is handled by OnAppearing -> RefreshUiAsync()
@@ -219,9 +222,11 @@ namespace SuleymaniyeCalendar.ViewModels
 
                     // Refresh monthly data (alarms depend on this); network may take time
                     var monthlyData = await _data.GetMonthlyPrayerTimesHybridAsync(location, forceRefresh: true).ConfigureAwait(false);
-
-                    // Schedule notifications (can be slow on Android); keep off UI thread
-                    await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+                    if (_data.CheckRemindersEnabledAny())
+                    {
+                        // Schedule notifications (can be slow on Android); keep off UI thread
+                        await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+                    }                    
 
                     // Coalesced UI update after background work
                     await RefreshUiAsync(force: true).ConfigureAwait(false);
@@ -453,8 +458,10 @@ namespace SuleymaniyeCalendar.ViewModels
                     }
                 }
             }
-
-            await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+            if (_data.CheckRemindersEnabledAny())
+            {
+                await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+            }            
 
             // Coalesced UI update
             await RefreshUiAsync(force: true).ConfigureAwait(false);

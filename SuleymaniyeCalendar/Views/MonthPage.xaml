@@ -8,7 +8,7 @@
              Title="{Binding Title}" 
              x:DataType="viewModels:MonthViewModel"
              FlowDirection="{DynamicResource FlowDirection}"
-             Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
+             Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
 <ContentPage.Content>
     <Grid RowDefinitions="*,Auto" Padding="{StaticResource SpacingXS}" RowSpacing="{StaticResource SpacingXS}">

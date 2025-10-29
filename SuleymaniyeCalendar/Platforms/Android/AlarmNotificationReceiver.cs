@@ -26,19 +26,21 @@ public class AlarmNotificationReceiver : BroadcastReceiver
 
     var pkg = context.PackageName;
 
-        // Pick channel by user selection (same ids as before)
-        var channelId = name switch
+        // Pick channel by user selection (unified key with PrayerDetailViewModel)
+        string prayerId = name switch
         {
-            "Fecri Kazip" => Preferences.Get("fecrikazipAlarmSesi", "alarm"),
-            "Fecri Sadık" => Preferences.Get("fecrisadikAlarmSesi", "alarm"),
-            "Sabah Sonu" => Preferences.Get("sabahsonuAlarmSesi", "alarm"),
-            "Öğle"       => Preferences.Get("ogleAlarmSesi", "alarm"),
-            "İkindi"     => Preferences.Get("ikindiAlarmSesi", "alarm"),
-            "Akşam"      => Preferences.Get("aksamAlarmSesi", "alarm"),
-            "Yatsı"      => Preferences.Get("yatsiAlarmSesi", "alarm"),
-            "Yatsı Sonu" => Preferences.Get("yatsisonuAlarmSesi", "alarm"),
-            _            => "alarm"
-        } switch
+            "Fecri Kazip" => "falsefajr",
+            "Fecri Sadık" => "fajr",
+            "Sabah Sonu"  => "sunrise",
+            "Öğle"        => "dhuhr",
+            "İkindi"      => "asr",
+            "Akşam"       => "maghrib",
+            "Yatsı"       => "isha",
+            "Yatsı Sonu"  => "endofisha",
+            _              => "asr" // fallback
+        };
+        var soundPref = Preferences.Get(prayerId + "AlarmSound", "kus");
+        var channelId = soundPref switch
         {
             "kus"   => "SuleymaniyeTakvimialarmbirdchannelId",
             "horoz" => "SuleymaniyeTakvimialarmroosterchannelId",

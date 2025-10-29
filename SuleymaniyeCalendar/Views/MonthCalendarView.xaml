@@ -130,15 +130,15 @@
                     Style="{StaticResource FrostGlassCardFrozen}" 
                     Padding="20,16"
                     IsVisible="{Binding HasSelectedDayData}">
-                <VerticalStackLayout Spacing="16">
+                <VerticalStackLayout Spacing="9">
                     <!-- Selected Date Header with Icon -->
-                    <HorizontalStackLayout Spacing="8">
-                        <Label Text="📖" FontSize="20" VerticalOptions="Center" />
+                    <!--<HorizontalStackLayout Spacing="8">
+                        <Label Text="📖" FontSize="20" VerticalOptions="Center" />-->
                         <Label Text="{Binding SelectedDate, StringFormat='{0:dddd, dd MMMM yyyy}'}"
                                Style="{StaticResource TitleMediumStyle}"
                                VerticalOptions="Center"
                                TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}" />
-                    </HorizontalStackLayout>
+                    <!--</HorizontalStackLayout>-->
                     
                     <!-- 🎨 Subtle Divider -->
                     <BoxView HeightRequest="1" 

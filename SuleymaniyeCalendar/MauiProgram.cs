@@ -20,7 +20,7 @@ namespace SuleymaniyeCalendar;
 
 public static class MauiProgram
 {
-            public static MauiApp CreateMauiApp()
+    public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
         builder
@@ -72,15 +72,15 @@ public static class MauiProgram
         builder.Services.AddSingleton<IAudioPreviewService, AudioPreviewService>();
         builder.Services.AddSingleton<IRadioService, RadioService>();
         builder.Services.AddSingleton<IRtlService, RtlService>();
-    builder.Services.AddSingleton<JsonApiService>();
-    builder.Services.AddSingleton<DataService>();
-        
+        builder.Services.AddSingleton<JsonApiService>();
+        builder.Services.AddSingleton<DataService>();
+
         // Enhanced services for better user experience  
         builder.Services.AddSingleton<AccessibilityService>();
         builder.Services.AddSingleton<PerformanceService>();
         builder.Services.AddSingleton<BackgroundDataPreloader>();
 
-    builder.Services.AddSingleton<MainViewModel>();
+        builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddSingleton<MainPage>();
         builder.Services.AddSingleton<AboutViewModel>();
         builder.Services.AddSingleton<AboutPage>();
@@ -94,7 +94,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<CompassPage>();
 
         // Transient Month page/VM
-    builder.Services.AddTransient<MonthViewModel>();
+        builder.Services.AddTransient<MonthViewModel>();
         builder.Services.AddTransient<MonthPage>();
 
 #if DEBUG

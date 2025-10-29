@@ -114,6 +114,53 @@ namespace SuleymaniyeCalendar.ViewModels
 					}
 					await _audioPreview.StopAsync().ConfigureAwait(false);
 					await MainThread.InvokeOnMainThreadAsync(() => IsPlaying = false);
+
+					// PLATFORM PERMISSION CHECKS - Android exact alarms and notifications
+					// If permissions are missing, open system settings/request directly and abort scheduling.	
+					#if ANDROID
+					try
+					{
+						// Exact alarms (API31+): open system scheduling settings directly (no intermediate alert)
+						if (OperatingSystem.IsAndroidVersionAtLeast(31))
+						{
+							var am = (Android.App.AlarmManager)Android.App.Application.Context.GetSystemService(Android.Content.Context.AlarmService);
+							if (am != null && !am.CanScheduleExactAlarms())
+							{
+								var intent = new Android.Content.Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm);
+								intent.SetData(Android.Net.Uri.Parse($"package:{Android.App.Application.Context.PackageName}"));
+								intent.AddFlags(Android.Content.ActivityFlags.NewTask);
+								Android.App.Application.Context.StartActivity(intent);
+								_scheduling = false;
+								return;
+							}
+						}
+
+						// Notification permission (Android13+): request directly
+						if (OperatingSystem.IsAndroidVersionAtLeast(33))
+						{
+							var status = await Permissions.CheckStatusAsync<Permissions.PostNotifications>();
+							if (status != PermissionStatus.Granted)
+							{
+								var newStatus = await Permissions.RequestAsync<Permissions.PostNotifications>();
+								if (newStatus != PermissionStatus.Granted)
+								{
+									DataService.ShowToast("Notification permission required to schedule alarms.");
+									_scheduling = false;
+									return;
+								}
+							}
+						}
+					}
+					catch (Exception ex)
+					{
+						Debug.WriteLine($"Permission checks failed: {ex.Message}");
+						// If permission check fails, abort scheduling to avoid unexpected prompts
+						_scheduling = false;
+						return;
+					}
+					#endif
+
+					// Proceed with scheduling (DataService already checks reminders)
 					await _dataService.SetMonthlyAlarmsAsync().ConfigureAwait(false);
 				}
 			}

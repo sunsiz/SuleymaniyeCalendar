@@ -1170,7 +1170,7 @@ namespace SuleymaniyeCalendar.Services
 			}
 		}
 
-		private bool CheckRemindersEnabledAny()
+		internal bool CheckRemindersEnabledAny()
 		{
 			return Preferences.Get("falsefajrEnabled", false) || Preferences.Get("fajrEnabled", false) ||
 				   Preferences.Get("sunriseEnabled", false) || Preferences.Get("dhuhrEnabled", false) ||

@@ -8,15 +8,13 @@
     x:DataType="viewModels:AboutViewModel"
     Title="{Binding Title}"
     FlowDirection="{DynamicResource FlowDirection}"
-    Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <StackLayout
-            Margin="10"
-            HeightRequest="34"
-            Orientation="Horizontal">
+        <StackLayout Margin="8" HeightRequest="48" Orientation="Horizontal">
             <Label
                 AutomationProperties.IsInAccessibleTree="True"
+                SemanticProperties.HeadingLevel="Level1"
                 Style="{StaticResource LabelSectionHeader}"
                 Text="{localization:Translate SuleymaniyeVakfi}" />
         </StackLayout>
@@ -27,13 +25,10 @@
             HorizontalOptions="Fill"
             Orientation="Vertical"
             VerticalOptions="Fill">
-            <VerticalStackLayout
-                Padding="{StaticResource CardPaddingTight}"
-                Spacing="{StaticResource SpacingTight}">
-
+            <VerticalStackLayout Padding="{StaticResource CardPaddingTight}" Spacing="{StaticResource SpacingTight}">
                 <!--  Hero Section with App Description (with subtle halo)  -->
                 <Grid>
-                    <BoxView Background="{StaticResource PrimaryHaloBrush}" />
+                    <!--<BoxView Background="{StaticResource PrimaryHaloBrush}" />-->
                     <Border Style="{StaticResource FrostGlassCardCrystal}">
                         <VerticalStackLayout Spacing="10">
                         <Label Style="{StaticResource HeadlineLargeStyle}"
@@ -60,18 +55,6 @@
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
-
-                        <!-- Version Info -->
-                        <Label HorizontalTextAlignment="Center"
-                               Style="{StaticResource LabelLargeStyle}"
-                               TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="{Binding VersionNumber}" />
-                                    <Span Text="{localization:Translate Version}" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
                         </VerticalStackLayout>
                     </Border>
                 </Grid>
@@ -94,8 +77,6 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://www.suleymaniyevakfi.org/"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfi}"
                                 Source="app_logo.png" />
 
@@ -104,8 +85,6 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://www.facebook.com/suleymaniyevakfi/"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiFacebook}"
                                 Source="facebook.png" />
 
@@ -114,8 +93,6 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://twitter.com/suleymaniye_vkf"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiTwitter}"
                                 Source="twitter.png" />
 
@@ -124,8 +101,6 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://www.instagram.com/suleymaniyevakfi"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiInstagram}"
                                 Source="instagram.png" />
                         </Grid>
@@ -150,8 +125,6 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://play.google.com/store/apps/details?id=org.suleymaniyevakfi"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="Google Play Store"
                                 Source="google_play.png" />
 
@@ -160,11 +133,21 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://apps.apple.com/app/id688657265"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="Apple App Store"
                                 Source="app_store.png" />
                         </Grid>
+
+                        <!-- Version Info -->
+                        <Label HorizontalTextAlignment="Center"
+                               Style="{StaticResource LabelLargeStyle}"
+                               TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding VersionNumber}" />
+                                    <Span Text="{localization:Translate Version}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
                     </VerticalStackLayout>
                 </Border>
 

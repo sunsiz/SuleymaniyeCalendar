@@ -10,7 +10,7 @@
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     x:DataType="viewModels:SettingsViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    Background="{AppThemeBinding Light={StaticResource AppBackgroundBrushLight}, Dark={StaticResource AppBackgroundBrushDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <!-- Windows: explicit back navigation (Shell back button not always visible)
     <ContentPage.ToolbarItems>
@@ -74,7 +74,7 @@
 
                 <!--  Theme Selection - Compact  -->
                 <!--  🎨 PHASE 15: Using ElevatedPrimaryCard for featured settings  -->
-                <Border Style="{StaticResource FrostGlassCardFrozen}">
+                <Border Style="{StaticResource iOSLiquidGlassCard}">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Padding="16,12" Spacing="16">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                             <!--  Golden theme icon with increased visibility  -->
@@ -101,19 +101,17 @@
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" 
                                            FontFamily="{StaticResource IconFontFamily}" 
-                                           FontSize="{DynamicResource IconSmallFontSize}" 
+                                           FontSize="{DynamicResource IconMediumFontSize}" 
                                            Text="&#xf185;"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
                                            VerticalOptions="Center" />
                                     <Label Grid.Column="1" 
                                            Text="{localization:Translate AcikTema}" 
-                                           Style="{StaticResource BodyMediumStyle}"
+                                           Style="{DynamicResource BodyMediumStyle}"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
+                                           FontSize="{DynamicResource BodyFontSize}"
                                            VerticalOptions="Center" />
-                                    <RadioButton Grid.Column="2" 
-                                                 GroupName="ThemeGroup"
-                                                 Value="1"
-                                                 IsChecked="{Binding LightChecked}" />
+                                    <RadioButton Grid.Column="2" GroupName="ThemeGroup" Value="1" IsChecked="{Binding LightChecked}" />
                                 </Grid>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer x:DataType="viewModels:SettingsViewModel" Command="{Binding SetThemeByIndexCommand}" CommandParameter="1" />
@@ -122,11 +120,6 @@
                                     <!-- 🦸 PHASE 12: Golden theme chip when selected -->
                                     <DataTrigger Binding="{Binding LightChecked}" Value="True" TargetType="Border">
                                         <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
-                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary40}}" />
-                                        <Setter Property="StrokeThickness" Value="2.5" />
-                                        <Setter Property="Shadow">
-                                            <Shadow Brush="{StaticResource Primary50}" Radius="12" Offset="0,3" Opacity="0.3" />
-                                        </Setter>
                                     </DataTrigger>
                                 </Border.Triggers>
                             </Border>
@@ -135,19 +128,17 @@
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" 
                                            FontFamily="{StaticResource IconFontFamily}" 
-                                           FontSize="{DynamicResource IconSmallFontSize}" 
+                                           FontSize="{DynamicResource IconMediumFontSize}" 
                                            Text="&#xf186;"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
                                            VerticalOptions="Center" />
                                     <Label Grid.Column="1" 
                                            Text="{localization:Translate KoyuTema}" 
-                                           Style="{StaticResource BodyMediumStyle}"
+                                           Style="{DynamicResource BodyMediumStyle}"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
+                                           FontSize="{DynamicResource BodyFontSize}"
                                            VerticalOptions="Center" />
-                                    <RadioButton Grid.Column="2" 
-                                                 GroupName="ThemeGroup"
-                                                 Value="0"
-                                                 IsChecked="{Binding DarkChecked}" />
+                                    <RadioButton Grid.Column="2" GroupName="ThemeGroup" Value="0" IsChecked="{Binding DarkChecked}" />
                                 </Grid>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer x:DataType="viewModels:SettingsViewModel" Command="{Binding SetThemeByIndexCommand}" CommandParameter="0" />
@@ -156,11 +147,6 @@
                                     <!-- 🦸 PHASE 12: Golden theme chip when selected -->
                                     <DataTrigger Binding="{Binding DarkChecked}" Value="True" TargetType="Border">
                                         <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
-                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary40}}" />
-                                        <Setter Property="StrokeThickness" Value="2.5" />
-                                        <Setter Property="Shadow">
-                                            <Shadow Brush="{StaticResource Primary50}" Radius="12" Offset="0,3" Opacity="0.3" />
-                                        </Setter>
                                     </DataTrigger>
                                 </Border.Triggers>
                             </Border>
@@ -169,19 +155,17 @@
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" 
                                            FontFamily="{StaticResource IconFontFamily}" 
-                                           FontSize="{DynamicResource IconSmallFontSize}" 
+                                           FontSize="{DynamicResource IconMediumFontSize}" 
                                            Text="&#xf3ce;"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
                                            VerticalOptions="Center" />
                                     <Label Grid.Column="1" 
                                            Text="{localization:Translate SistemTemasi}" 
-                                           Style="{StaticResource BodyMediumStyle}"
+                                           Style="{DynamicResource BodyMediumStyle}"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
+                                           FontSize="{DynamicResource BodyFontSize}"
                                            VerticalOptions="Center" />
-                                    <RadioButton Grid.Column="2" 
-                                                 GroupName="ThemeGroup"
-                                                 Value="2"
-                                                 IsChecked="{Binding SystemChecked}" />
+                                    <RadioButton Grid.Column="2" GroupName="ThemeGroup" Value="2" IsChecked="{Binding SystemChecked}" />
                                 </Grid>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer x:DataType="viewModels:SettingsViewModel" Command="{Binding SetThemeByIndexCommand}" CommandParameter="2" />
@@ -190,11 +174,6 @@
                                     <!-- 🦸 PHASE 12: Golden theme chip when selected -->
                                     <DataTrigger Binding="{Binding SystemChecked}" Value="True" TargetType="Border">
                                         <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
-                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary40}}" />
-                                        <Setter Property="StrokeThickness" Value="2.5" />
-                                        <Setter Property="Shadow">
-                                            <Shadow Brush="{StaticResource Primary50}" Radius="12" Offset="0,3" Opacity="0.3" />
-                                        </Setter>
                                     </DataTrigger>
                                 </Border.Triggers>
                             </Border>
@@ -204,7 +183,7 @@
 
                 <!--  Font Size - Simplified icon ✅  -->
                 <!--  🎨 PHASE 15: Using FrostGlassCardFrozen + GoldenSlider  -->
-                <Border Style="{StaticResource FrostGlassCardFrozen}" Padding="16,12">
+                <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                             <!--  Golden font size icon with increased visibility  -->
@@ -320,7 +299,7 @@
 
                 <!--  Android Foreground Service - Simplified icon ✅  -->
                 <!--  🎨 PHASE 15: Using FrostGlassCardFrozen for secondary settings  -->
-                <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource FrostGlassCardFrozen}" Padding="16,12">
+                <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource FrostGlassCardCrystal}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                             <!--  Golden service icon with increased visibility  -->
@@ -340,7 +319,7 @@
                                     Style="{StaticResource HeadlineMediumStyle}"
                                     Text="{localization:Translate BildirimKapatma}" />
                                 <Label
-                                    MaxLines="3"
+                                    LineHeight="0.9"
                                     Style="{StaticResource BodySmallStyle}"
                                     Text="{localization:Translate BildirimUyari}"
                                     Opacity="0.8" />
@@ -356,7 +335,7 @@
                         <!-- 🦸 PHASE 12: Settings button - golden primary for maximum contrast -->
                         <Button
                             Margin="8,0,8,16"
-                            Style="{StaticResource GlassButtonSuccess}"
+                            Style="{StaticResource GlassButtonPrimaryIntense}"
                             TextColor="{AppThemeBinding Light={StaticResource OnPrimaryContainerLight}, Dark={StaticResource Primary30}}"
                             Command="{Binding GotoSettingsCommand}"
                             Text="{localization:Translate GotoSettings}" />

@@ -214,11 +214,12 @@ namespace SuleymaniyeCalendar
 			// Use main looper-bound Handler; default ctor is obsolete on modern Android
 			_handler = new Handler(Looper.MainLooper);
 			_notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
-            // Ensure all alarm channels (with sounds) exist before any alarm fires
-            NotificationChannelManager.CreateAlarmNotificationChannels();
-            
-            SetNotification();
+			// Ensure all alarm channels (with sounds) exist before any alarm fires
+			NotificationChannelManager.CreateAlarmNotificationChannels();
 
+			SetNotification();
+
+			// CRITICAL: Call StartForeground IMMEDIATELY (before any async/background work)
 			if (Preferences.Get("ForegroundServiceEnabled", true))
 			{
 #pragma warning disable CA1416 // Platform compatibility
@@ -251,9 +252,12 @@ namespace SuleymaniyeCalendar
 					System.Diagnostics.Debug.WriteLine($"Widget service start failed: {exception.Message}");
 				}
 				_updateCounter = 0;
-
-				// Auto-reschedule monthly alarms when approaching the end of the current window
-				TryRescheduleAlarms();
+                if (CheckRemindersEnabledAny())
+                {
+					// Auto-reschedule monthly alarms when approaching the end of the current window
+					TryRescheduleAlarms();
+                }
+                
 			});
 			_handler.PostDelayed(_runnable, NOTIFICATION_UPDATE_INTERVAL_MS);
 			_isStarted = true;
@@ -413,9 +417,13 @@ namespace SuleymaniyeCalendar
 						StartForeground(NOTIFICATION_ID, _notification);
 						_handler.PostDelayed(_runnable, NOTIFICATION_UPDATE_INTERVAL_MS);
 						_isStarted = true;
-						
-						// Start alarm setup work in background (non-blocking)
-						_ = Task.Run(async () =>
+						if (!CheckRemindersEnabledAny())
+						{
+							System.Diagnostics.Debug.WriteLine("OnStartCommand: No reminders enabled, skipping alarm setup.");
+							break;
+                        }
+                        // Start alarm setup work in background (non-blocking)
+                        _ = Task.Run(async () =>
 						{
 							try
 							{
@@ -496,5 +504,13 @@ namespace SuleymaniyeCalendar
 			});
 			System.Diagnostics.Debug.WriteLine("Main Activity" + $"Main Activity StopAlarmForegroundService Finished: {DateTime.Now:HH:m:s.fff}");
 		}
-	}
+
+        private bool CheckRemindersEnabledAny()
+        {
+            return Preferences.Get("falsefajrEnabled", false) || Preferences.Get("fajrEnabled", false) ||
+                   Preferences.Get("sunriseEnabled", false) || Preferences.Get("dhuhrEnabled", false) ||
+                   Preferences.Get("asrEnabled", false) || Preferences.Get("maghribEnabled", false) ||
+                   Preferences.Get("ishaEnabled", false) || Preferences.Get("endofishaEnabled", false);
+        }
+    }
 }

@@ -107,8 +107,11 @@ public partial class MonthViewModel : BaseViewModel
     }
 
     // 🌍 PHASE 20.1: Localized Weekday Headers
-    private string[] weekdayHeaders;
-    public string[] WeekdayHeaders
+    // Use IList<string> instead of string[] to avoid AOT/linker issues with XAML indexer bindings in Release builds.
+    // Binding expressions like {Binding WeekdayHeaders[0]} can be compiled to typed bindings that resolve to
+    // unexpected member signatures when using raw arrays which may be trimmed under aggressive linking.
+    private System.Collections.Generic.IList<string> weekdayHeaders = new System.Collections.Generic.List<string>(7);
+    public System.Collections.Generic.IList<string> WeekdayHeaders
     {
         get => weekdayHeaders;
         set => SetProperty(ref weekdayHeaders, value);
@@ -138,16 +141,18 @@ public partial class MonthViewModel : BaseViewModel
     {
         var culture = CultureInfo.CurrentCulture;
         var dayNames = culture.DateTimeFormat.AbbreviatedDayNames;
-        
-        // .NET already starts with Sunday (0), so use directly
-        WeekdayHeaders = new string[7];
+
+        // Ensure we populate a concrete list to avoid array indexer bindings in XAML
+        var list = new System.Collections.Generic.List<string>(7);
         for (int i = 0; i < 7; i++)
         {
-            // Take first 3 characters for ultra-compact display
-            WeekdayHeaders[i] = dayNames[i].Length > 3 
-                ? dayNames[i].Substring(0, 3) 
-                : dayNames[i];
+            var val = dayNames[i] ?? string.Empty;
+            if (val.Length > 3)
+                val = val.Substring(0, 3);
+            list.Add(val);
         }
+
+        WeekdayHeaders = list;
     }
 
     /// <summary>
@@ -193,7 +198,7 @@ public partial class MonthViewModel : BaseViewModel
             {
                 cached = await _data.GetMonthlyFromCacheOrEmptyAsync(location).ConfigureAwait(false);
             }
-            
+
             if (cached != null && cached.Count > 0)
             {
                 var normalizedCache = DeduplicateAndSort(cached);
@@ -205,10 +210,10 @@ public partial class MonthViewModel : BaseViewModel
                         OnPropertyChanged(nameof(HasData));
                     }
                 });
-                
+
                 // 🗓️ PHASE 20.1C: Build calendar grid asynchronously (off UI thread)
                 await BuildCalendarGridAsync().ConfigureAwait(false);
-                
+
                 await MainThread.InvokeOnMainThreadAsync(() =>
                 {
                     IsBusy = false;
@@ -267,7 +272,7 @@ public partial class MonthViewModel : BaseViewModel
                 }
                 ShowToast(AppResources.AylikTakvimYenilendi);
             });
-            
+
             // 🗓️ PHASE 20.1C: Rebuild calendar grid after refresh (async)
             await BuildCalendarGridAsync();
         }

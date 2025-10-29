@@ -8,8 +8,8 @@ namespace SuleymaniyeCalendar;
 [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
 public class MainActivity : MauiAppCompatActivity
 {
-	protected override async void OnCreate(Bundle savedInstanceState)
-	{
+    protected override async void OnCreate(Bundle savedInstanceState)
+    {
         try
         {
             base.OnCreate(savedInstanceState);
@@ -24,7 +24,10 @@ public class MainActivity : MauiAppCompatActivity
                 await MainThread.InvokeOnMainThreadAsync(async () => await EnsureNotificationPermissionAsync());
             });
 
-            EnsureExactAlarmCapability();
+            if (AnyRemindersEnabled())
+            {
+                EnsureExactAlarmCapability();
+            }
 
             if (Preferences.Get("ForegroundServiceEnabled", true))
             {
@@ -42,7 +45,18 @@ public class MainActivity : MauiAppCompatActivity
             System.Diagnostics.Debug.WriteLine($"MainActivity.OnCreate: Exception - {ex.Message}");
         }
     }
-	
+
+    private bool AnyRemindersEnabled()
+    {
+        return Preferences.Get("falsefajrEnabled", false) ||
+           Preferences.Get("fajrEnabled", false) ||
+           Preferences.Get("sunriseEnabled", false) ||
+           Preferences.Get("dhuhrEnabled", false) ||
+           Preferences.Get("asrEnabled", false) ||
+           Preferences.Get("maghribEnabled", false) ||
+           Preferences.Get("ishaEnabled", false) ||
+           Preferences.Get("endofishaEnabled", false);
+    }
 
     async Task EnsureNotificationPermissionAsync()
     {
