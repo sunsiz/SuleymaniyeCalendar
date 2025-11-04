@@ -103,4 +103,16 @@ public static class MauiProgram
 
         return builder.Build();
     }
+
+    public static void Initialize()
+    {
+        AppDomain.CurrentDomain.UnhandledException += (sender, e) =>
+        {
+            System.Diagnostics.Debug.WriteLine($"Unhandled exception: {e.ExceptionObject}");
+        };
+        TaskScheduler.UnobservedTaskException += (sender, e) =>
+        {
+            System.Diagnostics.Debug.WriteLine($"Unobserved task exception: {e.Exception}");
+        };
+    }
 }

@@ -1,15 +1,27 @@
-using ObjCRuntime;
+using System;
+using Foundation;
 using UserNotifications;
 
 namespace SuleymaniyeCalendar
 {
-    internal class UserNotificationCenterDelegate : IUNUserNotificationCenterDelegate
+    internal class UserNotificationCenterDelegate : UNUserNotificationCenterDelegate
     {
-        public NativeHandle Handle => throw new NotImplementedException();
-
-        public void Dispose()
+        // This method is called when a notification is delivered to a foreground app
+        public override void WillPresentNotification(UNUserNotificationCenter center, UNNotification notification, 
+            Action<UNNotificationPresentationOptions> completionHandler)
         {
-            throw new NotImplementedException();
+            // Show the notification even when the app is in the foreground
+            completionHandler(UNNotificationPresentationOptions.Alert | 
+                              UNNotificationPresentationOptions.Sound | 
+                              UNNotificationPresentationOptions.Badge);
+        }
+
+        // This method is called when the user interacts with a notification
+        public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, 
+            Action completionHandler)
+        {
+            // Handle the notification tap/interaction here if needed
+            completionHandler();
         }
     }
 }
