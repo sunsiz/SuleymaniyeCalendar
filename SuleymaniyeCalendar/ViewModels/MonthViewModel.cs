@@ -90,7 +90,21 @@ public partial class MonthViewModel : BaseViewModel
             if (SetProperty(ref selectedDayData, value))
             {
                 OnPropertyChanged(nameof(HasSelectedDayData));
+                System.Diagnostics.Debug.WriteLine($"🔔 SelectedDayData changed: HasSelectedDayData={HasSelectedDayData}");
             }
+        }
+    }
+
+    /// <summary>
+    /// Whether daily detail card should be visible.
+    /// </summary>
+    public bool HasSelectedDayData
+    {
+        get
+        {
+            var result = SelectedDayData != null;
+            System.Diagnostics.Debug.WriteLine($"📊 HasSelectedDayData getter called: returning {result}");
+            return result;
         }
     }
 
@@ -189,11 +203,6 @@ public partial class MonthViewModel : BaseViewModel
         get => weekdayHeaders;
         set => SetProperty(ref weekdayHeaders, value);
     }
-
-    /// <summary>
-    /// Whether daily detail card should be visible.
-    /// </summary>
-    public bool HasSelectedDayData => SelectedDayData != null;
 
     #endregion
 
