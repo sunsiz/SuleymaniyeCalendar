@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -14,108 +16,216 @@ using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Resources.Strings;
 using Calendar = SuleymaniyeCalendar.Models.Calendar;
 
-namespace SuleymaniyeCalendar.Services
+namespace SuleymaniyeCalendar.Services;
+
+/// <summary>
+/// Core data service for managing prayer times, location data, caching, and alarm scheduling.
+/// Acts as the central hub for all data operations in the application.
+/// </summary>
+/// <remarks>
+/// <para>Key responsibilities:</para>
+/// <list type="bullet">
+///   <item>Fetch prayer times from JSON API with XML fallback</item>
+///   <item>Manage local caching with unified year-based cache system</item>
+///   <item>Handle GPS location and permission requests</item>
+///   <item>Schedule 30-day rolling alarm notifications</item>
+///   <item>Coordinate between API services and UI layer</item>
+/// </list>
+/// </remarks>
+public class DataService
 {
-	public class DataService
-	{
-	private readonly IAlarmService _alarmService;
-	private readonly JsonApiService _jsonApiService;
-	private readonly PerformanceService _perf;
-		public Calendar calendar;
-		private Calendar _location;
-		private ObservableCollection<Calendar> _monthlyCalendar;
-		private static readonly HttpClient _xmlHttpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
-		private const int UnifiedCacheVersion = 1;
-		private const string LastAlarmDatePreferenceKey = "LastAlarmDate";
-		private const string LastAutoReschedulePreferenceKey = "LastAutoRescheduleUtc";
-		private static readonly TimeSpan AutoRescheduleWindow = TimeSpan.FromDays(3);
-		private static readonly TimeSpan AutoRescheduleCooldown = TimeSpan.FromHours(6);
+    #region Constants
 
-		// Primary constructor for DI: JsonApiService is injected
-		public DataService(IAlarmService alarmService, JsonApiService jsonApiService, PerformanceService perf = null)
-		{
-			_alarmService = alarmService;
-			_jsonApiService = jsonApiService;
-			_perf = perf ?? new PerformanceService();
-			calendar = GetTakvimFromFile() ?? new Calendar()
-			{
-				Latitude = Preferences.Get("latitude", 41.0),
-				Longitude = Preferences.Get("longitude", 29.0),
-				Altitude = Preferences.Get("altitude", 114.0),
-				TimeZone = Preferences.Get("timezone", 3.0),
-				DayLightSaving = Preferences.Get("daylightsaving", 0.0),
-				FalseFajr = Preferences.Get("falsefajr", "06:28"),
-				Fajr = Preferences.Get("fajr", "07:16"),
-				Sunrise = Preferences.Get("sunrise", "08:00"),
-				Dhuhr = Preferences.Get("dhuhr", "12:59"),
-				Asr = Preferences.Get("asr", "15:27"),
-				Maghrib = Preferences.Get("maghrib", "17:54"),
-				Isha = Preferences.Get("isha", "18:41"),
-				EndOfIsha = Preferences.Get("endofisha", "19:31"),
-				Date = Preferences.Get("date", DateTime.Today.ToString("dd/MM/yyyy"))
-			};
-		}
+    /// <summary>
+    /// Current version of the unified cache format for migration support.
+    /// </summary>
+    private const int UnifiedCacheVersion = 1;
 
-		// Backward-compatible constructor for callers without DI (e.g., Android widget fallback)
-	public DataService(IAlarmService alarmService) : this(alarmService, new JsonApiService())
-		{
-		}
+    /// <summary>
+    /// Preference key for storing the last alarm coverage date.
+    /// </summary>
+    private const string LastAlarmDatePreferenceKey = "LastAlarmDate";
 
-		// Robust, culture-invariant parsing for Calendar.Date which may arrive as "dd/MM/yyyy", "dd-MM-yyyy", "yyyy-MM-dd", etc.
-		private static readonly string[] KnownDateFormats = new[]
-		{
-			"dd/MM/yyyy", "d/M/yyyy", "dd-MM-yyyy", "d-M-yyyy",
-			"yyyy-MM-dd", "yyyy/MM/dd", "MM/dd/yyyy", "M/d/yyyy",
-			"dd.MM.yyyy", "d.MM.yyyy"
-		};
+    /// <summary>
+    /// Preference key for storing the last auto-reschedule timestamp.
+    /// </summary>
+    private const string LastAutoReschedulePreferenceKey = "LastAutoRescheduleUtc";
 
-		private static bool TryParseCalendarDate(string input, out DateTime date)
-		{
-			date = default;
-			if (string.IsNullOrWhiteSpace(input)) return false;
-			var s = input.Trim();
-			return DateTime.TryParseExact(s, KnownDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out date)
-				|| DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
-		}
+    /// <summary>
+    /// Number of days before alarm coverage expiry to trigger auto-reschedule.
+    /// </summary>
+    private static readonly TimeSpan AutoRescheduleWindow = TimeSpan.FromDays(3);
 
-		private static DateTime ParseCalendarDateOrMin(string input)
-		{
-			return TryParseCalendarDate(input, out var dt) ? dt : DateTime.MinValue;
-		}
+    /// <summary>
+    /// Minimum time between automatic reschedule operations.
+    /// </summary>
+    private static readonly TimeSpan AutoRescheduleCooldown = TimeSpan.FromHours(6);
 
-		/// <summary>
-		/// Persists the most recent coverage day along with the timestamp of the scheduling run.
-		/// </summary>
-		private static void PersistAlarmCoverage(DateTime coverageThrough)
-		{
-			Preferences.Set(LastAlarmDatePreferenceKey, coverageThrough.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-			Preferences.Set(LastAutoReschedulePreferenceKey, DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
-		}
+    /// <summary>
+    /// Supported date formats for parsing calendar dates from various sources.
+    /// </summary>
+    private static readonly string[] KnownDateFormats =
+    [
+        "dd/MM/yyyy", "d/M/yyyy", "dd-MM-yyyy", "d-M-yyyy",
+        "yyyy-MM-dd", "yyyy/MM/dd", "MM/dd/yyyy", "M/d/yyyy",
+        "dd.MM.yyyy", "d.MM.yyyy"
+    ];
 
-		/// <summary>
-		/// Removes cached coverage metadata when alarms are disabled.
-		/// </summary>
-		private static void ClearAlarmCoverage()
-		{
-			Preferences.Remove(LastAlarmDatePreferenceKey);
-			Preferences.Remove(LastAutoReschedulePreferenceKey);
-		}
+    #endregion
 
-		/// <summary>
-		/// Determines whether an automatic reschedule should be throttled based on remaining coverage or cooldowns.
-		/// </summary>
-		private bool ShouldThrottleAutoReschedule(bool forceReschedule)
-		{
-			if (forceReschedule)
-			{
-				return false;
-			}
+    #region Private Fields
 
-			var coverageRaw = Preferences.Get(LastAlarmDatePreferenceKey, string.Empty);
-			if (TryParseCalendarDate(coverageRaw, out var coverageDate))
-			{
-				var daysRemaining = (coverageDate - DateTime.Today).TotalDays;
-				if (daysRemaining > AutoRescheduleWindow.TotalDays)
+    /// <summary>
+    /// Service for scheduling and managing prayer alarms.
+    /// </summary>
+    private readonly IAlarmService _alarmService;
+
+    /// <summary>
+    /// JSON API service for fetching prayer times from the new API.
+    /// </summary>
+    private readonly JsonApiService _jsonApiService;
+
+    /// <summary>
+    /// Performance monitoring service for timing operations.
+    /// </summary>
+    private readonly PerformanceService _perf;
+
+    /// <summary>
+    /// Cached location data for the current user.
+    /// </summary>
+    private Calendar? _location;
+
+    /// <summary>
+    /// Cached monthly prayer times collection.
+    /// </summary>
+    private ObservableCollection<Calendar>? _monthlyCalendar;
+
+    /// <summary>
+    /// Shared HTTP client for XML API requests with 15-second timeout.
+    /// </summary>
+    private static readonly HttpClient _xmlHttpClient = new() { Timeout = TimeSpan.FromSeconds(15) };
+
+    #endregion
+
+    #region Public Fields
+
+    /// <summary>
+    /// Current day's prayer calendar data. Shared with ViewModels for UI binding.
+    /// </summary>
+    public Calendar calendar;
+
+    #endregion
+
+    #region Constructors
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DataService"/> class with full dependency injection.
+    /// </summary>
+    /// <param name="alarmService">Service for scheduling prayer alarms.</param>
+    /// <param name="jsonApiService">JSON API service for fetching prayer times.</param>
+    /// <param name="perf">Optional performance monitoring service.</param>
+    public DataService(IAlarmService alarmService, JsonApiService jsonApiService, PerformanceService? perf = null)
+    {
+        _alarmService = alarmService;
+        _jsonApiService = jsonApiService;
+        _perf = perf ?? new PerformanceService();
+        calendar = GetTakvimFromFile() ?? new Calendar
+        {
+            Latitude = Preferences.Get("latitude", 41.0),
+            Longitude = Preferences.Get("longitude", 29.0),
+            Altitude = Preferences.Get("altitude", 114.0),
+            TimeZone = Preferences.Get("timezone", 3.0),
+            DayLightSaving = Preferences.Get("daylightsaving", 0.0),
+            FalseFajr = Preferences.Get("falsefajr", "06:28"),
+            Fajr = Preferences.Get("fajr", "07:16"),
+            Sunrise = Preferences.Get("sunrise", "08:00"),
+            Dhuhr = Preferences.Get("dhuhr", "12:59"),
+            Asr = Preferences.Get("asr", "15:27"),
+            Maghrib = Preferences.Get("maghrib", "17:54"),
+            Isha = Preferences.Get("isha", "18:41"),
+            EndOfIsha = Preferences.Get("endofisha", "19:31"),
+            Date = Preferences.Get("date", DateTime.Today.ToString("dd/MM/yyyy"))
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance with only alarm service (backward compatibility for widgets).
+    /// Creates a default JsonApiService internally.
+    /// </summary>
+    /// <param name="alarmService">Service for scheduling prayer alarms.</param>
+    public DataService(IAlarmService alarmService) : this(alarmService, new JsonApiService())
+    {
+    }
+
+    #endregion
+
+    #region Date Parsing Utilities
+
+    /// <summary>
+    /// Attempts to parse a calendar date string using multiple known formats.
+    /// </summary>
+    /// <param name="input">The date string to parse.</param>
+    /// <param name="date">The parsed date if successful.</param>
+    /// <returns>True if parsing succeeded; otherwise false.</returns>
+    private static bool TryParseCalendarDate(string? input, out DateTime date)
+    {
+        date = default;
+        if (string.IsNullOrWhiteSpace(input)) return false;
+        var s = input.Trim();
+        return DateTime.TryParseExact(s, KnownDateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out date)
+            || DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out date);
+    }
+
+    /// <summary>
+    /// Parses a calendar date string, returning <see cref="DateTime.MinValue"/> on failure.
+    /// </summary>
+    /// <param name="input">The date string to parse.</param>
+    /// <returns>Parsed date or MinValue if parsing fails.</returns>
+    private static DateTime ParseCalendarDateOrMin(string? input)
+    {
+        return TryParseCalendarDate(input, out var dt) ? dt : DateTime.MinValue;
+    }
+
+    #endregion
+
+    #region Alarm Coverage Management
+
+    /// <summary>
+    /// Persists the most recent coverage day along with the timestamp of the scheduling run.
+    /// </summary>
+    /// <param name="coverageThrough">The date through which alarms are scheduled.</param>
+    private static void PersistAlarmCoverage(DateTime coverageThrough)
+    {
+        Preferences.Set(LastAlarmDatePreferenceKey, coverageThrough.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+        Preferences.Set(LastAutoReschedulePreferenceKey, DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+    }
+
+    /// <summary>
+    /// Removes cached coverage metadata when alarms are disabled.
+    /// </summary>
+    private static void ClearAlarmCoverage()
+    {
+        Preferences.Remove(LastAlarmDatePreferenceKey);
+        Preferences.Remove(LastAutoReschedulePreferenceKey);
+    }
+
+    /// <summary>
+    /// Determines whether an automatic reschedule should be throttled based on remaining coverage or cooldowns.
+    /// </summary>
+    /// <param name="forceReschedule">If true, bypasses throttling.</param>
+    /// <returns>True if rescheduling should be skipped; otherwise false.</returns>
+    private bool ShouldThrottleAutoReschedule(bool forceReschedule)
+    {
+        if (forceReschedule)
+        {
+            return false;
+        }
+
+        var coverageRaw = Preferences.Get(LastAlarmDatePreferenceKey, string.Empty);
+        if (TryParseCalendarDate(coverageRaw, out var coverageDate))
+        {
+            var daysRemaining = (coverageDate - DateTime.Today).TotalDays;
+            if (daysRemaining > AutoRescheduleWindow.TotalDays)
 				{
 					Debug.WriteLine($"[DataService] Skipping auto reschedule; {daysRemaining:F1} days remain.");
 					return true;
@@ -1425,6 +1535,8 @@ namespace SuleymaniyeCalendar.Services
 			return location;
 		}
 
+		#endregion
+
 		#region Hybrid API Methods (New JSON + Old XML Fallback)
 
 		/// <summary>
@@ -1752,11 +1864,10 @@ namespace SuleymaniyeCalendar.Services
 		/// <summary>
 		/// Get today's prayer times using hybrid approach - parameterless version for backward compatibility
 		/// </summary>
-		public async Task<Calendar> GetPrayerTimesHybridAsync()
-		{
-			return await GetPrayerTimesHybridAsync(false);
-		}
+    public async Task<Calendar?> GetPrayerTimesHybridAsync()
+    {
+        return await GetPrayerTimesHybridAsync(false);
+    }
 
-		#endregion
-	}
+    #endregion
 }
