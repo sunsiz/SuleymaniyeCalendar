@@ -325,10 +325,16 @@ public partial class MonthCalendarView : ContentView
         
         System.Diagnostics.Debug.WriteLine($"🎴 OnCellTapped: After selection - SelectedDayCard.IsVisible={SelectedDayCard?.IsVisible}");
         
-        // Animate selected day card if visible
+        // Animate selected day card if visible and scroll to it
         if (SelectedDayCard != null && SelectedDayCard.IsVisible)
         {
             await AnimateSelectedDayCardAsync();
+            
+            // Scroll to make the card visible
+            if (MainScrollView != null)
+            {
+                await MainScrollView.ScrollToAsync(SelectedDayCard, ScrollToPosition.MakeVisible, true);
+            }
         }
     }
 

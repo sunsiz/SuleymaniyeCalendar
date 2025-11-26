@@ -10,7 +10,7 @@
     x:DataType="viewModels:MonthViewModel"
     FlowDirection="{DynamicResource FlowDirection}">
 
-    <ScrollView>
+    <ScrollView x:Name="MainScrollView">
         <VerticalStackLayout Spacing="{StaticResource SpacingMD}" Padding="{StaticResource SpacingXS}">
             
             <!-- 🎯 PHASE 20.2: Unified Calendar Card with Integrated Navigation -->
