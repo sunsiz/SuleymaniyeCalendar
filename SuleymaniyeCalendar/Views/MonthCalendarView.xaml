@@ -122,23 +122,25 @@
                           RowSpacing="4" />
                     
                     <!-- 📥 Download Prompt: Shown when navigating to months without cached data -->
+                    <!-- 🔧 Made compact to keep prayer card visible -->
                     <Border Style="{StaticResource FrostGlassCardCool}"
-                            Padding="16,12"
+                            Padding="12,8"
                             IsVisible="{Binding ShowDownloadPrompt}">
-                        <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                        <HorizontalStackLayout Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
                             <Label Text="📅" 
-                                   FontSize="32" 
-                                   HorizontalTextAlignment="Center" />
+                                   FontSize="20" 
+                                   VerticalOptions="Center" />
                             <Label Text="{localization:Translate AylikVeriYenilemeIste}"
-                                   Style="{StaticResource BodyMediumStyle}"
-                                   HorizontalTextAlignment="Center"
+                                   Style="{StaticResource BodySmallStyle}"
+                                   VerticalOptions="Center"
                                    TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceDarkColor}}" />
                             <Button Text="{localization:Translate AyVeriYukle}"
                                     Style="{StaticResource iOSLiquidGlassButton}"
                                     Command="{Binding DownloadDisplayedMonthCommand}"
-                                    HorizontalOptions="Center"
-                                    Padding="24,8" />
-                        </VerticalStackLayout>
+                                    VerticalOptions="Center"
+                                    HeightRequest="32"
+                                    Padding="16,4" />
+                        </HorizontalStackLayout>
                     </Border>
                     
                     <!-- 🔄 Loading Indicator for Month Download -->
@@ -147,8 +149,8 @@
                                        Color="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}"
                                        HorizontalOptions="Center"
                                        VerticalOptions="Center"
-                                       HeightRequest="36"
-                                       WidthRequest="36" />
+                                       HeightRequest="24"
+                                       WidthRequest="24" />
                     
                 </VerticalStackLayout>
             </Border>
