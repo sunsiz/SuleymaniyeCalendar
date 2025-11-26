@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Maui.Alerts;
+﻿#nullable enable
+
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SuleymaniyeCalendar.Resources.Strings;
@@ -75,7 +77,7 @@ public partial class BaseViewModel : ObservableObject
         set => SetProperty(ref _showOverlay, value);
     }
 
-    private string _overlayMessage;
+    private string _overlayMessage = string.Empty;
     /// <summary>Message displayed on the overlay.</summary>
     public string OverlayMessage
     {
