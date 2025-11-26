@@ -74,13 +74,7 @@ public partial class MonthViewModel : BaseViewModel
     public DateTime SelectedDate
     {
         get => selectedDate;
-        set
-        {
-            if (SetProperty(ref selectedDate, value))
-            {
-                SelectDay(value);
-            }
-        }
+        set => SetProperty(ref selectedDate, value);
     }
 
     private PrayerCalendar? selectedDayData;
@@ -660,13 +654,12 @@ public partial class MonthViewModel : BaseViewModel
 
     /// <summary>
     /// Selects a day and populates the detail card with prayer times.
-    /// ?? PHASE 20.1: Updates visual highlight for selected day.
+    /// 🔧 PHASE 20.1: Updates visual highlight for selected day.
+    /// Note: This method updates UI state only. Use SelectDayAsync for full selection logic.
     /// </summary>
-    public void SelectDay(DateTime date)
+    private void UpdateSelectionUI(DateTime date)
     {
-        SelectedDate = date;
-
-        // ?? Update visual selection state
+        // 🔧 Update visual selection state
         if (CalendarDays != null)
         {
             foreach (var day in CalendarDays)
@@ -678,9 +671,6 @@ public partial class MonthViewModel : BaseViewModel
         // Find prayer data for selected date
         var selectedDay = CalendarDays?.FirstOrDefault(d => d.Date.Date == date.Date);
         SelectedDayData = selectedDay?.PrayerData;
-        
-        // Rebuild to refresh visual state
-        OnPropertyChanged(nameof(CalendarDays));
     }
 
     /// <summary>

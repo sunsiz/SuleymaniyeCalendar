@@ -275,23 +275,47 @@ public partial class MonthCalendarView : ContentView
     /// <summary>
     /// Unified tap handler for pooled cells.
     /// </summary>
-    private async void OnCellTapped(object sender, TappedEventArgs e)
+    private async void OnCellTapped(object? sender, TappedEventArgs e)
     {
-        if (_viewModel != null && sender is TapGestureRecognizer gesture && 
-            gesture.Parent is Border tappedBorder && 
-            tappedBorder.BindingContext is CalendarDay day)
+        System.Diagnostics.Debug.WriteLine($"🔵 OnCellTapped: sender={sender?.GetType().Name}, e.Source={e}");
+        
+        // The sender is the TapGestureRecognizer, we need to find the Border it belongs to
+        if (_viewModel == null || sender is not TapGestureRecognizer gesture)
         {
-            // Subtle scale animation
-            await tappedBorder.ScaleTo(0.92, 80, Easing.CubicOut);
-            await tappedBorder.ScaleTo(1.0, 120, Easing.CubicOut);
-            
-            // Execute selection
-            _viewModel.SelectDayCommand.Execute(day.Date);
-            
-            // Animate selected day card
-            if (SelectedDayCard != null && SelectedDayCard.IsVisible)
+            System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: ViewModel null or sender not TapGestureRecognizer");
+            return;
+        }
+
+        // Find the border that owns this gesture recognizer
+        Border? tappedBorder = null;
+        foreach (var cell in _cellPool)
+        {
+            if (cell.GestureRecognizers.Contains(gesture))
             {
-                await AnimateSelectedDayCardAsync();
+                tappedBorder = cell;
+                break;
+            }
+        }
+
+        if (tappedBorder == null || tappedBorder.BindingContext is not CalendarDay day)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: Border not found or BindingContext not CalendarDay");
+            return;
+        }
+
+        System.Diagnostics.Debug.WriteLine($"✅ OnCellTapped: Tapped day {day.Date:yyyy-MM-dd}");
+
+        // Subtle scale animation
+        await tappedBorder.ScaleTo(0.92, 80, Easing.CubicOut);
+        await tappedBorder.ScaleTo(1.0, 120, Easing.CubicOut);
+        
+        // Execute selection
+        _viewModel.SelectDayCommand.Execute(day.Date);
+        
+        // Animate selected day card
+        if (SelectedDayCard != null && SelectedDayCard.IsVisible)
+        {
+            await AnimateSelectedDayCardAsync();
             }
         }
     }
