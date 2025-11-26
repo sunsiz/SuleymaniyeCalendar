@@ -541,11 +541,11 @@
             </Setter.Value>
         </Setter>
         <Setter Property="TextColor" Value="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary30}}" />
-        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="CornerRadius" Value="22" />
         <Setter Property="Padding" Value="18,10" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light={StaticResource Primary30}, Dark={StaticResource Primary90}}" Opacity="0.35" Radius="2" Offset="0,3" />
+                <Shadow Brush="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary90}}" Opacity="0.85" Radius="9" Offset="0,2" />
             </Setter.Value>
         </Setter>
     </Style>

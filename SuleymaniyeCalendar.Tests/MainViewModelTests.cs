@@ -52,7 +52,7 @@ namespace SuleymaniyeCalendar.Tests
             // Setup DataService mock
             _dataServiceMock.SetupGet(x => x.calendar).Returns(_testCalendar);
             _dataServiceMock.Setup(x => x.PrepareMonthlyPrayerTimes()).ReturnsAsync(_testCalendar);
-            _dataServiceMock.Setup(x => x.SetMonthlyAlarmsAsync()).Returns(Task.CompletedTask);
+            _dataServiceMock.Setup(x => x.SetMonthlyAlarmsAsync(It.IsAny<bool>())).Returns(Task.CompletedTask);
         }
 
         private MainViewModel CreateViewModel()
@@ -84,7 +84,7 @@ namespace SuleymaniyeCalendar.Tests
 
             // Assert
             _dataServiceMock.Verify(x => x.PrepareMonthlyPrayerTimes(), Times.Once);
-            _dataServiceMock.Verify(x => x.SetMonthlyAlarmsAsync(), Times.Once);
+            _dataServiceMock.Verify(x => x.SetMonthlyAlarmsAsync(It.Is<bool>(force => force)), Times.Once);
         }
 
         [TestMethod]

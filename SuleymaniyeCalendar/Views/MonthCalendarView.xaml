@@ -121,6 +121,35 @@
                           ColumnSpacing="4"
                           RowSpacing="4" />
                     
+                    <!-- 📥 Download Prompt: Shown when navigating to months without cached data -->
+                    <Border Style="{StaticResource FrostGlassCardCool}"
+                            Padding="16,12"
+                            IsVisible="{Binding ShowDownloadPrompt}">
+                        <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
+                            <Label Text="📅" 
+                                   FontSize="32" 
+                                   HorizontalTextAlignment="Center" />
+                            <Label Text="{localization:Translate AylikVeriYenilemeIste}"
+                                   Style="{StaticResource BodyMediumStyle}"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceDarkColor}}" />
+                            <Button Text="{localization:Translate AyVeriYukle}"
+                                    Style="{StaticResource iOSLiquidGlassButton}"
+                                    Command="{Binding DownloadDisplayedMonthCommand}"
+                                    HorizontalOptions="Center"
+                                    Padding="24,8" />
+                        </VerticalStackLayout>
+                    </Border>
+                    
+                    <!-- 🔄 Loading Indicator for Month Download -->
+                    <ActivityIndicator IsRunning="{Binding IsLoadingMonth}"
+                                       IsVisible="{Binding IsLoadingMonth}"
+                                       Color="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       HeightRequest="36"
+                                       WidthRequest="36" />
+                    
                 </VerticalStackLayout>
             </Border>
 

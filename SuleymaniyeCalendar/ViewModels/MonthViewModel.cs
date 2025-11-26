@@ -106,6 +106,37 @@ public partial class MonthViewModel : BaseViewModel
         set => SetProperty(ref monthYearDisplay, value);
     }
 
+    // 🔄 Indicates whether the currently displayed month has prayer data
+    private bool displayedMonthHasData = true;
+    public bool DisplayedMonthHasData
+    {
+        get => displayedMonthHasData;
+        set
+        {
+            if (SetProperty(ref displayedMonthHasData, value))
+            {
+                OnPropertyChanged(nameof(ShowDownloadPrompt));
+            }
+        }
+    }
+
+    // 📥 Shows the "Download This Month" prompt when navigating to months without cached data
+    public bool ShowDownloadPrompt => !DisplayedMonthHasData && !IsLoadingMonth;
+
+    // 🔄 Indicates whether a specific month is currently being downloaded
+    private bool isLoadingMonth = false;
+    public bool IsLoadingMonth
+    {
+        get => isLoadingMonth;
+        set
+        {
+            if (SetProperty(ref isLoadingMonth, value))
+            {
+                OnPropertyChanged(nameof(ShowDownloadPrompt));
+            }
+        }
+    }
+
     // 🌍 PHASE 20.1: Localized Weekday Headers
     // Use IList<string> instead of string[] to avoid AOT/linker issues with XAML indexer bindings in Release builds.
     // Binding expressions like {Binding WeekdayHeaders[0]} can be compiled to typed bindings that resolve to
@@ -225,7 +256,7 @@ public partial class MonthViewModel : BaseViewModel
                 await MainThread.InvokeOnMainThreadAsync(() =>
                 {
                     IsBusy = false;
-                    ShowToast("Please refresh to load monthly data");
+                    ShowToast(AppResources.AylikVeriYenilemeIste);
                 });
                 // Show empty calendar structure
                 await BuildCalendarGridAsync();
@@ -377,7 +408,7 @@ public partial class MonthViewModel : BaseViewModel
             var currentMonth = CurrentMonth;
 
             // 🚀 PHASE 20.1C: Heavy work on background thread
-            var (days, monthYearDisplay, autoSelectDate) = await Task.Run(() =>
+            var (days, monthYearDisplay, autoSelectDate, monthHasData) = await Task.Run(() =>
             {
                 using (_perf?.StartTimer("Month.BuildCalendarGrid.Background"))
                 {
@@ -418,12 +449,15 @@ public partial class MonthViewModel : BaseViewModel
 
                     var displayText = firstDay.ToString("MMMM yyyy", CultureInfo.CurrentCulture);
                     
+                    // 📊 Check if any days in the displayed month have prayer data
+                    var monthHasData = daysList.Any(d => d.IsCurrentMonth && d.HasData);
+                    
                     // Determine which day to auto-select
                     var selectDate = selectedDate.Month == currentMonth && selectedDate.Year == currentYear
                         ? selectedDate
                         : firstDay;
 
-                    return (daysList, displayText, selectDate);
+                    return (daysList, displayText, selectDate, monthHasData);
                 }
             }).ConfigureAwait(false);
 
@@ -434,6 +468,7 @@ public partial class MonthViewModel : BaseViewModel
                 {
                     CalendarDays = new ObservableCollection<CalendarDay>(days);
                     MonthYearDisplay = monthYearDisplay;
+                    DisplayedMonthHasData = monthHasData; // 📊 Track if current month has data
                 }
             });
 
@@ -572,6 +607,67 @@ public partial class MonthViewModel : BaseViewModel
         await BuildCalendarGridAsync();
         // BuildCalendarGridAsync selects 1st day by default, so explicitly select today
         await SelectDayAsync(today);
+    }
+
+    /// <summary>
+    /// 📥 Downloads prayer times for the currently displayed month.
+    /// Called when user navigates to a month without cached data.
+    /// Does NOT save to monthly cache file to avoid impacting loading speed.
+    /// Instead, stores in memory-only session cache for the current session.
+    /// </summary>
+    [RelayCommand]
+    private async Task DownloadDisplayedMonth()
+    {
+        if (IsLoadingMonth) return;
+
+        await MainThread.InvokeOnMainThreadAsync(() => IsLoadingMonth = true);
+
+        try
+        {
+            var location = await _data.GetCurrentLocationAsync(false).ConfigureAwait(false);
+            if (location == null || location.Latitude == 0 || location.Longitude == 0)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => ShowToast(AppResources.KonumIzniIcerik));
+                return;
+            }
+
+            // 📥 Fetch the specific month from API (not affecting main cache)
+            var targetMonth = CurrentMonth;
+            var targetYear = CurrentYear;
+            
+            var monthData = await _data.FetchSpecificMonthAsync(location, targetMonth, targetYear).ConfigureAwait(false);
+            
+            if (monthData == null || monthData.Count == 0)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() => 
+                    ShowToast(AppResources.TakvimIcinInternet));
+                return;
+            }
+
+            // Add fetched data to MonthlyCalendar (in-memory only, doesn't affect file cache)
+            var normalizedData = DeduplicateAndSort(monthData.Concat(MonthlyCalendar).ToList());
+            
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                MonthlyCalendar = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar>(normalizedData);
+                OnPropertyChanged(nameof(HasData));
+                ShowToast(string.Format(AppResources.AyVeriIndirildi, MonthYearDisplay));
+            });
+
+            // Rebuild grid with new data
+            await BuildCalendarGridAsync();
+        }
+        catch (Exception ex)
+        {
+            await MainThread.InvokeOnMainThreadAsync(() =>
+            {
+                ShowToast($"Error: {ex.Message}");
+            });
+        }
+        finally
+        {
+            await MainThread.InvokeOnMainThreadAsync(() => IsLoadingMonth = false);
+        }
     }
 }
 

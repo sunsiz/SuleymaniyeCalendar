@@ -144,7 +144,7 @@ namespace SuleymaniyeCalendar.ViewModels
 								var newStatus = await Permissions.RequestAsync<Permissions.PostNotifications>();
 								if (newStatus != PermissionStatus.Granted)
 								{
-									DataService.ShowToast("Notification permission required to schedule alarms.");
+									DataService.ShowToast(AppResources.BildirimIzniGerekli);
 									_scheduling = false;
 									return;
 								}
@@ -161,7 +161,7 @@ namespace SuleymaniyeCalendar.ViewModels
 					#endif
 
 					// Proceed with scheduling (DataService already checks reminders)
-					await _dataService.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+					await _dataService.SetMonthlyAlarmsAsync(forceReschedule: true).ConfigureAwait(false);
 				}
 			}
 			catch (Exception ex)

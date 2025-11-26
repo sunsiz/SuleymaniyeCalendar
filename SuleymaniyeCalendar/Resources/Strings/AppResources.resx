@@ -127,6 +127,15 @@
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>Monthly Calendar Refreshed Successfully</value>
   </data>
+  <data name="AyVeriIndirildi" xml:space="preserve">
+    <value>{0} data downloaded</value>
+  </data>
+  <data name="AyVeriYukle" xml:space="preserve">
+    <value>Download This Month</value>
+  </data>
+  <data name="AylikVeriYenilemeIste" xml:space="preserve">
+    <value>Please refresh to load monthly data</value>
+  </data>
   <data name="BesDakikaOnceden" xml:space="preserve">
     <value>5 minutes before</value>
   </data>
@@ -144,6 +153,9 @@
   </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>Show notification</value>
+  </data>
+  <data name="BildirimIzniGerekli" xml:space="preserve">
+    <value>Notification permission required to schedule alarms.</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>Reminder Time: </value>
@@ -207,6 +219,12 @@
   </data>
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>Fitrat TV Youtube Channel</value>
+  </data>
+  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+    <value>Failed to load prayer times for scheduling</value>
+  </data>
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+    <value>Prayer reminders scheduled for 30 days</value>
   </data>
   <data name="Hakkinda" xml:space="preserve">
     <value>About</value>

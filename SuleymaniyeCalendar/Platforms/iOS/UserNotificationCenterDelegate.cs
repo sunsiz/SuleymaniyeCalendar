@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Foundation;
 using UserNotifications;
 
@@ -17,11 +17,35 @@ namespace SuleymaniyeCalendar
         }
 
         // This method is called when the user interacts with a notification
-        public override void DidReceiveNotificationResponse(UNUserNotificationCenter center, UNNotificationResponse response, 
+        public override void DidReceiveNotificationResponse(
+            UNUserNotificationCenter center,
+            UNNotificationResponse response,
             Action completionHandler)
         {
-            // Handle the notification tap/interaction here if needed
-            completionHandler();
+            try
+            {
+                var userInfo = response.Notification.Request.Content.UserInfo;
+                
+                if (userInfo?["prayerName"] is NSString prayerName)
+                {
+                    System.Diagnostics.Debug.WriteLine(
+                        $"📲 User tapped notification: {prayerName}");
+                    
+                    // Navigate to prayer detail or show information
+                    MainThread.BeginInvokeOnMainThread(async () =>
+                    {
+                        await Shell.Current.GoToAsync("mainpage");
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ Notification response error: {ex.Message}");
+            }
+            finally
+            {
+                completionHandler();
+            }
         }
     }
 }

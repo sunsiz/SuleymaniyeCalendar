@@ -11,18 +11,18 @@ namespace SuleymaniyeCalendar.Tests
         public void GetPrayerIconById_ShouldReturnCorrectIcons()
         {
             // Test main prayer icons by ID
-            Assert.AreEqual("sunrise.svg", PrayerIconService.GetPrayerIconById("fajr"));
-            Assert.AreEqual("sunrise.svg", PrayerIconService.GetPrayerIconById("falsefajr"));
-            Assert.AreEqual("clearday.svg", PrayerIconService.GetPrayerIconById("dhuhr"));
-            Assert.AreEqual("partlycloudyday.svg", PrayerIconService.GetPrayerIconById("asr"));
-            Assert.AreEqual("sunset.svg", PrayerIconService.GetPrayerIconById("maghrib"));
-            Assert.AreEqual("starrynight.svg", PrayerIconService.GetPrayerIconById("isha"));
-            Assert.AreEqual("starrynight.svg", PrayerIconService.GetPrayerIconById("endofisha"));
-            Assert.AreEqual("sunrise.svg", PrayerIconService.GetPrayerIconById("sunrise"));
+            Assert.AreEqual("sunrise", PrayerIconService.GetPrayerIconById("sunrise"));
+            Assert.AreEqual("overcastnight", PrayerIconService.GetPrayerIconById("falsefajr"));
+            Assert.AreEqual("overcast", PrayerIconService.GetPrayerIconById("fajr"));
+            Assert.AreEqual("clearday", PrayerIconService.GetPrayerIconById("dhuhr"));
+            Assert.AreEqual("partlycloudyday", PrayerIconService.GetPrayerIconById("asr"));
+            Assert.AreEqual("sunset", PrayerIconService.GetPrayerIconById("maghrib"));
+            Assert.AreEqual("overcastnight", PrayerIconService.GetPrayerIconById("isha"));
+            Assert.AreEqual("starrynight", PrayerIconService.GetPrayerIconById("endofisha"));
             
             // Test default fallback
-            Assert.AreEqual("clearday.svg", PrayerIconService.GetPrayerIconById("unknown"));
-            Assert.AreEqual("clearday.svg", PrayerIconService.GetPrayerIconById(null));
+            Assert.AreEqual("clearday", PrayerIconService.GetPrayerIconById("unknown"));
+            Assert.AreEqual("clearday", PrayerIconService.GetPrayerIconById(null));
         }
 
         [TestMethod]
@@ -32,35 +32,35 @@ namespace SuleymaniyeCalendar.Tests
             var fajrPrayer = new Prayer { Id = "fajr", Name = "Fecr-i Sadık" };
             PrayerIconService.AssignIconById(fajrPrayer);
             
-            Assert.AreEqual("sunrise.svg", fajrPrayer.IconPath);
+            Assert.AreEqual("overcast", fajrPrayer.IconPath);
             Assert.AreEqual(string.Empty, fajrPrayer.Description); // No description
             
             // Test Dhuhr prayer  
             var dhuhrPrayer = new Prayer { Id = "dhuhr", Name = "Öğle" };
             PrayerIconService.AssignIconById(dhuhrPrayer);
             
-            Assert.AreEqual("clearday.svg", dhuhrPrayer.IconPath);
+            Assert.AreEqual("clearday", dhuhrPrayer.IconPath);
             Assert.AreEqual(string.Empty, dhuhrPrayer.Description); // No description
             
             // Test Asr prayer
             var asrPrayer = new Prayer { Id = "asr", Name = "İkindi" };
             PrayerIconService.AssignIconById(asrPrayer);
             
-            Assert.AreEqual("partlycloudyday.svg", asrPrayer.IconPath);
+            Assert.AreEqual("partlycloudyday", asrPrayer.IconPath);
             Assert.AreEqual(string.Empty, asrPrayer.Description); // No description
             
             // Test Maghrib prayer
             var maghribPrayer = new Prayer { Id = "maghrib", Name = "Akşam" };
             PrayerIconService.AssignIconById(maghribPrayer);
             
-            Assert.AreEqual("sunset.svg", maghribPrayer.IconPath);
+            Assert.AreEqual("sunset", maghribPrayer.IconPath);
             Assert.AreEqual(string.Empty, maghribPrayer.Description); // No description
             
             // Test Isha prayer
             var ishaPrayer = new Prayer { Id = "isha", Name = "Yatsı" };
             PrayerIconService.AssignIconById(ishaPrayer);
             
-            Assert.AreEqual("starrynight.svg", ishaPrayer.IconPath);
+            Assert.AreEqual("overcastnight", ishaPrayer.IconPath);
             Assert.AreEqual(string.Empty, ishaPrayer.Description); // No description
         }
 
@@ -83,19 +83,23 @@ namespace SuleymaniyeCalendar.Tests
         {
             var icons = PrayerIconService.GetAllPrayerIcons();
             
-            Assert.AreEqual(5, icons.Count);
+            // Updated to include all 8 prayer times
+            Assert.AreEqual(8, icons.Count);
+            Assert.IsTrue(icons.ContainsKey("falsefajr"));
             Assert.IsTrue(icons.ContainsKey("fajr"));
+            Assert.IsTrue(icons.ContainsKey("sunrise"));
             Assert.IsTrue(icons.ContainsKey("dhuhr"));
             Assert.IsTrue(icons.ContainsKey("asr"));
             Assert.IsTrue(icons.ContainsKey("maghrib"));
             Assert.IsTrue(icons.ContainsKey("isha"));
+            Assert.IsTrue(icons.ContainsKey("endofisha"));
             
             // Verify correct icons are mapped
-            Assert.AreEqual("sunrise.svg", icons["fajr"]);
-            Assert.AreEqual("clearday.svg", icons["dhuhr"]);
-            Assert.AreEqual("partlycloudyday.svg", icons["asr"]);
-            Assert.AreEqual("sunset.svg", icons["maghrib"]);
-            Assert.AreEqual("starrynight.svg", icons["isha"]);
+            Assert.AreEqual("overcast", icons["fajr"]);
+            Assert.AreEqual("clearday", icons["dhuhr"]);
+            Assert.AreEqual("partlycloudyday", icons["asr"]);
+            Assert.AreEqual("sunset", icons["maghrib"]);
+            Assert.AreEqual("overcastnight", icons["isha"]);
         }
     }
 }

@@ -1,9 +1,15 @@
-using System.Text.Json.Serialization;
+namespace SuleymaniyeCalendar.Models;
 
-namespace SuleymaniyeCalendar.Models
+/// <summary>
+/// This file is a placeholder. The JSON API response models (TimeCalcDto) 
+/// are defined in JsonApiService.cs as internal DTOs since they're only 
+/// used for API deserialization and immediately converted to Calendar objects.
+/// </summary>
+/// <remarks>
+/// The API at api.suleymaniyetakvimi.com returns bare JSON objects/arrays,
+/// not wrapped responses. All conversion logic is in JsonApiService.ConvertJsonDataToCalendar().
+/// </remarks>
+internal static class JsonApiModels
 {
-    // JSON API Response Models for new api.suleymaniyetakvimi.com API
-
-    // Note: The new JSON API returns a bare JSON object/array, not a wrapper with isSuccess/message.
-    // The previous wrapper models are no longer used and kept here only for reference.
+    // Intentionally empty - models are internal to JsonApiService
 }

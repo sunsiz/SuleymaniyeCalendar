@@ -248,7 +248,7 @@ namespace SuleymaniyeCalendar.Tests
             _viewModel.PrayerId = "dhuhr";
             _viewModel.SelectedSound = _viewModel.AvailableSounds.First();
             _audioPreviewMock.Setup(a => a.StopAsync()).Returns(Task.CompletedTask);
-            _dataServiceMock.Setup(d => d.SetMonthlyAlarmsAsync()).Returns(Task.CompletedTask);
+            _dataServiceMock.Setup(d => d.SetMonthlyAlarmsAsync(It.IsAny<bool>())).Returns(Task.CompletedTask);
 
             // Act
             _viewModel.GoBackCommand.Execute(null);
@@ -258,7 +258,7 @@ namespace SuleymaniyeCalendar.Tests
 
             // Assert
             _audioPreviewMock.Verify(a => a.StopAsync(), Times.Once);
-            _dataServiceMock.Verify(d => d.SetMonthlyAlarmsAsync(), Times.Once);
+            _dataServiceMock.Verify(d => d.SetMonthlyAlarmsAsync(It.Is<bool>(force => force)), Times.Once);
         }
 
         [TestMethod]

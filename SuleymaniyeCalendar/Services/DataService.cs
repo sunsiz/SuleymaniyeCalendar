@@ -26,6 +26,10 @@ namespace SuleymaniyeCalendar.Services
 		private ObservableCollection<Calendar> _monthlyCalendar;
 		private static readonly HttpClient _xmlHttpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(15) };
 		private const int UnifiedCacheVersion = 1;
+		private const string LastAlarmDatePreferenceKey = "LastAlarmDate";
+		private const string LastAutoReschedulePreferenceKey = "LastAutoRescheduleUtc";
+		private static readonly TimeSpan AutoRescheduleWindow = TimeSpan.FromDays(3);
+		private static readonly TimeSpan AutoRescheduleCooldown = TimeSpan.FromHours(6);
 
 		// Primary constructor for DI: JsonApiService is injected
 		public DataService(IAlarmService alarmService, JsonApiService jsonApiService, PerformanceService perf = null)
@@ -77,6 +81,60 @@ namespace SuleymaniyeCalendar.Services
 		private static DateTime ParseCalendarDateOrMin(string input)
 		{
 			return TryParseCalendarDate(input, out var dt) ? dt : DateTime.MinValue;
+		}
+
+		/// <summary>
+		/// Persists the most recent coverage day along with the timestamp of the scheduling run.
+		/// </summary>
+		private static void PersistAlarmCoverage(DateTime coverageThrough)
+		{
+			Preferences.Set(LastAlarmDatePreferenceKey, coverageThrough.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+			Preferences.Set(LastAutoReschedulePreferenceKey, DateTime.UtcNow.ToString("o", CultureInfo.InvariantCulture));
+		}
+
+		/// <summary>
+		/// Removes cached coverage metadata when alarms are disabled.
+		/// </summary>
+		private static void ClearAlarmCoverage()
+		{
+			Preferences.Remove(LastAlarmDatePreferenceKey);
+			Preferences.Remove(LastAutoReschedulePreferenceKey);
+		}
+
+		/// <summary>
+		/// Determines whether an automatic reschedule should be throttled based on remaining coverage or cooldowns.
+		/// </summary>
+		private bool ShouldThrottleAutoReschedule(bool forceReschedule)
+		{
+			if (forceReschedule)
+			{
+				return false;
+			}
+
+			var coverageRaw = Preferences.Get(LastAlarmDatePreferenceKey, string.Empty);
+			if (TryParseCalendarDate(coverageRaw, out var coverageDate))
+			{
+				var daysRemaining = (coverageDate - DateTime.Today).TotalDays;
+				if (daysRemaining > AutoRescheduleWindow.TotalDays)
+				{
+					Debug.WriteLine($"[DataService] Skipping auto reschedule; {daysRemaining:F1} days remain.");
+					return true;
+				}
+			}
+
+			var lastAutoRaw = Preferences.Get(LastAutoReschedulePreferenceKey, string.Empty);
+			if (!string.IsNullOrWhiteSpace(lastAutoRaw)
+				&& DateTime.TryParse(lastAutoRaw, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out var lastAutoUtc))
+			{
+				var sinceLast = DateTime.UtcNow - lastAutoUtc;
+				if (sinceLast < AutoRescheduleCooldown)
+				{
+					Debug.WriteLine($"[DataService] Skipping auto reschedule; last run was {sinceLast.TotalHours:F1}h ago.");
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		private Calendar GetTakvimFromFile()
@@ -649,90 +707,165 @@ namespace SuleymaniyeCalendar.Services
 			return calendar;
 		}
 
-		public async Task SetMonthlyAlarmsAsync()
+		public async Task SetMonthlyAlarmsAsync(bool forceReschedule = false)
 		{
 			Debug.WriteLine("TimeStamp-SetWeeklyAlarms-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
-            using (_perf.StartTimer("SetMonthlyAlarms"))
-            {
-			    _alarmService.CancelAlarm();
-			    if (CheckRemindersEnabledAny())
-			    {
-				    try
-				    {
-					    // Ensure we have 30 days of data starting today, potentially spanning next month/year
-					    var location = await GetCurrentLocationAsync(false).ConfigureAwait(false);
-						if (location != null && location.Latitude != 0 && location.Longitude != 0)
-						{
-							var next30Days = await EnsureDaysRangeAsync(location, DateTime.Today, 30).ConfigureAwait(false);
-							if (next30Days == null || next30Days.Count == 0)
-							{
-								ShowToast(AppResources.AylikTakvimeErisemedi);
-								Debug.WriteLine("⚠️ No days returned from EnsureDaysRangeAsync");
-								return;
-							}
-							Debug.WriteLine($"Setting alarms for {next30Days.Count} days starting {next30Days.First().Date}");
-							int dayCounter = 0;
-							var now = DateTime.Now;
-							foreach (var todayCalendar in next30Days.OrderBy(d => ParseCalendarDateOrMin(d.Date)))
-							{
-								var todayDate = ParseCalendarDateOrMin(todayCalendar.Date);
-								if (todayDate < DateTime.Today)
-								{
-									Debug.WriteLine($"⏭️ Skipping past date: {todayCalendar.Date}");
-									continue;
-								}
-								var baseDate = todayDate;
-								try
-								{
-									var falseFajrTime = TimeSpan.Parse(todayCalendar.FalseFajr);
-									var fajrTime = TimeSpan.Parse(todayCalendar.Fajr);
-									var sunriseTime = TimeSpan.Parse(todayCalendar.Sunrise);
-									var dhuhrTime = TimeSpan.Parse(todayCalendar.Dhuhr);
-									var asrTime = TimeSpan.Parse(todayCalendar.Asr);
-									var maghribTime = TimeSpan.Parse(todayCalendar.Maghrib);
-									var ishaTime = TimeSpan.Parse(todayCalendar.Isha);
-									var endOfIshaTime = TimeSpan.Parse(todayCalendar.EndOfIsha);
+			using (_perf.StartTimer("SetMonthlyAlarms"))
+			{
+				var remindersEnabled = CheckRemindersEnabledAny();
 
-									Debug.WriteLine($"⏰ Processing alarms for {baseDate:dd/MM/yyyy} (day {dayCounter})");
+				if (DeviceInfo.Platform == DevicePlatform.Android)
+				{
+					if (!remindersEnabled)
+					{
+						_alarmService.CancelAlarm();
+						ClearAlarmCoverage();
+						return;
+					}
 
-									bool isToday = todayDate.Date == DateTime.Today;
+					if (ShouldThrottleAutoReschedule(forceReschedule))
+					{
+						return;
+					}
 
-									// Schedule each prayer using helper method
-									SchedulePrayerAlarmIfEnabled(baseDate, falseFajrTime, now, isToday, "falsefajr", "Fecri Kazip");
-									SchedulePrayerAlarmIfEnabled(baseDate, fajrTime, now, isToday, "fajr", "Fecri Sadık");
-									SchedulePrayerAlarmIfEnabled(baseDate, sunriseTime, now, isToday, "sunrise", "Sabah Sonu");
-									SchedulePrayerAlarmIfEnabled(baseDate, dhuhrTime, now, isToday, "dhuhr", "Öğle");
-									SchedulePrayerAlarmIfEnabled(baseDate, asrTime, now, isToday, "asr", "İkindi");
-									SchedulePrayerAlarmIfEnabled(baseDate, maghribTime, now, isToday, "maghrib", "Akşam");
-									SchedulePrayerAlarmIfEnabled(baseDate, ishaTime, now, isToday, "isha", "Yatsı");
-									SchedulePrayerAlarmIfEnabled(baseDate, endOfIshaTime, now, isToday, "endofisha", "Yatsı Sonu");
-
-									dayCounter++;
-									Debug.WriteLine($"✅ Completed day {dayCounter}: {baseDate:dd/MM/yyyy} (alarms so far)");
-									if (dayCounter >= 30) break;
-								}
-								catch (Exception ex)
-								{
-									Debug.WriteLine($"❌ Error processing day {baseDate:dd/MM/yyyy}: {ex.Message}");
-									// Continue to next day instead of breaking entire loop
-								}
-								Debug.WriteLine($"✅ Alarm scheduling complete: alarms across {dayCounter} days");
-							}
-						}
-						else
+					_alarmService.CancelAlarm();
+					try
+					{
+						var location = await GetCurrentLocationAsync(false).ConfigureAwait(false);
+						if (location == null || location.Latitude == 0 || location.Longitude == 0)
 						{
 							ShowToast(AppResources.AylikTakvimeErisemedi);
 							Debug.WriteLine("⚠️ Invalid location data");
+							return;
 						}
-				    }
-				    catch (Exception exception)
-				    {
-						Debug.WriteLine($"❌ SetMonthlyAlarmsAsync failed: {exception.Message}\n{exception.StackTrace}");
-				    }
 
-				    Preferences.Set("LastAlarmDate", DateTime.Today.AddDays(30).ToShortDateString());
-			    }
-            }
+						var next30Days = await EnsureDaysRangeAsync(location, DateTime.Today, 30).ConfigureAwait(false);
+						if (next30Days == null || next30Days.Count == 0)
+						{
+							ShowToast(AppResources.AylikTakvimeErisemedi);
+							Debug.WriteLine("⚠️ No days returned from EnsureDaysRangeAsync");
+							return;
+						}
+
+						Debug.WriteLine($"Setting alarms for {next30Days.Count} days starting {next30Days.First().Date}");
+						var dayCounter = 0;
+						var now = DateTime.Now;
+						DateTime? coverageThrough = null;
+
+						foreach (var todayCalendar in next30Days.OrderBy(d => ParseCalendarDateOrMin(d.Date)))
+						{
+							var todayDate = ParseCalendarDateOrMin(todayCalendar.Date);
+							if (todayDate < DateTime.Today)
+							{
+								Debug.WriteLine($"⏭️ Skipping past date: {todayCalendar.Date}");
+								continue;
+							}
+
+							var baseDate = todayDate;
+							try
+							{
+								var falseFajrTime = TimeSpan.Parse(todayCalendar.FalseFajr);
+								var fajrTime = TimeSpan.Parse(todayCalendar.Fajr);
+								var sunriseTime = TimeSpan.Parse(todayCalendar.Sunrise);
+								var dhuhrTime = TimeSpan.Parse(todayCalendar.Dhuhr);
+								var asrTime = TimeSpan.Parse(todayCalendar.Asr);
+								var maghribTime = TimeSpan.Parse(todayCalendar.Maghrib);
+								var ishaTime = TimeSpan.Parse(todayCalendar.Isha);
+								var endOfIshaTime = TimeSpan.Parse(todayCalendar.EndOfIsha);
+
+								Debug.WriteLine($"⏰ Processing alarms for {baseDate:dd/MM/yyyy} (day {dayCounter})");
+
+								var isToday = todayDate.Date == DateTime.Today;
+
+								SchedulePrayerAlarmIfEnabled(baseDate, falseFajrTime, now, isToday, "falsefajr", "Fecri Kazip");
+								SchedulePrayerAlarmIfEnabled(baseDate, fajrTime, now, isToday, "fajr", "Fecri Sadık");
+								SchedulePrayerAlarmIfEnabled(baseDate, sunriseTime, now, isToday, "sunrise", "Sabah Sonu");
+								SchedulePrayerAlarmIfEnabled(baseDate, dhuhrTime, now, isToday, "dhuhr", "Öğle");
+								SchedulePrayerAlarmIfEnabled(baseDate, asrTime, now, isToday, "asr", "İkindi");
+								SchedulePrayerAlarmIfEnabled(baseDate, maghribTime, now, isToday, "maghrib", "Akşam");
+								SchedulePrayerAlarmIfEnabled(baseDate, ishaTime, now, isToday, "isha", "Yatsı");
+								SchedulePrayerAlarmIfEnabled(baseDate, endOfIshaTime, now, isToday, "endofisha", "Yatsı Sonu");
+
+								dayCounter++;
+								coverageThrough = baseDate;
+								Debug.WriteLine($"✅ Completed day {dayCounter}: {baseDate:dd/MM/yyyy} (alarms so far)");
+								if (dayCounter >= 30)
+								{
+									break;
+								}
+							}
+							catch (Exception ex)
+							{
+								Debug.WriteLine($"❌ Error processing day {baseDate:dd/MM/yyyy}: {ex.Message}");
+							}
+						}
+
+						if (dayCounter > 0 && coverageThrough.HasValue)
+						{
+							PersistAlarmCoverage(coverageThrough.Value);
+							Debug.WriteLine($"✅ Alarm scheduling complete through {coverageThrough.Value:dd/MM/yyyy}");
+						}
+					}
+					catch (Exception exception)
+					{
+						Debug.WriteLine($"❌ SetMonthlyAlarmsAsync failed: {exception.Message}\n{exception.StackTrace}");
+					}
+				}
+
+				if (DeviceInfo.Platform == DevicePlatform.iOS)
+				{
+#if __IOS__
+					Platforms.iOS.NotificationService.CancelAllNotifications();
+
+					if (!remindersEnabled)
+					{
+						ClearAlarmCoverage();
+						return;
+					}
+
+					try
+					{
+						var location = await GetCurrentLocationAsync(false);
+						if (location != null && location.Latitude != 0 && location.Longitude != 0)
+						{
+							var next30Days = await EnsureDaysRangeAsync(location, DateTime.Today, 30);
+							if (next30Days?.Count > 0)
+							{
+								var notificationMinutes = new Dictionary<string, int>
+								{
+									{ "falsefajr", Preferences.Get("falsefajrNotificationTime", 0) },
+									{ "fajr", Preferences.Get("fajrNotificationTime", 0) },
+									{ "sunrise", Preferences.Get("sunriseNotificationTime", 0) },
+									{ "dhuhr", Preferences.Get("dhuhrNotificationTime", 0) },
+									{ "asr", Preferences.Get("asrNotificationTime", 0) },
+									{ "maghrib", Preferences.Get("maghribNotificationTime", 0) },
+									{ "isha", Preferences.Get("ishaNotificationTime", 0) },
+									{ "endofisha", Preferences.Get("endofishaNotificationTime", 0) }
+								};
+
+								var orderedDays = next30Days.OrderBy(d => ParseCalendarDateOrMin(d.Date)).ToList();
+								await Platforms.iOS.NotificationService.ScheduleMonthlyNotificationsAsync(orderedDays, notificationMinutes);
+								var coverageCandidate = ParseCalendarDateOrMin(orderedDays.Last().Date);
+								if (coverageCandidate != DateTime.MinValue)
+								{
+									PersistAlarmCoverage(coverageCandidate);
+								}
+
+								ShowToast(AppResources.OtuzGunHatirlaticiPlanlandi);
+							}
+							else
+							{
+								ShowToast(AppResources.OtuzGunHatirlaticiHatasi);
+							}
+						}
+					}
+					catch (Exception ex)
+					{
+						Debug.WriteLine($"❌ iOS notification scheduling failed: {ex.Message}");
+					}
+#endif
+				}
+			}
 			Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 		}
 
@@ -1428,6 +1561,92 @@ namespace SuleymaniyeCalendar.Services
 
 			Debug.WriteLine("Hybrid Daily: Both APIs failed");
 			return null;
+		}
+
+		/// <summary>
+		/// 📥 Fetches prayer times for a specific month and saves to cache.
+		/// Used by MonthPage when user navigates to months without cached data.
+		/// Saves to year cache file in background (async, non-blocking).
+		/// Performance impact is minimal: ~15KB write, async I/O, user doesn't wait.
+		/// </summary>
+		/// <param name="location">User's location</param>
+		/// <param name="month">Target month (1-12)</param>
+		/// <param name="year">Target year</param>
+		/// <returns>Collection of calendar entries for the specified month, or null if failed</returns>
+		public async Task<ObservableCollection<Calendar>> FetchSpecificMonthAsync(Location location, int month, int year)
+		{
+			if (!HaveInternet()) return null;
+
+			try
+			{
+				Debug.WriteLine($"FetchSpecificMonth: Fetching {month}/{year}");
+				ObservableCollection<Calendar> result = null;
+
+				// Try JSON API first (supports current year by monthId)
+				if (year == DateTime.Now.Year)
+				{
+					var jsonResult = await _jsonApiService.GetMonthlyPrayerTimesAsync(
+						location.Latitude, location.Longitude, month, location.Altitude ?? 0
+					).ConfigureAwait(false);
+
+					if (jsonResult != null && jsonResult.Count > 0)
+					{
+						Debug.WriteLine($"FetchSpecificMonth: JSON API success - {jsonResult.Count} days");
+						result = jsonResult;
+					}
+				}
+
+				// Fallback: Fetch each day individually (for different years or JSON failure)
+				if (result == null)
+				{
+					Debug.WriteLine($"FetchSpecificMonth: Falling back to daily API");
+					var daysInMonth = DateTime.DaysInMonth(year, month);
+					var list = new List<Calendar>(daysInMonth);
+
+					for (int d = 1; d <= daysInMonth; d++)
+					{
+						var date = new DateTime(year, month, d);
+						var day = await _jsonApiService.GetDailyPrayerTimesAsync(
+							location.Latitude, location.Longitude, date, location.Altitude ?? 0
+						).ConfigureAwait(false);
+
+						if (day != null) list.Add(day);
+					}
+
+					if (list.Count > 0)
+					{
+						Debug.WriteLine($"FetchSpecificMonth: Daily API success - {list.Count} days");
+						result = new ObservableCollection<Calendar>(list);
+					}
+				}
+
+				// 💾 Save to cache in background (non-blocking, ~15KB async write)
+				if (result != null && result.Count > 0)
+				{
+					_ = Task.Run(async () =>
+					{
+						try
+						{
+							// Load existing year cache, merge with new data, and save
+							var existing = await LoadYearCacheAsync(location, year).ConfigureAwait(false) ?? new List<Calendar>();
+							var merged = MergeCalendars(existing, result.ToList());
+							await SaveYearCacheAsync(location, year, merged).ConfigureAwait(false);
+							Debug.WriteLine($"FetchSpecificMonth: Saved {result.Count} days to cache (total {merged.Count} for year {year})");
+						}
+						catch (Exception cacheEx)
+						{
+							Debug.WriteLine($"FetchSpecificMonth: Cache save failed - {cacheEx.Message}");
+						}
+					});
+				}
+
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"FetchSpecificMonth: Error - {ex.Message}");
+				return null;
+			}
 		}
 
 		/// <summary>

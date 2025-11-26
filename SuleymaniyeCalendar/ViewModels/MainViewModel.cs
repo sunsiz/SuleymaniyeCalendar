@@ -225,7 +225,7 @@ namespace SuleymaniyeCalendar.ViewModels
                     if (_data.CheckRemindersEnabledAny())
                     {
                         // Schedule notifications (can be slow on Android); keep off UI thread
-                        await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+                        await _data.SetMonthlyAlarmsAsync(forceReschedule: true).ConfigureAwait(false);
                     }                    
 
                     // Coalesced UI update after background work
@@ -324,7 +324,7 @@ namespace SuleymaniyeCalendar.ViewModels
                 {
                     try
                     {
-                        await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+                        await _data.SetMonthlyAlarmsAsync(forceReschedule: true).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
@@ -825,6 +825,38 @@ namespace SuleymaniyeCalendar.ViewModels
             }
 
             return "";
+        }
+
+        public async Task UpdatePrayerTimeDisplayAsync()
+        {
+            // Update UI
+            Application.Current?.Dispatcher.Dispatch(() =>
+            {
+                LoadPrayers(); // Recalculate states immediately
+            });
+
+            // Update iOS Live Activity if supported
+            if (DeviceInfo.Platform == DevicePlatform.iOS)
+            {
+#if __IOS__
+                var currentPrayer = Prayers.FirstOrDefault(p => p.IsActive);
+                if (currentPrayer != null)
+                {
+                    var remainingTime = GetRemainingTime();
+                    var nextPrayer = Prayers.FirstOrDefault(p => p.IsUpcoming);
+                
+                    await Platforms.iOS.LiveActivityService.StartPrayerActivityAsync(
+                        currentPrayer.Name,
+                        currentPrayer.Time,
+                        remainingTime,
+                        nextPrayer?.Name ?? "---");
+                }
+                else if (currentPrayer is null)
+                {
+                    await Platforms.iOS.LiveActivityService.StopPrayerActivityAsync();
+                }
+#endif
+            }
         }
 
         private async Task GetPrayersAsync()

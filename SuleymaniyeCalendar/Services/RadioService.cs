@@ -1,4 +1,4 @@
-using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Maui.Core.Primitives;
 using SuleymaniyeCalendar.Resources.Strings;
 
@@ -49,6 +49,14 @@ namespace SuleymaniyeCalendar.Services
 
             try
             {
+                // iOS: Initialize audio session before playing
+                if (DeviceInfo.Platform == DevicePlatform.iOS)
+                {
+#if __IOS__
+                    Platforms.iOS.AudioSessionManager.InitializeAudioSession();
+#endif
+                }
+
                 SetLoadingState(true);
                 
                 // Create media source with metadata for better media control display
@@ -63,11 +71,12 @@ namespace SuleymaniyeCalendar.Services
                 _mediaElement.Source = mediaSource;
 
                 _mediaElement.Play();
+                System.Diagnostics.Debug.WriteLine("📻 Radio playback started");
                 await Task.CompletedTask;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Radio play error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Radio play error: {ex.Message}");
                 SetLoadingState(false);
                 SetPlaybackState(false);
             }
@@ -98,11 +107,21 @@ namespace SuleymaniyeCalendar.Services
                 _mediaElement.Stop();
                 SetPlaybackState(false);
                 SetLoadingState(false);
+        
+                // iOS: Deactivate audio session
+                if (DeviceInfo.Platform == DevicePlatform.iOS)
+                {
+#if __IOS__
+                    Platforms.iOS.AudioSessionManager.DeactivateAudioSession();
+#endif
+                }
+
+                System.Diagnostics.Debug.WriteLine("✅ Radio stopped");
                 await Task.CompletedTask;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Radio stop error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Radio stop error: {ex.Message}");
             }
         }
 

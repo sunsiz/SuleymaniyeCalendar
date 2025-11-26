@@ -70,6 +70,31 @@
                 <key>NSIncludesSubdomains</key>
                 <true/>
             </dict>
+	        <!-- suleymaniyevakfi.org radio stream -->
+	        <key>suleymaniyevakfi.org</key>
+	        <dict>
+		        <key>NSIncludesSubdomains</key>
+		        <true/>
+		        <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+		        <true/>
+		        <key>NSTemporaryExceptionMinimumTLSVersion</key>
+		        <string>TLSv1.2</string>
+		        <key>NSExceptionRequiresForwardSecrecy</key>
+		        <false/>
+	        </dict>
+            
+	        <!-- www.suleymaniyevakfi.org -->
+	        <key>www.suleymaniyevakfi.org</key>
+	        <dict>
+		        <key>NSIncludesSubdomains</key>
+		        <true/>
+		        <key>NSTemporaryExceptionAllowsInsecureHTTPLoads</key>
+		        <true/>
+		        <key>NSTemporaryExceptionMinimumTLSVersion</key>
+		        <string>TLSv1.2</string>
+		        <key>NSExceptionRequiresForwardSecrecy</key>
+		        <false/>
+	        </dict>
         </dict>
     </dict>
     <key>UIViewControllerBasedStatusBarAppearance</key>

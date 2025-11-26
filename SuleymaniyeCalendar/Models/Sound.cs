@@ -1,26 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace SuleymaniyeCalendar.Models;
 
-namespace SuleymaniyeCalendar.Models
+/// <summary>
+/// Represents an alarm/notification sound option.
+/// </summary>
+public sealed class Sound
 {
-	public class Sound
-	{
-		public Sound(string fileName, string name)
-		{
-			FileName = fileName;
-			Name = name;
-		}
-		
-		public string FileName { get; set; }
-		public string Name { get; set; }
+    /// <summary>The sound file name (without path/extension).</summary>
+    public string FileName { get; }
 
-		public override string ToString()
-		{
-			// Allow Picker to display item text without ItemDisplayBinding
-			return Name ?? base.ToString();
-		}
-	}
+    /// <summary>Display name shown in the UI picker.</summary>
+    public string Name { get; }
+
+    public Sound(string fileName, string name)
+    {
+        FileName = fileName;
+        Name = name;
+    }
+
+    /// <summary>
+    /// Allows Picker to display item text without ItemDisplayBinding.
+    /// </summary>
+    public override string ToString() => Name ?? base.ToString();
 }

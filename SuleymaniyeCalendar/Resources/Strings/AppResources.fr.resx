@@ -169,6 +169,15 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>Les horaires de prière mensuels ont été mis à jour avec succès</value>
   </data>
+  <data name="AyVeriIndirildi" xml:space="preserve">
+    <value>Données de {0} téléchargées</value>
+  </data>
+  <data name="AyVeriYukle" xml:space="preserve">
+    <value>Télécharger ce mois</value>
+  </data>
+  <data name="AylikVeriYenilemeIste" xml:space="preserve">
+    <value>Veuillez actualiser pour charger les données mensuelles</value>
+  </data>
   <data name="Azerbaijani" xml:space="preserve">
     <value>Azerbaïdjanais</value>
   </data>
@@ -189,6 +198,9 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>Montrer la notification</value>
+  </data>
+  <data name="BildirimIzniGerekli" xml:space="preserve">
+    <value>L’autorisation de notifications est requise pour programmer des alarmes.</value>
   </data>
   <data name="BildirimKapatma" xml:space="preserve">
     <value>Activez la notification collante</value>
@@ -277,6 +289,12 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>Fitrat TV YouTube</value>
   </data>
+    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+      <value>Impossible de charger les horaires de prière pour la planification</value>
+    </data>
+    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+      <value>Rappels de prière planifiés pour 30 jours</value>
+    </data>
   <data name="French" xml:space="preserve">
     <value>Français</value>
   </data>
