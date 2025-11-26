@@ -1002,7 +1002,6 @@ public class DataService
 			return dict.Values.OrderBy(c => ParseCalendarDateOrMin(c.Date)).ToList();
 		}
 
-		/// <summary>
     /// <summary>
     /// Schedules a single prayer alarm if enabled and the time is in the future.
     /// </summary>
@@ -1396,7 +1395,6 @@ public class DataService
 
 		#region Hybrid API Methods (New JSON + Old XML Fallback)
 
-		/// <summary>
 		/// <summary>
 		/// Gets monthly prayer times using a hybrid approach: tries new JSON API first, falls back to legacy XML API.
 		/// </summary>

@@ -277,29 +277,37 @@ public partial class MonthCalendarView : ContentView
     /// </summary>
     private async void OnCellTapped(object? sender, TappedEventArgs e)
     {
-        System.Diagnostics.Debug.WriteLine($"🔵 OnCellTapped: sender={sender?.GetType().Name}, e.Source={e}");
-        
-        // The sender is the TapGestureRecognizer, we need to find the Border it belongs to
-        if (_viewModel == null || sender is not TapGestureRecognizer gesture)
+        if (_viewModel == null)
         {
-            System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: ViewModel null or sender not TapGestureRecognizer");
+            System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: ViewModel is null");
             return;
         }
 
-        // Find the border that owns this gesture recognizer
-        Border? tappedBorder = null;
-        foreach (var cell in _cellPool)
+        // sender can be either the Border itself or the TapGestureRecognizer
+        Border? tappedBorder = sender as Border;
+        
+        if (tappedBorder == null && sender is TapGestureRecognizer gesture)
         {
-            if (cell.GestureRecognizers.Contains(gesture))
+            // Find the border that owns this gesture recognizer
+            foreach (var cell in _cellPool)
             {
-                tappedBorder = cell;
-                break;
+                if (cell.GestureRecognizers.Contains(gesture))
+                {
+                    tappedBorder = cell;
+                    break;
+                }
             }
         }
 
-        if (tappedBorder == null || tappedBorder.BindingContext is not CalendarDay day)
+        if (tappedBorder == null)
         {
-            System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: Border not found or BindingContext not CalendarDay");
+            System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: Could not find Border (sender={sender?.GetType().Name})");
+            return;
+        }
+
+        if (tappedBorder.BindingContext is not CalendarDay day)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: BindingContext is not CalendarDay (type={tappedBorder.BindingContext?.GetType().Name})");
             return;
         }
 
@@ -316,7 +324,6 @@ public partial class MonthCalendarView : ContentView
         if (SelectedDayCard != null && SelectedDayCard.IsVisible)
         {
             await AnimateSelectedDayCardAsync();
-            }
         }
     }
 
