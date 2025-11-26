@@ -1219,6 +1219,17 @@ public class DataService
 			=> _cacheService.GetMonthlyFromCacheOrEmptyAsync(location);
 
 		/// <summary>
+		/// Gets prayer data for a specific month and year from cache.
+		/// Returns null if not cached.
+		/// </summary>
+		/// <param name="location">User's location for cache lookup.</param>
+		/// <param name="year">Target year.</param>
+		/// <param name="month">Target month (1-12).</param>
+		/// <returns>Observable collection of calendar entries for the month, or null if not cached.</returns>
+		public Task<ObservableCollection<Calendar>?> GetMonthFromCacheAsync(Location location, int year, int month)
+			=> _cacheService.TryGetMonthlyFromCacheAsync(location, year, month);
+
+		/// <summary>
 		/// Saves a list of calendar days to the unified year cache.
 		/// Delegates to PrayerCacheService.
 		/// </summary>

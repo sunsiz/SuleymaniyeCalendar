@@ -315,15 +315,18 @@ public partial class MonthCalendarView : ContentView
             return;
         }
 
-        // Skip redundant renders by checking hash of displayed month
+        // Skip redundant renders by checking hash of displayed month AND data state
+        // Include count of days with data to force re-render after download
         var firstDay = _viewModel.CalendarDays.FirstOrDefault();
-        var hash = firstDay?.Date.GetHashCode() ?? 0;
+        var daysWithData = _viewModel.CalendarDays.Count(d => d.HasData);
+        var hash = HashCode.Combine(firstDay?.Date ?? DateTime.MinValue, daysWithData);
         if (hash == _lastRenderedHash && CalendarGrid.Children.Count > 0)
         {
-            System.Diagnostics.Debug.WriteLine($"⏭️ RenderCalendarGrid skipped: Same month already rendered");
+            System.Diagnostics.Debug.WriteLine($"⏭️ RenderCalendarGrid skipped: Same month already rendered (hash={hash}, daysWithData={daysWithData})");
             return;
         }
         _lastRenderedHash = hash;
+        System.Diagnostics.Debug.WriteLine($"🔃 RenderCalendarGrid: hash changed to {hash} (daysWithData={daysWithData})");
 
         System.Diagnostics.Debug.WriteLine($"✅ RenderCalendarGrid: Updating grid with {daysCount} days");
 

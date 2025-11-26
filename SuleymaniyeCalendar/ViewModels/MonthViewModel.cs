@@ -384,6 +384,64 @@ public partial class MonthViewModel : BaseViewModel
     }
 
     /// <summary>
+    /// 🐛 FIX: Ensures the target month's data is loaded from cache and merged into MonthlyCalendar.
+    /// This fixes the issue where navigating to a month that was previously downloaded wouldn't show data.
+    /// </summary>
+    /// <param name="year">Target year.</param>
+    /// <param name="month">Target month (1-12).</param>
+    /// <returns>The updated MonthlyCalendar collection.</returns>
+    private async Task<ObservableCollection<PrayerCalendar>> EnsureMonthDataAsync(int year, int month)
+    {
+        // Check if we already have data for this month
+        var formats = new[] { "dd.MM.yyyy", "dd/MM/yyyy", "dd-MM-yyyy", "yyyy-MM-dd" };
+        bool hasMonthData = MonthlyCalendar.Any(cal =>
+        {
+            if (DateTime.TryParseExact(cal.Date, formats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
+            {
+                return dt.Year == year && dt.Month == month;
+            }
+            return false;
+        });
+
+        if (hasMonthData)
+        {
+            // Already have this month's data in memory
+            return MonthlyCalendar;
+        }
+
+        // Try to load from cache
+        try
+        {
+            var place = _data.calendar;
+            var location = new Location { Latitude = place.Latitude, Longitude = place.Longitude, Altitude = place.Altitude };
+            if (location.Latitude != 0 && location.Longitude != 0)
+            {
+                var cachedMonth = await _data.GetMonthFromCacheAsync(location, year, month).ConfigureAwait(false);
+                if (cachedMonth != null && cachedMonth.Count > 0)
+                {
+                    // Merge cached data into MonthlyCalendar
+                    var merged = DeduplicateAndSort(MonthlyCalendar.Concat(cachedMonth));
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        MonthlyCalendar = new ObservableCollection<PrayerCalendar>(merged);
+                    });
+                    System.Diagnostics.Debug.WriteLine($"✅ EnsureMonthDataAsync: Loaded {cachedMonth.Count} days for {month}/{year} from cache");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"⚠️ EnsureMonthDataAsync: No cached data for {month}/{year}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ EnsureMonthDataAsync failed: {ex.Message}");
+        }
+
+        return MonthlyCalendar;
+    }
+
+    /// <summary>
     /// Removes duplicate calendar entries by date and returns a chronologically sorted distinct list.
     /// </summary>
     private List<PrayerCalendar> DeduplicateAndSort(IEnumerable<PrayerCalendar> source)
@@ -455,7 +513,8 @@ public partial class MonthViewModel : BaseViewModel
     /// <summary>
     /// Builds the calendar grid for the current month/year. Creates 35 or 42 day boxes.
     /// Populates prayer data from MonthlyCalendar collection where available.
-    /// ?? PHASE 20.1C: Now async to prevent UI thread blocking (83% faster).
+    /// 🚀 PHASE 20.1C: Now async to prevent UI thread blocking (83% faster).
+    /// 🐛 FIX: Now loads target month from cache if not already in MonthlyCalendar.
     /// </summary>
     public async Task BuildCalendarGridAsync()
     {
@@ -471,8 +530,8 @@ public partial class MonthViewModel : BaseViewModel
             if (daysFromPrevMonth + lastDay.Day > 35)
                 totalDaysToShow = 42; // Need 6 weeks
 
-            // Capture context for background thread
-            var monthlyCalendar = MonthlyCalendar;
+            // 🐛 FIX: Check if target month is already in MonthlyCalendar, if not try loading from cache
+            var monthlyCalendar = await EnsureMonthDataAsync(CurrentYear, CurrentMonth).ConfigureAwait(false);
             var selectedDate = SelectedDate;
             var currentYear = CurrentYear;
             var currentMonth = CurrentMonth;
