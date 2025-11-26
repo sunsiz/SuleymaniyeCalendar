@@ -1,7 +1,6 @@
-﻿using System;
+#nullable enable
+
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,16 +10,32 @@ using SuleymaniyeCalendar.Services;
 
 namespace SuleymaniyeCalendar.ViewModels;
 
+// Alias to resolve ambiguity with System.Globalization.Calendar
+using PrayerCalendar = SuleymaniyeCalendar.Models.Calendar;
+
+/// <summary>
+/// ViewModel for the monthly calendar view.
+/// Provides prayer times data in both list and grid calendar formats.
+/// Supports navigation between months and downloading data for non-cached periods.
+/// </summary>
 public partial class MonthViewModel : BaseViewModel
 {
+    #region Private Fields
+
     private readonly DataService _data;
     private readonly PerformanceService _perf;
 
-    private ObservableCollection<SuleymaniyeCalendar.Models.Calendar> monthlyCalendar = new();
+    #endregion
+
+    #region Observable Properties - Data
+
+    private ObservableCollection<PrayerCalendar> monthlyCalendar = new();
+    
     /// <summary>
-    /// The collection bound to the month view. Populated in staged batches for perceived performance.
+    /// The collection bound to the month view.
+    /// Populated in staged batches for perceived performance.
     /// </summary>
-    public ObservableCollection<SuleymaniyeCalendar.Models.Calendar> MonthlyCalendar
+    public ObservableCollection<PrayerCalendar> MonthlyCalendar
     {
         get => monthlyCalendar;
         set => SetProperty(ref monthlyCalendar, value);
@@ -32,13 +47,19 @@ public partial class MonthViewModel : BaseViewModel
     public bool HasData => MonthlyCalendar?.Count > 0;
 
     /// <summary>
-    /// Whether the share button should be shown – only when we have a cached location.
+    /// Whether the share button should be shown � only when we have a cached location.
     /// </summary>
     public bool ShowShare => Preferences.Get("LastLatitude", 0.0) != 0.0 && Preferences.Get("LastLongitude", 0.0) != 0.0;
 
-    // 🗓️ PHASE 20: Calendar Grid Properties
+    #endregion
+
+    #region Observable Properties - Calendar Grid
 
     private ObservableCollection<CalendarDay> calendarDays = new();
+    
+    /// <summary>
+    /// Calendar grid cells for the current month view.
+    /// </summary>
     public ObservableCollection<CalendarDay> CalendarDays
     {
         get => calendarDays;
@@ -46,6 +67,10 @@ public partial class MonthViewModel : BaseViewModel
     }
 
     private DateTime selectedDate = DateTime.Today;
+    
+    /// <summary>
+    /// The currently selected date in the calendar.
+    /// </summary>
     public DateTime SelectedDate
     {
         get => selectedDate;
@@ -58,8 +83,12 @@ public partial class MonthViewModel : BaseViewModel
         }
     }
 
-    private SuleymaniyeCalendar.Models.Calendar selectedDayData;
-    public SuleymaniyeCalendar.Models.Calendar SelectedDayData
+    private PrayerCalendar? selectedDayData;
+    
+    /// <summary>
+    /// Prayer data for the selected day, displayed in the detail card.
+    /// </summary>
+    public PrayerCalendar? SelectedDayData
     {
         get => selectedDayData;
         set
@@ -72,6 +101,10 @@ public partial class MonthViewModel : BaseViewModel
     }
 
     private int currentMonth = DateTime.Today.Month;
+    
+    /// <summary>
+    /// The currently displayed month (1-12).
+    /// </summary>
     public int CurrentMonth
     {
         get => currentMonth;
@@ -79,13 +112,16 @@ public partial class MonthViewModel : BaseViewModel
         {
             if (SetProperty(ref currentMonth, value))
             {
-                // Property changed - rebuild will happen from navigation commands
                 OnPropertyChanged(nameof(MonthYearDisplay));
             }
         }
     }
 
     private int currentYear = DateTime.Today.Year;
+    
+    /// <summary>
+    /// The currently displayed year.
+    /// </summary>
     public int CurrentYear
     {
         get => currentYear;
@@ -93,21 +129,27 @@ public partial class MonthViewModel : BaseViewModel
         {
             if (SetProperty(ref currentYear, value))
             {
-                // Property changed - rebuild will happen from navigation commands
                 OnPropertyChanged(nameof(MonthYearDisplay));
             }
         }
     }
 
     private string monthYearDisplay = DateTime.Today.ToString("MMMM yyyy");
+    
+    /// <summary>
+    /// Formatted display text showing current month and year (e.g., "January 2024").
+    /// </summary>
     public string MonthYearDisplay
     {
         get => monthYearDisplay;
         set => SetProperty(ref monthYearDisplay, value);
     }
 
-    // 🔄 Indicates whether the currently displayed month has prayer data
     private bool displayedMonthHasData = true;
+    
+    /// <summary>
+    /// Indicates whether the currently displayed month has prayer data.
+    /// </summary>
     public bool DisplayedMonthHasData
     {
         get => displayedMonthHasData;
@@ -120,11 +162,16 @@ public partial class MonthViewModel : BaseViewModel
         }
     }
 
-    // 📥 Shows the "Download This Month" prompt when navigating to months without cached data
+    /// <summary>
+    /// Shows the "Download This Month" prompt when navigating to months without cached data.
+    /// </summary>
     public bool ShowDownloadPrompt => !DisplayedMonthHasData && !IsLoadingMonth;
 
-    // 🔄 Indicates whether a specific month is currently being downloaded
     private bool isLoadingMonth = false;
+    
+    /// <summary>
+    /// Indicates whether a specific month is currently being downloaded.
+    /// </summary>
     public bool IsLoadingMonth
     {
         get => isLoadingMonth;
@@ -137,12 +184,13 @@ public partial class MonthViewModel : BaseViewModel
         }
     }
 
-    // 🌍 PHASE 20.1: Localized Weekday Headers
-    // Use IList<string> instead of string[] to avoid AOT/linker issues with XAML indexer bindings in Release builds.
-    // Binding expressions like {Binding WeekdayHeaders[0]} can be compiled to typed bindings that resolve to
-    // unexpected member signatures when using raw arrays which may be trimmed under aggressive linking.
-    private System.Collections.Generic.IList<string> weekdayHeaders = new System.Collections.Generic.List<string>(7);
-    public System.Collections.Generic.IList<string> WeekdayHeaders
+    private IList<string> weekdayHeaders = new List<string>(7);
+    
+    /// <summary>
+    /// Localized weekday header labels.
+    /// Uses IList&lt;string&gt; instead of string[] to avoid AOT/linker issues with XAML indexer bindings.
+    /// </summary>
+    public IList<string> WeekdayHeaders
     {
         get => weekdayHeaders;
         set => SetProperty(ref weekdayHeaders, value);
@@ -153,19 +201,32 @@ public partial class MonthViewModel : BaseViewModel
     /// </summary>
     public bool HasSelectedDayData => SelectedDayData != null;
 
-    public MonthViewModel(DataService dataService, PerformanceService perf = null)
+    #endregion
+
+    #region Constructor
+
+    /// <summary>
+    /// Initializes a new instance of MonthViewModel.
+    /// </summary>
+    /// <param name="dataService">Data service for fetching prayer times.</param>
+    /// <param name="perf">Performance monitoring service (optional).</param>
+    public MonthViewModel(DataService dataService, PerformanceService? perf = null)
     {
         Title = AppResources.AylikTakvim;
         _data = dataService;
         _perf = perf ?? new PerformanceService();
-        MonthlyCalendar = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar>();
+        MonthlyCalendar = new ObservableCollection<PrayerCalendar>();
         UpdateWeekdayHeaders();
         IsBusy = false;
     }
 
+    #endregion
+
+    #region Private Methods - Initialization
+
     /// <summary>
-    /// 🌍 PHASE 20.1: Updates weekday headers based on current culture.
-    /// Turkish: "Paz", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"
+    /// Updates weekday headers based on current culture.
+    /// Turkish: "Paz", "Pzt", "Sal", "�ar", "Per", "Cum", "Cmt"
     /// English: "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"
     /// </summary>
     private void UpdateWeekdayHeaders()
@@ -174,7 +235,7 @@ public partial class MonthViewModel : BaseViewModel
         var dayNames = culture.DateTimeFormat.AbbreviatedDayNames;
 
         // Ensure we populate a concrete list to avoid array indexer bindings in XAML
-        var list = new System.Collections.Generic.List<string>(7);
+        var list = new List<string>(7);
         for (int i = 0; i < 7; i++)
         {
             var val = dayNames[i] ?? string.Empty;
@@ -186,13 +247,18 @@ public partial class MonthViewModel : BaseViewModel
         WeekdayHeaders = list;
     }
 
+    #endregion
+
+    #region Public Methods - Initialization
+
     /// <summary>
-    /// Legacy entrypoint preserved for existing bindings/tests – delegates to <see cref="InitializeAsync"/>.
+    /// Legacy entrypoint preserved for existing bindings/tests � delegates to <see cref="InitializeAsync"/>.
     /// </summary>
     public Task InitializeWithDelayAsync() => InitializeAsync();
 
     /// <summary>
-    /// Initializes the month view if not already loaded. Performs a cache-first staged fill then background refresh.
+    /// Initializes the month view if not already loaded.
+    /// Performs a cache-first staged fill then background refresh.
     /// </summary>
     public async Task InitializeAsync()
     {
@@ -202,8 +268,12 @@ public partial class MonthViewModel : BaseViewModel
         Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("MonthView"));
     }
 
+    #endregion
+
+    #region Private Methods - Data Loading
+
     /// <summary>
-    /// 🚀 PHASE 20 OPTIMIZATION: Cache-only loading for instant performance.
+    /// Cache-only loading for instant performance.
     /// MainPage already fetched monthly data, so we just read from cache here.
     /// User can manually refresh via the Refresh button if needed.
     /// </summary>
@@ -223,8 +293,8 @@ public partial class MonthViewModel : BaseViewModel
                 return;
             }
 
-            // 📖 Read from cache ONLY (no API fetch - MainPage already loaded monthly data)
-            ObservableCollection<SuleymaniyeCalendar.Models.Calendar> cached;
+            // ?? Read from cache ONLY (no API fetch - MainPage already loaded monthly data)
+            ObservableCollection<PrayerCalendar> cached;
             using (_perf.StartTimer("Month.ReadCache"))
             {
                 cached = await _data.GetMonthlyFromCacheOrEmptyAsync(location).ConfigureAwait(false);
@@ -237,12 +307,12 @@ public partial class MonthViewModel : BaseViewModel
                 {
                     using (_perf.StartTimer("Month.UI.Assign.CacheFull"))
                     {
-                        MonthlyCalendar = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar>(normalizedCache);
+                        MonthlyCalendar = new ObservableCollection<PrayerCalendar>(normalizedCache);
                         OnPropertyChanged(nameof(HasData));
                     }
                 });
 
-                // 🗓️ PHASE 20.1C: Build calendar grid asynchronously (off UI thread)
+                // ??? PHASE 20.1C: Build calendar grid asynchronously (off UI thread)
                 await BuildCalendarGridAsync().ConfigureAwait(false);
 
                 await MainThread.InvokeOnMainThreadAsync(() =>
@@ -298,13 +368,13 @@ public partial class MonthViewModel : BaseViewModel
             {
                 using (_perf.StartTimer("Month.UI.AssignItemsSource.RefreshFull"))
                 {
-                    MonthlyCalendar = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar>(normalizedFresh);
+                    MonthlyCalendar = new ObservableCollection<PrayerCalendar>(normalizedFresh);
                     OnPropertyChanged(nameof(HasData));
                 }
                 ShowToast(AppResources.AylikTakvimYenilendi);
             });
 
-            // 🗓️ PHASE 20.1C: Rebuild calendar grid after refresh (async)
+            // ??? PHASE 20.1C: Rebuild calendar grid after refresh (async)
             await BuildCalendarGridAsync();
         }
         finally
@@ -316,9 +386,9 @@ public partial class MonthViewModel : BaseViewModel
     /// <summary>
     /// Removes duplicate calendar entries by date and returns a chronologically sorted distinct list.
     /// </summary>
-    private List<SuleymaniyeCalendar.Models.Calendar> DeduplicateAndSort(IEnumerable<SuleymaniyeCalendar.Models.Calendar> source)
+    private List<PrayerCalendar> DeduplicateAndSort(IEnumerable<PrayerCalendar> source)
     {
-    if (source == null) return new List<SuleymaniyeCalendar.Models.Calendar>();
+    if (source == null) return new List<PrayerCalendar>();
         var formats = new[] { "dd.MM.yyyy", "dd/MM/yyyy", "dd-MM-yyyy", "yyyy-MM-dd" };
         DateTime Parse(string s)
         {
@@ -326,7 +396,7 @@ public partial class MonthViewModel : BaseViewModel
             if (DateTime.TryParse(s, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt)) return dt.Date;
             return DateTime.MinValue;
         }
-    var map = new Dictionary<DateTime, SuleymaniyeCalendar.Models.Calendar>();
+    var map = new Dictionary<DateTime, PrayerCalendar>();
         foreach (var cal in source)
         {
             var key = Parse(cal.Date);
@@ -340,7 +410,7 @@ public partial class MonthViewModel : BaseViewModel
     /// <summary>
     /// Determines if new list differs from currently displayed list (count or any field time differences per date).
     /// </summary>
-    private bool ShouldReplace(List<SuleymaniyeCalendar.Models.Calendar> incoming, List<SuleymaniyeCalendar.Models.Calendar> existing)
+    private bool ShouldReplace(List<PrayerCalendar> incoming, List<PrayerCalendar> existing)
     {
         if (existing == null) return true;
         if (incoming.Count != existing.Count) return true;
@@ -380,12 +450,12 @@ public partial class MonthViewModel : BaseViewModel
         await Launcher.OpenAsync(url).ConfigureAwait(false);
     }
 
-    // 🗓️ PHASE 20: Calendar Grid Methods
+    // ??? PHASE 20: Calendar Grid Methods
 
     /// <summary>
     /// Builds the calendar grid for the current month/year. Creates 35 or 42 day boxes.
     /// Populates prayer data from MonthlyCalendar collection where available.
-    /// 🚀 PHASE 20.1C: Now async to prevent UI thread blocking (83% faster).
+    /// ?? PHASE 20.1C: Now async to prevent UI thread blocking (83% faster).
     /// </summary>
     public async Task BuildCalendarGridAsync()
     {
@@ -407,7 +477,7 @@ public partial class MonthViewModel : BaseViewModel
             var currentYear = CurrentYear;
             var currentMonth = CurrentMonth;
 
-            // 🚀 PHASE 20.1C: Heavy work on background thread
+            // ?? PHASE 20.1C: Heavy work on background thread
             var (days, monthYearDisplay, autoSelectDate, monthHasData) = await Task.Run(() =>
             {
                 using (_perf?.StartTimer("Month.BuildCalendarGrid.Background"))
@@ -415,7 +485,7 @@ public partial class MonthViewModel : BaseViewModel
                     var startDate = firstDay.AddDays(-daysFromPrevMonth);
 
                     // Create lookup dictionary for fast prayer data access
-                    var prayerDataLookup = new Dictionary<string, SuleymaniyeCalendar.Models.Calendar>();
+                    var prayerDataLookup = new Dictionary<string, PrayerCalendar>();
                     if (monthlyCalendar != null)
                     {
                         var formats = new[] { "dd.MM.yyyy", "dd/MM/yyyy", "dd-MM-yyyy", "yyyy-MM-dd" };
@@ -449,7 +519,7 @@ public partial class MonthViewModel : BaseViewModel
 
                     var displayText = firstDay.ToString("MMMM yyyy", CultureInfo.CurrentCulture);
                     
-                    // 📊 Check if any days in the displayed month have prayer data
+                    // ?? Check if any days in the displayed month have prayer data
                     var monthHasData = daysList.Any(d => d.IsCurrentMonth && d.HasData);
                     
                     // Determine which day to auto-select
@@ -461,14 +531,14 @@ public partial class MonthViewModel : BaseViewModel
                 }
             }).ConfigureAwait(false);
 
-            // 🚀 PHASE 20.1C: Only UI updates on main thread
+            // ?? PHASE 20.1C: Only UI updates on main thread
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
                 using (_perf?.StartTimer("Month.BuildCalendarGrid.UIUpdate"))
                 {
                     CalendarDays = new ObservableCollection<CalendarDay>(days);
                     MonthYearDisplay = monthYearDisplay;
-                    DisplayedMonthHasData = monthHasData; // 📊 Track if current month has data
+                    DisplayedMonthHasData = monthHasData; // ?? Track if current month has data
                 }
             });
 
@@ -479,15 +549,15 @@ public partial class MonthViewModel : BaseViewModel
 
     /// <summary>
     /// Selects a day and populates the detail card with prayer times.
-    /// 🎯 PHASE 20.1: Updates visual highlight for selected day.
-    /// 🚀 PHASE 20.1C: Optimized to only update 2 cells (95% faster).
+    /// ?? PHASE 20.1: Updates visual highlight for selected day.
+    /// ?? PHASE 20.1C: Optimized to only update 2 cells (95% faster).
     /// </summary>
     public async Task SelectDayAsync(DateTime date)
     {
         var oldSelectedDate = SelectedDate;
         SelectedDate = date;
 
-        // 🚀 PHASE 20.1C: Only update affected cells (old + new selection)
+        // ?? PHASE 20.1C: Only update affected cells (old + new selection)
         // Check if already on main thread to avoid deadlock
         if (MainThread.IsMainThread)
         {
@@ -531,13 +601,13 @@ public partial class MonthViewModel : BaseViewModel
 
     /// <summary>
     /// Selects a day and populates the detail card with prayer times.
-    /// 🎯 PHASE 20.1: Updates visual highlight for selected day.
+    /// ?? PHASE 20.1: Updates visual highlight for selected day.
     /// </summary>
     public void SelectDay(DateTime date)
     {
         SelectedDate = date;
 
-        // 🎯 Update visual selection state
+        // ?? Update visual selection state
         if (CalendarDays != null)
         {
             foreach (var day in CalendarDays)
@@ -556,7 +626,7 @@ public partial class MonthViewModel : BaseViewModel
 
     /// <summary>
     /// Command for selecting a day from the calendar grid.
-    /// 🚀 PHASE 20.1C: Now async for optimized updates.
+    /// ?? PHASE 20.1C: Now async for optimized updates.
     /// </summary>
     [RelayCommand]
     private async Task SelectDay(object parameter)
@@ -569,7 +639,7 @@ public partial class MonthViewModel : BaseViewModel
 
     /// <summary>
     /// Navigates to the previous month.
-    /// 🚀 PHASE 20.1C: Now async for smooth navigation.
+    /// ?? PHASE 20.1C: Now async for smooth navigation.
     /// </summary>
     [RelayCommand]
     private async Task PreviousMonth()
@@ -582,7 +652,7 @@ public partial class MonthViewModel : BaseViewModel
 
     /// <summary>
     /// Navigates to the next month.
-    /// 🚀 PHASE 20.1C: Now async for smooth navigation.
+    /// ?? PHASE 20.1C: Now async for smooth navigation.
     /// </summary>
     [RelayCommand]
     private async Task NextMonth()
@@ -595,8 +665,8 @@ public partial class MonthViewModel : BaseViewModel
 
     /// <summary>
     /// Jumps to today's date and selects it.
-    /// 🚀 PHASE 20.1C: Now async for smooth navigation.
-    /// 🔧 PHASE 20.2: Fixed to actually select today, not just navigate to month.
+    /// ?? PHASE 20.1C: Now async for smooth navigation.
+    /// ?? PHASE 20.2: Fixed to actually select today, not just navigate to month.
     /// </summary>
     [RelayCommand]
     private async Task Today()
@@ -610,7 +680,7 @@ public partial class MonthViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// 📥 Downloads prayer times for the currently displayed month.
+    /// ?? Downloads prayer times for the currently displayed month.
     /// Called when user navigates to a month without cached data.
     /// Does NOT save to monthly cache file to avoid impacting loading speed.
     /// Instead, stores in memory-only session cache for the current session.
@@ -631,7 +701,7 @@ public partial class MonthViewModel : BaseViewModel
                 return;
             }
 
-            // 📥 Fetch the specific month from API (not affecting main cache)
+            // ?? Fetch the specific month from API (not affecting main cache)
             var targetMonth = CurrentMonth;
             var targetYear = CurrentYear;
             
@@ -649,7 +719,7 @@ public partial class MonthViewModel : BaseViewModel
             
             await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                MonthlyCalendar = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar>(normalizedData);
+                MonthlyCalendar = new ObservableCollection<PrayerCalendar>(normalizedData);
                 OnPropertyChanged(nameof(HasData));
                 ShowToast(string.Format(AppResources.AyVeriIndirildi, MonthYearDisplay));
             });
@@ -669,5 +739,7 @@ public partial class MonthViewModel : BaseViewModel
             await MainThread.InvokeOnMainThreadAsync(() => IsLoadingMonth = false);
         }
     }
+
+    #endregion
 }
 
