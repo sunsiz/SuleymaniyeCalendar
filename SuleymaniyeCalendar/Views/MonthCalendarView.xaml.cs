@@ -317,10 +317,15 @@ public partial class MonthCalendarView : ContentView
         await tappedBorder.ScaleTo(0.92, 80, Easing.CubicOut);
         await tappedBorder.ScaleTo(1.0, 120, Easing.CubicOut);
         
-        // Execute selection
+        // Execute selection - this is async, need to wait for binding to update
         _viewModel.SelectDayCommand.Execute(day.Date);
         
-        // Animate selected day card
+        // Small delay to allow binding to update before checking visibility
+        await Task.Delay(50);
+        
+        System.Diagnostics.Debug.WriteLine($"🎴 OnCellTapped: After selection - SelectedDayCard.IsVisible={SelectedDayCard?.IsVisible}");
+        
+        // Animate selected day card if visible
         if (SelectedDayCard != null && SelectedDayCard.IsVisible)
         {
             await AnimateSelectedDayCardAsync();
