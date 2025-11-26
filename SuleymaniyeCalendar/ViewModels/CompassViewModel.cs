@@ -3,359 +3,430 @@ using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SuleymaniyeCalendar.Resources.Strings;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Maui.ApplicationModel;
 using SuleymaniyeCalendar.Services;
 
-namespace SuleymaniyeCalendar.ViewModels
+namespace SuleymaniyeCalendar.ViewModels;
+
+/// <summary>
+/// ViewModel for Qibla compass page showing direction to Kaaba in Mecca.
+/// Uses device compass sensor to calculate and display Qibla direction.
+/// </summary>
+public partial class CompassViewModel : BaseViewModel
 {
-	public partial class CompassViewModel : BaseViewModel
+	private readonly PerformanceService _perf = new();
+	private readonly DataService _dataService;
+
+	// Kaaba coordinates in Mecca, Saudi Arabia
+	private readonly double _qiblaLatitude = 21.4224779;
+	private readonly double _qiblaLongitude = 39.8251832;
+	
+	// Current device location
+	private double _currentLatitude = 41.0;
+	private double _currentLongitude = 29.0;
+	private double _currentAltitude = 114;
+	
+	internal readonly SensorSpeed Speed = SensorSpeed.UI;
+
+	#region Display Properties
+
+	/// <summary>Formatted latitude and altitude display (e.g., "Latitude: 41.00 | Altitude: 114").</summary>
+	private string _latitudeAltitude;
+	public string LatitudeAltitude
 	{
-		private readonly PerformanceService _perf = new PerformanceService();
-		// AOT-safe explicit properties using SetProperty
-		private string latitudeAltitude;
-		public string LatitudeAltitude { get => latitudeAltitude; set => SetProperty(ref latitudeAltitude, value); }
+		get => _latitudeAltitude;
+		set => SetProperty(ref _latitudeAltitude, value);
+	}
 
-		private string address;
-		public string Address { get => address; set => SetProperty(ref address, value); }
+	/// <summary>Formatted longitude and heading display (e.g., "Longitude: 29.00 | Angle: 123°").</summary>
+	private string _degreeLongitude;
+	public string DegreeLongitude
+	{
+		get => _degreeLongitude;
+		set => SetProperty(ref _degreeLongitude, value);
+	}
 
-		private string degreeLongitude;
-		public string DegreeLongitude { get => degreeLongitude; set => SetProperty(ref degreeLongitude, value); }
+	/// <summary>Human-readable address from reverse geocoding.</summary>
+	private string _address;
+	public string Address
+	{
+		get => _address;
+		set => SetProperty(ref _address, value);
+	}
 
-		private double heading;
-		public double Heading { get => heading; set => SetProperty(ref heading, value); }
+	/// <summary>Compass heading in degrees (rotation angle for compass UI).</summary>
+	private double _heading;
+	public double Heading
+	{
+		get => _heading;
+		set => SetProperty(ref _heading, value);
+	}
 
-		// Expose raw numeric values so labels can be localized in XAML
-		private double latitude;
-		public double Latitude { get => latitude; set => SetProperty(ref latitude, value); }
-		private double altitude;
-		public double Altitude { get => altitude; set => SetProperty(ref altitude, value); }
-		private double longitude;
-		public double Longitude { get => longitude; set => SetProperty(ref longitude, value); }
+	/// <summary>Raw latitude value for data binding.</summary>
+	private double _latitude;
+	public double Latitude
+	{
+		get => _latitude;
+		set => SetProperty(ref _latitude, value);
+	}
+
+	/// <summary>Raw longitude value for data binding.</summary>
+	private double _longitude;
+	public double Longitude
+	{
+		get => _longitude;
+		set => SetProperty(ref _longitude, value);
+	}
+
+	/// <summary>Raw altitude value for data binding.</summary>
+	private double _altitude;
+	public double Altitude
+	{
+		get => _altitude;
+		set => SetProperty(ref _altitude, value);
+	}
+
+	#endregion
+
+	#region Constructor
+
+	public CompassViewModel(DataService dataService)
+	{
+		_dataService = dataService;
+		Title = AppResources.KibleGostergesi;
 		
-		private double _currentLatitude = 41.0;
-		private double _currentLongitude = 29.0;
-		private double _currentAltitude = 114;
-		private readonly double _qiblaLatitude = 21.4224779;
-		private readonly double _qiblaLongitude = 39.8251832;
-		internal readonly SensorSpeed Speed = SensorSpeed.UI;
-
-		private readonly DataService _dataService;
-
-		// [RelayCommand]
-		// private void Start()
-		// {
-		// 	Compass.ReadingChanged += Compass_ReadingChanged;
-		// }
-
-		// [RelayCommand]
-		// private void Stop()
-		// {
-		// 	if (!Compass.IsMonitoring)
-		// 		return;
-
-		// 	Compass.ReadingChanged -= Compass_ReadingChanged;
-		// 	Compass.Stop();
-		// }
-
-		[RelayCommand]
-		private async Task RefreshLocation()
+		// Load saved location from preferences
+		UpdateLocationFromPreferences();
+		
+		// Initialize address asynchronously (reverse geocoding)
+		_ = InitializeAddressAsync();
+		
+		// Start compass sensor
+		try
 		{
-				//using (UserDialogs.Instance.Loading(AppResources.Yenileniyor))
-				//{
-			IsBusy = true;
-			// Explicit user action: force fresh GPS fix
+			if (!Compass.IsMonitoring)
+			{
+				// MUST subscribe BEFORE Compass.Start() or no readings received
+				Compass.ReadingChanged += Compass_ReadingChanged;
+				Compass.Start(Speed, applyLowPassFilter: true);
+			}
+		}
+		catch (FeatureNotSupportedException fnsEx)
+		{
+			ShowToast(AppResources.CihazPusulaDesteklemiyor);
+			Debug.WriteLine($"Compass not supported: {fnsEx.Message}");
+		}
+		catch (Exception ex)
+		{
+			ShowToast(ex.Message);
+			Debug.WriteLine($"Compass error: {ex.Message}");
+			
+			// Show fallback values
+			LatitudeAltitude = $"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
+			DegreeLongitude = $"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
+		}
+	}
+
+	#endregion
+
+	#region Commands
+
+	/// <summary>
+	/// Refreshes location from GPS with high accuracy.
+	/// Forces fresh GPS fix and reverse geocoding.
+	/// </summary>
+	[RelayCommand]
+	private async Task RefreshLocation()
+	{
+		IsBusy = true;
+		
+		try
+		{
+			// Force fresh GPS fix (user-initiated action)
 			Location location;
 			using (_perf.StartTimer("Compass.RefreshLocation"))
 			{
 				location = await _dataService.GetCurrentLocationAsync(true).ConfigureAwait(false);
 			}
-			if (location != null && location.Latitude != 0 && location.Longitude != 0)
+			
+			if (location?.Latitude != 0 && location?.Longitude != 0)
 			{
 				_currentLatitude = location.Latitude;
 				_currentLongitude = location.Longitude;
 				_currentAltitude = location.Altitude ?? 0.0;
 
-				MainThread.BeginInvokeOnMainThread(() =>
+				// Update UI on main thread
+				await MainThread.InvokeOnMainThreadAsync(() =>
 				{
 					Latitude = _currentLatitude;
 					Longitude = _currentLongitude;
 					Altitude = _currentAltitude;
 				});
 
-				// reverse geocode to human-readable address (include country)
-				try
-				{
-					using (_perf.StartTimer("Compass.ReverseGeocode"))
-					{
-						var placemarks = await Geocoding.GetPlacemarksAsync(_currentLatitude, _currentLongitude).ConfigureAwait(false);
-					var place = placemarks?.FirstOrDefault();
-					var full = BuildAddressFromPlacemark(place);
-					if (!string.IsNullOrWhiteSpace(full))
-					{
-						MainThread.BeginInvokeOnMainThread(() => Address = full);
-						Preferences.Set("LastAddress", full);
-					}
-					}
-				}
-				catch { /* ignore geocode failures */ }
+				// Reverse geocode to address
+				await UpdateAddressFromLocationAsync();
 			}
-
+		}
+		finally
+		{
 			IsBusy = false;
-			//}
 		}
+	}
 
-		private async Task InitializeAddressAsync()
+	/// <summary>
+	/// Opens device maps app showing current location.
+	/// </summary>
+	[RelayCommand]
+	private async Task GoToMap()
+	{
+		try
 		{
-			try
-			{
-				// Skip if we already have an address for current location, unless it was cleared
-				if (!string.IsNullOrWhiteSpace(Address))
-					return;
-
-				if (_currentLatitude != 0 && _currentLongitude != 0)
-				{
-					var placemarks = await Geocoding.GetPlacemarksAsync(_currentLatitude, _currentLongitude).ConfigureAwait(false);
-					var place = placemarks?.FirstOrDefault();
-					var full = BuildAddressFromPlacemark(place);
-					if (!string.IsNullOrWhiteSpace(full))
-					{
-						MainThread.BeginInvokeOnMainThread(() => Address = full);
-						Preferences.Set("LastAddress", full);
-					}
-				}
-			}
-			catch { }
-		}
-
-		private static string BuildAddressFromPlacemark(Placemark place)
-		{
-			if (place == null)
-				return string.Empty;
-
-			var parts = new List<string>();
-			if (!string.IsNullOrWhiteSpace(place.Thoroughfare)) parts.Add(place.Thoroughfare);
-			if (!string.IsNullOrWhiteSpace(place.SubLocality)) parts.Add(place.SubLocality);
-			if (!string.IsNullOrWhiteSpace(place.Locality)) parts.Add(place.Locality);
-			if (!string.IsNullOrWhiteSpace(place.AdminArea)) parts.Add(place.AdminArea);
-			if (!string.IsNullOrWhiteSpace(place.PostalCode)) parts.Add(place.PostalCode);
-			if (!string.IsNullOrWhiteSpace(place.CountryName)) parts.Add(place.CountryName);
-
-			return string.Join(", ", parts);
-		}
-
-
-		[RelayCommand]
-		private async Task GoToMap()
-		{
-				try
-				{
-					var location = new Location(Convert.ToDouble(_currentLatitude, CultureInfo.InvariantCulture.NumberFormat),
-						Convert.ToDouble(_currentLongitude, CultureInfo.InvariantCulture.NumberFormat));
-					var placemark = await Geocoding
-						.GetPlacemarksAsync(Convert.ToDouble(_currentLatitude, CultureInfo.InvariantCulture.NumberFormat),
-							Convert.ToDouble(_currentLongitude, CultureInfo.InvariantCulture.NumberFormat))
-						.ConfigureAwait(true);
-					var options = new MapLaunchOptions
-						{ Name = placemark.FirstOrDefault()?.Thoroughfare ?? placemark.FirstOrDefault()?.CountryName };
-
-					await Map.OpenAsync(location, options).ConfigureAwait(false);
-				}
-				catch (Exception ex)
-				{
-					CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-					ToastDuration duration = ToastDuration.Long;
-					double fontSize = 14;
-					var toast = Toast.Make(AppResources.HaritaHatasi, duration, fontSize);
-					await toast.Show(cancellationTokenSource.Token);
-					//UserDialogs.Instance.Toast(AppResources.HaritaHatasi + ex.Message);
-					Debug.WriteLine(ex.Message);
-				}
-		}
-		public CompassViewModel(DataService dataService)
-		{
-			_dataService = dataService;
-			Title = AppResources.KibleGostergesi;
+			var location = new Location(
+				Convert.ToDouble(_currentLatitude, CultureInfo.InvariantCulture),
+				Convert.ToDouble(_currentLongitude, CultureInfo.InvariantCulture)
+			);
 			
-			// Initialize from saved preferences first
-			UpdateLocationFromPreferences();
+			var placemarks = await Geocoding.GetPlacemarksAsync(
+				Convert.ToDouble(_currentLatitude, CultureInfo.InvariantCulture),
+				Convert.ToDouble(_currentLongitude, CultureInfo.InvariantCulture)
+			).ConfigureAwait(true);
 			
-			// initialize address asynchronously so UI shows saved or reverse-geocoded address without user action
-			_ = InitializeAddressAsync();
-			
-			try
+			var options = new MapLaunchOptions
 			{
-				if (!Compass.IsMonitoring)
-				{
-					Compass.ReadingChanged += Compass_ReadingChanged;
-					Compass.Start(Speed, applyLowPassFilter: true);
-				}
-			}
-			catch (FeatureNotSupportedException fnsEx)
-			{
-				// Feature not supported on device
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-				ToastDuration duration = ToastDuration.Long;
-				double fontSize = 14;
-				var toast = Toast.Make(AppResources.CihazPusulaDesteklemiyor, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
-				//UserDialogs.Instance.Toast(AppResources.CihazPusulaDesteklemiyor, TimeSpan.FromSeconds(4));
-				Debug.WriteLine($"**** {this.GetType().Name}.{nameof(Compass_ReadingChanged)}: {fnsEx.Message}");
-			}
-			catch (Exception ex)
-			{
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-				ToastDuration duration = ToastDuration.Long;
-				double fontSize = 14;
-				var toast = Toast.Make(ex.Message, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
-				//UserDialogs.Instance.Alert(ex.Message);
-				Debug.WriteLine(ex.Message);
-				LatitudeAltitude =
-					$"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
-				DegreeLongitude =
-					$"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
-			}
+				Name = placemarks.FirstOrDefault()?.Thoroughfare ?? placemarks.FirstOrDefault()?.CountryName
+			};
+
+			await Map.OpenAsync(location, options).ConfigureAwait(false);
 		}
-
-		// Call this method to refresh location data from current app state
-		public async Task RefreshLocationFromAppAsync()
+		catch (Exception ex)
 		{
-			// Get current location from DataService (which has the latest location)
-			var currentCalendar = _dataService.calendar;
-			if (currentCalendar != null)
-			{
-				var hasLocationChanged = 
-					Math.Abs(_currentLatitude - currentCalendar.Latitude) > 0.001 ||
-					Math.Abs(_currentLongitude - currentCalendar.Longitude) > 0.001;
-
-				if (hasLocationChanged)
-				{
-					_currentLatitude = currentCalendar.Latitude;
-					_currentLongitude = currentCalendar.Longitude;
-					_currentAltitude = currentCalendar.Altitude;
-
-					// Update UI
-					MainThread.BeginInvokeOnMainThread(() =>
-					{
-						Latitude = _currentLatitude;
-						Longitude = _currentLongitude;
-						Altitude = _currentAltitude;
-						LatitudeAltitude = $"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
-						DegreeLongitude = $"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
-					});
-
-					// Clear old address and get new one
-					Address = string.Empty;
-					await InitializeAddressAsync();
-				}
-			}
+			ShowToast(AppResources.HaritaHatasi);
+			Debug.WriteLine($"Map launch error: {ex.Message}");
 		}
+	}
 
-		private void UpdateLocationFromPreferences()
+	#endregion
+
+	#region Public Methods
+
+	/// <summary>
+	/// Refreshes location from DataService calendar (after location change in other pages).
+	/// </summary>
+	public async Task RefreshLocationFromAppAsync()
+	{
+		var currentCalendar = _dataService.calendar;
+		if (currentCalendar is null) return;
+
+		// Check if location changed significantly (>0.001° = ~110m)
+		// Check if location changed significantly (>0.001° = ~110m)
+		var hasLocationChanged = 
+			Math.Abs(_currentLatitude - currentCalendar.Latitude) > 0.001 ||
+			Math.Abs(_currentLongitude - currentCalendar.Longitude) > 0.001;
+
+		if (hasLocationChanged)
 		{
-			_currentLatitude = Preferences.Get("LastLatitude", 0.0);
-			_currentLongitude = Preferences.Get("LastLongitude", 0.0);
-			_currentAltitude = Preferences.Get("LastAltitude", 0.0);
-			Address = Preferences.Get("LastAddress", string.Empty);
+			_currentLatitude = currentCalendar.Latitude;
+			_currentLongitude = currentCalendar.Longitude;
+			_currentAltitude = currentCalendar.Altitude;
 
-			// initialize numeric bindings for XAML
-			MainThread.BeginInvokeOnMainThread(() =>
+			// Update UI
+			await MainThread.InvokeOnMainThreadAsync(() =>
 			{
 				Latitude = _currentLatitude;
 				Longitude = _currentLongitude;
 				Altitude = _currentAltitude;
+				LatitudeAltitude = $"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
+				DegreeLongitude = $"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
 			});
-			
-			LatitudeAltitude = $"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
-			DegreeLongitude = $"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
-		}
 
-		private void Compass_ReadingChanged(object sender, CompassChangedEventArgs e)
-		{
-			try
-			{
-				var qiblaLocation = new Location(_qiblaLatitude, _qiblaLongitude);
-				var position = new Location(_currentLatitude, _currentLongitude);
-				var res = DistanceCalculator.Bearing(position, qiblaLocation);
-				var targetHeading = (360 - res) % 360;
-
-				var currentHeading = 360 - e.Reading.HeadingMagneticNorth;
-				Heading = currentHeading - targetHeading;
-				
-				LatitudeAltitude =
-					$"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
-				DegreeLongitude =
-					$"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
-
-			}
-			catch (FeatureNotSupportedException fnsEx)
-			{
-				// Feature not supported on device
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-				ToastDuration duration = ToastDuration.Long;
-				double fontSize = 14;
-				var toast = Toast.Make(AppResources.CihazPusulaDesteklemiyor, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
-				//UserDialogs.Instance.Alert(AppResources.CihazPusulaDesteklemiyor, AppResources.CihazPusulaDesteklemiyor);
-				Debug.WriteLine($"**** {this.GetType().Name}.{nameof(Compass_ReadingChanged)}: {fnsEx.Message}");
-			}
-			catch (Exception ex)
-			{
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-				ToastDuration duration = ToastDuration.Long;
-				double fontSize = 14;
-				var toast = Toast.Make(ex.Message, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
-				//UserDialogs.Instance.Alert(ex.Message);
-				Debug.WriteLine(ex.Message);
-			}
-		}
-		public void Dispose()
-		{
-			try
-			{
-				if (Compass.IsMonitoring)
-				{
-					Compass.ReadingChanged -= Compass_ReadingChanged;
-					Compass.Stop();
-				}
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Error disposing compass: {ex.Message}");
-			}
+			// Clear old address and get new one
+			Address = string.Empty;
+			await InitializeAddressAsync();
 		}
 	}
 
-	internal class DistanceCalculator
+	/// <summary>
+	/// Disposes compass sensor resources.
+	/// CRITICAL: Must unsubscribe ReadingChanged before Stop() to prevent memory leaks.
+	/// </summary>
+	public void Dispose()
 	{
-		private const double KDegreesToRadians = Math.PI / 180.0;
-		private const double KRadiansToDegrees = 180.0 / Math.PI;
-
-		public static double Bearing(Location position, Location location)
+		try
 		{
-			double fromLong = position.Longitude * KDegreesToRadians;
-			double toLong = location.Longitude * KDegreesToRadians;
-			double toLat = location.Latitude * KDegreesToRadians;
-			double fromLat = position.Latitude * KDegreesToRadians;
-
-			double dlon = toLong - fromLong;
-			double y = Math.Sin(dlon);
-			double x = Math.Cos(fromLat) * Math.Tan(toLat) - Math.Sin(fromLat) * Math.Cos(dlon);
-
-			double direction = Math.Atan2(y, x);
-
-			// convert to degrees
-			direction *= KRadiansToDegrees;
-
-			return direction;
+			if (Compass.IsMonitoring)
+			{
+				Compass.ReadingChanged -= Compass_ReadingChanged;  // Unsubscribe first
+				Compass.Stop();  // Then stop sensor
+			}
 		}
+		catch (Exception ex)
+		{
+			Debug.WriteLine($"Compass disposal error: {ex.Message}");
+		}
+	}
+
+	#endregion
+
+	#region Private Methods
+
+	/// <summary>
+	/// Loads saved location from preferences (from previous app session).
+	/// </summary>
+	private void UpdateLocationFromPreferences()
+	{
+		_currentLatitude = Preferences.Get("LastLatitude", 0.0);
+		_currentLongitude = Preferences.Get("LastLongitude", 0.0);
+		_currentAltitude = Preferences.Get("LastAltitude", 0.0);
+		Address = Preferences.Get("LastAddress", string.Empty);
+
+		// Initialize UI bindings on main thread
+		MainThread.BeginInvokeOnMainThread(() =>
+		{
+			Latitude = _currentLatitude;
+			Longitude = _currentLongitude;
+			Altitude = _currentAltitude;
+		});
+		
+		LatitudeAltitude = $"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
+		DegreeLongitude = $"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
+	}
+
+	/// <summary>
+	/// Initializes address from reverse geocoding (async startup).
+	/// </summary>
+	private async Task InitializeAddressAsync()
+	{
+		try
+		{
+			// Skip if we already have an address
+			if (!string.IsNullOrWhiteSpace(Address))
+				return;
+
+			if (_currentLatitude != 0 && _currentLongitude != 0)
+			{
+				await UpdateAddressFromLocationAsync();
+			}
+		}
+		catch (Exception ex)
+		{
+			Debug.WriteLine($"Address initialization failed: {ex.Message}");
+		}
+	}
+
+	/// <summary>
+	/// Updates address from reverse geocoding and saves to preferences.
+	/// </summary>
+	private async Task UpdateAddressFromLocationAsync()
+	{
+		try
+		{
+			using (_perf.StartTimer("Compass.ReverseGeocode"))
+			{
+				var placemarks = await Geocoding.GetPlacemarksAsync(_currentLatitude, _currentLongitude).ConfigureAwait(false);
+				var place = placemarks?.FirstOrDefault();
+				var fullAddress = BuildAddressFromPlacemark(place);
+				
+				if (!string.IsNullOrWhiteSpace(fullAddress))
+				{
+					await MainThread.InvokeOnMainThreadAsync(() => Address = fullAddress);
+					Preferences.Set("LastAddress", fullAddress);
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Debug.WriteLine($"Reverse geocoding failed: {ex.Message}");
+		}
+	}
+
+	/// <summary>
+	/// Builds human-readable address from Placemark.
+	/// </summary>
+	private static string BuildAddressFromPlacemark(Placemark place)
+	{
+		if (place is null) return string.Empty;
+
+		var parts = new List<string>();
+		if (!string.IsNullOrWhiteSpace(place.Thoroughfare)) parts.Add(place.Thoroughfare);
+		if (!string.IsNullOrWhiteSpace(place.SubLocality)) parts.Add(place.SubLocality);
+		if (!string.IsNullOrWhiteSpace(place.Locality)) parts.Add(place.Locality);
+		if (!string.IsNullOrWhiteSpace(place.AdminArea)) parts.Add(place.AdminArea);
+		if (!string.IsNullOrWhiteSpace(place.PostalCode)) parts.Add(place.PostalCode);
+		if (!string.IsNullOrWhiteSpace(place.CountryName)) parts.Add(place.CountryName);
+
+		return string.Join(", ", parts);
+	}
+
+	/// <summary>
+	/// Compass sensor reading changed event handler.
+	/// Calculates Qibla direction relative to device heading.
+	/// </summary>
+	private void Compass_ReadingChanged(object sender, CompassChangedEventArgs e)
+	{
+		try
+		{
+			// Calculate bearing from current position to Kaaba
+			var qiblaLocation = new Location(_qiblaLatitude, _qiblaLongitude);
+			var currentPosition = new Location(_currentLatitude, _currentLongitude);
+			var targetBearing = DistanceCalculator.Bearing(currentPosition, qiblaLocation);
+			var targetHeading = (360 - targetBearing) % 360;
+
+			// Get current device heading (magnetic north-based)
+			var currentHeading = 360 - e.Reading.HeadingMagneticNorth;
+			
+			// Calculate relative rotation for UI
+			Heading = currentHeading - targetHeading;
+			
+			// Update display strings
+			LatitudeAltitude = $"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
+			DegreeLongitude = $"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
+		}
+		catch (FeatureNotSupportedException fnsEx)
+		{
+			ShowToast(AppResources.CihazPusulaDesteklemiyor);
+			Debug.WriteLine($"Compass feature not supported: {fnsEx.Message}");
+		}
+		catch (Exception ex)
+		{
+			ShowToast(ex.Message);
+			Debug.WriteLine($"Compass reading error: {ex.Message}");
+		}
+	}
+
+	#endregion
+}
+
+/// <summary>
+/// Helper class for calculating bearing between two geographic locations.
+/// </summary>
+internal static class DistanceCalculator
+{
+	private const double DegreesToRadians = Math.PI / 180.0;
+	private const double RadiansToDegrees = 180.0 / Math.PI;
+
+	/// <summary>
+	/// Calculates bearing from position to target location.
+	/// </summary>
+	/// <param name="position">Starting position.</param>
+	/// <param name="location">Target location.</param>
+	/// <returns>Bearing in degrees (0-360).</returns>
+	public static double Bearing(Location position, Location location)
+	{
+		var fromLongRad = position.Longitude * DegreesToRadians;
+		var toLongRad = location.Longitude * DegreesToRadians;
+		var toLatRad = location.Latitude * DegreesToRadians;
+		var fromLatRad = position.Latitude * DegreesToRadians;
+
+		var dlon = toLongRad - fromLongRad;
+		var y = Math.Sin(dlon);
+		var x = Math.Cos(fromLatRad) * Math.Tan(toLatRad) - Math.Sin(fromLatRad) * Math.Cos(dlon);
+
+		var direction = Math.Atan2(y, x);
+
+		// Convert to degrees
+		direction *= RadiansToDegrees;
+
+		return direction;
 	}
 }
