@@ -1,105 +1,120 @@
 ﻿using CommunityToolkit.Maui.Alerts;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.Input;
 using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.Services;
 
-namespace SuleymaniyeCalendar.ViewModels
+namespace SuleymaniyeCalendar.ViewModels;
+
+/// <summary>
+/// ViewModel for Süleymaniye radio streaming page.
+/// Handles play/pause, displays track metadata, and manages audio state.
+/// </summary>
+public partial class RadioViewModel : BaseViewModel
 {
-	public partial class RadioViewModel : BaseViewModel
+	private readonly IRadioService _radioService;
+	private readonly PerformanceService _perf = new();
+
+	#region Properties
+
+	/// <summary>Whether audio is currently playing.</summary>
+	private bool _isPlaying;
+	public bool IsPlaying
 	{
-		private readonly IRadioService _radioService;
-		private readonly PerformanceService _perf = new PerformanceService();
-
-		private bool isPlaying;
-		public bool IsPlaying { get => isPlaying; set => SetProperty(ref isPlaying, value); }
-
-        public Command TapCommand => new Command<string>(async (url) => await Launcher.OpenAsync(url).ConfigureAwait(false));
-
-		public RadioViewModel(IRadioService radioService)
-		{
-			_radioService = radioService;
-			IsBusy = true;
-			Title = AppResources.IcerikYukleniyor;
-			
-			// Subscribe to radio service events
-			_radioService.PlaybackStateChanged += OnPlaybackStateChanged;
-			_radioService.LoadingStateChanged += OnLoadingStateChanged;
-			_radioService.TitleChanged += OnTitleChanged;
-			
-			Title = AppResources.FitratinSesi;
-			_ = CheckInternetAsync();
-			IsBusy = false;
-		}
-
-		[RelayCommand]
-		private async Task Play()
-		{
-			if (await CheckInternetAsync().ConfigureAwait(false))
-			{
-				using (_perf.StartTimer("Radio.TogglePlay"))
-				{
-					if (IsPlaying)
-					{
-						await _radioService.PauseAsync().ConfigureAwait(false);
-					}
-					else
-					{
-						await _radioService.PlayAsync().ConfigureAwait(false);
-					}
-				}
-			}
-			else
-			{
-				await _radioService.StopAsync().ConfigureAwait(false);
-			}
-		}
-
-		private void OnPlaybackStateChanged(object sender, bool isPlaying)
-		{
-			MainThread.InvokeOnMainThreadAsync(() =>
-			{
-				IsPlaying = isPlaying;
-			});
-		}
-
-		private void OnLoadingStateChanged(object sender, bool isLoading)
-		{
-			MainThread.InvokeOnMainThreadAsync(() =>
-			{
-				IsBusy = isLoading;
-			});
-		}
-
-		private void OnTitleChanged(object sender, string title)
-		{
-			MainThread.InvokeOnMainThreadAsync(() =>
-			{
-				Title = title;
-			});
-		}
-
-		private static Task<bool> CheckInternetAsync()
-		{
-			var current = Connectivity.NetworkAccess;
-			if (current != NetworkAccess.Internet)
-			{
-				// Enhanced network feedback with contextual guidance
-				var message = $"{AppResources.RadyoIcinInternet} 📶";
-				
-				MainThread.BeginInvokeOnMainThread(() =>
-				{
-					CancellationTokenSource cancellationTokenSource = new();
-					var toast = Toast.Make(message, ToastDuration.Long, 16);
-					toast.Show(cancellationTokenSource.Token);
-				});
-				return Task.FromResult(false);
-			}
-
-			return Task.FromResult(true);
-		}
-
-		public IRadioService GetRadioService() => _radioService;
+		get => _isPlaying;
+		set => SetProperty(ref _isPlaying, value);
 	}
+
+	/// <summary>Command to open URL in browser (for social links).</summary>
+	public Command TapCommand => new(async (url) => await Launcher.OpenAsync((string)url).ConfigureAwait(false));
+
+	#endregion
+
+	#region Constructor
+
+	public RadioViewModel(IRadioService radioService)
+	{
+		_radioService = radioService;
+		IsBusy = true;
+		Title = AppResources.IcerikYukleniyor;
+
+		// Subscribe to radio service events
+		_radioService.PlaybackStateChanged += OnPlaybackStateChanged;
+		_radioService.LoadingStateChanged += OnLoadingStateChanged;
+		_radioService.TitleChanged += OnTitleChanged;
+
+		Title = AppResources.FitratinSesi;
+		_ = CheckInternetAsync();
+		IsBusy = false;
+	}
+
+	#endregion
+
+	#region Commands
+
+	/// <summary>
+	/// Toggles radio playback (play/pause).
+	/// </summary>
+	[RelayCommand]
+	private async Task Play()
+	{
+		if (await CheckInternetAsync().ConfigureAwait(false))
+		{
+			using (_perf.StartTimer("Radio.TogglePlay"))
+			{
+				if (IsPlaying)
+					await _radioService.PauseAsync().ConfigureAwait(false);
+				else
+					await _radioService.PlayAsync().ConfigureAwait(false);
+			}
+		}
+		else
+		{
+			await _radioService.StopAsync().ConfigureAwait(false);
+		}
+	}
+
+	#endregion
+
+	#region Event Handlers
+
+	/// <summary>Handles playback state changes from RadioService.</summary>
+	private void OnPlaybackStateChanged(object sender, bool isPlaying)
+	{
+		_ = MainThread.InvokeOnMainThreadAsync(() => IsPlaying = isPlaying);
+	}
+
+	/// <summary>Handles loading state changes (buffering indicator).</summary>
+	private void OnLoadingStateChanged(object sender, bool isLoading)
+	{
+		_ = MainThread.InvokeOnMainThreadAsync(() => IsBusy = isLoading);
+	}
+
+	/// <summary>Handles track title/metadata changes.</summary>
+	private void OnTitleChanged(object sender, string title)
+	{
+		_ = MainThread.InvokeOnMainThreadAsync(() => Title = title);
+	}
+
+	#endregion
+
+	#region Helpers
+
+	/// <summary>
+	/// Checks internet connectivity and shows toast if offline.
+	/// </summary>
+	private static Task<bool> CheckInternetAsync()
+	{
+		if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+		{
+			ShowToast($"{AppResources.RadyoIcinInternet} 📶");
+			return Task.FromResult(false);
+		}
+		return Task.FromResult(true);
+	}
+
+	/// <summary>Gets the underlying radio service (for page-level access).</summary>
+	public IRadioService GetRadioService() => _radioService;
+
+	#endregion
 }

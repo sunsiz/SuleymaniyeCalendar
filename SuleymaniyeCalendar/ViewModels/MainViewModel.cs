@@ -1,28 +1,32 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using SuleymaniyeCalendar.Models;
-using SuleymaniyeCalendar.Resources.Strings;
 using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
+using SuleymaniyeCalendar.Models;
+using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.Services;
 using SuleymaniyeCalendar.Views;
 using Calendar = SuleymaniyeCalendar.Models.Calendar;
-using Microsoft.Maui.ApplicationModel;
 
-namespace SuleymaniyeCalendar.ViewModels
+namespace SuleymaniyeCalendar.ViewModels;
+
+/// <summary>
+/// Main ViewModel for the prayer times home page.
+/// Displays current day's prayer times with countdown timer and location info.
+/// </summary>
+/// <remarks>
+/// Key responsibilities:
+/// - Display 8 prayer times with temporal states (Past/Current/Future)
+/// - Update countdown timer every second with animated progress
+/// - Handle location refresh and geocoding for city display
+/// - Schedule monthly alarms when reminders are enabled
+/// - Detect midnight rollover for automatic day transitions
+/// </remarks>
+public partial class MainViewModel : BaseViewModel
 {
-    public partial class MainViewModel : BaseViewModel
-    {
-        private Calendar _calendar;
-        private DataService _data;
-        private Task _startupRefreshTask;
+    private Calendar _calendar;
+    private DataService _data;
+    private Task _startupRefreshTask;
         private Task _weeklyAlarmsTask;
         // (Removed legacy _skipWindowsGeocoding flag; Windows geocoding guarded by token check in GetCityAsync.)
 
@@ -891,4 +895,3 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
     }
-}
