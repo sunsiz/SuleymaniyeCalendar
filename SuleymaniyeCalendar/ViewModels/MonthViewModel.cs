@@ -630,6 +630,8 @@ public partial class MonthViewModel : BaseViewModel
     /// </summary>
     private void SelectDayInternal(DateTime oldSelectedDate, DateTime date)
     {
+        System.Diagnostics.Debug.WriteLine($"🔍 SelectDayInternal: Selecting {date:yyyy-MM-dd}, CalendarDays count={CalendarDays?.Count ?? 0}");
+        
         if (CalendarDays != null)
         {
             // Deselect old cell
@@ -644,12 +646,18 @@ public partial class MonthViewModel : BaseViewModel
             if (newDay != null)
             {
                 newDay.IsSelected = true; // Triggers OnIsSelectedChanged in CalendarDay
+                System.Diagnostics.Debug.WriteLine($"✅ SelectDayInternal: Found day {date:yyyy-MM-dd}, HasData={newDay.HasData}, PrayerData={(newDay.PrayerData != null ? "not null" : "NULL")}");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ SelectDayInternal: Day {date:yyyy-MM-dd} NOT FOUND in CalendarDays");
             }
         }
 
         // Find prayer data for selected date
         var selectedDay = CalendarDays?.FirstOrDefault(d => d.Date.Date == date.Date);
         SelectedDayData = selectedDay?.PrayerData;
+        System.Diagnostics.Debug.WriteLine($"📋 SelectDayInternal: SelectedDayData={(SelectedDayData != null ? $"set (Fajr={SelectedDayData.Fajr})" : "NULL")}");
     }
 
     /// <summary>
@@ -675,14 +683,19 @@ public partial class MonthViewModel : BaseViewModel
 
     /// <summary>
     /// Command for selecting a day from the calendar grid.
-    /// ?? PHASE 20.1C: Now async for optimized updates.
+    /// 🔧 PHASE 20.1C: Now async for optimized updates.
     /// </summary>
     [RelayCommand]
     private async Task SelectDay(object parameter)
     {
+        System.Diagnostics.Debug.WriteLine($"🎯 SelectDay command: parameter={parameter} (type={parameter?.GetType().Name})");
         if (parameter is DateTime date)
         {
             await SelectDayAsync(date);
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ SelectDay: parameter is NOT DateTime");
         }
     }
 
