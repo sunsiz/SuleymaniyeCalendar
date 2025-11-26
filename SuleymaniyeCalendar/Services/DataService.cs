@@ -242,53 +242,67 @@ public class DataService
 					Debug.WriteLine($"[DataService] Skipping auto reschedule; last run was {sinceLast.TotalHours:F1}h ago.");
 					return true;
 				}
-			}
+        }
 
-			return false;
-		}
+        return false;
+    }
 
-		private Calendar GetTakvimFromFile()
-		{
-			try
-			{
-				// Use unified cache for today's data
-				var location = new Location
-				{
-					Latitude = Preferences.Get("LastLatitude", 0.0),
-					Longitude = Preferences.Get("LastLongitude", 0.0),
-					Altitude = Preferences.Get("LastAltitude", 0.0)
-				};
+    #endregion
 
-				if (location.Latitude != 0.0 && location.Longitude != 0.0)
-				{
-					var currentYear = DateTime.Today.Year;
-					// Note: This is synchronous initialization - async loading happens later via PrepareMonthlyPrayerTimes
-					var cachedYearData = Task.Run(() => LoadYearCacheAsync(location, currentYear)).Result;
-					
-					if (cachedYearData?.Count > 0)
-					{
-						var todayData = cachedYearData.FirstOrDefault(d => 
-							ParseCalendarDateOrMin(d.Date) == DateTime.Today);
-						
-						if (todayData != null)
-						{
-							todayData.Latitude = location.Latitude;
-							todayData.Longitude = location.Longitude;
-							todayData.Altitude = location.Altitude ?? 0;
-							return todayData;
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"GetTakvimFromFile cache error: {ex.Message}");
-			}
-			
-			return null;
-		}
+    #region Cache and File Methods
 
-		public async Task<Calendar> PrepareMonthlyPrayerTimes()
+    /// <summary>
+    /// Loads today's prayer times from the unified cache file.
+    /// Used for initial synchronous loading during app startup.
+    /// </summary>
+    /// <returns>Today's calendar data or null if not cached.</returns>
+    private Calendar? GetTakvimFromFile()
+    {
+        try
+        {
+            // Use unified cache for today's data
+            var location = new Location
+            {
+                Latitude = Preferences.Get("LastLatitude", 0.0),
+                Longitude = Preferences.Get("LastLongitude", 0.0),
+                Altitude = Preferences.Get("LastAltitude", 0.0)
+            };
+
+            if (location.Latitude != 0.0 && location.Longitude != 0.0)
+            {
+                var currentYear = DateTime.Today.Year;
+                // Note: This is synchronous initialization - async loading happens later via PrepareMonthlyPrayerTimes
+                var cachedYearData = Task.Run(() => LoadYearCacheAsync(location, currentYear)).Result;
+
+                if (cachedYearData?.Count > 0)
+                {
+                    var todayData = cachedYearData.FirstOrDefault(d =>
+                        ParseCalendarDateOrMin(d.Date) == DateTime.Today);
+
+                    if (todayData != null)
+                    {
+                        todayData.Latitude = location.Latitude;
+                        todayData.Longitude = location.Longitude;
+                        todayData.Altitude = location.Altitude ?? 0;
+                        return todayData;
+                    }
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"GetTakvimFromFile cache error: {ex.Message}");
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Prepares monthly prayer times on app startup.
+    /// Respects user's auto-renew location preference.
+    /// </summary>
+    /// <returns>Today's calendar data.</returns>
+    public async Task<Calendar?> PrepareMonthlyPrayerTimes()
 		{
 			// On app startup, respect the user's auto-renew preference:
 			// - When AlwaysRenewLocationEnabled is ON, force a fresh GPS fix to renew location
@@ -310,11 +324,24 @@ public class DataService
 			else
 			{
 				calendar = GetTakvimFromFile();
-			}
-			return calendar;
-		}
+	        }
+        return calendar;
+    }
 
-		public async Task<Location> GetCurrentLocationAsync(bool refreshLocation)
+    #endregion
+
+    #region Location Methods
+
+    /// <summary>
+    /// Gets the current device location, with caching and permission handling.
+    /// </summary>
+    /// <param name="refreshLocation">If true, requests fresh GPS fix; otherwise uses cached location.</param>
+    /// <returns>Current location or default fallback coordinates.</returns>
+    /// <remarks>
+    /// On Windows (WinUI), bypasses runtime geolocation to prevent crashes.
+    /// Falls back through: GPS → Last known → Preferences → Default (Istanbul).
+    /// </remarks>
+    public async Task<Location?> GetCurrentLocationAsync(bool refreshLocation)
 		{
 			var location = new Location(0.0, 0.0);
 			// WINDOWS SAFEGUARD: Some Windows environments (missing capability or OS-level location disabled)
@@ -446,10 +473,21 @@ public class DataService
 				Debug.WriteLine($"Location error: {ex.Message}");
 			}
 
-			return location;
-		}
+        return location;
+    }
 
-		public ObservableCollection<Calendar> GetMonthlyPrayerTimes(Location location, bool forceRefresh = false)
+    #endregion
+
+    #region Monthly Prayer Times
+
+    /// <summary>
+    /// Gets monthly prayer times synchronously using unified cache or XML API.
+    /// Legacy wrapper for backward compatibility - prefer async version.
+    /// </summary>
+    /// <param name="location">User's current location.</param>
+    /// <param name="forceRefresh">If true, bypasses cache and fetches fresh data.</param>
+    /// <returns>Collection of calendar days for the month, or null if unavailable.</returns>
+    public ObservableCollection<Calendar>? GetMonthlyPrayerTimes(Location? location, bool forceRefresh = false)
 		{
 			// Use unified cache system - synchronous wrapper for legacy callers
 			if (!forceRefresh)
@@ -544,10 +582,22 @@ public class DataService
 			{
 				Debug.WriteLine($"Async XML monthly failed: {ex.Message}");
 				return null;
-			}
-		}
+        }
+    }
 
-		private ObservableCollection<Calendar> ParseXmlList(XDocument doc, double latitude = 0.0, double longitude = 0.0, double altitude = 0.0)
+    #endregion
+
+    #region XML Parsing
+
+    /// <summary>
+    /// Parses XML document containing a list of monthly prayer times.
+    /// </summary>
+    /// <param name="doc">The XML document from the API.</param>
+    /// <param name="latitude">Fallback latitude if not in XML.</param>
+    /// <param name="longitude">Fallback longitude if not in XML.</param>
+    /// <param name="altitude">Fallback altitude if not in XML.</param>
+    /// <returns>Collection of calendar days parsed from the XML.</returns>
+    private ObservableCollection<Calendar> ParseXmlList(XDocument doc, double latitude = 0.0, double longitude = 0.0, double altitude = 0.0)
 		{
 			ObservableCollection<Calendar> monthlyCalendar = new ObservableCollection<Calendar>();
 			if (doc.Root == null) return monthlyCalendar;
@@ -667,28 +717,46 @@ public class DataService
 				}
 			}
 
-			return calendar;
-		}
+        return calendar;
+    }
 
-		public bool HaveInternet()
-		{
-			// Consider Internet and ConstrainedInternet as online to avoid false negatives
-			var access = Connectivity.NetworkAccess;
-			if (access == NetworkAccess.Internet || access == NetworkAccess.ConstrainedInternet)
-				return true;
+    #endregion
 
-			// Some platforms report Unknown while still having a connection profile
-			if (access == NetworkAccess.Unknown)
-			{
-				var profiles = Connectivity.ConnectionProfiles;
-				if (profiles.Contains(ConnectionProfile.WiFi) || profiles.Contains(ConnectionProfile.Cellular))
-					return true;
-			}
+    #region Network and Internet
 
-			return false;
-		}
+    /// <summary>
+    /// Checks if the device has internet connectivity.
+    /// Considers both full Internet and ConstrainedInternet as online.
+    /// </summary>
+    /// <returns>True if internet is available; otherwise false.</returns>
+    public bool HaveInternet()
+    {
+        // Consider Internet and ConstrainedInternet as online to avoid false negatives
+        var access = Connectivity.NetworkAccess;
+        if (access == NetworkAccess.Internet || access == NetworkAccess.ConstrainedInternet)
+            return true;
 
-		public async Task<Calendar> GetPrayerTimesFastAsync()
+        // Some platforms report Unknown while still having a connection profile
+        if (access == NetworkAccess.Unknown)
+        {
+            var profiles = Connectivity.ConnectionProfiles;
+            if (profiles.Contains(ConnectionProfile.WiFi) || profiles.Contains(ConnectionProfile.Cellular))
+                return true;
+        }
+
+        return false;
+    }
+
+    #endregion
+
+    #region Prayer Times Fetching
+
+    /// <summary>
+    /// Gets prayer times quickly using cached data or XML API.
+    /// Prefers cached data for fast startup.
+    /// </summary>
+    /// <returns>Today's prayer times or null if unavailable.</returns>
+    public async Task<Calendar?> GetPrayerTimesFastAsync()
 		{
 			calendar = GetTakvimFromFile();
 			if (calendar != null) return calendar;
@@ -813,11 +881,29 @@ public class DataService
 				Alert(exception.Message, AppResources.KonumHatasi);
 			}
 
-			Debug.WriteLine("TimeStamp-GetPrayerTimes-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
-			return calendar;
-		}
+        Debug.WriteLine("TimeStamp-GetPrayerTimes-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+        return calendar;
+    }
 
-		public async Task SetMonthlyAlarmsAsync(bool forceReschedule = false)
+    #endregion
+
+    #region Alarm Scheduling
+
+    /// <summary>
+    /// Schedules prayer alarms for the next 30 days.
+    /// Uses unified cache to ensure coverage across month boundaries.
+    /// </summary>
+    /// <param name="forceReschedule">If true, bypasses throttling and reschedules immediately.</param>
+    /// <remarks>
+    /// Key behaviors:
+    /// <list type="bullet">
+    ///   <item>Cancels existing alarms if reminders disabled</item>
+    ///   <item>Throttles auto-reschedule based on coverage and cooldown</item>
+    ///   <item>Schedules each prayer type based on user preferences</item>
+    ///   <item>Persists coverage date for tracking</item>
+    /// </list>
+    /// </remarks>
+    public async Task SetMonthlyAlarmsAsync(bool forceReschedule = false)
 		{
 			Debug.WriteLine("TimeStamp-SetWeeklyAlarms-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 			using (_perf.StartTimer("SetMonthlyAlarms"))
@@ -976,12 +1062,18 @@ public class DataService
 #endif
 				}
 			}
-			Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
-		}
+        Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+    }
 
-		// Returns >= daysNeeded Calendar entries starting at startDate, potentially spanning next month/year.
-		// Uses unified yearly JSON cache keyed by location/year; fills gaps via JSON monthly (same year) or JSON daily (any date).
-		private async Task<List<Calendar>> EnsureDaysRangeAsync(Location location, DateTime startDate, int daysNeeded)
+    /// <summary>
+    /// Ensures a range of calendar days is available, fetching from cache or API as needed.
+    /// Spans multiple months/years if necessary for 30-day alarm scheduling.
+    /// </summary>
+    /// <param name="location">User's current location.</param>
+    /// <param name="startDate">First date needed.</param>
+    /// <param name="daysNeeded">Number of consecutive days required.</param>
+    /// <returns>List of calendar days covering the requested range.</returns>
+    private async Task<List<Calendar>> EnsureDaysRangeAsync(Location location, DateTime startDate, int daysNeeded)
 		{
 			Debug.WriteLine($"EnsureDaysRangeAsync: Ensuring {daysNeeded} days from {startDate:dd/MM/yyyy} for location {location.Latitude},{location.Longitude}");
             // Invalidate yearly caches if location changed meaningfully
@@ -1100,30 +1192,53 @@ public class DataService
 		}
 
 		/// <summary>
-		/// Helper to schedule a single prayer alarm if enabled and in the future.
-		/// </summary>
-		private void SchedulePrayerAlarmIfEnabled(DateTime baseDate, TimeSpan prayerTime, DateTime now, bool isToday, 
-			string preferenceKey, string prayerName)
-		{
-			var notificationMinutes = Preferences.Get($"{preferenceKey}NotificationTime", 0);
-			var alarmDateTime = baseDate + prayerTime - TimeSpan.FromMinutes(notificationMinutes);
-			var isEnabled = Preferences.Get($"{preferenceKey}Enabled", false);
-			
-			if (isEnabled && (!isToday || now < alarmDateTime))
-			{
-				_alarmService.SetAlarm(baseDate, prayerTime, notificationMinutes, prayerName);
-			}
-		}
+    /// <summary>
+    /// Schedules a single prayer alarm if enabled and the time is in the future.
+    /// </summary>
+    /// <param name="baseDate">The date of the prayer.</param>
+    /// <param name="prayerTime">Time of day for the prayer.</param>
+    /// <param name="now">Current time for comparison.</param>
+    /// <param name="isToday">Whether this is today's schedule.</param>
+    /// <param name="preferenceKey">Preference key prefix for this prayer (e.g., "fajr").</param>
+    /// <param name="prayerName">Display name of the prayer for notifications.</param>
+    private void SchedulePrayerAlarmIfEnabled(DateTime baseDate, TimeSpan prayerTime, DateTime now, bool isToday,
+        string preferenceKey, string prayerName)
+    {
+        var notificationMinutes = Preferences.Get($"{preferenceKey}NotificationTime", 0);
+        var alarmDateTime = baseDate + prayerTime - TimeSpan.FromMinutes(notificationMinutes);
+        var isEnabled = Preferences.Get($"{preferenceKey}Enabled", false);
 
-		private string GetYearCachePath(Location location, int year)
-		{
-			var lat = Math.Round(location.Latitude, 4).ToString(CultureInfo.InvariantCulture);
-			var lon = Math.Round(location.Longitude, 4).ToString(CultureInfo.InvariantCulture);
-			var file = $"prayercache_{lat}_{lon}_{year}.json";
-			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), file);
-		}
+        if (isEnabled && (!isToday || now < alarmDateTime))
+        {
+            _alarmService.SetAlarm(baseDate, prayerTime, notificationMinutes, prayerName);
+        }
+    }
 
-		private async Task<List<Calendar>> LoadYearCacheAsync(Location location, int year)
+    #endregion
+
+    #region Unified Cache System
+
+    /// <summary>
+    /// Gets the file path for a year's cache based on location and year.
+    /// </summary>
+    /// <param name="location">User's location (rounded to 4 decimal places).</param>
+    /// <param name="year">Calendar year.</param>
+    /// <returns>Full path to the cache JSON file.</returns>
+    private string GetYearCachePath(Location location, int year)
+    {
+        var lat = Math.Round(location.Latitude, 4).ToString(CultureInfo.InvariantCulture);
+        var lon = Math.Round(location.Longitude, 4).ToString(CultureInfo.InvariantCulture);
+        var file = $"prayercache_{lat}_{lon}_{year}.json";
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), file);
+    }
+
+    /// <summary>
+    /// Loads cached prayer times for a specific year and location.
+    /// </summary>
+    /// <param name="location">User's location.</param>
+    /// <param name="year">Calendar year to load.</param>
+    /// <returns>List of cached calendar days, or null if not cached.</returns>
+    private async Task<List<Calendar>?> LoadYearCacheAsync(Location location, int year)
 		{
 			try
 			{
@@ -1167,19 +1282,26 @@ public class DataService
 					await File.WriteAllTextAsync(path, json).ConfigureAwait(false);
 				}
 			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Year cache save failed: {ex.Message}");
-			}
-		}
+            catch (Exception ex)
+        {
+            Debug.WriteLine($"Year cache save failed: {ex.Message}");
+        }
+    }
 
-		// ---------------------
-		// Unified Prayer builders
-		// These provide a single source of truth to map a Calendar day into UI-ready Prayer objects
-		// and to persist the day's raw times to Preferences. Keeping Calendar as the canonical
-		// storage/cache format is simpler and API-agnostic; Prayer carries UI state and toggles.
-		// ---------------------
-		public List<Prayer> BuildPrayersFromCalendar(Calendar day)
+    #endregion
+
+    #region Prayer Data Builders
+
+    /// <summary>
+    /// Builds a list of Prayer objects from a Calendar day.
+    /// Maps raw calendar times to UI-ready Prayer objects with enabled states.
+    /// </summary>
+    /// <param name="day">The calendar day containing prayer times.</param>
+    /// <returns>List of 8 prayers for the day.</returns>
+    /// <remarks>
+    /// Calendar is the canonical storage format; Prayer carries UI state and notification toggles.
+    /// </remarks>
+    public List<Prayer> BuildPrayersFromCalendar(Calendar day)
 		{
 			var list = new List<Prayer>();
 			if (day is null)
@@ -1225,6 +1347,12 @@ public class DataService
 			}
 		}
 
+		/// <summary>
+		/// Gets prayer data for a specific date from cache or network.
+		/// </summary>
+		/// <param name="date">Target date.</param>
+		/// <param name="forceRefresh">Whether to bypass cache.</param>
+		/// <returns>List of prayers for the specified date.</returns>
 		public async Task<List<Prayer>> GetPrayersForDateAsync(DateTime date, bool forceRefresh = false)
 		{
 			var location = await GetCurrentLocationAsync(false).ConfigureAwait(false);
@@ -1233,10 +1361,16 @@ public class DataService
 			return BuildPrayersFromCalendar(day);
 		}
 
+		#endregion
+
+		#region Cache Maintenance
+
 		/// <summary>
-		/// Ensure that today's Calendar entry exists in the unified yearly cache and update the in-memory calendar.
-		/// Lightweight for returning users when auto-renew is off. Uses last-known location and JSON monthly/daily.
+		/// Ensures today's calendar entry exists in the unified yearly cache and updates the in-memory calendar.
+		/// Lightweight method for returning users when auto-renew is off.
+		/// Uses last-known location and JSON monthly/daily APIs.
 		/// </summary>
+		/// <returns>True if cache was updated with new data, false if cache already had today's data or update failed.</returns>
 		public async Task<bool> EnsureTodayInCacheAsync()
 		{
 			try
@@ -1307,16 +1441,36 @@ public class DataService
 			return false;
 		}
 
+		/// <summary>
+		/// Wrapper class for serializing year-based prayer cache to JSON.
+		/// Contains location coordinates for cache validation.
+		/// </summary>
 		private sealed class YearCacheWrapper
 		{
+			/// <summary>Cache format version for backward compatibility.</summary>
 			public int Version { get; set; }
+			
+			/// <summary>Latitude used when generating this cache.</summary>
 			public double Latitude { get; set; }
+			
+			/// <summary>Longitude used when generating this cache.</summary>
 			public double Longitude { get; set; }
+			
+			/// <summary>Altitude used when generating this cache.</summary>
 			public double Altitude { get; set; }
+			
+			/// <summary>Year this cache covers.</summary>
 			public int Year { get; set; }
-			public List<Calendar> Days { get; set; }
+			
+			/// <summary>Collection of calendar days for the year.</summary>
+			public List<Calendar> Days { get; set; } = new();
 		}
 
+		/// <summary>
+		/// Clears all year caches if user location has changed significantly (~2km).
+		/// Prevents stale prayer times when user relocates.
+		/// </summary>
+		/// <param name="location">Current user location.</param>
 		private void ClearYearCachesIfLocationChanged(Location location)
 		{
 			try
@@ -1344,8 +1498,14 @@ public class DataService
 			}
 		}
 
-		// Unified cache helpers
-		private async Task<ObservableCollection<Calendar>> TryGetMonthlyFromUnifiedCacheAsync(Location location, int year, int month)
+		/// <summary>
+		/// Tries to retrieve a specific month's prayer data from the unified year cache.
+		/// </summary>
+		/// <param name="location">User's location.</param>
+		/// <param name="year">Target year.</param>
+		/// <param name="month">Target month (1-12).</param>
+		/// <returns>Observable collection of calendar days if cache has complete month data, null otherwise.</returns>
+		private async Task<ObservableCollection<Calendar>?> TryGetMonthlyFromUnifiedCacheAsync(Location location, int year, int month)
 		{
 			try
 			{
@@ -1371,6 +1531,8 @@ public class DataService
 		/// Returns the current month's data from unified cache if present (even if incomplete) without null;
 		/// returns an empty collection when no cache file or month fragment exists. Never hits network.
 		/// </summary>
+		/// <param name="location">User's location for cache lookup.</param>
+		/// <returns>Observable collection of calendar days (may be empty but never null).</returns>
 		public async Task<ObservableCollection<Calendar>> GetMonthlyFromCacheOrEmptyAsync(Location location)
 		{
 			var year = DateTime.Now.Year;
@@ -1391,6 +1553,12 @@ public class DataService
 			}
 		}
 
+		/// <summary>
+		/// Saves a list of calendar days to the unified year cache.
+		/// Groups days by year and merges with existing cache data.
+		/// </summary>
+		/// <param name="location">User's location for cache file naming.</param>
+		/// <param name="days">List of calendar days to save.</param>
 		private async Task SaveToUnifiedCacheAsync(Location location, List<Calendar> days)
 		{
 			if (days == null || days.Count == 0) return;
@@ -1413,6 +1581,14 @@ public class DataService
 			}
 		}
 
+		#endregion
+
+		#region User Interaction Utilities
+
+		/// <summary>
+		/// Checks if any prayer reminder notifications are enabled.
+		/// </summary>
+		/// <returns>True if at least one prayer has notifications enabled.</returns>
 		internal bool CheckRemindersEnabledAny()
 		{
 			return Preferences.Get("falsefajrEnabled", false) || Preferences.Get("fajrEnabled", false) ||
@@ -1421,6 +1597,11 @@ public class DataService
 				   Preferences.Get("ishaEnabled", false) || Preferences.Get("endofishaEnabled", false);
 		}
 
+		/// <summary>
+		/// Displays a toast notification message to the user.
+		/// Runs on the main UI thread.
+		/// </summary>
+		/// <param name="message">Message to display.</param>
 		public static void ShowToast(string message)
 		{
 			MainThread.BeginInvokeOnMainThread(() =>
@@ -1433,6 +1614,12 @@ public class DataService
 			});
 		}
 
+		/// <summary>
+		/// Displays a modal alert dialog to the user.
+		/// Runs on the main UI thread.
+		/// </summary>
+		/// <param name="title">Alert title.</param>
+		/// <param name="message">Alert message body.</param>
 		public static void Alert(string title, string message)
 		{
 			MainThread.BeginInvokeOnMainThread(async () =>
@@ -1441,6 +1628,11 @@ public class DataService
 			});
 		}
 
+		/// <summary>
+		/// Checks and requests location permission from the user.
+		/// Handles Windows bypass, soft denial, and permanent denial scenarios.
+		/// </summary>
+		/// <returns>The current permission status after check/request.</returns>
 		public async Task<PermissionStatus> CheckAndRequestLocationPermission()
 		{
 			// Windows: Completely bypass permission flow (mock/static location strategy)
@@ -1479,14 +1671,24 @@ public class DataService
 			}
 			return status;
 		}
-		public async Task<Location> RequestLocationAsync(int waitDelay = 5)
+
+		/// <summary>
+		/// Requests the device's current GPS location with fallback strategies.
+		/// Uses medium accuracy first (fast), then falls back to low accuracy (coarse).
+		/// </summary>
+		/// <param name="waitDelay">Maximum seconds to wait for GPS fix (default 5).</param>
+		/// <returns>Location if successful, null if failed or platform doesn't support geolocation.</returns>
+		/// <remarks>
+		/// Windows returns null by design - caller should use saved coordinates.
+		/// </remarks>
+		public async Task<Location?> RequestLocationAsync(int waitDelay = 5)
 		{
 			// Windows: do not invoke Geolocation APIs – return null so caller uses saved/mock coordinates
 			if (DeviceInfo.Platform == DevicePlatform.WinUI)
 			{
 				return null;
 			}
-			Location location = null;
+			Location? location = null;
 			try
 			{
 				// Strategy: fast first fix, then a quick fallback for broader providers.
@@ -1540,9 +1742,17 @@ public class DataService
 		#region Hybrid API Methods (New JSON + Old XML Fallback)
 
 		/// <summary>
-		/// Get monthly prayer times using hybrid approach: Try new JSON API first, fallback to old XML API
+		/// <summary>
+		/// Gets monthly prayer times using a hybrid approach: tries new JSON API first, falls back to legacy XML API.
 		/// </summary>
-		public async Task<ObservableCollection<Calendar>> GetMonthlyPrayerTimesHybridAsync(Location location, bool forceRefresh = false)
+		/// <param name="location">User's geographic location.</param>
+		/// <param name="forceRefresh">If true, bypasses cache and fetches fresh data.</param>
+		/// <returns>Observable collection of calendar days, or null if both APIs fail.</returns>
+		/// <remarks>
+		/// Strategy order: 1) Unified cache (if not forcing refresh), 2) JSON API, 3) XML API.
+		/// Results are automatically saved to unified cache for future use.
+		/// </remarks>
+		public async Task<ObservableCollection<Calendar>?> GetMonthlyPrayerTimesHybridAsync(Location location, bool forceRefresh = false)
 		{
 			Debug.WriteLine("Starting Hybrid Monthly Prayer Times request");
 
@@ -1551,7 +1761,7 @@ public class DataService
 			{
 				var month = DateTime.Now.Month;
 				var year = DateTime.Now.Year;
-				ObservableCollection<Calendar> unified;
+				ObservableCollection<Calendar>? unified;
 				using (_perf.StartTimer("Cache.TryGetMonthlyUnified"))
 				{
 					unified = await TryGetMonthlyFromUnifiedCacheAsync(location, year, month).ConfigureAwait(false);
@@ -1573,7 +1783,7 @@ public class DataService
 			Debug.WriteLine("Hybrid: Trying new JSON API");
 			try
 			{
-				ObservableCollection<Calendar> jsonResult;
+				ObservableCollection<Calendar>? jsonResult;
 				using (_perf.StartTimer("JSON.Monthly"))
 				{
 					jsonResult = await _jsonApiService.GetMonthlyPrayerTimesAsync(
@@ -1618,9 +1828,15 @@ public class DataService
 		}
 
 		/// <summary>
-		/// Get daily prayer times using hybrid approach: Try new JSON API first, fallback to old XML API
+		/// Gets daily prayer times using a hybrid approach: tries new JSON API first, falls back to legacy XML API.
 		/// </summary>
-		public async Task<Calendar> GetDailyPrayerTimesHybridAsync(Location location, DateTime? date = null)
+		/// <param name="location">User's geographic location.</param>
+		/// <param name="date">Target date (defaults to today if null).</param>
+		/// <returns>Calendar for the specified day, or null if both APIs fail.</returns>
+		/// <remarks>
+		/// Results are automatically persisted to unified cache for future use.
+		/// </remarks>
+		public async Task<Calendar?> GetDailyPrayerTimesHybridAsync(Location location, DateTime? date = null)
 		{
 			if (!HaveInternet()) return null;
 
@@ -1631,7 +1847,7 @@ public class DataService
 			Debug.WriteLine("Hybrid Daily: Trying new JSON API");
 			try
 			{
-				Calendar jsonResult;
+				Calendar? jsonResult;
 				using (_perf.StartTimer("JSON.Daily"))
 				{
 					jsonResult = await _jsonApiService.GetDailyPrayerTimesAsync(
@@ -1655,7 +1871,7 @@ public class DataService
 			Debug.WriteLine("Hybrid Daily: Falling back to XML API");
 			try
 			{
-				Calendar xmlResult;
+				Calendar? xmlResult;
 				using (_perf.StartTimer("XML.Daily.Fallback"))
 				{
 					xmlResult = await GetPrayerTimesAsync(false);
@@ -1676,23 +1892,25 @@ public class DataService
 		}
 
 		/// <summary>
-		/// 📥 Fetches prayer times for a specific month and saves to cache.
+		/// Fetches prayer times for a specific month and saves to cache.
 		/// Used by MonthPage when user navigates to months without cached data.
-		/// Saves to year cache file in background (async, non-blocking).
-		/// Performance impact is minimal: ~15KB write, async I/O, user doesn't wait.
 		/// </summary>
-		/// <param name="location">User's location</param>
-		/// <param name="month">Target month (1-12)</param>
-		/// <param name="year">Target year</param>
-		/// <returns>Collection of calendar entries for the specified month, or null if failed</returns>
-		public async Task<ObservableCollection<Calendar>> FetchSpecificMonthAsync(Location location, int month, int year)
+		/// <param name="location">User's location.</param>
+		/// <param name="month">Target month (1-12).</param>
+		/// <param name="year">Target year.</param>
+		/// <returns>Collection of calendar entries for the specified month, or null if failed.</returns>
+		/// <remarks>
+		/// Saves to year cache file in background (async, non-blocking).
+		/// Performance impact is minimal: ~15KB write, async I/O.
+		/// </remarks>
+		public async Task<ObservableCollection<Calendar>?> FetchSpecificMonthAsync(Location location, int month, int year)
 		{
 			if (!HaveInternet()) return null;
 
 			try
 			{
 				Debug.WriteLine($"FetchSpecificMonth: Fetching {month}/{year}");
-				ObservableCollection<Calendar> result = null;
+				ObservableCollection<Calendar>? result = null;
 
 				// Try JSON API first (supports current year by monthId)
 				if (year == DateTime.Now.Year)
@@ -1732,7 +1950,7 @@ public class DataService
 					}
 				}
 
-				// 💾 Save to cache in background (non-blocking, ~15KB async write)
+				// Save to cache in background (non-blocking, ~15KB async write)
 				if (result != null && result.Count > 0)
 				{
 					_ = Task.Run(async () =>
@@ -1762,9 +1980,10 @@ public class DataService
 		}
 
 		/// <summary>
-		/// Try to get monthly data from unified cache only
+		/// Tries to get monthly data from unified cache only (no network calls).
 		/// </summary>
-		private async Task<ObservableCollection<Calendar>> TryGetMonthlyFromCacheAsync()
+		/// <returns>Cached monthly data or null if not available.</returns>
+		private async Task<ObservableCollection<Calendar>?> TryGetMonthlyFromCacheAsync()
 		{
 			try
 			{
@@ -1791,8 +2010,10 @@ public class DataService
 		}
 
 		/// <summary>
-		/// Test which API is faster/available
+		/// Tests response time and availability of both JSON and XML APIs.
+		/// Useful for diagnostics and determining preferred API strategy.
 		/// </summary>
+		/// <returns>Report string showing API status and response times.</returns>
 		public async Task<string> TestApiPerformanceAsync()
 		{
 			var tasks = new List<Task<(string api, bool success, long ms)>>();
@@ -1838,9 +2059,12 @@ public class DataService
 		}
 
 		/// <summary>
-		/// Get today's prayer times using hybrid approach - used by MainViewModel
+		/// Gets today's prayer times using hybrid approach.
+		/// Primary method used by MainViewModel for displaying current prayer times.
 		/// </summary>
-		public async Task<Calendar> GetPrayerTimesHybridAsync(bool refreshLocation = false)
+		/// <param name="refreshLocation">If true, fetches fresh GPS location.</param>
+		/// <returns>Calendar for today, or fallback from cache/memory.</returns>
+		public async Task<Calendar?> GetPrayerTimesHybridAsync(bool refreshLocation = false)
 		{
 			var location = await GetCurrentLocationAsync(refreshLocation).ConfigureAwait(false);
 			if (location == null || location.Latitude == 0 || location.Longitude == 0)
@@ -1862,12 +2086,13 @@ public class DataService
 		}
 
 		/// <summary>
-		/// Get today's prayer times using hybrid approach - parameterless version for backward compatibility
+		/// Gets today's prayer times using hybrid approach - parameterless version for backward compatibility.
 		/// </summary>
-    public async Task<Calendar?> GetPrayerTimesHybridAsync()
-    {
-        return await GetPrayerTimesHybridAsync(false);
-    }
+		/// <returns>Calendar for today.</returns>
+		public async Task<Calendar?> GetPrayerTimesHybridAsync()
+		{
+			return await GetPrayerTimesHybridAsync(false);
+		}
 
-    #endregion
+		#endregion
 }
