@@ -86,6 +86,16 @@ public class DataService
     private readonly JsonApiService _jsonApiService;
 
     /// <summary>
+    /// XML API service for fetching prayer times from the legacy API.
+    /// </summary>
+    private readonly XmlApiService _xmlApiService;
+
+    /// <summary>
+    /// Cache service for managing prayer times cache.
+    /// </summary>
+    private readonly PrayerCacheService _cacheService;
+
+    /// <summary>
     /// Performance monitoring service for timing operations.
     /// </summary>
     private readonly PerformanceService _perf;
@@ -123,11 +133,20 @@ public class DataService
     /// </summary>
     /// <param name="alarmService">Service for scheduling prayer alarms.</param>
     /// <param name="jsonApiService">JSON API service for fetching prayer times.</param>
+    /// <param name="xmlApiService">XML API service for legacy fallback.</param>
+    /// <param name="cacheService">Cache service for managing prayer data persistence.</param>
     /// <param name="perf">Optional performance monitoring service.</param>
-    public DataService(IAlarmService alarmService, JsonApiService jsonApiService, PerformanceService? perf = null)
+    public DataService(
+        IAlarmService alarmService, 
+        JsonApiService jsonApiService,
+        XmlApiService xmlApiService,
+        PrayerCacheService cacheService,
+        PerformanceService? perf = null)
     {
         _alarmService = alarmService;
         _jsonApiService = jsonApiService;
+        _xmlApiService = xmlApiService;
+        _cacheService = cacheService;
         _perf = perf ?? new PerformanceService();
         calendar = GetTakvimFromFile() ?? new Calendar
         {
@@ -150,10 +169,11 @@ public class DataService
 
     /// <summary>
     /// Initializes a new instance with only alarm service (backward compatibility for widgets).
-    /// Creates a default JsonApiService internally.
+    /// Creates default services internally.
     /// </summary>
     /// <param name="alarmService">Service for scheduling prayer alarms.</param>
-    public DataService(IAlarmService alarmService) : this(alarmService, new JsonApiService())
+    public DataService(IAlarmService alarmService) 
+        : this(alarmService, new JsonApiService(), new XmlApiService(), new PrayerCacheService())
     {
     }
 

@@ -95,10 +95,12 @@ public static class MauiProgram
         services.AddSingleton<IRtlService, RtlService>();
 
         // Core services
+        services.AddSingleton<PerformanceService>();
         services.AddSingleton<JsonApiService>();
+        services.AddSingleton<XmlApiService>();
+        services.AddSingleton<PrayerCacheService>();
         services.AddSingleton<DataService>();
         services.AddSingleton<AccessibilityService>();
-        services.AddSingleton<PerformanceService>();
         services.AddSingleton<BackgroundDataPreloader>();
 
         // Singleton pages (main tabs)

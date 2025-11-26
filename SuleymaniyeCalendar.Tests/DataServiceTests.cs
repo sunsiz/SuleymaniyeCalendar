@@ -49,7 +49,9 @@ namespace SuleymaniyeCalendar.Tests
             _jsonLoggerMock = new Mock<ILogger<JsonApiService>>();
             _jsonApiMock = new Mock<JsonApiService>(_jsonLoggerMock.Object);
             _alarmServiceMock = new Mock<IAlarmService>();
-            _dataService = new DataService(_alarmServiceMock.Object, _jsonApiMock.Object);
+            var xmlApiService = new XmlApiService();
+            var cacheService = new PrayerCacheService();
+            _dataService = new DataService(_alarmServiceMock.Object, _jsonApiMock.Object, xmlApiService, cacheService);
         }
 
         [TestMethod]
