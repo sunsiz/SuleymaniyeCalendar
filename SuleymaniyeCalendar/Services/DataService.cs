@@ -280,7 +280,6 @@ public class DataService
     {
         try
         {
-            // Use unified cache for today's data
             var location = new Location
             {
                 Latitude = Preferences.Get("LastLatitude", 0.0),
@@ -290,23 +289,9 @@ public class DataService
 
             if (location.Latitude != 0.0 && location.Longitude != 0.0)
             {
-                var currentYear = DateTime.Today.Year;
-                // Note: This is synchronous initialization - async loading happens later via PrepareMonthlyPrayerTimes
-                var cachedYearData = Task.Run(() => LoadYearCacheAsync(location, currentYear)).Result;
-
-                if (cachedYearData?.Count > 0)
-                {
-                    var todayData = cachedYearData.FirstOrDefault(d =>
-                        ParseCalendarDateOrMin(d.Date) == DateTime.Today);
-
-                    if (todayData != null)
-                    {
-                        todayData.Latitude = location.Latitude;
-                        todayData.Longitude = location.Longitude;
-                        todayData.Altitude = location.Altitude ?? 0;
-                        return todayData;
-                    }
-                }
+                // Delegate to PrayerCacheService for cache lookup
+                var todayData = Task.Run(() => _cacheService.GetTodayFromCacheAsync(location)).Result;
+                return todayData;
             }
         }
         catch (Exception ex)
@@ -508,62 +493,55 @@ public class DataService
     /// <param name="forceRefresh">If true, bypasses cache and fetches fresh data.</param>
     /// <returns>Collection of calendar days for the month, or null if unavailable.</returns>
     public ObservableCollection<Calendar>? GetMonthlyPrayerTimes(Location? location, bool forceRefresh = false)
-		{
-			// Use unified cache system - synchronous wrapper for legacy callers
-			if (!forceRefresh)
-			{
-				var month = DateTime.Now.Month;
-				var year = DateTime.Now.Year;
-				var unified = Task.Run(() => TryGetMonthlyFromUnifiedCacheAsync(location, year, month)).Result;
-				if (unified != null)
-				{
-					_monthlyCalendar = unified;
-					return _monthlyCalendar;
-				}
-			}
+    {
+        if (location == null) return null;
+        
+        // Use unified cache system - synchronous wrapper for legacy callers
+        if (!forceRefresh)
+        {
+            var month = DateTime.Now.Month;
+            var year = DateTime.Now.Year;
+            var unified = Task.Run(() => TryGetMonthlyFromUnifiedCacheAsync(location, year, month)).Result;
+            if (unified != null)
+            {
+                _monthlyCalendar = unified;
+                return _monthlyCalendar;
+            }
+        }
 
-			if (!HaveInternet()) return null;
-			_location = new Calendar()
-			{
-				Latitude = location.Latitude,
-				Longitude = location.Longitude,
-				Altitude = location.Altitude ?? 0,
-				TimeZone = TimeZoneInfo.Local.BaseUtcOffset.Hours,
-				DayLightSaving = TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ? 1 : 0,
-				Date = DateTime.Today.ToString("dd/MM/yyyy")
-			};
+        if (!HaveInternet()) return null;
 
-			var url =
-				$"http://servis.suleymaniyetakvimi.com/servis.asmx/VakitHesabiListesi?" +
-				$"Enlem={_location.Latitude.ToString(CultureInfo.InvariantCulture)}" +
-				$"&Boylam={_location.Longitude.ToString(CultureInfo.InvariantCulture)}" +
-				$"&Yukseklik={_location.Altitude.ToString(CultureInfo.InvariantCulture)}" +
-				$"&SaatBolgesi={TimeZoneInfo.Local.BaseUtcOffset.Hours}" +
-				$"&yazSaati={(TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ? 1 : 0)}" +
-				$"&Tarih={DateTime.Today:dd/MM/yyyy}";
+        try
+        {
+            // Delegate to XmlApiService
+            var result = Task.Run(() => _xmlApiService.GetMonthlyPrayerTimesAsync(
+                location.Latitude,
+                location.Longitude,
+                location.Altitude ?? 0,
+                DateTime.Now.Month,
+                DateTime.Now.Year)).Result;
 
-			try
-			{
-				XDocument doc = XDocument.Load(url);
-				_monthlyCalendar = ParseXmlList(doc, _location.Latitude, _location.Longitude, _location.Altitude);
-				// Save to unified cache only (synchronous version)
-				_ = Task.Run(async () => await SaveToUnifiedCacheAsync(location, _monthlyCalendar.ToList()));
-				return _monthlyCalendar;
-			}
-			catch (Exception exception)
-			{
-				Debug.WriteLine(
-					$"An error occurred while downloading or parsing the xml file, details: {exception.Message}");
-			}
+            if (result != null && result.Count > 0)
+            {
+                _monthlyCalendar = result;
+                // Save to unified cache (fire-and-forget)
+                _ = Task.Run(async () => await SaveToUnifiedCacheAsync(location, result.ToList()));
+            }
+            return _monthlyCalendar;
+        }
+        catch (Exception exception)
+        {
+            Debug.WriteLine($"GetMonthlyPrayerTimes failed: {exception.Message}");
+        }
 
-			return _monthlyCalendar;
-		}
+        return _monthlyCalendar;
+    }
 
 		/// <summary>
 		/// Async monthly XML fetch to avoid blocking with XDocument.Load(url).
 		/// Uses unified year cache when available.
 		/// </summary>
-		public async Task<ObservableCollection<Calendar>> GetMonthlyPrayerTimesXmlAsync(Location location, bool forceRefresh = false)
+		public async Task<ObservableCollection<Calendar>?> GetMonthlyPrayerTimesXmlAsync(Location location, bool forceRefresh = false)
 		{
 			if (!forceRefresh)
 			{
@@ -575,27 +553,20 @@ public class DataService
 
 			if (!HaveInternet()) return null;
 
-			var tz = TimeZoneInfo.Local.BaseUtcOffset.Hours;
-			var dls = TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ? 1 : 0;
-			var url =
-				$"http://servis.suleymaniyetakvimi.com/servis.asmx/VakitHesabiListesi?" +
-				$"Enlem={location.Latitude.ToString(CultureInfo.InvariantCulture)}" +
-				$"&Boylam={location.Longitude.ToString(CultureInfo.InvariantCulture)}" +
-				$"&Yukseklik={(location.Altitude ?? 0).ToString(CultureInfo.InvariantCulture)}" +
-				$"&SaatBolgesi={tz}" +
-				$"&yazSaati={dls}" +
-				$"&Tarih={DateTime.Today:dd/MM/yyyy}";
-
 			try
 			{
-				using var _ = _perf.StartTimer("XML.Monthly.GetAsync");
-				var resp = await _xmlHttpClient.GetAsync(url).ConfigureAwait(false);
-				resp.EnsureSuccessStatusCode();
-				var xml = await resp.Content.ReadAsStringAsync().ConfigureAwait(false);
-				var doc = XDocument.Parse(xml);
-				var result = ParseXmlList(doc, location.Latitude, location.Longitude, location.Altitude ?? 0);
-				// Save to unified cache only
-				await SaveToUnifiedCacheAsync(location, result.ToList()).ConfigureAwait(false);
+				// Delegate to XmlApiService for fetch + parse
+				var result = await _xmlApiService.GetMonthlyPrayerTimesAsync(
+					location.Latitude,
+					location.Longitude,
+					location.Altitude ?? 0,
+					DateTime.Now.Month,
+					DateTime.Now.Year).ConfigureAwait(false);
+
+				if (result != null && result.Count > 0)
+				{
+					await SaveToUnifiedCacheAsync(location, result.ToList()).ConfigureAwait(false);
+				}
 				return result;
 			}
 			catch (Exception ex)
@@ -607,140 +578,7 @@ public class DataService
 
     #endregion
 
-    #region XML Parsing
-
-    /// <summary>
-    /// Parses XML document containing a list of monthly prayer times.
-    /// </summary>
-    /// <param name="doc">The XML document from the API.</param>
-    /// <param name="latitude">Fallback latitude if not in XML.</param>
-    /// <param name="longitude">Fallback longitude if not in XML.</param>
-    /// <param name="altitude">Fallback altitude if not in XML.</param>
-    /// <returns>Collection of calendar days parsed from the XML.</returns>
-    private ObservableCollection<Calendar> ParseXmlList(XDocument doc, double latitude = 0.0, double longitude = 0.0, double altitude = 0.0)
-		{
-			ObservableCollection<Calendar> monthlyCalendar = new ObservableCollection<Calendar>();
-			if (doc.Root == null) return monthlyCalendar;
-			foreach (var item in doc.Root.Descendants())
-			{
-				if (item.Name.LocalName == "TakvimListesi")
-				{
-					var calendarItem = new Calendar();
-					foreach (var subitem in item.Descendants())
-					{
-						switch (subitem.Name.LocalName)
-						{
-							case "Tarih":
-								calendarItem.Date = subitem.Value;
-								break;
-							case "Enlem":
-								calendarItem.Latitude = Convert.ToDouble(subitem.Value, CultureInfo.InvariantCulture.NumberFormat);
-								break;
-							case "Boylam":
-								calendarItem.Longitude = Convert.ToDouble(subitem.Value, CultureInfo.InvariantCulture.NumberFormat);
-								break;
-							case "Yukseklik":
-								calendarItem.Altitude = Convert.ToDouble(subitem.Value, CultureInfo.InvariantCulture.NumberFormat);
-								break;
-							case "SaatBolgesi":
-								calendarItem.TimeZone = Convert.ToDouble(subitem.Value, CultureInfo.InvariantCulture.NumberFormat);
-								break;
-							case "YazKis":
-								calendarItem.DayLightSaving = Convert.ToDouble(subitem.Value, CultureInfo.InvariantCulture.NumberFormat);
-								break;
-							case "FecriKazip":
-								calendarItem.FalseFajr = subitem.Value;
-								break;
-							case "FecriSadik":
-								calendarItem.Fajr = subitem.Value;
-								break;
-							case "SabahSonu":
-								calendarItem.Sunrise = subitem.Value;
-								break;
-							case "Ogle":
-								calendarItem.Dhuhr = subitem.Value;
-								break;
-							case "Ikindi":
-								calendarItem.Asr = subitem.Value;
-								break;
-							case "Aksam":
-								calendarItem.Maghrib = subitem.Value;
-								break;
-							case "Yatsi":
-								calendarItem.Isha = subitem.Value;
-								break;
-							case "YatsiSonu":
-								calendarItem.EndOfIsha = subitem.Value;
-								break;
-						}
-					}
-
-					calendarItem.Latitude = calendarItem.Latitude == 0 ? latitude : calendarItem.Latitude;
-					calendarItem.Longitude = calendarItem.Longitude == 0 ? longitude : calendarItem.Longitude;
-					calendarItem.Altitude = calendarItem.Altitude == 0 ? altitude : calendarItem.Altitude;
-					monthlyCalendar.Add(calendarItem);
-				}
-			}
-
-			return monthlyCalendar;
-		}
-
-
-		private Calendar ParseXml(string xmlResult)
-		{
-			calendar = new Calendar();
-			XDocument doc = XDocument.Parse(xmlResult);
-			if (doc.Root == null) return calendar;
-			foreach (var item in doc.Root.Descendants())
-			{
-				switch (item.Name.LocalName)
-				{
-					case "Enlem":
-						calendar.Latitude = Convert.ToDouble(item.Value, CultureInfo.InvariantCulture.NumberFormat);
-						break;
-					case "Boylam":
-						calendar.Longitude = Convert.ToDouble(item.Value, CultureInfo.InvariantCulture.NumberFormat);
-						break;
-					case "Yukseklik":
-						calendar.Altitude = Convert.ToDouble(item.Value, CultureInfo.InvariantCulture.NumberFormat);
-						break;
-					case "SaatBolgesi":
-						calendar.TimeZone = Convert.ToDouble(item.Value, CultureInfo.InvariantCulture.NumberFormat);
-						break;
-					case "YazKis":
-						calendar.DayLightSaving = Convert.ToDouble(item.Value, CultureInfo.InvariantCulture.NumberFormat);
-						break;
-					case "FecriKazip":
-						calendar.FalseFajr = item.Value;
-						break;
-					case "FecriSadik":
-						calendar.Fajr = item.Value;
-						break;
-					case "SabahSonu":
-						calendar.Sunrise = item.Value;
-						break;
-					case "Ogle":
-						calendar.Dhuhr = item.Value;
-						break;
-					case "Ikindi":
-						calendar.Asr = item.Value;
-						break;
-					case "Aksam":
-						calendar.Maghrib = item.Value;
-						break;
-					case "Yatsi":
-						calendar.Isha = item.Value;
-						break;
-					case "YatsiSonu":
-						calendar.EndOfIsha = item.Value;
-						break;
-				}
-			}
-
-        return calendar;
-    }
-
-    #endregion
+    // XML Parsing methods have been moved to XmlApiService
 
     #region Network and Internet
 
@@ -777,129 +615,82 @@ public class DataService
     /// </summary>
     /// <returns>Today's prayer times or null if unavailable.</returns>
     public async Task<Calendar?> GetPrayerTimesFastAsync()
-		{
-			calendar = GetTakvimFromFile();
-			if (calendar != null) return calendar;
-			calendar = new Calendar();
+    {
+        // Try cache first
+        var cached = GetTakvimFromFile();
+        if (cached != null)
+        {
+            calendar = cached;
+            return calendar;
+        }
 
-			if (!HaveInternet()) return null;
-			var location = await GetCurrentLocationAsync(false).ConfigureAwait(false);
-			if (location != null)
-			{
+        if (!HaveInternet()) return null;
+        
+        var location = await GetCurrentLocationAsync(false).ConfigureAwait(false);
+        if (location != null)
+        {
+            try
+            {
+                // Delegate to XmlApiService
+                var result = await _xmlApiService.GetDailyPrayerTimesAsync(
+                    location.Latitude,
+                    location.Longitude,
+                    location.Altitude ?? 0,
+                    DateTime.Today).ConfigureAwait(false);
 
-				var url = "http://servis.suleymaniyetakvimi.com/servis.asmx/VakitHesabi?";
-				url += "Enlem=" + location.Latitude;
-				url += "&Boylam=" + location.Longitude;
-				url += "&Yukseklik=" + location.Altitude;
-				url = url.Replace(',', '.');
-				url += "&SaatBolgesi=" + TimeZoneInfo.Local.BaseUtcOffset.Hours;//.StandardName;
-				url += "&yazSaati=" + (TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ? 1 : 0);
-				url += "&Tarih=" + DateTime.Today.ToString("dd/MM/yyyy");
+                if (result != null)
+                {
+                    calendar = result;
+                    return calendar;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetPrayerTimesFastAsync failed: {ex.Message}");
+            }
+        }
 
-				//Xml Parsing  
-				XDocument doc = XDocument.Load(url);
-				if (doc.Root == null) return null;
-				foreach (var item in doc.Root.Descendants())
-				{
-					switch (item.Name.LocalName)
-					{
-						//Without the Convert.ToDouble conversion it confuses the , and . when UI culture changed. like latitude=50.674367348783 become latitude= 50674367348783 then throw exception.
-						case "Enlem":
-							calendar.Latitude = Convert.ToDouble(item.Value, CultureInfo.InvariantCulture.NumberFormat);
-							break;
-						case "Boylam":
-							calendar.Longitude = Convert.ToDouble(item.Value, CultureInfo.InvariantCulture.NumberFormat);
-							break;
-						case "Yukseklik":
-							calendar.Altitude =
-								Convert.ToDouble(item.Value, CultureInfo.InvariantCulture.NumberFormat);
-							break;
-						case "SaatBolgesi":
-							calendar.TimeZone =
-								Convert.ToDouble(item.Value, CultureInfo.InvariantCulture.NumberFormat);
-							break;
-						case "YazKis":
-							calendar.DayLightSaving = Convert.ToDouble(item.Value, CultureInfo.InvariantCulture.NumberFormat);
-							break;
-						case "FecriKazip":
-							calendar.FalseFajr = item.Value;
-							break;
-						case "FecriSadik":
-							calendar.Fajr = item.Value;
-							break;
-						case "SabahSonu":
-							calendar.Sunrise = item.Value;
-							break;
-						case "Ogle":
-							calendar.Dhuhr = item.Value;
-							break;
-						case "Ikindi":
-							calendar.Asr = item.Value;
-							break;
-						case "Aksam":
-							calendar.Maghrib = item.Value;
-							break;
-						case "Yatsi":
-							calendar.Isha = item.Value;
-							break;
-						case "YatsiSonu":
-							calendar.EndOfIsha = item.Value;
-							break;
-					}
-				}
-			}
+        return calendar;
+    }
 
-			return calendar;
-		}
+    /// <summary>
+    /// Gets prayer times with optional location refresh.
+    /// When refreshLocation is true, forces a fresh GPS fix.
+    /// </summary>
+    /// <param name="refreshLocation">If true, refreshes GPS location.</param>
+    /// <returns>Today's prayer times.</returns>
+    public async Task<Calendar?> GetPrayerTimesAsync(bool refreshLocation)
+    {
+        Debug.WriteLine("TimeStamp-GetPrayerTimes-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 
-		//When refreshLocation true, force refresh location not using last known location.
-		public async Task<Calendar> GetPrayerTimesAsync(bool refreshLocation)
-		{
-			//Analytics.TrackEvent("GetPrayerTimes in the DataService Triggered: " + $" at {DateTime.Now}");
-			Debug.WriteLine("TimeStamp-GetPrayerTimes-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+        try
+        {
+            if (!HaveInternet()) return null;
+            
+            var location = await GetCurrentLocationAsync(refreshLocation).ConfigureAwait(false);
+            if (location == null) return calendar;
 
-			try
-			{
-				if (!HaveInternet()) return null;
-				var location = await GetCurrentLocationAsync(refreshLocation).ConfigureAwait(false);
-				var loc = new Calendar()
-				{
-					Latitude = location.Latitude,
-					Longitude = location.Longitude,
-					Altitude = location.Altitude ?? 0,
-					TimeZone = TimeZoneInfo.Local.BaseUtcOffset.Hours, //.StandardName;
-					DayLightSaving = TimeZoneInfo.Local.IsDaylightSavingTime(DateTime.Now) ? 1 : 0,
-					Date = DateTime.Today.ToString("dd/MM/yyyy")
-				};
-				DateTime now = DateTime.Now;
-				DateTime withKind = DateTime.SpecifyKind(now, DateTimeKind.Local);
-				Debug.WriteLine("{0} - Time is ambiguous? {1}", TimeZoneInfo.Local.DaylightName, TimeZoneInfo.Local.IsAmbiguousTime(withKind));
-				Debug.WriteLine("{0} - Time is daylight saving time? {1}", TimeZoneInfo.Local.StandardName, TimeZoneInfo.Local.IsDaylightSavingTime(withKind));
-				Debug.WriteLine("{0} - Time is support daylight saving time? {1}", TimeZoneInfo.Local.DisplayName, TimeZoneInfo.Local.SupportsDaylightSavingTime);
-				if (TimeZoneInfo.Local.IsAmbiguousTime(withKind) || TimeZoneInfo.Local.SupportsDaylightSavingTime ||
-					TimeZoneInfo.Local.IsDaylightSavingTime(withKind))
-					Debug.WriteLine("{0} may be daylight saving time in {1}.",
-						withKind, TimeZoneInfo.Local.DisplayName);
-				var uri = new Uri($"http://servis.suleymaniyetakvimi.com/servis.asmx/" +
-								  $"VakitHesabi?Enlem={Convert.ToDouble(loc.Latitude, CultureInfo.InvariantCulture.NumberFormat)}" +
-								  $"&Boylam={Convert.ToDouble(loc.Longitude, CultureInfo.InvariantCulture.NumberFormat)}" +
-								  $"&Yukseklik={Convert.ToDouble(loc.Altitude, CultureInfo.InvariantCulture.NumberFormat)}" +
-								  $"&SaatBolgesi={loc.TimeZone}&yazSaati={loc.DayLightSaving}&Tarih={loc.Date}");
-				var response = await _xmlHttpClient.GetAsync(uri).ConfigureAwait(false);
-				var xmlResult = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-				if (!string.IsNullOrEmpty(xmlResult) && xmlResult.StartsWith("<?xml"))
-				{
-					calendar = ParseXml(xmlResult);
-					ShowToast(AppResources.KonumYenilendi);
-				}
-				else
-					ShowToast(AppResources.NamazVaktiAlmaHatasi);
+            // Delegate to XmlApiService
+            var result = await _xmlApiService.GetDailyPrayerTimesAsync(
+                location.Latitude,
+                location.Longitude,
+                location.Altitude ?? 0,
+                DateTime.Today).ConfigureAwait(false);
 
-			}
-			catch (Exception exception)
-			{
-				Alert(exception.Message, AppResources.KonumHatasi);
-			}
+            if (result != null)
+            {
+                calendar = result;
+                ShowToast(AppResources.KonumYenilendi);
+            }
+            else
+            {
+                ShowToast(AppResources.NamazVaktiAlmaHatasi);
+            }
+        }
+        catch (Exception exception)
+        {
+            Alert(exception.Message, AppResources.KonumHatasi);
+        }
 
         Debug.WriteLine("TimeStamp-GetPrayerTimes-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
         return calendar;
@@ -1236,77 +1027,21 @@ public class DataService
 
     #endregion
 
-    #region Unified Cache System
-
-    /// <summary>
-    /// Gets the file path for a year's cache based on location and year.
-    /// </summary>
-    /// <param name="location">User's location (rounded to 4 decimal places).</param>
-    /// <param name="year">Calendar year.</param>
-    /// <returns>Full path to the cache JSON file.</returns>
-    private string GetYearCachePath(Location location, int year)
-    {
-        var lat = Math.Round(location.Latitude, 4).ToString(CultureInfo.InvariantCulture);
-        var lon = Math.Round(location.Longitude, 4).ToString(CultureInfo.InvariantCulture);
-        var file = $"prayercache_{lat}_{lon}_{year}.json";
-        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), file);
-    }
+    #region Unified Cache System (Delegating to PrayerCacheService)
 
     /// <summary>
     /// Loads cached prayer times for a specific year and location.
+    /// Delegates to PrayerCacheService.
     /// </summary>
-    /// <param name="location">User's location.</param>
-    /// <param name="year">Calendar year to load.</param>
-    /// <returns>List of cached calendar days, or null if not cached.</returns>
-    private async Task<List<Calendar>?> LoadYearCacheAsync(Location location, int year)
-		{
-			try
-			{
-				var path = GetYearCachePath(location, year);
-				if (!File.Exists(path)) return null;
-				string json;
-				using (_perf.StartTimer($"IO.ReadAllText.{year}"))
-				{
-					json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-				}
-				var wrapper = JsonSerializer.Deserialize<YearCacheWrapper>(json);
-				if (wrapper != null && wrapper.Version == UnifiedCacheVersion && wrapper.Year == year)
-				{
-					return wrapper.Days ?? new List<Calendar>();
-				}
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Year cache load failed: {ex.Message}");
-			}
-			return null;
-		}
+    private Task<List<Calendar>?> LoadYearCacheAsync(Location location, int year)
+        => _cacheService.LoadYearCacheAsync(location, year);
 
-		private async Task SaveYearCacheAsync(Location location, int year, List<Calendar> days)
-		{
-			try
-			{
-				var wrapper = new YearCacheWrapper
-				{
-					Version = UnifiedCacheVersion,
-					Latitude = location.Latitude,
-					Longitude = location.Longitude,
-					Altitude = location.Altitude ?? 0,
-					Year = year,
-					Days = days
-				};
-				var json = JsonSerializer.Serialize(wrapper, new JsonSerializerOptions { WriteIndented = false });
-				var path = GetYearCachePath(location, year);
-				using (_perf.StartTimer($"IO.WriteAllText.{year}"))
-				{
-					await File.WriteAllTextAsync(path, json).ConfigureAwait(false);
-				}
-			}
-            catch (Exception ex)
-        {
-            Debug.WriteLine($"Year cache save failed: {ex.Message}");
-        }
-    }
+    /// <summary>
+    /// Saves prayer times for a year to cache.
+    /// Delegates to PrayerCacheService.
+    /// </summary>
+    private Task SaveYearCacheAsync(Location location, int year, List<Calendar> days)
+        => _cacheService.SaveYearCacheAsync(location, year, days);
 
     #endregion
 
@@ -1462,144 +1197,33 @@ public class DataService
 		}
 
 		/// <summary>
-		/// Wrapper class for serializing year-based prayer cache to JSON.
-		/// Contains location coordinates for cache validation.
-		/// </summary>
-		private sealed class YearCacheWrapper
-		{
-			/// <summary>Cache format version for backward compatibility.</summary>
-			public int Version { get; set; }
-			
-			/// <summary>Latitude used when generating this cache.</summary>
-			public double Latitude { get; set; }
-			
-			/// <summary>Longitude used when generating this cache.</summary>
-			public double Longitude { get; set; }
-			
-			/// <summary>Altitude used when generating this cache.</summary>
-			public double Altitude { get; set; }
-			
-			/// <summary>Year this cache covers.</summary>
-			public int Year { get; set; }
-			
-			/// <summary>Collection of calendar days for the year.</summary>
-			public List<Calendar> Days { get; set; } = new();
-		}
-
-		/// <summary>
 		/// Clears all year caches if user location has changed significantly (~2km).
-		/// Prevents stale prayer times when user relocates.
+		/// Delegates to PrayerCacheService.
 		/// </summary>
 		/// <param name="location">Current user location.</param>
 		private void ClearYearCachesIfLocationChanged(Location location)
-		{
-			try
-			{
-				const double threshold = 0.02; // ~2km latitude delta; coarse but effective
-				var lastLat = Preferences.Get("CacheLastLat", double.NaN);
-				var lastLon = Preferences.Get("CacheLastLon", double.NaN);
-				if (double.IsNaN(lastLat) || double.IsNaN(lastLon) ||
-					Math.Abs(lastLat - location.Latitude) > threshold ||
-					Math.Abs(lastLon - location.Longitude) > threshold)
-				{
-					var dir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-					var files = Directory.GetFiles(dir, "prayercache_*.json");
-					foreach (var f in files)
-					{
-						try { File.Delete(f); } catch { /* ignore */ }
-					}
-					Preferences.Set("CacheLastLat", location.Latitude);
-					Preferences.Set("CacheLastLon", location.Longitude);
-				}
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Cache invalidation check failed: {ex.Message}");
-			}
-		}
+			=> _cacheService.ClearCachesIfLocationChanged(location);
 
 		/// <summary>
 		/// Tries to retrieve a specific month's prayer data from the unified year cache.
+		/// Delegates to PrayerCacheService.
 		/// </summary>
-		/// <param name="location">User's location.</param>
-		/// <param name="year">Target year.</param>
-		/// <param name="month">Target month (1-12).</param>
-		/// <returns>Observable collection of calendar days if cache has complete month data, null otherwise.</returns>
-		private async Task<ObservableCollection<Calendar>?> TryGetMonthlyFromUnifiedCacheAsync(Location location, int year, int month)
-		{
-			try
-			{
-				var list = await LoadYearCacheAsync(location, year).ConfigureAwait(false);
-				if (list == null || list.Count == 0) return null;
-					var monthDays = list.Where(d =>
-					{
-						var dd = ParseCalendarDateOrMin(d.Date);
-						if (dd == DateTime.MinValue) return false;
-						return dd.Year == year && dd.Month == month;
-					}).OrderBy(d => ParseCalendarDateOrMin(d.Date)).ToList();
-				if (monthDays.Count >= 28)
-					return new ObservableCollection<Calendar>(monthDays);
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Unified cache monthly read failed: {ex.Message}");
-			}
-			return null;
-		}
+		private Task<ObservableCollection<Calendar>?> TryGetMonthlyFromUnifiedCacheAsync(Location location, int year, int month)
+			=> _cacheService.TryGetMonthlyFromCacheAsync(location, year, month);
 
 		/// <summary>
-		/// Returns the current month's data from unified cache if present (even if incomplete) without null;
-		/// returns an empty collection when no cache file or month fragment exists. Never hits network.
+		/// Returns the current month's data from unified cache if present (even if incomplete).
+		/// Delegates to PrayerCacheService.
 		/// </summary>
-		/// <param name="location">User's location for cache lookup.</param>
-		/// <returns>Observable collection of calendar days (may be empty but never null).</returns>
-		public async Task<ObservableCollection<Calendar>> GetMonthlyFromCacheOrEmptyAsync(Location location)
-		{
-			var year = DateTime.Now.Year;
-			var month = DateTime.Now.Month;
-			try
-			{
-				var list = await LoadYearCacheAsync(location, year).ConfigureAwait(false) ?? new List<Calendar>();
-				var monthDays = list.Where(d => {
-					var dd = ParseCalendarDateOrMin(d.Date);
-					return dd != DateTime.MinValue && dd.Year == year && dd.Month == month;
-				}).OrderBy(d => ParseCalendarDateOrMin(d.Date)).ToList();
-				return new ObservableCollection<Calendar>(monthDays);
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"GetMonthlyFromCacheOrEmptyAsync failed: {ex.Message}");
-				return new ObservableCollection<Calendar>();
-			}
-		}
+		public Task<ObservableCollection<Calendar>> GetMonthlyFromCacheOrEmptyAsync(Location location)
+			=> _cacheService.GetMonthlyFromCacheOrEmptyAsync(location);
 
 		/// <summary>
 		/// Saves a list of calendar days to the unified year cache.
-		/// Groups days by year and merges with existing cache data.
+		/// Delegates to PrayerCacheService.
 		/// </summary>
-		/// <param name="location">User's location for cache file naming.</param>
-		/// <param name="days">List of calendar days to save.</param>
-		private async Task SaveToUnifiedCacheAsync(Location location, List<Calendar> days)
-		{
-			if (days == null || days.Count == 0) return;
-			try
-			{
-				var groups = days
-					.Where(d => ParseCalendarDateOrMin(d.Date) != DateTime.MinValue)
-					.GroupBy(d => ParseCalendarDateOrMin(d.Date).Year);
-				foreach (var g in groups)
-				{
-					var year = g.Key;
-					var existing = await LoadYearCacheAsync(location, year).ConfigureAwait(false) ?? new List<Calendar>();
-					existing = MergeCalendars(existing, g.ToList());
-					await SaveYearCacheAsync(location, year, existing).ConfigureAwait(false);
-				}
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine($"Unified cache save failed: {ex.Message}");
-			}
-		}
+		private Task SaveToUnifiedCacheAsync(Location location, List<Calendar> days)
+			=> _cacheService.SaveToUnifiedCacheAsync(location, days);
 
 		#endregion
 
