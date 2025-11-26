@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Maui.Alerts;
+﻿#nullable enable
+
+using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -15,11 +17,14 @@ namespace SuleymaniyeCalendar.ViewModels;
 /// </summary>
 public partial class CompassViewModel : BaseViewModel
 {
+	#region Private Fields
+
 	private readonly PerformanceService _perf = new();
 	private readonly DataService _dataService;
 
-	// Kaaba coordinates in Mecca, Saudi Arabia
+	/// <summary>Kaaba latitude in Mecca, Saudi Arabia.</summary>
 	private readonly double _qiblaLatitude = 21.4224779;
+	/// <summary>Kaaba longitude in Mecca, Saudi Arabia.</summary>
 	private readonly double _qiblaLongitude = 39.8251832;
 	
 	// Current device location
@@ -29,10 +34,12 @@ public partial class CompassViewModel : BaseViewModel
 	
 	internal readonly SensorSpeed Speed = SensorSpeed.UI;
 
+	#endregion
+
 	#region Display Properties
 
 	/// <summary>Formatted latitude and altitude display (e.g., "Latitude: 41.00 | Altitude: 114").</summary>
-	private string _latitudeAltitude;
+	private string _latitudeAltitude = string.Empty;
 	public string LatitudeAltitude
 	{
 		get => _latitudeAltitude;
@@ -40,7 +47,7 @@ public partial class CompassViewModel : BaseViewModel
 	}
 
 	/// <summary>Formatted longitude and heading display (e.g., "Longitude: 29.00 | Angle: 123°").</summary>
-	private string _degreeLongitude;
+	private string _degreeLongitude = string.Empty;
 	public string DegreeLongitude
 	{
 		get => _degreeLongitude;
@@ -48,7 +55,7 @@ public partial class CompassViewModel : BaseViewModel
 	}
 
 	/// <summary>Human-readable address from reverse geocoding.</summary>
-	private string _address;
+	private string _address = string.Empty;
 	public string Address
 	{
 		get => _address;
