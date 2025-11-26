@@ -23,25 +23,24 @@
                     <SwipeGestureRecognizer Direction="Right" Command="{Binding PreviousMonthCommand}" />
                 </Border.GestureRecognizers>
                 
-                <VerticalStackLayout Spacing="12">
+                <VerticalStackLayout Spacing="8">
                     
-                    <!-- 📍 Navigation Header (Integrated) -->
-                    <Grid ColumnDefinitions="44,*,44,Auto" ColumnSpacing="8">
+                    <!-- 📍 Navigation Header (Compact) -->
+                    <Grid ColumnDefinitions="36,*,36,Auto" ColumnSpacing="6">
                         <!-- Previous Month -->
                         <Button Grid.Column="0"
                                 Text="◀"
                                 Style="{StaticResource GlassButtonOutline}"
-                                FontSize="18"
-                                WidthRequest="44"
-                                HeightRequest="44"
+                                FontSize="16"
+                                WidthRequest="36"
+                                HeightRequest="36"
                                 Padding="0"
-                                Command="{Binding PreviousMonthCommand}"
-                                ToolTipProperties.Text="Previous Month" />
+                                Command="{Binding PreviousMonthCommand}" />
                         
                         <!-- Month/Year Title (Centered) -->
                         <Label Grid.Column="1"
                                Text="{Binding MonthYearDisplay}"
-                               Style="{StaticResource TitleLargeStyle}"
+                               Style="{StaticResource TitleMediumStyle}"
                                HorizontalTextAlignment="Center"
                                VerticalTextAlignment="Center"
                                TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}" />
@@ -50,29 +49,22 @@
                         <Button Grid.Column="2"
                                 Text="▶"
                                 Style="{StaticResource GlassButtonOutline}"
-                                FontSize="18"
-                                WidthRequest="44"
-                                HeightRequest="44"
+                                FontSize="16"
+                                WidthRequest="36"
+                                HeightRequest="36"
                                 Padding="0"
-                                Command="{Binding NextMonthCommand}"
-                                ToolTipProperties.Text="Next Month" />
+                                Command="{Binding NextMonthCommand}" />
                         
                         <!-- Today Button (Localized) -->
                         <Button Grid.Column="3"
                                 Text="{localization:Translate Bugun}"
                                 Style="{StaticResource iOSLiquidGlassButton}"
-                                FontSize="13"
-                                Padding="16,0"
-                                HeightRequest="36"
+                                FontSize="12"
+                                Padding="12,0"
+                                HeightRequest="32"
                                 VerticalOptions="Center"
-                                Command="{Binding TodayCommand}"
-                                ToolTipProperties.Text="Jump to Today" />
+                                Command="{Binding TodayCommand}" />
                     </Grid>
-                    
-                    <!-- 🎨 Subtle Divider -->
-                    <BoxView HeightRequest="1" 
-                             Opacity="0.15"
-                             Color="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
                     
                     <!-- 🌍 Weekday Headers -->
                     <Grid ColumnDefinitions="*,*,*,*,*,*,*" ColumnSpacing="4">
@@ -122,25 +114,29 @@
                           RowSpacing="4" />
                     
                     <!-- 📥 Download Prompt: Shown when navigating to months without cached data -->
-                    <!-- 🔧 Made compact to keep prayer card visible -->
+                    <!-- 🔧 Made compact with FlexLayout for better wrapping -->
                     <Border Style="{StaticResource FrostGlassCardCool}"
-                            Padding="12,8"
+                            Padding="10,6"
                             IsVisible="{Binding ShowDownloadPrompt}">
-                        <HorizontalStackLayout Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
+                        <FlexLayout Direction="Row" 
+                                    Wrap="Wrap" 
+                                    JustifyContent="Center" 
+                                    AlignItems="Center"
+                                    AlignContent="Center">
                             <Label Text="📅" 
-                                   FontSize="20" 
-                                   VerticalOptions="Center" />
+                                   FontSize="18" 
+                                   Margin="0,0,8,0" />
                             <Label Text="{localization:Translate AylikVeriYenilemeIste}"
                                    Style="{StaticResource BodySmallStyle}"
-                                   VerticalOptions="Center"
+                                   Margin="0,0,10,0"
                                    TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceDarkColor}}" />
                             <Button Text="{localization:Translate AyVeriYukle}"
                                     Style="{StaticResource iOSLiquidGlassButton}"
                                     Command="{Binding DownloadDisplayedMonthCommand}"
-                                    VerticalOptions="Center"
-                                    HeightRequest="32"
-                                    Padding="16,4" />
-                        </HorizontalStackLayout>
+                                    HeightRequest="28"
+                                    FontSize="12"
+                                    Padding="12,2" />
+                        </FlexLayout>
                     </Border>
                     
                     <!-- 🔄 Loading Indicator for Month Download -->
