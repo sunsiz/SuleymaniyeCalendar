@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿#nullable enable
+
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
@@ -24,55 +26,128 @@ namespace SuleymaniyeCalendar.ViewModels;
 /// </remarks>
 public partial class MainViewModel : BaseViewModel
 {
-    private Calendar _calendar;
-    private DataService _data;
-    private Task _startupRefreshTask;
-        private Task _weeklyAlarmsTask;
-        // (Removed legacy _skipWindowsGeocoding flag; Windows geocoding guarded by token check in GetCityAsync.)
+    #region Private Fields
 
-        // Throttle refreshes to avoid duplicate work during navigation churn
-        private DateTimeOffset _lastUiRefresh = DateTimeOffset.MinValue;
-        private static readonly TimeSpan UiRefreshThrottle = TimeSpan.FromSeconds(2);
+    /// <summary>
+    /// Current day's prayer calendar data.
+    /// </summary>
+    private Calendar? _calendar;
 
-        // 🔄 PHASE 18: Track date for midnight rollover detection
-        private DateTime _lastKnownDate = DateTime.Today;
-        // Track last minute to detect prayer window changes (optimize performance)
-        private int _lastMinute = DateTime.Now.Minute;
+    /// <summary>
+    /// Data service for prayer times, location, and alarm scheduling.
+    /// </summary>
+    private DataService _data = null!;
 
-        // Single-flight guard for UI refresh
-        private int _refreshing; // 0 = idle, 1 = running
-                                 // Single-flight guard for manual location refresh pipeline (pull-to-refresh and refresh button)
-        private int _locationRefreshing; // 0 = idle, 1 = running
+    /// <summary>
+    /// Background task for initial data loading on startup.
+    /// </summary>
+    private Task? _startupRefreshTask;
 
-        private ObservableCollection<Prayer> prayers;
-        public ObservableCollection<Prayer> Prayers { get => prayers; set => SetProperty(ref prayers, value); }
+    /// <summary>
+    /// Background task for weekly alarm scheduling.
+    /// </summary>
+    private Task? _weeklyAlarmsTask;
 
-        private string remainingTime;
-        public string RemainingTime { get => remainingTime; set => SetProperty(ref remainingTime, value); }
+    /// <summary>
+    /// Timestamp of last UI refresh to throttle duplicate updates.
+    /// </summary>
+    private DateTimeOffset _lastUiRefresh = DateTimeOffset.MinValue;
 
-        // 🎨 PHASE 17: Progress percentage for animated gradient (0.0 to 1.0)
-        private double timeProgress;
-        public double TimeProgress { get => timeProgress; set => SetProperty(ref timeProgress, value); }
+    /// <summary>
+    /// Minimum interval between UI refreshes to prevent churn.
+    /// </summary>
+    private static readonly TimeSpan UiRefreshThrottle = TimeSpan.FromSeconds(2);
 
-        private string city;
-        public string City { get => city; set => SetProperty(ref city, value); }
-        private IDispatcherTimer _ticker;
-        private EventHandler _tickHandler;
+    /// <summary>
+    /// Track current date for midnight rollover detection (PHASE 18).
+    /// </summary>
+    private DateTime _lastKnownDate = DateTime.Today;
 
-        // Dedicated flag for pull-to-refresh to avoid coupling with IsBusy
-        private bool isRefreshing;
-        public bool IsRefreshing { get => isRefreshing; set => SetProperty(ref isRefreshing, value); }
+    /// <summary>
+    /// Track last minute to detect prayer window changes and optimize state updates.
+    /// </summary>
+    private int _lastMinute = DateTime.Now.Minute;
 
-        // Bind CollectionView.SelectedItem to this
-        private Prayer selectedPrayer;
-        public Prayer SelectedPrayer { get => selectedPrayer; set => SetProperty(ref selectedPrayer, value); }
+    /// <summary>
+    /// Single-flight guard for UI refresh. 0 = idle, 1 = running.
+    /// </summary>
+    private int _refreshing;
 
-        // Prevent double navigation/reentrancy on fast taps/selection churn
-        private bool _isNavigating;
+    /// <summary>
+    /// Single-flight guard for manual location refresh (pull-to-refresh). 0 = idle, 1 = running.
+    /// </summary>
+    private int _locationRefreshing;
 
-        private readonly PerformanceService _perf;
+    /// <summary>
+    /// Timer for countdown tick updates every second.
+    /// </summary>
+    private IDispatcherTimer? _ticker;
 
-        public MainViewModel(DataService dataService, PerformanceService perf = null)
+    /// <summary>
+    /// Handler for ticker events, stored for proper unsubscription.
+    /// </summary>
+    private EventHandler? _tickHandler;
+
+    /// <summary>
+    /// Prevents double navigation on fast taps.
+    /// </summary>
+    private bool _isNavigating;
+
+    /// <summary>
+    /// Performance monitoring service for timing operations.
+    /// </summary>
+    private readonly PerformanceService _perf;
+
+    #endregion
+
+    #region Observable Properties
+
+    /// <summary>
+    /// Gets or sets the collection of prayer times displayed in the UI.
+    /// </summary>
+    private ObservableCollection<Prayer>? prayers;
+    public ObservableCollection<Prayer>? Prayers { get => prayers; set => SetProperty(ref prayers, value); }
+
+    /// <summary>
+    /// Gets or sets the formatted remaining time until next prayer.
+    /// </summary>
+    private string remainingTime = string.Empty;
+    public string RemainingTime { get => remainingTime; set => SetProperty(ref remainingTime, value); }
+
+    /// <summary>
+    /// Gets or sets the progress percentage (0.0 to 1.0) for animated gradient (PHASE 17).
+    /// </summary>
+    private double timeProgress;
+    public double TimeProgress { get => timeProgress; set => SetProperty(ref timeProgress, value); }
+
+    /// <summary>
+    /// Gets or sets the current city name from geocoding.
+    /// </summary>
+    private string city = string.Empty;
+    public string City { get => city; set => SetProperty(ref city, value); }
+
+    /// <summary>
+    /// Gets or sets whether pull-to-refresh is active. Separate from IsBusy to avoid coupling.
+    /// </summary>
+    private bool isRefreshing;
+    public bool IsRefreshing { get => isRefreshing; set => SetProperty(ref isRefreshing, value); }
+
+    /// <summary>
+    /// Gets or sets the currently selected prayer for CollectionView binding.
+    /// </summary>
+    private Prayer? selectedPrayer;
+    public Prayer? SelectedPrayer { get => selectedPrayer; set => SetProperty(ref selectedPrayer, value); }
+
+    #endregion
+
+    #region Constructor
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MainViewModel"/> class.
+    /// </summary>
+    /// <param name="dataService">The data service for prayer times and location.</param>
+    /// <param name="perf">Optional performance monitoring service.</param>
+    public MainViewModel(DataService dataService, PerformanceService? perf = null)
         {
             _perf = perf ?? new PerformanceService();
             Debug.WriteLine("TimeStamp-MainViewModel-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
@@ -140,6 +215,13 @@ public partial class MainViewModel : BaseViewModel
             // Icon/UI refresh is handled by OnAppearing -> RefreshUiAsync()
         }
 
+    #endregion
+
+    #region Commands
+
+        /// <summary>
+        /// Opens the device's map application centered on the current location.
+        /// </summary>
         [RelayCommand]
         private async Task GoToMap()
         {
@@ -165,6 +247,10 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
+        /// <summary>
+        /// Refreshes the current location and updates prayer times.
+        /// Used by pull-to-refresh and refresh button. Shows overlay during operation.
+        /// </summary>
         [RelayCommand]
         public async Task RefreshLocation()
         {
@@ -266,7 +352,10 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
-        // Changed: parameterless; uses SelectedPrayer (bound from XAML)
+        /// <summary>
+        /// Navigates to the prayer detail page when a prayer is selected.
+        /// Uses SelectedPrayer bound from XAML CollectionView.
+        /// </summary>
         [RelayCommand]
         private async Task PrayerSelected()
         {
@@ -291,6 +380,9 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
+        /// <summary>
+        /// Navigates to the monthly prayer times calendar page.
+        /// </summary>
         [RelayCommand]
         private async Task GoToMonth()
         {
@@ -306,6 +398,9 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
+        /// <summary>
+        /// Navigates to the application settings page.
+        /// </summary>
         [RelayCommand]
         private async Task Settings()
         {
@@ -314,8 +409,13 @@ public partial class MainViewModel : BaseViewModel
             IsBusy = false;
         }
 
+        /// <summary>
+        /// Toggles the enabled state of a prayer's notification.
+        /// Reschedules alarms in the background after the toggle.
+        /// </summary>
+        /// <param name="prayer">The prayer to toggle.</param>
         [RelayCommand]
-        private void TogglePrayerEnabled(Prayer prayer)
+        private void TogglePrayerEnabled(Prayer? prayer)
         {
             if (prayer == null) return;
 
@@ -342,6 +442,14 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
+    #endregion
+
+    #region Private Methods - Location
+
+        /// <summary>
+        /// Performs reverse geocoding to get the city name from current coordinates.
+        /// Uses a 5-second timeout to prevent hanging. Falls back to cached city on failure.
+        /// </summary>
         private async Task GetCityAsync()
         {
             try
@@ -395,13 +503,25 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
-        // Legacy method - keep for backward compatibility but make it non-blocking
+        /// <summary>
+        /// Legacy synchronous wrapper for <see cref="GetCityAsync"/>.
+        /// Kept for backward compatibility with fire-and-forget calls.
+        /// </summary>
         private async void GetCity()
         {
             await GetCityAsync();
         }
 
+        /// <summary>
+        /// Tracks whether initial location check has been performed.
+        /// </summary>
         private bool _initialLocationChecked;
+
+        /// <summary>
+        /// Checks location permission and fetches prayer times on first app launch.
+        /// Shows overlay during operation and schedules alarms if reminders enabled.
+        /// </summary>
+        /// <param name="timeDelay">Initial delay in milliseconds (clamped to max 500ms).</param>
         private async Task CheckLocationInfoAsync(int timeDelay)
         {
             if (_initialLocationChecked)
@@ -482,7 +602,16 @@ public partial class MainViewModel : BaseViewModel
             _initialLocationChecked = true;
         }
 
-        private ObservableCollection<Prayer> LoadPrayers()
+    #endregion
+
+    #region Private Methods - Prayer Loading
+
+        /// <summary>
+        /// Loads prayer times from the calendar model, computes temporal states, and updates the UI.
+        /// Uses differential updates to minimize collection churn.
+        /// </summary>
+        /// <returns>The updated prayer collection.</returns>
+        private ObservableCollection<Prayer>? LoadPrayers()
         {
             Debug.WriteLine("TimeStamp-MainViewModel-ExecuteLoadItemsCommand-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 
@@ -567,6 +696,11 @@ public partial class MainViewModel : BaseViewModel
             return Prayers;
         }
 
+        /// <summary>
+        /// Applies differential updates to the Prayers collection to minimize UI churn.
+        /// Only updates changed properties rather than replacing the entire collection.
+        /// </summary>
+        /// <param name="newList">The new prayer list to merge into the current collection.</param>
         private void ApplyPrayerDiff(List<Prayer> newList)
         {
             if (Prayers == null || Prayers.Count != newList.Count)
@@ -596,6 +730,12 @@ public partial class MainViewModel : BaseViewModel
             Debug.WriteLine("[MainViewModel] ApplyPrayerDiff completed");
         }
 
+        /// <summary>
+        /// Determines the temporal state of a prayer based on current and next prayer times.
+        /// </summary>
+        /// <param name="current">Start time of this prayer window.</param>
+        /// <param name="next">Start time of the next prayer window.</param>
+        /// <returns>"Passed", "Happening", or "Waiting" based on current time.</returns>
         private string CheckState(DateTime current, DateTime next)
         {
             var state = "";
@@ -605,7 +745,12 @@ public partial class MainViewModel : BaseViewModel
             return state;
         }
 
-        private string GetStateDescription(string state)
+        /// <summary>
+        /// Converts state code to human-readable description for accessibility.
+        /// </summary>
+        /// <param name="state">The state code (Happening/Passed/Waiting).</param>
+        /// <returns>User-friendly state description.</returns>
+        private string GetStateDescription(string? state)
         {
             return state?.ToLower() switch
             {
@@ -616,6 +761,13 @@ public partial class MainViewModel : BaseViewModel
             };
         }
 
+    #endregion
+
+    #region Lifecycle Methods
+
+        /// <summary>
+        /// Called when the page appears. Starts the countdown timer and refreshes UI.
+        /// </summary>
         public void OnAppearing()
         {
             // Ensure any stuck pull-to-refresh indicator is cleared when navigating back to this page
@@ -694,6 +846,9 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
+        /// <summary>
+        /// Called when the page disappears. Stops the countdown timer to conserve resources.
+        /// </summary>
         public void OnDisappearing()
         {
             if (_ticker != null)
@@ -705,7 +860,10 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
-        // Coalesced + throttled UI refresh
+        /// <summary>
+        /// Coalesced and throttled UI refresh. Prevents duplicate updates during navigation churn.
+        /// </summary>
+        /// <param name="force">When true, bypasses throttle and forces immediate refresh.</param>
         private async Task RefreshUiAsync(bool force = false)
         {
             var now = DateTimeOffset.UtcNow;
@@ -744,7 +902,16 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
-        // 🎨 PHASE 17: Helper method to calculate progress percentage (0.0 to 1.0)
+    #endregion
+
+    #region Time Calculation Methods
+
+        /// <summary>
+        /// Calculates the progress percentage (0.0 to 1.0) for animated gradient display (PHASE 17).
+        /// </summary>
+        /// <param name="startTime">Start of the current prayer window.</param>
+        /// <param name="endTime">End of the current prayer window.</param>
+        /// <param name="currentTime">Current time of day.</param>
         private void CalculateTimeProgress(TimeSpan startTime, TimeSpan endTime, TimeSpan currentTime)
         {
             var totalDuration = endTime - startTime;
@@ -760,6 +927,11 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
+        /// <summary>
+        /// Calculates and formats the remaining time until the next prayer.
+        /// Also updates <see cref="TimeProgress"/> for gradient animation.
+        /// </summary>
+        /// <returns>Formatted remaining time string with localized prayer name.</returns>
         private string GetRemainingTime()
         {
             var currentTime = DateTime.Now.TimeOfDay;
@@ -831,6 +1003,10 @@ public partial class MainViewModel : BaseViewModel
             return "";
         }
 
+        /// <summary>
+        /// Updates the prayer time display and iOS Live Activity.
+        /// Called when prayer states need to be refreshed.
+        /// </summary>
         public async Task UpdatePrayerTimeDisplayAsync()
         {
             // Update UI
@@ -863,6 +1039,10 @@ public partial class MainViewModel : BaseViewModel
             }
         }
 
+        /// <summary>
+        /// Fetches fresh prayer times with location refresh and saves to preferences.
+        /// Shows toast on failure.
+        /// </summary>
         private async Task GetPrayersAsync()
         {
             // GetPrayersAsync is called when user needs fresh prayer times, so refresh location
@@ -894,4 +1074,6 @@ public partial class MainViewModel : BaseViewModel
                     ShowToast(AppResources.KonumKapali);
             }
         }
+
+    #endregion
     }
