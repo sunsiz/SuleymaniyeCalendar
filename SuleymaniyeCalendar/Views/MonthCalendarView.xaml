@@ -17,20 +17,24 @@
         </Style>
         <Style x:Key="PrayerNameStyle" TargetType="Label" BasedOn="{StaticResource BodyMediumStyle}">
             <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         </Style>
         <Style x:Key="PrayerTimeStyle" TargetType="Label" BasedOn="{StaticResource TitleSmallStyle}">
             <Setter Property="VerticalOptions" Value="Center" />
             <Setter Property="HorizontalTextAlignment" Value="End" />
+            <Setter Property="FontSize" Value="{DynamicResource SubHeaderFontSize}" />
             <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
         </Style>
         <Style x:Key="PrayerNameBoldStyle" TargetType="Label" BasedOn="{StaticResource BodyMediumStyle}">
             <Setter Property="VerticalOptions" Value="Center" />
             <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         </Style>
         <Style x:Key="PrayerTimeBoldStyle" TargetType="Label" BasedOn="{StaticResource TitleSmallStyle}">
             <Setter Property="VerticalOptions" Value="Center" />
             <Setter Property="HorizontalTextAlignment" Value="End" />
             <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="{DynamicResource SubHeaderFontSize}" />
             <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}" />
         </Style>
     </ContentView.Resources>

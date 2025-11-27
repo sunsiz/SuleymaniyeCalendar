@@ -107,7 +107,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  🎨 PHASE 15: App Store Section with FrostGlassCardCrystal  -->
+                <!--  App Store Section  -->
         <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="16,12">
                     <VerticalStackLayout Spacing="12">
                         <Label Text="{localization:Translate SuleymaniyeVakfiTakvimi}"

@@ -18,7 +18,7 @@
             <!-- Lightweight host; we will inject the heavy table after first frame -->
             <ContentView x:Name="ListHost" />
 
-            <!--  🎨 PHASE 15: Loading Indicator Overlay with FrostGlassCardCrystal  -->
+            <!--  Loading Indicator Overlay  -->
             <Grid IsVisible="{Binding IsBusy}" 
                   BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}"
                   InputTransparent="False">
@@ -39,7 +39,7 @@
                 </Border>
             </Grid>
 
-            <!--  🎨 PHASE 15: Extended overlay with FrostGlassCardCrystal  -->
+            <!--  Extended overlay  -->
             <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
                 <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
                     <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
@@ -50,7 +50,7 @@
             </Grid>
         </Grid>
 
-        <!-- 🎨 PHASE 20.2: Action Buttons with Share for Monthly Data Table -->
+        <!-- Action Buttons -->
         <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="12">
             <!-- Close Button -->
             <Button Grid.Column="0"

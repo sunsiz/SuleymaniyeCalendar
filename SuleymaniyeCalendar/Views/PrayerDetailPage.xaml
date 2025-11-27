@@ -18,7 +18,7 @@
             x:DataType="viewModels:PrayerDetailViewModel"
             Spacing="{StaticResource SpacingDefault}">
 
-                <!--  🎨 PHASE 15: Prayer Title Card - HeroPrimaryCard for maximum impact  -->
+                <!--  Prayer Title Card  -->
                 <Border Style="{StaticResource GlassCardSecondaryTint}" Padding="12,22">
                     <VerticalStackLayout Spacing="12">
                         <Label
@@ -37,7 +37,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  🎨 PHASE 15: Time & Enable Card - FrostGlassCardFrozen  -->
+                <!--  Time & Enable Card  -->
                 <Border Style="{StaticResource iOSLiquidGlassCard}">
                     <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6" RowDefinitions="Auto,Auto" RowSpacing="2">
                         <!-- Time Section -->
@@ -72,7 +72,7 @@
                     </Grid>
                 </Border>
 
-                <!--  🎨 PHASE 15: Notification Settings Card - StandardCard  -->
+                <!--  Notification Settings Card  -->
                 <Border IsVisible="{Binding Enabled}" Style="{StaticResource FrostGlassCardCrystal}">
                     <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="16">
                         <!--  Notification Time Section  -->

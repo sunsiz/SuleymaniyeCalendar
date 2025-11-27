@@ -42,7 +42,7 @@
         <Grid>
             <ScrollView>
                 <VerticalStackLayout Padding="{StaticResource CardMarginCompact}" Spacing="{StaticResource SpacingTight}">
-                    <!--  🎨 PHASE 15: Compass Section - FrostGlassCardCrystal  -->
+                    <!--  Compass Section  -->
                     <Border Style="{StaticResource FrostGlassCardCrystal}">
                         <VerticalStackLayout Spacing="1">
                             <Label
@@ -69,7 +69,7 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!--  🎨 PHASE 15: Location Information - FrostGlassCardFrozen  -->
+                    <!--  Location Information  -->
                     <Border Style="{StaticResource FrostGlassCardCrystal}">
                         <VerticalStackLayout Spacing="4">
                             <Label

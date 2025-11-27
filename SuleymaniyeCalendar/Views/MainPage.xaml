@@ -74,19 +74,16 @@
                     VerticalOptions="Fill"
                     VerticalScrollBarVisibility="Never">
                     <CollectionView.ItemsLayout>
-                        <!-- 🎨 PHASE 16: ItemSpacing=0 - Let DataTriggers control ALL spacing -->
                         <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
                     </CollectionView.ItemsLayout>
                     <CollectionView.Header>
                         <StackLayout x:DataType="viewModels:MainViewModel">
-                            <!-- 🌙 PHASE 15: Remaining Time Card using IntensePrimaryCard -->
+                            <!-- Remaining Time Card -->
                             <Border
                                 Style="{StaticResource Card}"
                                 Margin="12,8"
                                 Padding="0"
                                 HorizontalOptions="Fill">
-                                <!-- 🎨 PHASE 17: Animated progress gradient background -->
-                                <!-- 🌙 PHASE 19: Dark mode optimization - reduced gradient brightness -->
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
                                         <!-- Remaining time portion (light gold) -->
@@ -133,13 +130,12 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Prayer">
                             <ContentView Padding="0">
-                                <!-- 🎨 PHASE 16: Pure DataTrigger margin system - NO ItemSpacing conflicts -->
                                 <ContentView.Triggers>
-                                    <!-- 🎨 PHASE 16: Ultra-compact past prayers - zero vertical, minimal horizontal -->
+                                    <!-- Past prayers: compact -->
                                     <DataTrigger Binding="{Binding IsPast}" TargetType="ContentView" Value="True">
                                         <Setter Property="Margin" Value="8,0,8,0" />
                                     </DataTrigger>
-                                    <!-- 🦸 PHASE 11: Generous margin for hero current prayer -->
+                                    <!-- Current prayer: generous -->
                                     <DataTrigger Binding="{Binding IsActive}" TargetType="ContentView" Value="True">
                                         <Setter Property="Margin" Value="10,4,10,4" />
                                     </DataTrigger>
@@ -153,10 +149,9 @@
                                     </MultiTrigger>
                                 </ContentView.Triggers>
                                 <Grid>
-                                    <!-- 🎨 PHASE 15: Prayer Card using FrostGlassCardCrystal -->
                                     <Border Style="{StaticResource FrostGlassCardCrystal}">
                                         <Border.Triggers>
-                                            <!-- 🎨 PHASE 16: Past prayer - Compact FlatContentCard style -->
+                                            <!-- Past prayer style -->
                                             <DataTrigger Binding="{Binding IsPast}" TargetType="Border" Value="True">
                                                 <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassPrayerPastLight}, Dark={StaticResource GlassPrayerPastDark}}" />
                                                 <Setter Property="Stroke" Value="#40A8896F" />
@@ -170,7 +165,7 @@
                                                     <Shadow Brush="#30FFD700" Opacity="0.06" Radius="4" Offset="0,1" />
                                                 </Setter>
                                             </DataTrigger>
-                                            <!-- 🎨 PHASE 15: Current prayer - HeroPrimaryCard style -->
+                                            <!-- Current prayer style -->
                                             <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
                                                 <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowestLight}, Dark={StaticResource SurfaceContainerLowestDark}}"/>
                                                 <Setter Property="Shadow">
@@ -179,7 +174,7 @@
                                                 <Setter Property="HeightRequest" Value="120" />
                                                 <Setter Property="Padding" Value="20,10" />
                                             </DataTrigger>
-                                            <!-- 🎨 PHASE 15: Upcoming prayer - ElevatedPrimaryCard style -->
+                                            <!-- Upcoming prayer style -->
                                             <MultiTrigger TargetType="Border">
                                                 <MultiTrigger.Conditions>
                                                     <BindingCondition Binding="{Binding IsActive}" Value="False" />
@@ -195,24 +190,21 @@
 
                                         <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
 
-                                            <!-- Animated Prayer Icon -->
-                                            <Border
-                                            Grid.Column="0"
-                                            WidthRequest="38"
-                                            HeightRequest="38"
-                                            Style="{StaticResource LuminousCircularIcon}"
-                                            BackgroundColor="Transparent"
-                                            Background="{AppThemeBinding Light={StaticResource NeoGlassSecondaryDark}, Dark={StaticResource FrostShowcaseBackdropDark}}"
-        									Stroke="{StaticResource GlassStrokeBrush}"
-                                            VerticalOptions="Center">
+                                            <!-- Prayer Icon -->
+                                            <Border Grid.Column="0" WidthRequest="38" HeightRequest="38"
+                                                    Style="{StaticResource LuminousCircularIcon}"
+                                                    BackgroundColor="Transparent"
+                                                    Background="{AppThemeBinding Light={StaticResource NeoGlassSecondaryDark}, Dark={StaticResource FrostShowcaseBackdropDark}}"
+                                                    Stroke="{StaticResource GlassStrokeBrush}"
+                                                    VerticalOptions="Center">
                                                 <Border.Triggers>
-                                                    <!-- 🎨 PHASE 16: Compact icon for past prayers -->
+                                                    <!-- Past: compact -->
                                                     <DataTrigger Binding="{Binding IsPast}" TargetType="Border" Value="True">
                                                         <Setter Property="WidthRequest" Value="28" />
                                                         <Setter Property="HeightRequest" Value="28" />
                                                         <Setter Property="Opacity" Value="0.7" />
                                                     </DataTrigger>
-                                                    <!-- 🦸 PHASE 9 HERO: Enhanced golden glow for current prayer icon container -->
+                                                    <!-- Current: enhanced -->
                                                     <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
                                                         <!-- <Setter Property="Background" Value="{StaticResource Primary30}" /> -->
                                                         <Setter Property="WidthRequest" Value="54" />
@@ -222,28 +214,18 @@
                                                         </Setter>
                                                     </DataTrigger>
                                                 </Border.Triggers>
-                                                <Image
-                                                Source="{Binding IconPath}"
-                                                Aspect="AspectFit"
-                                                WidthRequest="32"
-                                                HeightRequest="32"
-                                                VerticalOptions="Center"
-                                                HorizontalOptions="Center">
+                                                <Image Source="{Binding IconPath}" Aspect="AspectFit"
+                                                       WidthRequest="32" HeightRequest="32"
+                                                       VerticalOptions="Center" HorizontalOptions="Center">
                                                     <Image.Triggers>
-                                                        <!-- 🎨 PHASE 16: Smaller icon for past prayers -->
-                                                        <DataTrigger
-                                                        Binding="{Binding IsPast}"
-                                                        TargetType="Image"
-                                                        Value="True">
+                                                        <!-- Past: smaller -->
+                                                        <DataTrigger Binding="{Binding IsPast}" TargetType="Image" Value="True">
                                                             <Setter Property="WidthRequest" Value="20" />
                                                             <Setter Property="HeightRequest" Value="20" />
                                                             <Setter Property="Opacity" Value="{AppThemeBinding Light=0.6, Dark=0.55}" />
                                                         </DataTrigger>
-                                                        <!-- 🦸 PHASE 9 HERO: Enhanced icon scaling for current prayer -->
-                                                        <DataTrigger
-                                                        Binding="{Binding IsActive}"
-                                                        TargetType="Image"
-                                                        Value="True">
+                                                        <!-- Current: larger -->
+                                                        <DataTrigger Binding="{Binding IsActive}" TargetType="Image" Value="True">
                                                             <Setter Property="Opacity" Value="1.0" />
                                                             <Setter Property="Scale" Value="1.35" />
                                                             <Setter Property="WidthRequest" Value="40" />
@@ -261,16 +243,16 @@
                                                 </Image>
                                             </Border>
 
-                                            <!-- Prayer Name with State-Based Colors -->
+                                            <!-- Prayer Name -->
                                             <Label Grid.Column="1" Style="{StaticResource PrayerNameStyle}" Text="{Binding Name}" VerticalOptions="Center">
                                                 <Label.Triggers>
-                                                    <!-- 🎨 PHASE 16: Compact text for past prayers -->
+                                                    <!-- Past -->
                                                     <DataTrigger Binding="{Binding IsPast}" TargetType="Label" Value="True">
                                                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerPastTextColor}, Dark={StaticResource PrayerPastTextColorDark}}" />
                                                         <Setter Property="FontSize" Value="{DynamicResource BodySmallFontSize}" />
                                                         <Setter Property="Opacity" Value="0.9" />
                                                     </DataTrigger>
-                                                    <!-- 🦸 PHASE 11: Enhanced to TitleFontSize for maximum hero impact -->
+                                                    <!-- Current -->
                                                     <DataTrigger Binding="{Binding IsActive}" TargetType="Label" Value="True">
                                                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
                                                         <Setter Property="FontAttributes" Value="Bold" />
@@ -287,25 +269,19 @@
                                                 </Label.Triggers>
                                             </Label>
 
-                                            <!-- Prayer Time with State-Based Colors -->
-                                            <Label
-                                            Grid.Column="2"
-                                            HorizontalTextAlignment="End"
-                                            Style="{StaticResource PrayerTimeStyle}"
-                                            Text="{Binding Time}"
-                                            VerticalOptions="Center">
+                                            <!-- Prayer Time -->
+                                            <Label Grid.Column="2" HorizontalTextAlignment="End"
+                                                   Style="{StaticResource PrayerTimeStyle}" Text="{Binding Time}"
+                                                   VerticalOptions="Center">
                                                 <Label.Triggers>
-                                                    <!-- 🎨 PHASE 16: Compact text for past prayers -->
+                                                    <!-- Past -->
                                                     <DataTrigger Binding="{Binding IsPast}" TargetType="Label" Value="True">
                                                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerPastTextColor}, Dark={StaticResource PrayerPastTextColorDark}}" />
                                                         <Setter Property="FontSize" Value="{DynamicResource BodySmallFontSize}" />
                                                         <Setter Property="Opacity" Value="0.9" />
                                                     </DataTrigger>
-                                                    <!-- 🦸 PHASE 11: Enhanced to TitleFontSize for maximum hero impact -->
-                                                    <DataTrigger
-                                                    Binding="{Binding IsActive}"
-                                                    TargetType="Label"
-                                                    Value="True">
+                                                    <!-- Current -->
+                                                    <DataTrigger Binding="{Binding IsActive}" TargetType="Label" Value="True">
                                                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
                                                         <Setter Property="FontAttributes" Value="Bold" />
                                                         <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
@@ -321,17 +297,12 @@
                                                 </Label.Triggers>
                                             </Label>
 
-                                            <!-- Enhanced Notification Bell with Better Visual Distinction -->
-                                            <Border
-                                            Grid.Column="3"
-                                            BackgroundColor="Transparent"
-                                            Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
-        									Stroke="{StaticResource GlassStrokeBrush}"
-                                            StrokeThickness="0.75"
-                                            StrokeShape="RoundRectangle 16"
-                                            WidthRequest="36"
-                                            HeightRequest="36"
-                                            VerticalOptions="Center">
+                                            <!-- Notification Bell -->
+                                            <Border Grid.Column="3" BackgroundColor="Transparent"
+                                                    Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
+                                                    Stroke="{StaticResource GlassStrokeBrush}" StrokeThickness="0.75"
+                                                    StrokeShape="RoundRectangle 16" WidthRequest="36" HeightRequest="36"
+                                                    VerticalOptions="Center">
                                                 <Label
                                                 AutomationProperties.IsInAccessibleTree="True"
                                                 FontFamily="{StaticResource IconFontFamily}"
@@ -353,7 +324,7 @@
                                                             <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}" />
                                                             <Setter Property="Opacity" Value="1.0" />
                                                         </DataTrigger>
-                                                        <!-- 🌟 GOLDEN HOUR: Golden bell for enabled current prayer -->
+                                                        <!-- Enabled current -->
                                                         <MultiTrigger TargetType="Label">
                                                             <MultiTrigger.Conditions>
                                                                 <BindingCondition Binding="{Binding IsActive}" Value="True" />
@@ -374,7 +345,7 @@
                                                         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary60}}" />
                                                         <Setter Property="StrokeThickness" Value="1.25" />
                                                     </DataTrigger>
-                                                    <!-- 🌟 GOLDEN HOUR: Golden background for enabled current prayer bell -->
+                                                    <!-- Enabled current -->
                                                     <MultiTrigger TargetType="Border">
                                                         <MultiTrigger.Conditions>
                                                             <BindingCondition Binding="{Binding IsActive}" Value="True" />
@@ -399,7 +370,7 @@
 
                     <CollectionView.Footer>
                         <StackLayout x:DataType="viewModels:MainViewModel" Orientation="Vertical" Spacing="{StaticResource SpacingTight}" Margin="0,4,0,4">
-                            <!--  Monthly Calendar Button - 8px grid spacing ✅  -->
+                            <!-- Monthly Calendar Button -->
                             <Button
                                 Margin="32,0,32,0"
                                 Style="{StaticResource GlassButtonPillSecondary}"
@@ -416,7 +387,7 @@
                                 </Button.ImageSource>
                             </Button>
 
-                            <!--  City Location Card - 8px grid spacing ✅  -->
+                            <!-- City Location Card -->
                             <Border
                                 Margin="32,0,32,8"
                                 HorizontalOptions="Fill"
@@ -450,11 +421,10 @@
                     </CollectionView.Footer>
                 </CollectionView>
 
-                <!-- 🎨 PHASE 15: Long running overlay with FrostGlassCardCrystal + GoldenActivityIndicator -->
+                <!-- Loading overlay -->
                 <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
                     <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
                         <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
-                            <!-- 🎨 White activity indicator for visibility on golden card -->
                             <ActivityIndicator IsRunning="True" Color="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary40}}" WidthRequest="80" HeightRequest="80" />
                             <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>

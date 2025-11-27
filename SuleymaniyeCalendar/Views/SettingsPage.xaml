@@ -26,8 +26,7 @@
             Padding="{StaticResource PagePaddingMobile}">
             <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="{StaticResource SpacingDefault}">
 
-                <!--  Language Selection - Compact  -->
-                <!--  🎨 PHASE 15: Using ElevatedPrimaryCard for featured settings  -->
+                <!--  Language Selection  -->
                 <Border Style="{StaticResource FrostGlassCardCrystal}">
                     <Grid x:DataType="viewModels:SettingsViewModel" Padding="16,12" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <!--  Golden language icon with increased visibility  -->
@@ -72,8 +71,7 @@
                     ItemsSource="{Binding SupportedLanguages}"
                     SelectedItem="{Binding SelectedLanguage}" />
 
-                <!--  Theme Selection - Compact  -->
-                <!--  🎨 PHASE 15: Using ElevatedPrimaryCard for featured settings  -->
+                <!--  Theme Selection  -->
                 <Border Style="{StaticResource iOSLiquidGlassCard}">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Padding="16,12" Spacing="16">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
@@ -117,7 +115,6 @@
                                     <TapGestureRecognizer x:DataType="viewModels:SettingsViewModel" Command="{Binding SetThemeByIndexCommand}" CommandParameter="1" />
                                 </Border.GestureRecognizers>
                                 <Border.Triggers>
-                                    <!-- 🦸 PHASE 12: Golden theme chip when selected -->
                                     <DataTrigger Binding="{Binding LightChecked}" Value="True" TargetType="Border">
                                         <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
                                     </DataTrigger>
@@ -144,7 +141,6 @@
                                     <TapGestureRecognizer x:DataType="viewModels:SettingsViewModel" Command="{Binding SetThemeByIndexCommand}" CommandParameter="0" />
                                 </Border.GestureRecognizers>
                                 <Border.Triggers>
-                                    <!-- 🦸 PHASE 12: Golden theme chip when selected -->
                                     <DataTrigger Binding="{Binding DarkChecked}" Value="True" TargetType="Border">
                                         <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
                                     </DataTrigger>
@@ -171,7 +167,6 @@
                                     <TapGestureRecognizer x:DataType="viewModels:SettingsViewModel" Command="{Binding SetThemeByIndexCommand}" CommandParameter="2" />
                                 </Border.GestureRecognizers>
                                 <Border.Triggers>
-                                    <!-- 🦸 PHASE 12: Golden theme chip when selected -->
                                     <DataTrigger Binding="{Binding SystemChecked}" Value="True" TargetType="Border">
                                         <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
                                     </DataTrigger>
@@ -181,8 +176,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  Font Size - Simplified icon ✅  -->
-                <!--  🎨 PHASE 15: Using FrostGlassCardFrozen + GoldenSlider  -->
+                <!--  Font Size  -->
                 <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
@@ -204,7 +198,7 @@
                                 Text="{localization:Translate YaziBoyutu}"
                                 VerticalOptions="Center" />
                             
-                            <!-- 🦸 PHASE 12: Golden font size badge -->
+                            <!-- Font size badge -->
                             <Border 
                                 Grid.Column="2"
                                 Background="{StaticResource UpcomingPrayerBrush}"
@@ -221,7 +215,6 @@
                             </Border>
                         </Grid>
                         
-                        <!-- 🎨 PHASE 15: Direct PremiumGoldenSlider without wrapper -->
                         <Slider
                             AutomationProperties.IsInAccessibleTree="true"
                             HeightRequest="44"
@@ -235,8 +228,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  Location Settings - Simplified icon ✅  -->
-                <!--  🎨 PHASE 15: Using StandardCard for secondary settings  -->
+                <!--  Location Settings  -->
                 <Border Style="{StaticResource iOSLiquidGlassCard}" Padding="16,12">
                     <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <!--  Golden location icon with increased visibility  -->
@@ -270,8 +262,7 @@
                     </Grid>
                 </Border>
 
-                <!--  Android Notifications - Simplified icon ✅  -->
-                <!--  🎨 PHASE 15: Using StandardCard for secondary settings  -->
+                <!--  Android Notifications  -->
                 <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource iOSLiquidGlassCard}" Padding="16,12">
                     <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
                         <!--  Golden notification icon with increased visibility  -->
@@ -297,8 +288,7 @@
                     </Grid>
                 </Border>
 
-                <!--  Android Foreground Service - Simplified icon ✅  -->
-                <!--  🎨 PHASE 15: Using FrostGlassCardFrozen for secondary settings  -->
+                <!--  Android Foreground Service  -->
                 <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource FrostGlassCardCrystal}" Padding="16,12">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
                         <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
@@ -332,7 +322,6 @@
                                 VerticalOptions="Center" />
                         </Grid>
 
-                        <!-- 🦸 PHASE 12: Settings button - golden primary for maximum contrast -->
                         <Button
                             Margin="8,0,8,16"
                             Style="{StaticResource GlassButtonPrimaryIntense}"
