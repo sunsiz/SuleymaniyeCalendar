@@ -115,7 +115,7 @@
                     
                     <!-- 📥 Download Prompt: Shown when navigating to months without cached data -->
                     <!-- 🔧 Made compact with FlexLayout for better wrapping -->
-                    <Border Style="{StaticResource FrostGlassCardCool}"
+                    <Border Style="{StaticResource FrostGlassCardCrystal}"
                             Padding="10,6"
                             IsVisible="{Binding ShowDownloadPrompt}">
                         <FlexLayout Direction="Row" 

@@ -90,6 +90,7 @@ public partial class MonthViewModel : BaseViewModel
             if (SetProperty(ref selectedDayData, value))
             {
                 OnPropertyChanged(nameof(HasSelectedDayData));
+                OnPropertyChanged(nameof(ShowDownloadPrompt));
                 System.Diagnostics.Debug.WriteLine($"🔔 SelectedDayData changed: HasSelectedDayData={HasSelectedDayData}");
             }
         }
@@ -171,9 +172,10 @@ public partial class MonthViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Shows the "Download This Month" prompt when navigating to months without cached data.
+    /// Shows the "Download This Month" prompt only when the selected day has no data.
+    /// This hides the prompt when user selects a day with data (e.g., from current month visible in grid).
     /// </summary>
-    public bool ShowDownloadPrompt => !DisplayedMonthHasData && !IsLoadingMonth;
+    public bool ShowDownloadPrompt => !HasSelectedDayData && !IsLoadingMonth;
 
     private bool isLoadingMonth = false;
     
