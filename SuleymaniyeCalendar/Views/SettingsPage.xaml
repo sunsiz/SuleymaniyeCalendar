@@ -27,15 +27,15 @@
             <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="{StaticResource SpacingDefault}">
 
                 <!--  Language Selection  -->
-                <Border Style="{StaticResource FrostGlassCardCrystal}">
-                    <Grid x:DataType="viewModels:SettingsViewModel" Padding="16,12" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Border Style="{StaticResource SettingsCardOptimized}">
+                    <Grid x:DataType="viewModels:SettingsViewModel" Padding="8,6" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                         <!--  Golden language icon with increased visibility  -->
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
                             FontSize="26"
                             Text="&#xf0ac;"
-                            TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                            TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                             VerticalOptions="Center"
                             WidthRequest="44"
                             HorizontalTextAlignment="Center"
@@ -73,15 +73,15 @@
 
                 <!--  Theme Selection  -->
                 <Border Style="{StaticResource iOSLiquidGlassCard}">
-                    <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Padding="16,12" Spacing="16">
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                    <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Padding="8,6" Spacing="12">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
                             <!--  Golden theme icon with increased visibility  -->
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
                                 FontSize="26"
                                 Text="&#xf042;"
-                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 VerticalOptions="Center"
                                 WidthRequest="44"
                                 HorizontalTextAlignment="Center"
@@ -95,7 +95,9 @@
                         </Grid>
 
                         <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="8">
-                            <Border Style="{StaticResource Chip}">
+                            <Border Style="{StaticResource Chip}"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    SemanticProperties.Description="{localization:Translate AcikTema}">
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" 
                                            FontFamily="{StaticResource IconFontFamily}" 
@@ -116,12 +118,14 @@
                                 </Border.GestureRecognizers>
                                 <Border.Triggers>
                                     <DataTrigger Binding="{Binding LightChecked}" Value="True" TargetType="Border">
-                                        <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
+                                        <Setter Property="Background" Value="{StaticResource Amber30}" />
                                     </DataTrigger>
                                 </Border.Triggers>
                             </Border>
                             
-                            <Border Style="{StaticResource Chip}">
+                            <Border Style="{StaticResource Chip}"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    SemanticProperties.Description="{localization:Translate KoyuTema}">
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" 
                                            FontFamily="{StaticResource IconFontFamily}" 
@@ -142,12 +146,14 @@
                                 </Border.GestureRecognizers>
                                 <Border.Triggers>
                                     <DataTrigger Binding="{Binding DarkChecked}" Value="True" TargetType="Border">
-                                        <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
+                                        <Setter Property="Background" Value="{StaticResource Amber30}" />
                                     </DataTrigger>
                                 </Border.Triggers>
                             </Border>
                             
-                            <Border Style="{StaticResource Chip}">
+                            <Border Style="{StaticResource Chip}"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    SemanticProperties.Description="{localization:Translate SistemTemasi}">
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" 
                                            FontFamily="{StaticResource IconFontFamily}" 
@@ -168,7 +174,7 @@
                                 </Border.GestureRecognizers>
                                 <Border.Triggers>
                                     <DataTrigger Binding="{Binding SystemChecked}" Value="True" TargetType="Border">
-                                        <Setter Property="Background" Value="{StaticResource UpcomingPrayerBrush}" />
+                                        <Setter Property="Background" Value="{StaticResource Amber30}" />
                                     </DataTrigger>
                                 </Border.Triggers>
                             </Border>
@@ -177,16 +183,16 @@
                 </Border>
 
                 <!--  Font Size  -->
-                <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="16,12">
-                    <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Border Style="{StaticResource SettingsCardOptimized}" Padding="16,12">
+                    <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="8">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                             <!--  Golden font size icon with increased visibility  -->
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
                                 FontSize="26"
                                 Text="&#xf031;"
-                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 VerticalOptions="Center"
                                 WidthRequest="44"
                                 HorizontalTextAlignment="Center"
@@ -201,11 +207,11 @@
                             <!-- Font size badge -->
                             <Border 
                                 Grid.Column="2"
-                                Background="{StaticResource UpcomingPrayerBrush}"
+                                Background="{StaticResource Amber30}"
                                 Stroke="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary40}}"
                                 StrokeThickness="1.5"
                                 StrokeShape="RoundRectangle 10"
-                                Padding="10,4"
+                                Padding="8,4"
                                 VerticalOptions="Center">
                                 <Label
                                     Text="{Binding FontSize, StringFormat='{0:F0}'}"
@@ -219,9 +225,9 @@
                             AutomationProperties.IsInAccessibleTree="true"
                             HeightRequest="44"
                             HorizontalOptions="Fill"
-                            Margin="0,8,0,0"
-                            Maximum="24"
-                            Minimum="12"
+                            Margin="0,4,0,0"
+                            Maximum="28"
+                            Minimum="10"
                             SemanticProperties.Description="{localization:Translate YaziBoyutu}"
                             Style="{StaticResource PremiumGoldenSlider}"
                             Value="{Binding FontSize}" />
@@ -229,15 +235,15 @@
                 </Border>
 
                 <!--  Location Settings  -->
-                <Border Style="{StaticResource iOSLiquidGlassCard}" Padding="16,12">
-                    <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Border Style="{StaticResource iOSLiquidGlassCard}" Padding="14,10">
+                    <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                         <!--  Golden location icon with increased visibility  -->
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
                             FontSize="26"
                             Text="&#xf3c5;"
-                            TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                            TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                             VerticalOptions="Center"
                             WidthRequest="44"
                             HorizontalTextAlignment="Center"
@@ -263,15 +269,15 @@
                 </Border>
 
                 <!--  Android Notifications  -->
-                <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource iOSLiquidGlassCard}" Padding="16,12">
-                    <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource SettingsCardOptimized}" Padding="14,10">
+                    <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                         <!--  Golden notification icon with increased visibility  -->
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
                             FontSize="26"
                             Text="&#xf0f3;"
-                            TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                            TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                             VerticalOptions="Center"
                             WidthRequest="44"
                             HorizontalTextAlignment="Center"
@@ -289,16 +295,16 @@
                 </Border>
 
                 <!--  Android Foreground Service  -->
-                <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource FrostGlassCardCrystal}" Padding="16,12">
+                <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource FrostGlassCardCrystal}" Padding="14,10">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6">
                             <!--  Golden service icon with increased visibility  -->
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
                                 FontSize="26"
                                 Text="&#xf1e6;"
-                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 VerticalOptions="Center"
                                 WidthRequest="44"
                                 HorizontalTextAlignment="Center"
@@ -323,7 +329,7 @@
                         </Grid>
 
                         <Button
-                            Margin="8,0,8,16"
+                            Margin="8,0,8,10"
                             Style="{StaticResource GlassButtonPrimaryIntense}"
                             TextColor="{AppThemeBinding Light={StaticResource OnPrimaryContainerLight}, Dark={StaticResource Primary30}}"
                             Command="{Binding GotoSettingsCommand}"

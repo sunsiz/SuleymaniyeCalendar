@@ -65,7 +65,7 @@
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="GlassWarningTintLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#F2FFFFFF" />
-        <GradientStop Offset="0.5" Color="{StaticResource Neutral10}" />
+        <GradientStop Offset="0.5" Color="{StaticResource Warning10}" />
         <GradientStop Offset="1" Color="#E6FFFFFF" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="GlassWarningTintDark" StartPoint="0,0" EndPoint="0,1">
@@ -96,12 +96,10 @@
     <!--  Prayer state glass tints (based on existing state colors)  -->
     <LinearGradientBrush x:Key="GlassPrayerPastLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#F6D1D0D0" />
-        <GradientStop Offset="0.5" Color="{StaticResource PrayerPastBackgroundColor}" />
         <GradientStop Offset="1" Color="#ECCCCBCB" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="GlassPrayerPastDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#FF111010" />
-        <GradientStop Offset="0.5" Color="{StaticResource PrayerPastBackgroundColorDark}" />
+        <GradientStop Offset="0" Color="#FF272525" />
         <GradientStop Offset="1" Color="#FF292828" />
     </LinearGradientBrush>
     <!--  Past Prayer - Theme-Aware Elegant Gray-Copper 🌑  -->

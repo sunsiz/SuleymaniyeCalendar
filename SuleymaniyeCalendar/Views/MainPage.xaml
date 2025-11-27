@@ -25,9 +25,11 @@
                    HorizontalTextAlignment="Start" />
             <Image Grid.Column="1"
                    x:DataType="viewModels:MainViewModel"
-                   Margin="10,0,12,0"
+                   Margin="0"
                    AutomationProperties.IsInAccessibleTree="True"
                    VerticalOptions="Center"
+                   WidthRequest="44"
+                   HeightRequest="44"
                    SemanticProperties.Description="{localization:Translate UygulamaAyarlari}">
                 <Image.Source>
                     <FontImageSource
@@ -43,9 +45,11 @@
             </Image>
             <Image Grid.Column="2"
                    x:DataType="viewModels:MainViewModel"
-                   Margin="10,0,20,0"
+                   Margin="8,0,8,0"
                    AutomationProperties.IsInAccessibleTree="True"
                    VerticalOptions="Center"
+                   WidthRequest="44"
+                   HeightRequest="44"
                    SemanticProperties.Description="{localization:Translate Yenile}">
                 <Image.Source>
                     <FontImageSource
@@ -80,24 +84,24 @@
                         <StackLayout x:DataType="viewModels:MainViewModel">
                             <!-- Remaining Time Card -->
                             <Border
-                                Style="{StaticResource Card}"
+                                Style="{StaticResource GlassCardOptimized}"
                                 Margin="12,8"
                                 Padding="0"
                                 HorizontalOptions="Fill">
                                 <Border.Background>
                                     <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
-                                        <!-- Remaining time portion (light gold) -->
-                                        <GradientStop Color="{AppThemeBinding Light=#E8B08A, Dark=#80885511}" Offset="0" />
-                                        <GradientStop Color="{AppThemeBinding Light=#E8B08A, Dark=#60664410}" Offset="{Binding TimeProgress}" />
+                                        <!-- Remaining time portion -->
+                                        <GradientStop Color="{AppThemeBinding Light=#E8B08A, Dark=#C0885511}" Offset="0" />
+                                        <GradientStop Color="{AppThemeBinding Light=#E8B08A, Dark=#C0664410}" Offset="{Binding TimeProgress}" />
                                         <!-- Sharp transition zone (clear boundary) -->
                                         <GradientStop Color="{AppThemeBinding Light=#DC925E, Dark=#40775520}" Offset="{Binding TimeProgress}" />
-                                        <!-- Consumed time portion (saturated golden orange) -->
+                                        <!-- Consumed time portion -->
                                         <GradientStop Color="{AppThemeBinding Light=#DC925E, Dark=#20443308}" Offset="1" />
                                     </LinearGradientBrush>
                                 </Border.Background>
 
                                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="12,10">
-                                    <!-- Golden clock icon -->
+                                    <!-- Clock icon -->
                                     <Border
                                         Grid.Column="0"
                                         WidthRequest="44"
@@ -153,7 +157,7 @@
                                         <Border.Triggers>
                                             <!-- Past prayer style -->
                                             <DataTrigger Binding="{Binding IsPast}" TargetType="Border" Value="True">
-                                                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassPrayerPastLight}, Dark={StaticResource GlassPrayerPastDark}}" />
+                                                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerPastBackgroundColor}, Dark={StaticResource PrayerPastBackgroundColorDark}}" />
                                                 <Setter Property="Stroke" Value="#40A8896F" />
                                                 <Setter Property="StrokeThickness" Value="0.7" />
                                                 <Setter Property="Opacity" Value="0.9" />
@@ -161,9 +165,6 @@
                                                 <Setter Property="HeightRequest" Value="52" />
                                                 <Setter Property="MaximumHeightRequest" Value="52" />
                                                 <Setter Property="Padding" Value="8,4" />
-                                                <Setter Property="Shadow">
-                                                    <Shadow Brush="#30FFD700" Opacity="0.06" Radius="4" Offset="0,1" />
-                                                </Setter>
                                             </DataTrigger>
                                             <!-- Current prayer style -->
                                             <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
@@ -183,7 +184,7 @@
                                                 <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassStrongLight}, Dark={StaticResource GlassStrongDark}}"/>
                                                 <Setter Property="Opacity" Value="0.98" />
                                                 <Setter Property="Shadow">
-                                                    <Shadow Brush="{AppThemeBinding Light={StaticResource Secondary30}, Dark=#30FFA500}" Radius="1" Offset="0,1" Opacity="0.95" />
+                                                    <Shadow Brush="{AppThemeBinding Light={StaticResource Secondary30}, Dark=#30FFA500}" Radius="3" Offset="0,0" Opacity="0.95" />
                                                 </Setter>
                                             </MultiTrigger>
                                         </Border.Triggers>
@@ -194,7 +195,7 @@
                                             <Border Grid.Column="0" WidthRequest="38" HeightRequest="38"
                                                     Style="{StaticResource LuminousCircularIcon}"
                                                     BackgroundColor="Transparent"
-                                                    Background="{AppThemeBinding Light={StaticResource NeoGlassSecondaryDark}, Dark={StaticResource FrostShowcaseBackdropDark}}"
+                                                    Background="{StaticResource Secondary80}"
                                                     Stroke="{StaticResource GlassStrokeBrush}"
                                                     VerticalOptions="Center">
                                                 <Border.Triggers>
@@ -301,7 +302,7 @@
                                             <Border Grid.Column="3" BackgroundColor="Transparent"
                                                     Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
                                                     Stroke="{StaticResource GlassStrokeBrush}" StrokeThickness="0.75"
-                                                    StrokeShape="RoundRectangle 16" WidthRequest="36" HeightRequest="36"
+                                                    StrokeShape="RoundRectangle 18" WidthRequest="44" HeightRequest="44"
                                                     VerticalOptions="Center">
                                                 <Label
                                                 AutomationProperties.IsInAccessibleTree="True"

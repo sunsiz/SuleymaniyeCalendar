@@ -60,12 +60,12 @@
                                         FontFamily="{StaticResource IconFontFamily}"
                                         FontSize="{DynamicResource IconLargeFontSize}"
                                         Text="&#xf0ae; "
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource Primary40}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Span 
                                         Text="{localization:Translate YayinAkisi}" 
                                         FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
@@ -138,12 +138,12 @@
                                         FontFamily="{StaticResource IconFontFamily}"
                                         FontSize="{DynamicResource IconLargeFontSize}"
                                         Text="&#xf0ac; "
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource Primary40}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Span 
                                         Text="{localization:Translate WebSayfa}" 
                                         FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>

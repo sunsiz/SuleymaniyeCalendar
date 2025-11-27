@@ -19,8 +19,8 @@
             Spacing="{StaticResource SpacingDefault}">
 
                 <!--  Prayer Title Card  -->
-                <Border Style="{StaticResource GlassCardSecondaryTint}" Padding="12,22">
-                    <VerticalStackLayout Spacing="12">
+                <Border Style="{StaticResource GlassCardSecondaryTint}" Padding="12,21">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
                         <Label
                         FontAttributes="Bold"
                         HorizontalTextAlignment="Center"
@@ -29,7 +29,7 @@
                                                     Dark={StaticResource Neutral10}}"
                         Text="{Binding Title}" />
                         <BoxView
-                        HeightRequest="2"
+                        HeightRequest="3"
                         HorizontalOptions="Center"
                         WidthRequest="90"
                         Color="{AppThemeBinding Light={StaticResource Primary50},
@@ -39,29 +39,29 @@
 
                 <!--  Time & Enable Card  -->
                 <Border Style="{StaticResource iOSLiquidGlassCard}">
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6" RowDefinitions="Auto,Auto" RowSpacing="2">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6" RowDefinitions="Auto,Auto" Padding="8,6,8,0">
                         <!-- Time Section -->
                         <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="4">
                             <Label
                             FontSize="{DynamicResource DefaultFontSize}"
                             FontAttributes="Bold"
                             Text="{localization:Translate Vakti}"
-                            TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource Primary30}}" />
+                            TextColor="{AppThemeBinding Light={StaticResource CardLabelLight}, Dark={StaticResource CardLabelDark}}" />
                             <Label
                             FontAttributes="Bold"
                             FontSize="{DynamicResource SubHeaderFontSize}"
                             Text="{Binding Time}"
-                            TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}" />
+                            TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                         </VerticalStackLayout>
 
                         <!-- Enable Switch Section -->
-                        <VerticalStackLayout Grid.Column="1" Grid.Row="0" HorizontalOptions="End" Spacing="4">
+                        <VerticalStackLayout Grid.Column="1" Grid.Row="0" HorizontalOptions="End" Spacing="2">
                             <Label
                             HorizontalTextAlignment="Center"
                             FontSize="{DynamicResource DefaultFontSize}"
                             FontAttributes="Bold"
                             Text="{localization:Translate EtkinlestirSwitch}"
-                            TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource Primary30}}" />
+                            TextColor="{AppThemeBinding Light={StaticResource CardLabelLight}, Dark={StaticResource CardLabelDark}}" />
                             <Switch
                             HorizontalOptions="Center"
                             Style="{StaticResource GoldenSwitch}"
@@ -74,28 +74,24 @@
 
                 <!--  Notification Settings Card  -->
                 <Border IsVisible="{Binding Enabled}" Style="{StaticResource FrostGlassCardCrystal}">
-                    <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="16">
+                    <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="8" Padding="8,6">
                         <!--  Notification Time Section  -->
-                        <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="12">
-                            <VerticalStackLayout Spacing="4">
+                        <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="8">
+                            <VerticalStackLayout Spacing="8">
                                 <Label 
                                 FontSize="{DynamicResource DefaultFontSize}"
                                 FontAttributes="Bold"
                                 Text="{localization:Translate BildirmeZamani}" 
-                                TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource Primary30}}" />
-                                <Label TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}">
+                                TextColor="{AppThemeBinding Light={StaticResource CardLabelLight}, Dark={StaticResource CardLabelDark}}" />
+                                <Label FontSize="{DynamicResource DefaultFontSize}" 
+                                       TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}">
                                     <Label.FormattedText>
                                         <FormattedString>
                                             <Span
                                             FontAttributes="Bold"
-                                            FontSize="{DynamicResource DefaultFontSize}"
                                             Text="{Binding NotificationTime}" />
-                                            <Span 
-                                            FontSize="{DynamicResource DefaultFontSize}"
-                                            Text=" " />
-                                            <Span 
-                                            FontSize="{DynamicResource DefaultFontSize}"
-                                            Text="{localization:Translate DakikaOnceden}" />
+                                            <Span Text=" " />
+                                            <Span Text="{localization:Translate DakikaOnceden}" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
@@ -113,13 +109,13 @@
                         </VerticalStackLayout>
 
                         <!--  Sound Selection Section  -->
-                        <VerticalStackLayout Spacing="12">
+                        <VerticalStackLayout Spacing="8">
                             <Label 
                             FontSize="{DynamicResource DefaultFontSize}"
                             FontAttributes="Bold"
                             Text="{localization:Translate Birsessecin}" 
-                            TextColor="{AppThemeBinding Light=#5A4A30, Dark={StaticResource Primary30}}" />
-                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                            TextColor="{AppThemeBinding Light={StaticResource CardLabelLight}, Dark={StaticResource CardLabelDark}}" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                                 <Picker
                                 Grid.Column="0"
                                 Style="{StaticResource GoldenPicker}"
@@ -131,8 +127,8 @@
                                     x:DataType="viewModels:PrayerDetailViewModel"
                                     Margin="6"
                                         Style="{StaticResource iOSLiquidGlassButton}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                Dark={StaticResource Primary40}}"
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                Dark={StaticResource CardValueDark}}"
                                         Command="{Binding TestButtonClickedCommand}"
                                         WidthRequest="52" HeightRequest="48">
                                     <Button.Triggers>
@@ -141,7 +137,7 @@
                                                 <Setter.Value>
                                                     <FontImageSource FontFamily="{StaticResource IconFontFamily}"
                                                                      Glyph="&#xf04b;" Size="{DynamicResource IconSmallFontSize}"
-                                                                     Color="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}" />
+                                                                     Color="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                                                 </Setter.Value>
                                             </Setter>
                                         </DataTrigger>
@@ -162,12 +158,10 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  🎨 PHASE 15: Close Button - GlassButtonPrimary  -->
                 <Button Style="{StaticResource GlassButtonPrimaryIntense}" Command="{Binding GoBackCommand}" Text="{localization:Translate Kapat}" />
             </VerticalStackLayout>
         </ScrollView>
 
-        <!--  🎨 PHASE 15: Scheduling overlay with FrostGlassCardCrystal  -->
         <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
             <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="36,24" HorizontalOptions="Center" VerticalOptions="Center">
                 <VerticalStackLayout Spacing="14" HorizontalOptions="Center">

@@ -18,6 +18,7 @@
 	<Color x:Key="Primary95">#321607</Color>
 	<Color x:Key="FocusIndicatorPrimary">#DC925E</Color>
 	<Color x:Key="FocusIndicatorPrimaryDark">#6D3A16</Color>
+    <Color x:Key="Warning10">#FFF8E8</Color>
     <Color x:Key="Warning30">#FFE085</Color>
     <Color x:Key="Warning40">#FFD355</Color>
     <Color x:Key="Warning60">#CC9A1D</Color>
@@ -79,6 +80,12 @@
     <Color x:Key="AppBackgroundDark">#1C1B20</Color>
     <Color x:Key="OnPrimaryContainerLight">#321607</Color>
     <Color x:Key="OnPrimaryContainerDark">#F4CEB5</Color>
+
+    <!--  Semantic Card Label Colors (for form labels/headers)  -->
+    <Color x:Key="CardLabelLight">#5A4A30</Color>
+    <Color x:Key="CardLabelDark">#E8B08A</Color>
+    <Color x:Key="CardValueLight">#3A2E1C</Color>
+    <Color x:Key="CardValueDark">#DC925E</Color>
 
 	<!--  Enhanced gradient colors for premium design  -->
     <Color x:Key="GradientPrimaryStart">#8A4E1E</Color>

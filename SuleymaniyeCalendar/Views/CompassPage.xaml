@@ -48,7 +48,7 @@
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
-                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 Text="{localization:Translate KibleGostergesi}" />
                             <Grid HeightRequest="360" HorizontalOptions="Center" Padding="-10">
                                 <Image
@@ -75,7 +75,7 @@
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
-                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 Text="{localization:Translate KonumBilgileri}" />
 
                             <!--  Coordinates Grid  -->
@@ -94,8 +94,8 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate EnlemFormatsiz}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource Primary40}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -114,8 +114,8 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate BoylamFormatsiz}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource Primary40}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -134,8 +134,8 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate YukseklikFormatsiz}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource Primary40}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -154,8 +154,8 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
                                         Text="{localization:Translate Aci}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource Primary40}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -175,8 +175,8 @@
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource TitleMediumStyle}"
                                         Text="{localization:Translate Adres}"
-                                        TextColor="{AppThemeBinding Light=#3A2E1C,
-                                                                    Dark={StaticResource Primary40}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -190,7 +190,7 @@
                             <Button
                                 Margin="12,4,12,12"
                                 Style="{StaticResource VistaAeroGlassButton}"
-                                TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary30}}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 Command="{Binding GoToMapCommand}"
                                 Text="{localization:Translate HaritadaGoster}" />
                         </VerticalStackLayout>

@@ -34,7 +34,7 @@
                         <Label Style="{StaticResource HeadlineLargeStyle}"
                                Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
                                HorizontalTextAlignment="Center"
-                               TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}" />
+                               TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                         
                         <Label TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
                                Style="{StaticResource BodyLargeStyle}"
@@ -64,7 +64,7 @@
                     <VerticalStackLayout Spacing="12">
                         <Label Text="{localization:Translate SosyalMedyaBaglantisi}"
                                Style="{StaticResource TitleLargeStyle}"
-                               TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                               TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                HorizontalTextAlignment="Center" />
                                
                         <Grid
@@ -112,7 +112,7 @@
                     <VerticalStackLayout Spacing="12">
                         <Label Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
                                Style="{StaticResource TitleLargeStyle}"
-                               TextColor="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary40}}"
+                               TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                HorizontalTextAlignment="Center" />
                                
                         <Grid

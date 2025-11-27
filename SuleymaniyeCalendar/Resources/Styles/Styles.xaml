@@ -87,7 +87,7 @@
     </Style>
     <Style x:Key="LabelStyle" BasedOn="{StaticResource Label}" TargetType="Label" />
     <Style x:Key="LabelSectionHeader" BasedOn="{StaticResource Label}" TargetType="Label">
-        <Setter Property="FontSize" Value="{DynamicResource HeaderFontSize}" />
+        <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="VerticalTextAlignment" Value="Center" />
         <Setter Property="LineHeight" Value="1.3" />
@@ -226,25 +226,25 @@
         <Setter Property="MinimumHeightRequest" Value="44" />
     </Style>
     <Style x:Key="PremiumGoldenSlider" BasedOn="{StaticResource GoldenSlider}" TargetType="Slider">
-        <Setter Property="MinimumTrackColor" Value="{StaticResource Primary50}" />
-        <Setter Property="ThumbColor" Value="{StaticResource Primary30}" />
-        <Setter Property="Scale" Value="1.2" />
+        <Setter Property="MinimumTrackColor" Value="{StaticResource Secondary50}" />
+        <Setter Property="ThumbColor" Value="{StaticResource FocusIndicatorPrimary}" />
+        <Setter Property="Scale" Value="1.1" />
     </Style>
     <Style x:Key="GoldenSwitch" TargetType="Switch">
         <Setter Property="OnColor" Value="{StaticResource Primary50}" />
-        <Setter Property="ThumbColor" Value="White" />
+        <Setter Property="ThumbColor" Value="{StaticResource Primary50}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="On">
                         <VisualState.Setters>
-                            <Setter Property="OnColor" Value="{StaticResource Primary50}" />
-                            <Setter Property="ThumbColor" Value="White" />
+                            <Setter Property="OnColor" Value="{StaticResource Primary30}" />
+                            <Setter Property="ThumbColor" Value="{StaticResource Primary60}" />
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Off">
                         <VisualState.Setters>
-                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" />
+                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light=#80E0E0E0, Dark=#424242}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -267,9 +267,9 @@
         <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource HighContrastOutline}, Dark={StaticResource HighContrastOutlineDark}}" />
         <Setter Property="StrokeThickness" Value="1.5" />
         <Setter Property="StrokeShape" Value="RoundRectangle 16" />
-        <Setter Property="Padding" Value="12,8" />
+        <Setter Property="Padding" Value="12,6" />
         <Setter Property="Margin" Value="2" />
-        <Setter Property="MinimumHeightRequest" Value="40" />
+        <Setter Property="MinimumHeightRequest" Value="32" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -278,7 +278,7 @@
                         <VisualState.Setters>
                             <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary10}, Dark={StaticResource Primary90}}" />
                             <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary40}}" />
-                            <Setter Property="StrokeThickness" Value="2.5" />
+                            <Setter Property="StrokeThickness" Value="3" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -469,16 +469,16 @@
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                     <!-- Deeper golden - more saturated for "intense" -->
-                    <GradientStop Offset="0" Color="{AppThemeBinding Light={StaticResource Primary30}, Dark=#FF5A4A30}" />
-                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource Primary40}, Dark=#FF4A3A22}" />
-                    <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource Primary30}, Dark=#FF5A4A30}" />
+                    <GradientStop Offset="0" Color="{AppThemeBinding Light={StaticResource Primary40}, Dark=#AF5A4A30}" />
+                    <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource Primary50}, Dark=#AF4A3A22}" />
+                    <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource Primary40}, Dark=#AF5A4A30}" />
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
-        <Setter Property="TextColor" Value="{AppThemeBinding Light=#2F2415, Dark={StaticResource Primary30}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light=White, Dark={StaticResource Primary30}}" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.35" Radius="20" Offset="0,8" Brush="{AppThemeBinding Light=#70FFD700, Dark=#60FFD700}" />
+                <Shadow Opacity="0.45" Radius="10" Offset="0,0" Brush="{AppThemeBinding Light={StaticResource Primary30}, Dark={StaticResource Primary90}}" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -662,6 +662,23 @@
                     Brush="#1A000000"
                     Radius="8"
                     Offset="0,2" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--  SettingsCardOptimized - Solid color version for list performance  -->
+    <Style x:Key="SettingsCardOptimized" TargetType="Border" BasedOn="{StaticResource Card}">
+        <!-- Use solid SolidColor instead of gradient brush -->
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Neutral10}, Dark={StaticResource Neutral99}}" />
+        <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
+        <Setter Property="StrokeThickness" Value="0.75" />
+        <!-- Reduced shadow complexity -->
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow
+                    Brush="#1A000000"
+                    Radius="4"
+                    Offset="0,0" />
             </Setter.Value>
         </Setter>
     </Style>
