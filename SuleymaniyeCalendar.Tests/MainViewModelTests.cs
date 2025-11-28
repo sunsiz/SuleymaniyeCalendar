@@ -22,7 +22,6 @@ namespace SuleymaniyeCalendar.Tests
         private Mock<IRadioService> _radioServiceMock;
         private Mock<PerformanceService> _performanceServiceMock;
         private Mock<BackgroundDataPreloader> _backgroundDataPreloaderMock;
-        private MainViewModel _viewModel;
         private SuleymaniyeCalendar.Models.Calendar _testCalendar;
 
         [TestInitialize]

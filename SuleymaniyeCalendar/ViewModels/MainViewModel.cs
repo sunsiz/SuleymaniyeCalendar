@@ -30,8 +30,9 @@ public partial class MainViewModel : BaseViewModel
 
     /// <summary>
     /// Current day's prayer calendar data.
+    /// Access is thread-safe via volatile read/write.
     /// </summary>
-    private Calendar? _calendar;
+    private volatile Calendar? _calendar;
 
     /// <summary>
     /// Data service for prayer times, location, and alarm scheduling.
@@ -236,6 +237,11 @@ public partial class MainViewModel : BaseViewModel
                     return;
                 }
 #endif
+                if (_calendar == null)
+                {
+                    ShowToast(AppResources.HaritaHatasi);
+                    return;
+                }
                 var location = new Location(Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat));
                 var placeMark = await Geocoding.Default.GetPlacemarksAsync(Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat)).ConfigureAwait(true);
                 var options = new MapLaunchOptions { Name = placeMark.FirstOrDefault()?.Thoroughfare ?? placeMark.FirstOrDefault()?.CountryName };
@@ -469,6 +475,11 @@ public partial class MainViewModel : BaseViewModel
                 }
 #endif
                 // Non-Windows OR Windows with valid token proceeds to real reverse geocoding.
+                if (_calendar == null)
+                {
+                    Debug.WriteLine("GetCityAsync: _calendar is null, using cached city");
+                    return;
+                }
                 var placemark = await Geocoding.Default
                     .GetPlacemarksAsync(
                         Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat),
@@ -509,7 +520,14 @@ public partial class MainViewModel : BaseViewModel
         /// </summary>
         private async void GetCity()
         {
-            await GetCityAsync();
+            try
+            {
+                await GetCityAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"GetCity error: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -561,7 +579,7 @@ public partial class MainViewModel : BaseViewModel
             await Task.Delay(timeDelay).ConfigureAwait(false);
             var calendar = _data.calendar;
             calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
-            if ((calendar.Altitude == 114.0 && calendar.Latitude == 41.0 && calendar.Longitude == 29.0) || (calendar.Altitude == 0 && calendar.Latitude == 0 && calendar.Longitude == 0))
+            if (calendar != null && ((calendar.Altitude == 114.0 && calendar.Latitude == 41.0 && calendar.Longitude == 29.0) || (calendar.Altitude == 0 && calendar.Latitude == 0 && calendar.Longitude == 0)))
             {
                 // Default coordinates detected, need fresh location
                 _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
@@ -791,7 +809,9 @@ public partial class MainViewModel : BaseViewModel
 
             if (_ticker == null)
             {
-                _ticker = Application.Current.Dispatcher.CreateTimer();
+                var dispatcher = Application.Current?.Dispatcher;
+                if (dispatcher == null) return;
+                _ticker = dispatcher.CreateTimer();
                 _ticker.Interval = TimeSpan.FromSeconds(1);
                 // 🎨 PHASE 17: Update both RemainingTime and TimeProgress for animated gradient
                 // 🔄 PHASE 18: Detect date changes + recalculate states when minute changes
@@ -935,69 +955,75 @@ public partial class MainViewModel : BaseViewModel
         private string GetRemainingTime()
         {
             var currentTime = DateTime.Now.TimeOfDay;
+            var cal = _calendar;
+            if (cal == null)
+            {
+                TimeProgress = 0.0;
+                return "";
+            }
             try
             {
-                if (currentTime < TimeSpan.Parse(_calendar.FalseFajr))
+                if (currentTime < TimeSpan.Parse(cal.FalseFajr))
                 {
-                    CalculateTimeProgress(TimeSpan.Zero, TimeSpan.Parse(_calendar.FalseFajr), currentTime);
+                    CalculateTimeProgress(TimeSpan.Zero, TimeSpan.Parse(cal.FalseFajr), currentTime);
                     return AppResources.FecriKazibingirmesinekalanvakit +
-                              (TimeSpan.Parse(_calendar.FalseFajr) - currentTime).ToString(@"hh\:mm\:ss");
+                              (TimeSpan.Parse(cal.FalseFajr) - currentTime).ToString(@"hh\:mm\:ss");
                 }
-                if (currentTime >= TimeSpan.Parse(_calendar.FalseFajr) && currentTime <= TimeSpan.Parse(_calendar.Fajr))
+                if (currentTime >= TimeSpan.Parse(cal.FalseFajr) && currentTime <= TimeSpan.Parse(cal.Fajr))
                 {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.FalseFajr), TimeSpan.Parse(_calendar.Fajr), currentTime);
+                    CalculateTimeProgress(TimeSpan.Parse(cal.FalseFajr), TimeSpan.Parse(cal.Fajr), currentTime);
                     return AppResources.FecriSadikakalanvakit +
-                           (TimeSpan.Parse(_calendar.Fajr) - currentTime).ToString(@"hh\:mm\:ss");
+                           (TimeSpan.Parse(cal.Fajr) - currentTime).ToString(@"hh\:mm\:ss");
                 }
-                if (currentTime >= TimeSpan.Parse(_calendar.Fajr) && currentTime <= TimeSpan.Parse(_calendar.Sunrise))
+                if (currentTime >= TimeSpan.Parse(cal.Fajr) && currentTime <= TimeSpan.Parse(cal.Sunrise))
                 {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Fajr), TimeSpan.Parse(_calendar.Sunrise), currentTime);
+                    CalculateTimeProgress(TimeSpan.Parse(cal.Fajr), TimeSpan.Parse(cal.Sunrise), currentTime);
                     return AppResources.SabahSonunakalanvakit +
-                           (TimeSpan.Parse(_calendar.Sunrise) - currentTime).ToString(@"hh\:mm\:ss");
+                           (TimeSpan.Parse(cal.Sunrise) - currentTime).ToString(@"hh\:mm\:ss");
                 }
-                if (currentTime >= TimeSpan.Parse(_calendar.Sunrise) && currentTime <= TimeSpan.Parse(_calendar.Dhuhr))
+                if (currentTime >= TimeSpan.Parse(cal.Sunrise) && currentTime <= TimeSpan.Parse(cal.Dhuhr))
                 {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Sunrise), TimeSpan.Parse(_calendar.Dhuhr), currentTime);
+                    CalculateTimeProgress(TimeSpan.Parse(cal.Sunrise), TimeSpan.Parse(cal.Dhuhr), currentTime);
                     return AppResources.Ogleningirmesinekalanvakit +
-                           (TimeSpan.Parse(_calendar.Dhuhr) - currentTime).ToString(@"hh\:mm\:ss");
+                           (TimeSpan.Parse(cal.Dhuhr) - currentTime).ToString(@"hh\:mm\:ss");
                 }
-                if (currentTime >= TimeSpan.Parse(_calendar.Dhuhr) && currentTime <= TimeSpan.Parse(_calendar.Asr))
+                if (currentTime >= TimeSpan.Parse(cal.Dhuhr) && currentTime <= TimeSpan.Parse(cal.Asr))
                 {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Dhuhr), TimeSpan.Parse(_calendar.Asr), currentTime);
+                    CalculateTimeProgress(TimeSpan.Parse(cal.Dhuhr), TimeSpan.Parse(cal.Asr), currentTime);
                     return AppResources.Oglenincikmasinakalanvakit +
-                           (TimeSpan.Parse(_calendar.Asr) - currentTime).ToString(@"hh\:mm\:ss");
+                           (TimeSpan.Parse(cal.Asr) - currentTime).ToString(@"hh\:mm\:ss");
                 }
-                if (currentTime >= TimeSpan.Parse(_calendar.Asr) && currentTime <= TimeSpan.Parse(_calendar.Maghrib))
+                if (currentTime >= TimeSpan.Parse(cal.Asr) && currentTime <= TimeSpan.Parse(cal.Maghrib))
                 {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Asr), TimeSpan.Parse(_calendar.Maghrib), currentTime);
+                    CalculateTimeProgress(TimeSpan.Parse(cal.Asr), TimeSpan.Parse(cal.Maghrib), currentTime);
                     return AppResources.Ikindinincikmasinakalanvakit +
-                           (TimeSpan.Parse(_calendar.Maghrib) - currentTime).ToString(@"hh\:mm\:ss");
+                           (TimeSpan.Parse(cal.Maghrib) - currentTime).ToString(@"hh\:mm\:ss");
                 }
-                if (currentTime >= TimeSpan.Parse(_calendar.Maghrib) && currentTime <= TimeSpan.Parse(_calendar.Isha))
+                if (currentTime >= TimeSpan.Parse(cal.Maghrib) && currentTime <= TimeSpan.Parse(cal.Isha))
                 {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Maghrib), TimeSpan.Parse(_calendar.Isha), currentTime);
+                    CalculateTimeProgress(TimeSpan.Parse(cal.Maghrib), TimeSpan.Parse(cal.Isha), currentTime);
                     return AppResources.Aksamincikmasnakalanvakit +
-                           (TimeSpan.Parse(_calendar.Isha) - currentTime).ToString(@"hh\:mm\:ss");
+                           (TimeSpan.Parse(cal.Isha) - currentTime).ToString(@"hh\:mm\:ss");
                 }
-                if (currentTime >= TimeSpan.Parse(_calendar.Isha) && currentTime <= TimeSpan.Parse(_calendar.EndOfIsha))
+                if (currentTime >= TimeSpan.Parse(cal.Isha) && currentTime <= TimeSpan.Parse(cal.EndOfIsha))
                 {
-                    CalculateTimeProgress(TimeSpan.Parse(_calendar.Isha), TimeSpan.Parse(_calendar.EndOfIsha), currentTime);
+                    CalculateTimeProgress(TimeSpan.Parse(cal.Isha), TimeSpan.Parse(cal.EndOfIsha), currentTime);
                     return AppResources.Yatsinincikmasinakalanvakit +
-                           (TimeSpan.Parse(_calendar.EndOfIsha) - currentTime).ToString(@"hh\:mm\:ss");
+                           (TimeSpan.Parse(cal.EndOfIsha) - currentTime).ToString(@"hh\:mm\:ss");
                 }
-                if (currentTime >= TimeSpan.Parse(_calendar.EndOfIsha))
+                if (currentTime >= TimeSpan.Parse(cal.EndOfIsha))
                 {
                     // After EndOfIsha, show full progress (100%)
                     TimeProgress = 1.0;
                     return AppResources.Yatsininciktigindangecenvakit +
-                           (currentTime - TimeSpan.Parse(_calendar.EndOfIsha)).ToString(@"hh\:mm\:ss");
+                           (currentTime - TimeSpan.Parse(cal.EndOfIsha)).ToString(@"hh\:mm\:ss");
                 }
             }
             catch (Exception exception)
             {
                 TimeProgress = 0.0;
                 System.Diagnostics.Debug.WriteLine(
-                    $"GetFormattedRemainingTime exception: {exception.Message}. Location: {_calendar.Latitude}, {_calendar.Longitude}");
+                    $"GetFormattedRemainingTime exception: {exception.Message}. Location: {cal?.Latitude}, {cal?.Longitude}");
             }
 
             return "";
@@ -1019,11 +1045,11 @@ public partial class MainViewModel : BaseViewModel
             if (DeviceInfo.Platform == DevicePlatform.iOS)
             {
 #if __IOS__
-                var currentPrayer = Prayers.FirstOrDefault(p => p.IsActive);
+                var currentPrayer = Prayers?.FirstOrDefault(p => p.IsActive);
                 if (currentPrayer != null)
                 {
                     var remainingTime = GetRemainingTime();
-                    var nextPrayer = Prayers.FirstOrDefault(p => p.IsUpcoming);
+                    var nextPrayer = Prayers?.FirstOrDefault(p => p.IsUpcoming);
                 
                     await Platforms.iOS.LiveActivityService.StartPrayerActivityAsync(
                         currentPrayer.Name,
@@ -1047,7 +1073,7 @@ public partial class MainViewModel : BaseViewModel
         {
             // GetPrayersAsync is called when user needs fresh prayer times, so refresh location
             _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
-            if (_calendar.Latitude != 0)
+            if (_calendar != null && _calendar.Latitude != 0)
             {
                 Preferences.Set("latitude", _calendar.Latitude);
                 Preferences.Set("longitude", _calendar.Longitude);

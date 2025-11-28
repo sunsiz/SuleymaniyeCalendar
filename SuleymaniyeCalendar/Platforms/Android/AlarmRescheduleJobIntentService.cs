@@ -11,7 +11,12 @@ namespace SuleymaniyeCalendar;
     Permission = "android.permission.BIND_JOB_SERVICE",
     Exported = false
 )]
+// JobIntentService is marked obsolete by Google but still works reliably for background job execution.
+// The recommended replacement (WorkManager) would require significant architectural changes.
+// This service handles alarm rescheduling after device reboot/time changes.
+#pragma warning disable CS0618 // JobIntentService is obsolete but still functional
 internal sealed class AlarmRescheduleJobIntentService : JobIntentService
+#pragma warning restore CS0618
 {
     private const int JobId = 1994;
     internal const string ExtraReason = "extra_reschedule_reason";

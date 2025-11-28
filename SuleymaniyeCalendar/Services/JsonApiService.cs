@@ -11,10 +11,11 @@ namespace SuleymaniyeCalendar.Services
     /// <summary>
     /// Service for interacting with the new JSON-based API at api.suleymaniyetakvimi.com
     /// </summary>
-    public class JsonApiService
+    public class JsonApiService : IDisposable
     {
         private readonly HttpClient _httpClient;
         private readonly PerformanceService _perf;
+        private bool _disposed;
         private const string BaseUrl = "https://api.suleymaniyetakvimi.com/api/";
         private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {
@@ -201,7 +202,20 @@ namespace SuleymaniyeCalendar.Services
 
         public void Dispose()
         {
-            _httpClient?.Dispose();
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+            
+            if (disposing)
+            {
+                _httpClient?.Dispose();
+            }
+            
+            _disposed = true;
         }
 
         private static string NormalizeJson(string json)

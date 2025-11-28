@@ -11,7 +11,9 @@ namespace SuleymaniyeCalendar
             Action<UNNotificationPresentationOptions> completionHandler)
         {
             // Show the notification even when the app is in the foreground
-            completionHandler(UNNotificationPresentationOptions.Alert | 
+            // Use List | Banner instead of obsolete Alert option (iOS 14+)
+            completionHandler(UNNotificationPresentationOptions.List | 
+                              UNNotificationPresentationOptions.Banner |
                               UNNotificationPresentationOptions.Sound | 
                               UNNotificationPresentationOptions.Badge);
         }

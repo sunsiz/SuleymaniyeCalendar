@@ -17,7 +17,6 @@ namespace SuleymaniyeCalendar.Tests
     public class MonthPageTests
     {
         private Mock<DataService> _dataServiceMock;
-        private MonthViewModel _viewModel;
         private ObservableCollection<SuleymaniyeCalendar.Models.Calendar> _testMonthlyData;
         private Mock<ILogger<DataService>> _loggerMock;
         private Mock<JsonApiService> _jsonApiServiceMock;

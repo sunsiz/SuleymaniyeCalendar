@@ -287,6 +287,15 @@ public partial class MonthViewModel : BaseViewModel
         try
         {
             var place = _data.calendar;
+            if (place == null)
+            {
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    ShowToast(AppResources.KonumIzniIcerik);
+                    IsBusy = false;
+                });
+                return;
+            }
             var location = new Location { Latitude = place.Latitude, Longitude = place.Longitude, Altitude = place.Altitude };
             if (location.Latitude == 0 || location.Longitude == 0)
             {
@@ -418,6 +427,7 @@ public partial class MonthViewModel : BaseViewModel
         try
         {
             var place = _data.calendar;
+            if (place == null) return MonthlyCalendar;
             var location = new Location { Latitude = place.Latitude, Longitude = place.Longitude, Altitude = place.Altitude };
             if (location.Latitude != 0 && location.Longitude != 0)
             {

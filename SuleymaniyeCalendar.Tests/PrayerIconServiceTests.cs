@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Services;
@@ -84,7 +85,10 @@ namespace SuleymaniyeCalendar.Tests
             var icons = PrayerIconService.GetAllPrayerIcons();
             
             // Updated to include all 8 prayer times
-            Assert.AreEqual(8, icons.Count);
+            // Verify count using collection assertion
+#pragma warning disable MSTEST0037 // Use Assert.HasCount - IReadOnlyDictionary doesn't directly support it
+            Assert.AreEqual(8, icons.Count, "Expected 8 prayer icon mappings");
+#pragma warning restore MSTEST0037
             Assert.IsTrue(icons.ContainsKey("falsefajr"));
             Assert.IsTrue(icons.ContainsKey("fajr"));
             Assert.IsTrue(icons.ContainsKey("sunrise"));

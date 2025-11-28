@@ -1,3 +1,5 @@
+#nullable enable
+
 using SuleymaniyeCalendar.ViewModels;
 using SuleymaniyeCalendar.Models;
 using System.Collections.Specialized;
@@ -12,13 +14,13 @@ namespace SuleymaniyeCalendar.Views;
 /// </summary>
 public partial class MonthCalendarView : ContentView
 {
-    private MonthViewModel _viewModel;
-    private CancellationTokenSource _renderCts;
+    private MonthViewModel? _viewModel;
+    private CancellationTokenSource? _renderCts;
     private int _lastRenderedHash; // Skip redundant renders
     
     // Cached brushes to avoid repeated resource lookups
-    private SolidColorBrush _lightIndicatorBrush;
-    private SolidColorBrush _darkIndicatorBrush;
+    private SolidColorBrush? _lightIndicatorBrush;
+    private SolidColorBrush? _darkIndicatorBrush;
     
     // 🚀 Element pool for reuse - avoids expensive element creation
     private readonly List<Border> _cellPool = new(42);
@@ -36,7 +38,7 @@ public partial class MonthCalendarView : ContentView
         BindingContextChanged += OnBindingContextChanged;
     }
 
-    private void OnBindingContextChanged(object sender, EventArgs e)
+    private void OnBindingContextChanged(object? sender, EventArgs e)
     {
         // Unsubscribe from old ViewModel
         if (_viewModel != null && _viewModel.CalendarDays != null)
@@ -70,7 +72,7 @@ public partial class MonthCalendarView : ContentView
     /// <summary>
     /// Called when ViewModel properties change - re-subscribe if CalendarDays collection is replaced.
     /// </summary>
-    private void OnViewModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+    private void OnViewModelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(MonthViewModel.CalendarDays))
         {
@@ -85,8 +87,9 @@ public partial class MonthCalendarView : ContentView
                 // Subscribe to new collection
                 vm.CalendarDays.CollectionChanged += OnCalendarDaysChanged;
                 
-                // Cancel any pending render
+                // Cancel and dispose any pending render CTS
                 _renderCts?.Cancel();
+                _renderCts?.Dispose();
                 _renderCts = new CancellationTokenSource();
                 var token = _renderCts.Token;
                 
@@ -120,10 +123,11 @@ public partial class MonthCalendarView : ContentView
     /// <summary>
     /// Called when CalendarDays collection changes - rebuild the grid.
     /// </summary>
-    private void OnCalendarDaysChanged(object sender, NotifyCollectionChangedEventArgs e)
+    private void OnCalendarDaysChanged(object? sender, NotifyCollectionChangedEventArgs e)
     {
-        // Cancel any pending render and use debounced approach
+        // Cancel and dispose any pending render CTS
         _renderCts?.Cancel();
+        _renderCts?.Dispose();
         _renderCts = new CancellationTokenSource();
         var token = _renderCts.Token;
         
@@ -159,9 +163,18 @@ public partial class MonthCalendarView : ContentView
     {
         if (_poolInitialized) return;
         
-        // Cache brushes once
-        _lightIndicatorBrush ??= new SolidColorBrush((Color)Application.Current.Resources["PrimaryColor"]);
-        _darkIndicatorBrush ??= new SolidColorBrush((Color)Application.Current.Resources["Primary50"]);
+        // Cache brushes once - use null coalescing with null-forgiving for known resources
+        if (Application.Current?.Resources != null)
+        {
+            _lightIndicatorBrush ??= new SolidColorBrush((Color)Application.Current.Resources["PrimaryColor"]);
+            _darkIndicatorBrush ??= new SolidColorBrush((Color)Application.Current.Resources["Primary50"]);
+        }
+        else
+        {
+            // Fallback colors if resources not available
+            _lightIndicatorBrush ??= new SolidColorBrush(Colors.Blue);
+            _darkIndicatorBrush ??= new SolidColorBrush(Colors.LightBlue);
+        }
         
         // Create 42 reusable cells (max needed for 6-week month)
         for (int i = 0; i < 42; i++)
@@ -277,64 +290,71 @@ public partial class MonthCalendarView : ContentView
     /// </summary>
     private async void OnCellTapped(object? sender, TappedEventArgs e)
     {
-        if (_viewModel == null)
+        try
         {
-            System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: ViewModel is null");
-            return;
-        }
-
-        // sender can be either the Border itself or the TapGestureRecognizer
-        Border? tappedBorder = sender as Border;
-        
-        if (tappedBorder == null && sender is TapGestureRecognizer gesture)
-        {
-            // Find the border that owns this gesture recognizer
-            foreach (var cell in _cellPool)
+            if (_viewModel == null)
             {
-                if (cell.GestureRecognizers.Contains(gesture))
+                System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: ViewModel is null");
+                return;
+            }
+
+            // sender can be either the Border itself or the TapGestureRecognizer
+            Border? tappedBorder = sender as Border;
+        
+            if (tappedBorder == null && sender is TapGestureRecognizer gesture)
+            {
+                // Find the border that owns this gesture recognizer
+                foreach (var cell in _cellPool)
                 {
-                    tappedBorder = cell;
-                    break;
+                    if (cell.GestureRecognizers.Contains(gesture))
+                    {
+                        tappedBorder = cell;
+                        break;
+                    }
+                }
+            }
+
+            if (tappedBorder == null)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: Could not find Border (sender={sender?.GetType().Name})");
+                return;
+            }
+
+            if (tappedBorder.BindingContext is not CalendarDay day)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: BindingContext is not CalendarDay (type={tappedBorder.BindingContext?.GetType().Name})");
+                return;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"✅ OnCellTapped: Tapped day {day.Date:yyyy-MM-dd}");
+
+            // Subtle scale animation
+            await tappedBorder.ScaleTo(0.92, 80, Easing.CubicOut);
+            await tappedBorder.ScaleTo(1.0, 120, Easing.CubicOut);
+        
+            // Execute selection - this is async, need to wait for binding to update
+            _viewModel.SelectDayCommand.Execute(day.Date);
+        
+            // Small delay to allow binding to update before checking visibility
+            await Task.Delay(50);
+        
+            System.Diagnostics.Debug.WriteLine($"🎴 OnCellTapped: After selection - SelectedDayCard.IsVisible={SelectedDayCard?.IsVisible}");
+        
+            // Animate selected day card if visible and scroll to it
+            if (SelectedDayCard != null && SelectedDayCard.IsVisible)
+            {
+                await AnimateSelectedDayCardAsync();
+            
+                // Scroll to make the card visible
+                if (MainScrollView != null)
+                {
+                    await MainScrollView.ScrollToAsync(SelectedDayCard, ScrollToPosition.MakeVisible, true);
                 }
             }
         }
-
-        if (tappedBorder == null)
+        catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: Could not find Border (sender={sender?.GetType().Name})");
-            return;
-        }
-
-        if (tappedBorder.BindingContext is not CalendarDay day)
-        {
-            System.Diagnostics.Debug.WriteLine($"❌ OnCellTapped: BindingContext is not CalendarDay (type={tappedBorder.BindingContext?.GetType().Name})");
-            return;
-        }
-
-        System.Diagnostics.Debug.WriteLine($"✅ OnCellTapped: Tapped day {day.Date:yyyy-MM-dd}");
-
-        // Subtle scale animation
-        await tappedBorder.ScaleTo(0.92, 80, Easing.CubicOut);
-        await tappedBorder.ScaleTo(1.0, 120, Easing.CubicOut);
-        
-        // Execute selection - this is async, need to wait for binding to update
-        _viewModel.SelectDayCommand.Execute(day.Date);
-        
-        // Small delay to allow binding to update before checking visibility
-        await Task.Delay(50);
-        
-        System.Diagnostics.Debug.WriteLine($"🎴 OnCellTapped: After selection - SelectedDayCard.IsVisible={SelectedDayCard?.IsVisible}");
-        
-        // Animate selected day card if visible and scroll to it
-        if (SelectedDayCard != null && SelectedDayCard.IsVisible)
-        {
-            await AnimateSelectedDayCardAsync();
-            
-            // Scroll to make the card visible
-            if (MainScrollView != null)
-            {
-                await MainScrollView.ScrollToAsync(SelectedDayCard, ScrollToPosition.MakeVisible, true);
-            }
+            System.Diagnostics.Debug.WriteLine($"OnCellTapped error: {ex.Message}");
         }
     }
 

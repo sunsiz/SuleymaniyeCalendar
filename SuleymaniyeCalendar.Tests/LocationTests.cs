@@ -294,7 +294,7 @@ namespace SuleymaniyeCalendar.Tests
             if (completedTask == timeout)
             {
                 // Test passes - we successfully timed out instead of hanging
-                Assert.IsTrue(true, "Location request properly timed out");
+                completedTask.Should().Be(timeout, "Location request properly timed out");
             }
             else
             {

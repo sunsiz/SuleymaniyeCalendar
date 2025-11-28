@@ -148,16 +148,20 @@ public partial class CompassViewModel : BaseViewModel
 	{
 		IsBusy = true;
 		
+		// Track start time to ensure minimum visible duration for user feedback
+		var startTime = DateTime.UtcNow;
+		const int MinimumVisibleDurationMs = 500;
+		
 		try
 		{
 			// Force fresh GPS fix (user-initiated action)
-			Location location;
+			Location? location;
 			using (_perf.StartTimer("Compass.RefreshLocation"))
 			{
 				location = await _dataService.GetCurrentLocationAsync(true).ConfigureAwait(false);
 			}
 			
-			if (location?.Latitude != 0 && location?.Longitude != 0)
+			if (location != null && location.Latitude != 0 && location.Longitude != 0)
 			{
 				_currentLatitude = location.Latitude;
 				_currentLongitude = location.Longitude;
@@ -177,6 +181,12 @@ public partial class CompassViewModel : BaseViewModel
 		}
 		finally
 		{
+			// Ensure minimum visible duration so user sees feedback
+			var elapsed = (DateTime.UtcNow - startTime).TotalMilliseconds;
+			if (elapsed < MinimumVisibleDurationMs)
+			{
+				await Task.Delay(MinimumVisibleDurationMs - (int)elapsed);
+			}
 			IsBusy = false;
 		}
 	}
@@ -332,6 +342,7 @@ public partial class CompassViewModel : BaseViewModel
 			{
 				var placemarks = await Geocoding.GetPlacemarksAsync(_currentLatitude, _currentLongitude).ConfigureAwait(false);
 				var place = placemarks?.FirstOrDefault();
+				if (place == null) return;
 				var fullAddress = BuildAddressFromPlacemark(place);
 				
 				if (!string.IsNullOrWhiteSpace(fullAddress))
@@ -369,7 +380,7 @@ public partial class CompassViewModel : BaseViewModel
 	/// Compass sensor reading changed event handler.
 	/// Calculates Qibla direction relative to device heading.
 	/// </summary>
-	private void Compass_ReadingChanged(object sender, CompassChangedEventArgs e)
+	private void Compass_ReadingChanged(object? sender, CompassChangedEventArgs e)
 	{
 		try
 		{

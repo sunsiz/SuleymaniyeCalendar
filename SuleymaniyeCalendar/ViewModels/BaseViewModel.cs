@@ -77,9 +77,9 @@ public partial class BaseViewModel : ObservableObject
         set => SetProperty(ref _showOverlay, value);
     }
 
-    private string _overlayMessage = string.Empty;
+    private string? _overlayMessage = string.Empty;
     /// <summary>Message displayed on the overlay.</summary>
-    public string OverlayMessage
+    public string? OverlayMessage
     {
         get => _overlayMessage;
         set => SetProperty(ref _overlayMessage, value);

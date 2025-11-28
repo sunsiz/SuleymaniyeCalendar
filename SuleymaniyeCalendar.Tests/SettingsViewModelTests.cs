@@ -15,7 +15,6 @@ namespace SuleymaniyeCalendar.Tests
     {
         private Mock<ILocalizationResourceManager> _localizationMock;
         private Mock<IRtlService> _rtlServiceMock;
-        private SettingsViewModel _viewModel;
 
         [TestInitialize]
         public void Setup()

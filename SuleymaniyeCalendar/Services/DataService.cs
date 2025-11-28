@@ -101,11 +101,6 @@ public class DataService
     private readonly PerformanceService _perf;
 
     /// <summary>
-    /// Cached location data for the current user.
-    /// </summary>
-    private Calendar? _location;
-
-    /// <summary>
     /// Cached monthly prayer times collection.
     /// </summary>
     private ObservableCollection<Calendar>? _monthlyCalendar;
@@ -120,9 +115,24 @@ public class DataService
     #region Public Fields
 
     /// <summary>
-    /// Current day's prayer calendar data. Shared with ViewModels for UI binding.
+    /// Lock object for thread-safe access to calendar data.
     /// </summary>
-    public Calendar calendar;
+    private readonly object _calendarLock = new();
+    
+    /// <summary>
+    /// Backing field for current day's prayer calendar data.
+    /// </summary>
+    private Calendar? _calendarData;
+
+    /// <summary>
+    /// Current day's prayer calendar data. Shared with ViewModels for UI binding.
+    /// Thread-safe property with lock synchronization.
+    /// </summary>
+    public Calendar? calendar
+    {
+        get { lock (_calendarLock) return _calendarData; }
+        set { lock (_calendarLock) _calendarData = value; }
+    }
 
     #endregion
 
@@ -289,8 +299,8 @@ public class DataService
 
             if (location.Latitude != 0.0 && location.Longitude != 0.0)
             {
-                // Delegate to PrayerCacheService for cache lookup
-                var todayData = Task.Run(() => _cacheService.GetTodayFromCacheAsync(location)).Result;
+                // Delegate to PrayerCacheService for cache lookup (synchronous context, safe to use GetAwaiter)
+                var todayData = _cacheService.GetTodayFromCacheAsync(location).GetAwaiter().GetResult();
                 return todayData;
             }
         }
@@ -314,10 +324,12 @@ public class DataService
 			// - Otherwise, use last known/saved location to avoid prompting at launch
 			var forceLocationRefresh = Preferences.Get("AlwaysRenewLocationEnabled", false);
 			var location = await GetCurrentLocationAsync(forceLocationRefresh).ConfigureAwait(false);
-			ObservableCollection<Calendar> monthly;
+			ObservableCollection<Calendar>? monthly;
 			using (_perf.StartTimer("DataService.GetMonthly.HybridStartup"))
 			{
-				monthly = await GetMonthlyPrayerTimesHybridAsync(location, true).ConfigureAwait(false);
+				monthly = location != null 
+					? await GetMonthlyPrayerTimesHybridAsync(location, true).ConfigureAwait(false)
+					: null;
 			}
 			if (monthly != null && monthly.Count > 0)
 			{
@@ -412,12 +424,15 @@ public class DataService
 				{
 					using (_perf.StartTimer("Location.Request"))
 					{
-						// Shorten initial wait to improve perceived performance; fallback path inside will extend slightly if needed.
-						location = await RequestLocationAsync(waitDelay: 5).ConfigureAwait(false);
+						// When refreshLocation is true, use longer timeout and force active GPS
+						// to ensure we get a truly fresh fix, not cached FLP data
+						var waitTime = refreshLocation ? 10 : 5;
+						location = await RequestLocationAsync(waitDelay: waitTime, forceActiveGps: refreshLocation).ConfigureAwait(false);
 					}
 
-					// Fallbacks when a fresh fix isn't available quickly
-					if (location is null)
+					// Only use fallbacks when NOT explicitly refreshing
+					// When user requests refresh, they want fresh data or nothing
+					if (location is null && !refreshLocation)
 					{
 						using (_perf.StartTimer("Location.Fallback.LastKnown"))
 						{
@@ -501,8 +516,9 @@ public class DataService
         {
             var month = DateTime.Now.Month;
             var year = DateTime.Now.Year;
-            var unified = Task.Run(() => TryGetMonthlyFromUnifiedCacheAsync(location, year, month)).Result;
-            if (unified != null)
+            // Use GetAwaiter().GetResult() for synchronous context - safer than .Result for avoiding deadlocks
+            var unified = TryGetMonthlyFromUnifiedCacheAsync(location, year, month).GetAwaiter().GetResult();
+            if (unified is not null)
             {
                 _monthlyCalendar = unified;
                 return _monthlyCalendar;
@@ -513,13 +529,13 @@ public class DataService
 
         try
         {
-            // Delegate to XmlApiService
-            var result = Task.Run(() => _xmlApiService.GetMonthlyPrayerTimesAsync(
+            // Delegate to XmlApiService - use GetAwaiter().GetResult() for synchronous context
+            var result = _xmlApiService.GetMonthlyPrayerTimesAsync(
                 location.Latitude,
                 location.Longitude,
                 location.Altitude ?? 0,
                 DateTime.Now.Month,
-                DateTime.Now.Year)).Result;
+                DateTime.Now.Year).GetAwaiter().GetResult();
 
             if (result != null && result.Count > 0)
             {
@@ -898,7 +914,7 @@ public class DataService
 			var yearCaches = new Dictionary<int, List<Calendar>>();
 			foreach (var y in years)
 			{
-				List<Calendar> cached;
+				List<Calendar>? cached;
 				using (_perf.StartTimer($"Cache.LoadYear.{y}"))
 				{
 					cached = await LoadYearCacheAsync(location, y).ConfigureAwait(false);
@@ -921,7 +937,7 @@ public class DataService
 				}
 
 				// Fetch
-				ObservableCollection<Calendar> fetched = null;
+				ObservableCollection<Calendar>? fetched = null;
 				if (year == DateTime.Now.Year)
 				{
 					// JSON monthly supports current-year by monthId
@@ -1110,9 +1126,13 @@ public class DataService
 		public async Task<List<Prayer>> GetPrayersForDateAsync(DateTime date, bool forceRefresh = false)
 		{
 			var location = await GetCurrentLocationAsync(false).ConfigureAwait(false);
+			if (location == null)
+			{
+				return new List<Prayer>();
+			}
 			var days = await EnsureDaysRangeAsync(location, date.Date, 1).ConfigureAwait(false);
 			var day = days?.FirstOrDefault();
-			return BuildPrayersFromCalendar(day);
+			return day != null ? BuildPrayersFromCalendar(day) : new List<Prayer>();
 		}
 
 		#endregion
@@ -1146,7 +1166,7 @@ public class DataService
 				if (!HaveInternet()) return false;
 
 				// Try JSON monthly first for current month
-				ObservableCollection<Calendar> month = null;
+				ObservableCollection<Calendar>? month = null;
 				try
 				{
 					month = await _jsonApiService.GetMonthlyPrayerTimesAsync(location.Latitude, location.Longitude, today.Month, location.Altitude ?? 0).ConfigureAwait(false);
@@ -1156,7 +1176,7 @@ public class DataService
 					Debug.WriteLine($"EnsureTodayInCacheAsync: monthly fetch failed: {ex.Message}");
 				}
 
-				Calendar newToday = null;
+				Calendar? newToday = null;
 				if (month != null && month.Count > 0)
 				{
 					await SaveToUnifiedCacheAsync(location, month.ToList()).ConfigureAwait(false);
@@ -1258,13 +1278,13 @@ public class DataService
 		/// <param name="message">Message to display.</param>
 		public static void ShowToast(string message)
 		{
-			MainThread.BeginInvokeOnMainThread(() =>
+			MainThread.BeginInvokeOnMainThread(async () =>
 			{
-				CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+				using var cts = new CancellationTokenSource();
 				ToastDuration duration = ToastDuration.Long;
 				double fontSize = 14;
 				var toast = Toast.Make(message, duration, fontSize);
-				toast.Show(cancellationTokenSource.Token);
+				await toast.Show(cts.Token);
 			});
 		}
 
@@ -1334,8 +1354,9 @@ public class DataService
 		/// <returns>Location if successful, null if failed or platform doesn't support geolocation.</returns>
 		/// <remarks>
 		/// Windows returns null by design - caller should use saved coordinates.
+		/// When forceActiveGps is true, uses High accuracy to force an active GPS fix instead of cached location.
 		/// </remarks>
-		public async Task<Location?> RequestLocationAsync(int waitDelay = 5)
+		public async Task<Location?> RequestLocationAsync(int waitDelay = 5, bool forceActiveGps = false)
 		{
 			// Windows: do not invoke Geolocation APIs – return null so caller uses saved/mock coordinates
 			if (DeviceInfo.Platform == DevicePlatform.WinUI)
@@ -1346,9 +1367,15 @@ public class DataService
 			try
 			{
 				// Strategy: fast first fix, then a quick fallback for broader providers.
-				// 1) Medium accuracy, short timeout (good balance for speed vs. precision)
-				var cts = new CancellationTokenSource();
-				var requestFast = new GeolocationRequest(GeolocationAccuracy.Medium, TimeSpan.FromSeconds(waitDelay));
+				// Use proper CancellationTokenSource disposal to prevent FLP error logs about orphaned location requests.
+				// The timeout in GeolocationRequest handles cancellation; CTS is for external cancellation if needed.
+				using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(waitDelay + 10)); // Overall timeout safety
+				
+				// When forceActiveGps is true, use Best accuracy to force a truly fresh GPS fix
+				// Best accuracy bypasses cached FLP data and forces active GPS acquisition
+				// Medium/Low accuracy may return cached FLP (Fused Location Provider) data instantly
+				var accuracy = forceActiveGps ? GeolocationAccuracy.Best : GeolocationAccuracy.Medium;
+				var requestFast = new GeolocationRequest(accuracy, TimeSpan.FromSeconds(waitDelay));
 
 				using (_perf.StartTimer("Location.Request.Fast"))
 				{
@@ -1356,7 +1383,7 @@ public class DataService
 				}
 
 				// 2) If still null, try Low accuracy with a slightly longer timeout to allow coarse providers (cell/Wi‑Fi)
-				if (location is null)
+				if (location is null && !cts.IsCancellationRequested)
 				{
 					var fallbackTimeout = TimeSpan.FromSeconds(Math.Max(waitDelay + 3, 8));
 					var requestFallback = new GeolocationRequest(GeolocationAccuracy.Low, fallbackTimeout);
@@ -1460,7 +1487,7 @@ public class DataService
 			Debug.WriteLine("Hybrid: Falling back to XML API");
 			try
 			{
-				ObservableCollection<Calendar> xmlResult;
+				ObservableCollection<Calendar>? xmlResult;
 				using (_perf.StartTimer("XML.Monthly.Fallback"))
 				{
 					xmlResult = await GetMonthlyPrayerTimesXmlAsync(location, forceRefresh).ConfigureAwait(false);
