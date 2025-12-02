@@ -126,7 +126,7 @@ public sealed partial class Prayer : ObservableObject
     #endregion
 
     /// <summary>Navigation command set by ViewModel for compiled binding.</summary>
-    public IRelayCommand NavigateCommand { get; set; }
+    public IRelayCommand? NavigateCommand { get; set; }
 
     /// <summary>
     /// Updates visual state properties based on the current State value.

@@ -23,7 +23,7 @@ namespace SuleymaniyeCalendar.Services
             AllowTrailingCommas = true
         };
 
-        public JsonApiService(PerformanceService perf = null)
+        public JsonApiService(PerformanceService? perf = null)
         {
             _httpClient = new HttpClient
             {
@@ -35,7 +35,7 @@ namespace SuleymaniyeCalendar.Services
         /// <summary>
         /// Get prayer times for a specific date using new JSON API
         /// </summary>
-        public async Task<Calendar> GetDailyPrayerTimesAsync(double latitude, double longitude, DateTime date, double altitude = 0)
+        public async Task<Calendar?> GetDailyPrayerTimesAsync(double latitude, double longitude, DateTime date, double altitude = 0)
         {
             try
             {
@@ -76,14 +76,16 @@ namespace SuleymaniyeCalendar.Services
         /// <summary>
         /// Get prayer times for a full month using new JSON API
         /// </summary>
-        public async Task<ObservableCollection<Calendar>> GetMonthlyPrayerTimesAsync(double latitude, double longitude, int monthId, double altitude = 0)
+        public async Task<ObservableCollection<Calendar>?> GetMonthlyPrayerTimesAsync(double latitude, double longitude, int monthId, double altitude = 0, int? year = null)
         {
             try
             {
+                var targetYear = year ?? DateTime.Now.Year;
                 var url = $"{BaseUrl}TimeCalculation/TimeCalculateByMonth" +
                          $"?latitude={latitude.ToString(CultureInfo.InvariantCulture)}" +
                          $"&longitude={longitude.ToString(CultureInfo.InvariantCulture)}" +
-                         $"&monthId={monthId}";
+                         $"&monthId={monthId}" +
+                         $"&year={targetYear}";
 
                 Debug.WriteLine($"JSON API Monthly Request: {url}");
 
@@ -125,7 +127,7 @@ namespace SuleymaniyeCalendar.Services
         /// <summary>
         /// Convert JSON API data to Calendar model
         /// </summary>
-        private Calendar ConvertJsonDataToCalendar(TimeCalcDto data, double fallbackAltitude = 0)
+        private Calendar? ConvertJsonDataToCalendar(TimeCalcDto data, double fallbackAltitude = 0)
         {
             try
             {
@@ -157,7 +159,7 @@ namespace SuleymaniyeCalendar.Services
                     Fajr = Coalesce(data.FajrBeginTime, data.Fajr),
                     Sunrise = Coalesce(data.FajrEndTime, data.Sunrise),
                     Dhuhr = Coalesce(data.DuhrTime, data.Dhuhr),
-                    Asr = data.AsrTime,
+                    Asr = Coalesce(data.AsrTime),
                     Maghrib = Coalesce(data.Magrib, data.Maghrib),
                     Isha = Coalesce(data.IshaBeginTime, data.Isha),
                     EndOfIsha = Coalesce(data.IshaEndTime, data.EndOfIsha)
@@ -226,7 +228,7 @@ namespace SuleymaniyeCalendar.Services
             return json;
         }
 
-        private static string Coalesce(params string[] values)
+        private static string Coalesce(params string?[] values)
         {
             foreach (var v in values)
             {
@@ -235,8 +237,9 @@ namespace SuleymaniyeCalendar.Services
             return string.Empty;
         }
 
-        private static double ParseDoubleSafe(string value)
+        private static double ParseDoubleSafe(string? value)
         {
+            if (string.IsNullOrEmpty(value)) return 0;
             if (double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out var d))
                 return d;
             return 0;
@@ -258,7 +261,7 @@ namespace SuleymaniyeCalendar.Services
             public double Elevation { get; set; }
 
             [JsonPropertyName("timezone")]
-            public string Timezone { get; set; }
+            public string? Timezone { get; set; }
 
             [JsonPropertyName("gmt")]
             public double Gmt { get; set; }
@@ -270,49 +273,49 @@ namespace SuleymaniyeCalendar.Services
             public bool IsDaylightSaving { get; set; }
 
             [JsonPropertyName("dateTime")]
-            public string DateTime { get; set; }
+            public string? DateTime { get; set; }
 
             [JsonPropertyName("dawnTime")]
-            public string DawnTime { get; set; }
+            public string? DawnTime { get; set; }
 
             // Alternate/synonyms observed on some payloads
             [JsonPropertyName("falseFajr")]
-            public string FalseFajr { get; set; }
+            public string? FalseFajr { get; set; }
             [JsonPropertyName("imsak")]
-            public string Imsak { get; set; }
+            public string? Imsak { get; set; }
 
             [JsonPropertyName("fajrBeginTime")]
-            public string FajrBeginTime { get; set; }
+            public string? FajrBeginTime { get; set; }
             [JsonPropertyName("fajr")]
-            public string Fajr { get; set; }
+            public string? Fajr { get; set; }
 
             [JsonPropertyName("fajrEndTime")]
-            public string FajrEndTime { get; set; }
+            public string? FajrEndTime { get; set; }
             [JsonPropertyName("sunrise")]
-            public string Sunrise { get; set; }
+            public string? Sunrise { get; set; }
 
             [JsonPropertyName("duhrTime")]
-            public string DuhrTime { get; set; }
+            public string? DuhrTime { get; set; }
             [JsonPropertyName("dhuhr")]
-            public string Dhuhr { get; set; }
+            public string? Dhuhr { get; set; }
 
             [JsonPropertyName("asrTime")]
-            public string AsrTime { get; set; }
+            public string? AsrTime { get; set; }
 
             [JsonPropertyName("magrib")]
-            public string Magrib { get; set; }
+            public string? Magrib { get; set; }
             [JsonPropertyName("maghrib")]
-            public string Maghrib { get; set; }
+            public string? Maghrib { get; set; }
 
             [JsonPropertyName("ishaBeginTime")]
-            public string IshaBeginTime { get; set; }
+            public string? IshaBeginTime { get; set; }
             [JsonPropertyName("isha")]
-            public string Isha { get; set; }
+            public string? Isha { get; set; }
 
             [JsonPropertyName("ishaEndTime")]
-            public string IshaEndTime { get; set; }
+            public string? IshaEndTime { get; set; }
             [JsonPropertyName("endOfIsha")]
-            public string EndOfIsha { get; set; }
+            public string? EndOfIsha { get; set; }
         }
     }
 }

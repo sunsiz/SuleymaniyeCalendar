@@ -23,14 +23,14 @@ public partial class AppShell : Shell
     /// <summary>
     /// Ensures theme is applied correctly after navigation transitions.
     /// </summary>
-    private static void OnNavigated(object sender, ShellNavigatedEventArgs e)
+    private static void OnNavigated(object? sender, ShellNavigatedEventArgs e)
     {
         if (Application.Current is null) return;
 
-        Application.Current.UserAppTheme = Theme.Tema switch
+        Application.Current.UserAppTheme = Theme.CurrentTheme switch
         {
-            0 => AppTheme.Dark,
-            1 => AppTheme.Light,
+            ThemeMode.Dark => AppTheme.Dark,
+            ThemeMode.Light => AppTheme.Light,
             _ => AppTheme.Unspecified
         };
     }

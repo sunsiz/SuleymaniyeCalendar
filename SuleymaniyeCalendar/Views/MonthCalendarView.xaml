@@ -127,7 +127,7 @@
                             <Label Text="{localization:Translate AylikVeriYenilemeIste}"
                                    Style="{StaticResource BodySmallStyle}"
                                    Margin="3,3,10,3"
-                                   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceDarkColor}}" />
+                                   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}" />
                             <Button Text="{localization:Translate AyVeriYukle}"
                                     Style="{StaticResource iOSLiquidGlassButton}"
                                     Command="{Binding DownloadDisplayedMonthCommand}"

@@ -1,3 +1,5 @@
+using SuleymaniyeCalendar.Helpers;
+
 namespace SuleymaniyeCalendar.Services;
 
 /// <summary>
@@ -5,29 +7,16 @@ namespace SuleymaniyeCalendar.Services;
 /// </summary>
 public sealed class RtlService : IRtlService
 {
-    /// <summary>RTL language codes (Arabic, Farsi, Hebrew, Kurdish, etc.).</summary>
-    private static readonly HashSet<string> RtlLanguages =
-    [
-        "ar", "fa", "he", "ku", "ps", "sd", "ug", "ur", "yi"
-    ];
+    /// <inheritdoc/>
+    public bool IsRightToLeft => AppConstants.IsRtlLanguage(Preferences.Get("SelectedLanguage", "tr"));
 
     /// <inheritdoc/>
-    public bool IsRightToLeft => IsRtlLanguage(Preferences.Get("SelectedLanguage", "tr"));
-
-    /// <inheritdoc/>
-    public bool IsRtlLanguage(string languageCode)
-    {
-        if (string.IsNullOrEmpty(languageCode)) return false;
-
-        // Handle culture codes like "ar-SA" by extracting the base language
-        var baseCode = languageCode.Split('-')[0].ToLowerInvariant();
-        return RtlLanguages.Contains(baseCode);
-    }
+    public bool IsRtlLanguage(string languageCode) => AppConstants.IsRtlLanguage(languageCode);
 
     /// <inheritdoc/>
     public FlowDirection GetFlowDirection(string languageCode)
     {
-        return IsRtlLanguage(languageCode) ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+        return AppConstants.IsRtlLanguage(languageCode) ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
     }
 
     /// <inheritdoc/>

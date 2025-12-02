@@ -148,7 +148,7 @@
                             </Label.FormattedText>
                         </Label>
                         <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding TapCommand}" CommandParameter="https://www.radyofitrat.com/" />
+                            <TapGestureRecognizer Command="{Binding TapCommand}" CommandParameter="https://www.fitratradyo.com/" />
                         </StackLayout.GestureRecognizers>
                     </StackLayout>
                 </Grid>
@@ -163,7 +163,7 @@
                 HorizontalOptions="Fill"
                 IsVisible="False"
                 MetadataArtist="{localization:Translate SuleymaniyeVakfi}"
-                MetadataArtworkUrl="https://www.radyofitrat.com/img/radyo-fitrat.png"
+                MetadataArtworkUrl="https://www.fitratradyo.com/img/radyo-fitrat.png"
                 MetadataTitle="{localization:Translate RadyoFitrat}"
                 ShouldAutoPlay="False"
                 ShouldMute="False" CurrentState="Buffering"

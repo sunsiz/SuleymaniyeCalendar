@@ -422,6 +422,14 @@
                     </CollectionView.Footer>
                 </CollectionView>
 
+                <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                                   IsVisible="{Binding IsBusy}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Color="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryColor}}"
+                                   HeightRequest="80"
+                                   WidthRequest="80" />
+
                 <!-- Loading overlay -->
                 <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
                     <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">

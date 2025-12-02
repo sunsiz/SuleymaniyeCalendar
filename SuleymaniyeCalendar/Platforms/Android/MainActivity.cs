@@ -1,4 +1,4 @@
-﻿using Android.App;
+using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
@@ -8,7 +8,7 @@ namespace SuleymaniyeCalendar;
 [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
 public class MainActivity : MauiAppCompatActivity
 {
-    protected override async void OnCreate(Bundle savedInstanceState)
+    protected override async void OnCreate(Bundle? savedInstanceState)
     {
         try
         {
@@ -105,7 +105,7 @@ public class MainActivity : MauiAppCompatActivity
     {
         if (OperatingSystem.IsAndroidVersionAtLeast(31))
         {
-            var am = (AlarmManager)GetSystemService(AlarmService);
+            var am = GetSystemService(AlarmService) as AlarmManager;
             if (am != null && !am.CanScheduleExactAlarms())
             {
                 var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm);

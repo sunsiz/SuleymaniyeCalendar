@@ -231,15 +231,21 @@ public partial class SettingsViewModel : BaseViewModel
 	/// <param name="resourceManager">Localization resource manager for culture switching.</param>
 	/// <param name="rtlService">RTL layout service for bidirectional languages.</param>
 	/// <param name="perf">Optional performance monitoring service.</param>
-	public SettingsViewModel(ILocalizationResourceManager resourceManager, IRtlService rtlService, PerformanceService perf = null)
+	public SettingsViewModel(ILocalizationResourceManager resourceManager, IRtlService rtlService, PerformanceService? perf = null)
 	{
 		_perf = perf ?? new PerformanceService();
 		_resourceManager = resourceManager;
 		_rtlService = rtlService;
 
-		IsBusy = true;
-		InitializeSettings();
-		IsBusy = false;
+		using (_perf.StartTimer("Settings.Constructor.Total"))
+		{
+			IsBusy = true;
+			InitializeSettings();
+			IsBusy = false;
+		}
+
+		// Log perf summary after a short delay to capture any async operations
+		Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("SettingsView"));
 	}
 
 	#endregion
@@ -300,32 +306,44 @@ public partial class SettingsViewModel : BaseViewModel
 	private void InitializeSettings()
 	{
 		// Restore saved language and apply RTL
-		var savedCi = Preferences.Get("SelectedLanguage", "tr");
-		_resourceManager.CurrentCulture = CultureInfo.GetCultureInfo(savedCi);
-		_rtlService.ApplyFlowDirection(savedCi);
+		using (_perf.StartTimer("Settings.Init.Language"))
+		{
+			var savedCi = Preferences.Get("SelectedLanguage", "tr");
+			_resourceManager.CurrentCulture = CultureInfo.GetCultureInfo(savedCi);
+			_rtlService.ApplyFlowDirection(savedCi);
+		}
 
 		// Load language list
-		LoadLanguagesInternal();
+		using (_perf.StartTimer("Settings.Init.LoadLanguages"))
+		{
+			LoadLanguagesInternal();
+		}
 
 		// Restore theme settings
-		CurrentTheme = Theme.Tema;
-		_suppressThemeUpdates = true;
-		LightChecked = CurrentTheme == 1;
-		DarkChecked = CurrentTheme == 0;
-		SystemChecked = CurrentTheme == 2;
-		_suppressThemeUpdates = false;
+		using (_perf.StartTimer("Settings.Init.Theme"))
+		{
+			CurrentTheme = (int)Theme.CurrentTheme;
+			_suppressThemeUpdates = true;
+			LightChecked = CurrentTheme == 1;
+			DarkChecked = CurrentTheme == 0;
+			SystemChecked = CurrentTheme == 2;
+			_suppressThemeUpdates = false;
+		}
 
 		// Restore service settings
-		ForegroundServiceEnabled = Preferences.Get("ForegroundServiceEnabled", true);
-		NotificationPrayerTimesEnabled = Preferences.Get("NotificationPrayerTimesEnabled", false);
-		AlwaysRenewLocationEnabled = Preferences.Get("AlwaysRenewLocationEnabled", false);
+		using (_perf.StartTimer("Settings.Init.ServiceSettings"))
+		{
+			ForegroundServiceEnabled = Preferences.Get("ForegroundServiceEnabled", true);
+			NotificationPrayerTimesEnabled = Preferences.Get("NotificationPrayerTimesEnabled", false);
+			AlwaysRenewLocationEnabled = Preferences.Get("AlwaysRenewLocationEnabled", false);
+		}
 	}
 
 	/// <summary>
 	/// Loads supported languages and sets current selection.
 	/// </summary>
 	/// <param name="reselectCi">Optional culture to reselect after loading.</param>
-	private void LoadLanguagesInternal(string reselectCi = null)
+	private void LoadLanguagesInternal(string? reselectCi = null)
 	{
 		SupportedLanguages =
 		[
@@ -343,7 +361,7 @@ public partial class SettingsViewModel : BaseViewModel
 		];
 
 		var targetCi = reselectCi ?? _resourceManager?.CurrentCulture.TwoLetterISOLanguageName;
-		var match = SupportedLanguages.FirstOrDefault(l => l.CI == targetCi) ?? SupportedLanguages.FirstOrDefault();
+		var match = SupportedLanguages.FirstOrDefault(l => l.CI == targetCi) ?? SupportedLanguages.First();
 		_selectedLanguage = match;
 		OnPropertyChanged(nameof(SelectedLanguage));
 	}
@@ -354,6 +372,7 @@ public partial class SettingsViewModel : BaseViewModel
 
 	/// <summary>
 	/// Applies language change to app culture, resources, and widgets.
+	/// Widget update is dispatched to background to avoid UI blocking.
 	/// </summary>
 	private void ApplyLanguageChange(Language language)
 	{
@@ -365,10 +384,11 @@ public partial class SettingsViewModel : BaseViewModel
 			Preferences.Set("SelectedLanguage", language.CI);
 			_rtlService.ApplyFlowDirection(language.CI);
 			Title = AppResources.UygulamaAyarlari;
-#if ANDROID
-			UpdateWidget();
-#endif
 		}
+#if ANDROID
+		// Update widget asynchronously to avoid blocking UI
+		_ = Task.Run(() => MainThread.BeginInvokeOnMainThread(UpdateWidget));
+#endif
 	}
 
 	/// <summary>
@@ -437,16 +457,19 @@ public partial class SettingsViewModel : BaseViewModel
 
 	/// <summary>
 	/// Applies theme internally and persists selection.
+	/// Widget update is dispatched asynchronously to avoid blocking UI.
 	/// </summary>
 	private void ApplyThemeInternal(int themeValue)
 	{
+		var themeMode = (ThemeMode)themeValue;
+
 		// Idempotency check
-		if (Theme.Tema == themeValue && CurrentTheme == themeValue && Dark == (themeValue == 0))
+		if (Theme.CurrentTheme == themeMode && CurrentTheme == themeValue && Dark == (themeValue == 0))
 			return;
 
 		using (_perf.StartTimer("Settings.ApplyThemeInternal"))
 		{
-			Theme.Tema = themeValue;
+			Theme.CurrentTheme = themeMode;
 			CurrentTheme = themeValue;
 			Dark = themeValue == 0;
 
@@ -462,14 +485,18 @@ public partial class SettingsViewModel : BaseViewModel
 
 			// Optional simplified gradient mode for performance testing
 			ApplySimplifiedGradientsIfEnabled();
+		}
 
 #if ANDROID
+		// Update widget asynchronously to avoid blocking UI
+		_ = Task.Run(() =>
+		{
 			using (_perf.StartTimer("Settings.ApplyThemeInternal.UpdateWidget"))
 			{
-				UpdateWidget();
+				MainThread.BeginInvokeOnMainThread(UpdateWidget);
 			}
+		});
 #endif
-		}
 	}
 
 	/// <summary>

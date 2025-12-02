@@ -6,8 +6,8 @@ namespace SuleymaniyeCalendar.Services;
 /// </summary>
 public sealed class NullAlarmService : IAlarmService
 {
-    public void SetAlarm(DateTime date, TimeSpan triggerTimeSpan, int timeOffset, string name) { }
-    public void CancelAlarm() { }
+    public void SetAlarm(DateTime alarmTime, int requestCode, NotificationSettings settings) { }
+    public void CancelAllAlarms() { }
     public void StartAlarmForegroundService() { }
     public void StopAlarmForegroundService() { }
 }

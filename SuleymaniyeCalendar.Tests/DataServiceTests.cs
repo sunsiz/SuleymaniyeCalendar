@@ -49,9 +49,16 @@ namespace SuleymaniyeCalendar.Tests
             _jsonLoggerMock = new Mock<ILogger<JsonApiService>>();
             _jsonApiMock = new Mock<JsonApiService>(_jsonLoggerMock.Object);
             _alarmServiceMock = new Mock<IAlarmService>();
+            
+            var perfService = new PerformanceService();
+            var locationService = new LocationService(perfService);
             var xmlApiService = new XmlApiService();
             var cacheService = new PrayerCacheService();
-            _dataService = new DataService(_alarmServiceMock.Object, _jsonApiMock.Object, xmlApiService, cacheService);
+            
+            var repository = new PrayerTimesRepository(_jsonApiMock.Object, xmlApiService, cacheService, perfService);
+            var scheduler = new NotificationSchedulerService(_alarmServiceMock.Object, repository, perfService);
+            
+            _dataService = new DataService(locationService, repository, scheduler, perfService);
         }
 
         [TestMethod]
@@ -59,7 +66,7 @@ namespace SuleymaniyeCalendar.Tests
         {
             // Arrange
             var expectedData = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar> { _testCalendar };
-            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()))
+            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()))
                        .ReturnsAsync(expectedData);
 
             // Act
@@ -69,14 +76,14 @@ namespace SuleymaniyeCalendar.Tests
             result.Should().NotBeNull();
             result.Count.Should().Be(1);
             result[0].Date.Should().Be(_testCalendar.Date);
-            _jsonApiMock.Verify(j => j.GetMonthlyPrayerTimesAsync(41.0082, 28.9784, It.IsAny<int>(), It.IsAny<double>()), Times.Once);
+            _jsonApiMock.Verify(j => j.GetMonthlyPrayerTimesAsync(41.0082, 28.9784, It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()), Times.Once);
         }
 
         [TestMethod]
         public async Task GetMonthlyPrayerTimesHybridAsync_JsonApiFails_XmlFallbackUsed()
         {
             // Arrange
-            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()))
+            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()))
                        .ReturnsAsync((ObservableCollection<SuleymaniyeCalendar.Models.Calendar>)null);
 
             // Mock the XML fallback behavior (this would require additional setup in real DataService)
@@ -87,7 +94,7 @@ namespace SuleymaniyeCalendar.Tests
 
             // Assert
             // The method should attempt JSON first, then fallback to XML
-            _jsonApiMock.Verify(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()), Times.Once);
+            _jsonApiMock.Verify(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()), Times.Once);
             // Additional verification would depend on actual DataService implementation
         }
 
@@ -156,7 +163,7 @@ namespace SuleymaniyeCalendar.Tests
         {
             // Arrange
             var expectedData = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar> { _testCalendar };
-            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()))
+            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()))
                        .ReturnsAsync(expectedData);
 
             // Setup the calendar property to return test location data
@@ -180,14 +187,14 @@ namespace SuleymaniyeCalendar.Tests
         {
             // Arrange
             var expectedData = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar> { _testCalendar };
-            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()))
+            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()))
                        .ReturnsAsync(expectedData);
 
             // Act
             await _dataService.GetMonthlyPrayerTimesHybridAsync(_testLocation, forceRefresh: true);
 
             // Assert
-            _jsonApiMock.Verify(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()), Times.Once);
+            _jsonApiMock.Verify(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()), Times.Once);
         }
 
         [TestMethod]
@@ -217,7 +224,7 @@ namespace SuleymaniyeCalendar.Tests
         public async Task HybridApi_Resilience_HandlesNetworkErrors()
         {
             // Arrange
-            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()))
+            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()))
                        .ThrowsAsync(new System.Net.Http.HttpRequestException("Network error"));
 
             // Act & Assert
@@ -256,7 +263,7 @@ namespace SuleymaniyeCalendar.Tests
                 });
             }
 
-            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()))
+            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()))
                        .ReturnsAsync(largeDataSet);
 
             // Act
@@ -305,7 +312,7 @@ namespace SuleymaniyeCalendar.Tests
             // This would test the BackgroundDataPreloader mentioned in the instructions
             // For now, just verify DataService can handle background caching
             var expectedData = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar> { _testCalendar };
-            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()))
+            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()))
                        .ReturnsAsync(expectedData);
 
             // Act
@@ -319,7 +326,7 @@ namespace SuleymaniyeCalendar.Tests
         public async Task SetMonthlyAlarms_15DayLimit_RespectsConstraint()
         {
             // Arrange - Test the 15-day scheduling limit mentioned in documentation
-            _alarmServiceMock.Setup(a => a.SetAlarm(It.IsAny<DateTime>(), It.IsAny<TimeSpan>(), It.IsAny<int>(), It.IsAny<string>()));
+            _alarmServiceMock.Setup(a => a.SetAlarm(It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<NotificationSettings>()));
 
             // Act
             // This would call DataService's SetMonthlyAlarmsAsync which should respect the 15-day limit
@@ -335,14 +342,14 @@ namespace SuleymaniyeCalendar.Tests
         {
             // Arrange - Set up JSON API to return data
             var jsonData = new ObservableCollection<SuleymaniyeCalendar.Models.Calendar> { _testCalendar };
-            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()))
+            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()))
                        .ReturnsAsync(jsonData);
 
             // Act
             var result = _dataService.GetMonthlyPrayerTimesHybridAsync(_testLocation, false).Result;
 
             // Assert - JSON API should be called first (hybrid approach)
-            _jsonApiMock.Verify(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()), Times.Once);
+            _jsonApiMock.Verify(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()), Times.Once);
             result.Should().NotBeNull();
             result.Should().BeSameAs(jsonData);
         }
@@ -351,7 +358,7 @@ namespace SuleymaniyeCalendar.Tests
         public async Task NetworkResilience_OfflineMode_UsesCachedData()
         {
             // Arrange - Simulate network failure
-            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()))
+            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()))
                        .ThrowsAsync(new System.Net.NetworkInformation.NetworkInformationException());
 
             // Act & Assert - Should not throw, should handle gracefully with cached data
@@ -385,7 +392,7 @@ namespace SuleymaniyeCalendar.Tests
                 });
             }
 
-            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>()))
+            _jsonApiMock.Setup(j => j.GetMonthlyPrayerTimesAsync(It.IsAny<double>(), It.IsAny<double>(), It.IsAny<int>(), It.IsAny<double>(), It.IsAny<int?>()))
                        .ReturnsAsync(batchData);
 
             // Act

@@ -6,7 +6,7 @@ namespace SuleymaniyeCalendar.Services
 {
     public class RadioService : IRadioService
     {
-        private MediaElement _mediaElement;
+        private MediaElement? _mediaElement;
         private bool _isPlaying;
         private bool _isLoading;
         private string _currentTitle = AppResources.FitratinSesi;
@@ -16,9 +16,9 @@ namespace SuleymaniyeCalendar.Services
         public bool IsLoading => _isLoading;
         public string CurrentTitle => _currentTitle;
 
-        public event EventHandler<bool> PlaybackStateChanged;
-        public event EventHandler<bool> LoadingStateChanged;
-        public event EventHandler<string> TitleChanged;
+        public event EventHandler<bool>? PlaybackStateChanged;
+        public event EventHandler<bool>? LoadingStateChanged;
+        public event EventHandler<string>? TitleChanged;
 
         public void SetMediaElement(MediaElement mediaElement)
         {
@@ -125,27 +125,27 @@ namespace SuleymaniyeCalendar.Services
             }
         }
 
-        private void OnMediaOpened(object sender, EventArgs e)
+        private void OnMediaOpened(object? sender, EventArgs e)
         {
             SetLoadingState(false);
             SetPlaybackState(true);
             System.Diagnostics.Debug.WriteLine("Radio media opened successfully");
         }
 
-        private void OnMediaFailed(object sender, EventArgs e)
+        private void OnMediaFailed(object? sender, EventArgs e)
         {
             SetLoadingState(false);
             SetPlaybackState(false);
             System.Diagnostics.Debug.WriteLine($"Radio media failed");
         }
 
-        private void OnMediaEnded(object sender, EventArgs e)
+        private void OnMediaEnded(object? sender, EventArgs e)
         {
             SetPlaybackState(false);
             System.Diagnostics.Debug.WriteLine("Radio media ended");
         }
 
-        private void OnStateChanged(object sender, EventArgs e)
+        private void OnStateChanged(object? sender, EventArgs e)
         {
             if (_mediaElement == null) return;
             

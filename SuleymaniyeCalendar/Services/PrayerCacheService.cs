@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
+using SuleymaniyeCalendar.Helpers;
 using SuleymaniyeCalendar.Models;
 using PrayerCalendar = SuleymaniyeCalendar.Models.Calendar;
 
@@ -34,11 +35,6 @@ public class PrayerCacheService
     /// Location change threshold in degrees (~2km) for cache invalidation.
     /// </summary>
     private const double LocationChangeThreshold = 0.02;
-
-    /// <summary>
-    /// Supported date formats for parsing PrayerCalendar dates.
-    /// </summary>
-    private static readonly string[] DateFormats = { "dd.MM.yyyy", "dd/MM/yyyy", "dd-MM-yyyy", "yyyy-MM-dd" };
 
     #endregion
 
@@ -137,6 +133,19 @@ public class PrayerCacheService
             Debug.WriteLine($"TryGetMonthlyFromCacheAsync failed: {ex.Message}");
         }
         return null;
+    }
+
+    public async Task<PrayerCalendar?> TryGetDailyFromUnifiedCacheAsync(Location location, DateTime date)
+    {
+        var year = date.Year;
+        var list = await LoadYearCacheAsync(location, year).ConfigureAwait(false);
+        if (list == null) return null;
+
+        return list.FirstOrDefault(d => 
+        {
+            var dd = ParseCalendarDateOrMin(d.Date);
+            return dd != DateTime.MinValue && dd.Date == date.Date;
+        });
     }
 
     /// <summary>
@@ -349,21 +358,10 @@ public class PrayerCacheService
 
     /// <summary>
     /// Parses PrayerCalendar date string to DateTime, returning DateTime.MinValue on failure.
-    /// Uses invariant culture and multiple format patterns for robustness.
+    /// Delegates to centralized <see cref="AppConstants.ParseCalendarDate"/> for consistency.
     /// </summary>
-    public static DateTime ParseCalendarDateOrMin(string? dateString)
-    {
-        if (string.IsNullOrWhiteSpace(dateString))
-            return DateTime.MinValue;
-
-        if (DateTime.TryParseExact(dateString, DateFormats, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dt))
-            return dt.Date;
-
-        if (DateTime.TryParse(dateString, CultureInfo.InvariantCulture, DateTimeStyles.None, out dt))
-            return dt.Date;
-
-        return DateTime.MinValue;
-    }
+    public static DateTime ParseCalendarDateOrMin(string? dateString) =>
+        AppConstants.ParseCalendarDate(dateString);
 
     #endregion
 

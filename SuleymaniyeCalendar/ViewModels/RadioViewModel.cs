@@ -35,17 +35,24 @@ public partial class RadioViewModel : BaseViewModel
 	public RadioViewModel(IRadioService radioService)
 	{
 		_radioService = radioService;
-		IsBusy = true;
-		Title = AppResources.IcerikYukleniyor;
+		
+		using (_perf.StartTimer("Radio.Constructor"))
+		{
+			IsBusy = true;
+			Title = AppResources.IcerikYukleniyor;
 
-		// Subscribe to radio service events
-		_radioService.PlaybackStateChanged += OnPlaybackStateChanged;
-		_radioService.LoadingStateChanged += OnLoadingStateChanged;
-		_radioService.TitleChanged += OnTitleChanged;
+			// Subscribe to radio service events
+			_radioService.PlaybackStateChanged += OnPlaybackStateChanged;
+			_radioService.LoadingStateChanged += OnLoadingStateChanged;
+			_radioService.TitleChanged += OnTitleChanged;
 
-		Title = AppResources.FitratinSesi;
-		_ = CheckInternetAsync();
-		IsBusy = false;
+			Title = AppResources.FitratinSesi;
+			_ = CheckInternetAsync();
+			IsBusy = false;
+		}
+		
+		// Log perf summary after delay
+		Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("RadioView"));
 	}
 
 	#endregion
@@ -79,19 +86,19 @@ public partial class RadioViewModel : BaseViewModel
 	#region Event Handlers
 
 	/// <summary>Handles playback state changes from RadioService.</summary>
-	private void OnPlaybackStateChanged(object sender, bool isPlaying)
+	private void OnPlaybackStateChanged(object? sender, bool isPlaying)
 	{
 		_ = MainThread.InvokeOnMainThreadAsync(() => IsPlaying = isPlaying);
 	}
 
 	/// <summary>Handles loading state changes (buffering indicator).</summary>
-	private void OnLoadingStateChanged(object sender, bool isLoading)
+	private void OnLoadingStateChanged(object? sender, bool isLoading)
 	{
 		_ = MainThread.InvokeOnMainThreadAsync(() => IsBusy = isLoading);
 	}
 
 	/// <summary>Handles track title/metadata changes.</summary>
-	private void OnTitleChanged(object sender, string title)
+	private void OnTitleChanged(object? sender, string title)
 	{
 		_ = MainThread.InvokeOnMainThreadAsync(() => Title = title);
 	}

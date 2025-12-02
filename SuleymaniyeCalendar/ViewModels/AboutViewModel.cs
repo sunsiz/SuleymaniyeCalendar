@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SuleymaniyeCalendar.Resources.Strings;
+using SuleymaniyeCalendar.Services;
 using SuleymaniyeCalendar.Views;
 
 namespace SuleymaniyeCalendar.ViewModels;
@@ -10,6 +11,7 @@ namespace SuleymaniyeCalendar.ViewModels;
 /// </summary>
 public sealed partial class AboutViewModel : BaseViewModel
 {
+    private readonly PerformanceService _perf = new();
     private string _versionNumber = string.Empty;
 
     /// <summary>App version string displayed on the About page.</summary>
@@ -33,8 +35,14 @@ public sealed partial class AboutViewModel : BaseViewModel
 
     public AboutViewModel()
     {
-        Title = AppResources.SuleymaniyeVakfi;
-        VersionNumber = $" v{AppInfo.VersionString} ";
+        using (_perf.StartTimer("About.Constructor"))
+        {
+            Title = AppResources.SuleymaniyeVakfi;
+            VersionNumber = $" v{AppInfo.VersionString} ";
+        }
+        
+        // Log summary after page settles
+        Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("AboutView"));
     }
 
     [RelayCommand]

@@ -12,8 +12,10 @@ public class AlarmNotificationReceiver : BroadcastReceiver
 {
     private const int NotificationId = 2025;
 
-    public override void OnReceive(Context context, Intent intent)
+    public override void OnReceive(Context? context, Intent? intent)
     {
+        if (context == null) return;
+        
         var name = intent?.GetStringExtra("name") ?? string.Empty;
         var timeStr = intent?.GetStringExtra("time") ?? string.Empty;
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(timeStr))
@@ -22,9 +24,10 @@ public class AlarmNotificationReceiver : BroadcastReceiver
         // Ensure channels exist (no-op if already created)
         NotificationChannelManager.CreateAlarmNotificationChannels();
 
-        var nm = (NotificationManager)context.GetSystemService(Context.NotificationService);
+        var nm = context.GetSystemService(Context.NotificationService) as NotificationManager;
+        if (nm == null) return;
 
-    var pkg = context.PackageName;
+        var pkg = context.PackageName;
 
         // Pick channel by user selection (unified key with PrayerDetailViewModel)
         string prayerId = name switch
@@ -80,7 +83,7 @@ public class AlarmNotificationReceiver : BroadcastReceiver
         var content = $"{name} {Resources.Strings.AppResources.Vakti} {timeStr}";
 
         // Create large icon bitmap safely - decode fresh copy to avoid recycled bitmap issues
-        Bitmap largeIcon = null;
+        Bitmap? largeIcon = null;
         try
         {
             largeIcon = BitmapFactory.DecodeResource(context.Resources, Resource.Drawable.app_logo);
@@ -106,6 +109,10 @@ public class AlarmNotificationReceiver : BroadcastReceiver
             builder.SetLargeIcon(largeIcon);
         }
 
-        nm.Notify(NotificationId, builder.Build());
+        var notification = builder.Build();
+        if (notification != null)
+        {
+            nm.Notify(NotificationId, notification);
+        }
     }
 }

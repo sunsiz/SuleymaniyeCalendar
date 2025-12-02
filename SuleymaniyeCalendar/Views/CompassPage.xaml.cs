@@ -32,4 +32,10 @@ public partial class CompassPage : ContentPage
 			System.Diagnostics.Debug.WriteLine($"CompassPage.OnAppearing error: {ex.Message}");
 		}
 	}
+
+	protected override void OnDisappearing()
+	{
+		base.OnDisappearing();
+		_viewModel?.Dispose();
+	}
 }

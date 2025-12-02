@@ -103,36 +103,42 @@ public partial class CompassViewModel : BaseViewModel
 		_dataService = dataService;
 		Title = AppResources.KibleGostergesi;
 		
-		// Load saved location from preferences
-		UpdateLocationFromPreferences();
-		
-		// Initialize address asynchronously (reverse geocoding)
-		_ = InitializeAddressAsync();
-		
-		// Start compass sensor
-		try
+		using (_perf.StartTimer("Compass.Constructor"))
 		{
-			if (!Compass.IsMonitoring)
+			// Load saved location from preferences
+			UpdateLocationFromPreferences();
+			
+			// Initialize address asynchronously (reverse geocoding)
+			_ = InitializeAddressAsync();
+			
+			// Start compass sensor
+			try
 			{
-				// MUST subscribe BEFORE Compass.Start() or no readings received
-				Compass.ReadingChanged += Compass_ReadingChanged;
-				Compass.Start(Speed, applyLowPassFilter: true);
+				if (!Compass.IsMonitoring)
+				{
+					// MUST subscribe BEFORE Compass.Start() or no readings received
+					Compass.ReadingChanged += Compass_ReadingChanged;
+					Compass.Start(Speed, applyLowPassFilter: true);
+				}
+			}
+			catch (FeatureNotSupportedException fnsEx)
+			{
+				ShowToast(AppResources.CihazPusulaDesteklemiyor);
+				Debug.WriteLine($"Compass not supported: {fnsEx.Message}");
+			}
+			catch (Exception ex)
+			{
+				ShowToast(ex.Message);
+				Debug.WriteLine($"Compass error: {ex.Message}");
+				
+				// Show fallback values
+				LatitudeAltitude = $"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
+				DegreeLongitude = $"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
 			}
 		}
-		catch (FeatureNotSupportedException fnsEx)
-		{
-			ShowToast(AppResources.CihazPusulaDesteklemiyor);
-			Debug.WriteLine($"Compass not supported: {fnsEx.Message}");
-		}
-		catch (Exception ex)
-		{
-			ShowToast(ex.Message);
-			Debug.WriteLine($"Compass error: {ex.Message}");
-			
-			// Show fallback values
-			LatitudeAltitude = $"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
-			DegreeLongitude = $"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
-		}
+		
+		// Log perf summary after delay to capture async operations
+		Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("CompassView"));
 	}
 
 	#endregion

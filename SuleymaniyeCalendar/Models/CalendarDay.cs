@@ -50,7 +50,7 @@ public sealed partial class CalendarDay : ObservableObject
     public bool HasData { get; set; }
 
     /// <summary>Full prayer times data for this day (if available).</summary>
-    public Calendar PrayerData { get; set; }
+    public Calendar? PrayerData { get; set; }
 
     #region Computed Visual Properties
 
@@ -67,7 +67,7 @@ public sealed partial class CalendarDay : ObservableObject
     }
 
     /// <summary>Text color optimized for readability.</summary>
-    public Color TextColor
+    public Color? TextColor
     {
         get
         {

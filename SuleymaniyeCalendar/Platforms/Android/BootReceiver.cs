@@ -30,7 +30,7 @@ public class BootReceiver : BroadcastReceiver
 
         if (IsRescheduleAction(action))
         {
-            AlarmRescheduleJobIntentService.Enqueue(context, action);
+            // AlarmRescheduleJobIntentService.Enqueue(context, action);
             TryStartForegroundService(context, action);
             return;
         }
@@ -97,7 +97,7 @@ public class BootReceiver : BroadcastReceiver
 
     private static bool IsUserUnlocked(Context context)
     {
-        var userManager = (UserManager)context.GetSystemService(Context.UserService);
+        var userManager = context.GetSystemService(Context.UserService) as UserManager;
         return userManager?.IsUserUnlocked ?? true;
     }
 

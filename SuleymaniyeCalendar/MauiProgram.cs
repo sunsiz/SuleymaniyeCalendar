@@ -96,6 +96,9 @@ public static class MauiProgram
 
         // Core services
         services.AddSingleton<PerformanceService>();
+        services.AddSingleton<LocationService>();
+        services.AddSingleton<PrayerTimesRepository>();
+        services.AddSingleton<NotificationSchedulerService>();
         services.AddSingleton<JsonApiService>();
         services.AddSingleton<XmlApiService>();
         services.AddSingleton<PrayerCacheService>();

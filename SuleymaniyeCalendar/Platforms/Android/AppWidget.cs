@@ -15,7 +15,7 @@ namespace SuleymaniyeCalendar
 		/// This method is called when the 'updatePeriodMillis' from the AppwidgetProvider passes,
 		/// or the user manually refreshes/resizes.
 		/// </summary>
-		public override void OnUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
+		public override void OnUpdate(Context? context, AppWidgetManager? appWidgetManager, int[]? appWidgetIds)
 		{
 			try
 			{
@@ -30,9 +30,9 @@ namespace SuleymaniyeCalendar
 			//appWidgetManager.UpdateAppWidget(me, BuildRemoteViews(context, appWidgetIds));
 		}
 
-		public override void OnReceive(Context context, Intent intent)
+		public override void OnReceive(Context? context, Intent? intent)
 		{
-			base.OnReceive(context, intent);
+			base.OnReceive(context!, intent!);
 			try
 			{
 				// To prevent any ANR timeouts, we perform the update in a service

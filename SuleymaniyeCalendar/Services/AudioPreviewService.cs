@@ -6,7 +6,7 @@ namespace SuleymaniyeCalendar.Services
 	public class AudioPreviewService : IAudioPreviewService
 	{
 #if ANDROID
-		private Android.Media.MediaPlayer _player;
+		private Android.Media.MediaPlayer? _player;
 #endif
 
 		public bool IsPlaying {
@@ -31,8 +31,11 @@ namespace SuleymaniyeCalendar.Services
 					return;
 
 				_player = Android.Media.MediaPlayer.Create(context, resId);
-		_player.Looping = loop;
-				_player.Start();
+				if (_player != null)
+				{
+					_player.Looping = loop;
+					_player.Start();
+				}
 			}
 			catch { /* ignore */ }
 #else

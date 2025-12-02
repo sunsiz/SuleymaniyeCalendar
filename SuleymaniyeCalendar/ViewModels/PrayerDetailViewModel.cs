@@ -20,11 +20,12 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	
 	private bool _scheduling;
 	private bool _scheduledOnce;
+	private bool _awaitingPermissionReturn;
 
 	#region Properties
 
 	/// <summary>Prayer time display string (e.g., "05:30").</summary>
-	private string _time;
+	private string _time = string.Empty;
 	public string Time
 	{
 		get => _time;
@@ -71,7 +72,7 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	}
 
 	/// <summary>Available alarm sounds for selection.</summary>
-	private ObservableCollection<Sound> _availableSounds;
+	private ObservableCollection<Sound> _availableSounds = new();
 	public ObservableCollection<Sound> AvailableSounds
 	{
 		get => _availableSounds;
@@ -79,8 +80,8 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	}
 
 	/// <summary>Currently selected alarm sound.</summary>
-	private Sound _selectedSound;
-	public Sound SelectedSound
+	private Sound? _selectedSound;
+	public Sound? SelectedSound
 	{
 		get => _selectedSound;
 		set => SetProperty(ref _selectedSound, value);
@@ -90,7 +91,7 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	/// Prayer identifier (e.g., "fajr", "dhuhr").
 	/// Setting this triggers prayer data loading.
 	/// </summary>
-	private string _prayerId;
+	private string _prayerId = string.Empty;
 	public string PrayerId
 	{
 		get => _prayerId;
@@ -140,8 +141,16 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		_audioPreview = audioPreview;
 		_dataService = dataService;
 		Title = AppResources.PageTitle;
-		LoadSounds();
+		
+		using (_perf.StartTimer("PrayerDetail.Constructor"))
+		{
+			LoadSounds();
+		}
+		
 		IsPlaying = false;
+		
+		// Log perf summary after delay to capture LoadPrayer metrics
+		Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("PrayerDetailView"));
 	}
 
 	#endregion
@@ -156,7 +165,15 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	{
 		if (IsBusy) return;
 		
-		Preferences.Set(PrayerId + "Enabled", value);
+		try 
+		{ 
+			Preferences.Set(PrayerId + "Enabled", value); 
+		} 
+		catch (Exception ex)
+		{
+			Debug.WriteLine($"Failed to save preference {PrayerId}Enabled: {ex.Message}");
+		}
+
 		Debug.WriteLine($"Value Set for {PrayerId}Enabled: {value}");
 		Enabled = value;
 		OnPropertyChanged(nameof(ShowAdvancedOptions));
@@ -165,9 +182,10 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	/// <summary>
 	/// Saves settings and schedules alarms, then navigates back.
 	/// Shows overlay during scheduling for user feedback.
+	/// If permission is required, waits for user to grant it before navigating.
 	/// </summary>
 	[RelayCommand]
-	public async Task GoBack()
+	public async Task Save()
 	{
 		IsBusy = true;
 		OverlayMessage = AppResources.AlarmlarPlanlaniyor + "...";
@@ -175,18 +193,38 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		
 		try
 		{
-			await SaveAndScheduleInternalAsync().ConfigureAwait(false);
-			// Brief delay so user perceives progress
-			await Task.Delay(400).ConfigureAwait(false);
-			await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync(".."));
+			var success = await SaveAndScheduleInternalAsync().ConfigureAwait(false);
+			
+			// Only navigate back if scheduling succeeded or no permission was needed
+			// If user was sent to permission settings, don't navigate - they'll return to this page
+			if (success)
+			{
+				// Brief delay so user perceives progress
+				await Task.Delay(400).ConfigureAwait(false);
+				await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync(".."));
+				_scheduledOnce = true;
+			}
 		}
 		finally
 		{
 			ShowOverlay = false;
 			OverlayMessage = null;
 			IsBusy = false;
-			_scheduledOnce = true;
 		}
+	}
+
+	/// <summary>
+	/// Called when user returns to the page (e.g., after granting permission).
+	/// Retries scheduling if we were waiting for permission.
+	/// </summary>
+	public async Task OnPageResumedAsync()
+	{
+		if (!_awaitingPermissionReturn) return;
+		
+		_awaitingPermissionReturn = false;
+		
+		// Retry saving after permission was hopefully granted
+		await Save();
 	}
 
 	/// <summary>
@@ -233,9 +271,10 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	/// Saves alarm settings and schedules monthly alarms.
 	/// Handles Android permission checks (exact alarms, notifications).
 	/// </summary>
-	private async Task SaveAndScheduleInternalAsync()
+	/// <returns>True if scheduling completed successfully, false if user was redirected to permission settings.</returns>
+	private async Task<bool> SaveAndScheduleInternalAsync()
 	{
-		if (_scheduling) return; // Reentrancy guard
+		if (_scheduling) return false; // Reentrancy guard
 		_scheduling = true;
 		
 		try
@@ -254,16 +293,23 @@ public partial class PrayerDetailViewModel : BaseViewModel
 
 				// Platform permission checks
 				#if ANDROID
-				if (!await CheckAndroidPermissionsAsync()) return;
+				var permissionResult = await CheckAndroidPermissionsAsync();
+				if (!permissionResult.Success)
+				{
+					_awaitingPermissionReturn = permissionResult.RedirectedToSettings;
+					return false;
+				}
 				#endif
 
 				// Schedule alarms
 				await _dataService.SetMonthlyAlarmsAsync(forceReschedule: true).ConfigureAwait(false);
+				return true;
 			}
 		}
 		catch (Exception ex)
 		{
 			Alert(AppResources.SorunCikti, ex.Message);
+			return false;
 		}
 		finally
 		{
@@ -273,17 +319,22 @@ public partial class PrayerDetailViewModel : BaseViewModel
 
 	#if ANDROID
 	/// <summary>
+	/// Result of Android permission check.
+	/// </summary>
+	private readonly record struct PermissionCheckResult(bool Success, bool RedirectedToSettings);
+
+	/// <summary>
 	/// Checks and requests Android permissions for exact alarms and notifications.
 	/// </summary>
-	/// <returns>True if all permissions granted, false if scheduling should abort.</returns>
-	private async Task<bool> CheckAndroidPermissionsAsync()
+	/// <returns>Result indicating if permissions granted and whether user was redirected to settings.</returns>
+	private async Task<PermissionCheckResult> CheckAndroidPermissionsAsync()
 	{
 		try
 		{
 			// Exact alarms (API 31+): Open system settings if not granted
 			if (OperatingSystem.IsAndroidVersionAtLeast(31))
 			{
-				var am = (Android.App.AlarmManager)Android.App.Application.Context.GetSystemService(Android.Content.Context.AlarmService);
+				var am = (Android.App.AlarmManager?)Android.App.Application.Context.GetSystemService(Android.Content.Context.AlarmService);
 				if (am != null && !am.CanScheduleExactAlarms())
 				{
 					var intent = new Android.Content.Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm);
@@ -291,7 +342,7 @@ public partial class PrayerDetailViewModel : BaseViewModel
 					intent.AddFlags(Android.Content.ActivityFlags.NewTask);
 					Android.App.Application.Context.StartActivity(intent);
 					_scheduling = false;
-					return false;
+					return new PermissionCheckResult(Success: false, RedirectedToSettings: true);
 				}
 			}
 
@@ -304,9 +355,9 @@ public partial class PrayerDetailViewModel : BaseViewModel
 					var newStatus = await Permissions.RequestAsync<Permissions.PostNotifications>();
 					if (newStatus != PermissionStatus.Granted)
 					{
-						DataService.ShowToast(AppResources.BildirimIzniGerekli);
+						ShowToast(AppResources.BildirimIzniGerekli);
 						_scheduling = false;
-						return false;
+						return new PermissionCheckResult(Success: false, RedirectedToSettings: false);
 					}
 				}
 			}
@@ -315,10 +366,10 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		{
 			Debug.WriteLine($"Permission checks failed: {ex.Message}");
 			_scheduling = false;
-			return false;
+			return new PermissionCheckResult(Success: false, RedirectedToSettings: false);
 		}
 		
-		return true;
+		return new PermissionCheckResult(Success: true, RedirectedToSettings: false);
 	}
 	#endif
 
@@ -328,37 +379,40 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	/// </summary>
 	private void LoadPrayer()
 	{
-		try
+		using (_perf.StartTimer("PrayerDetail.LoadPrayer"))
 		{
-			// Set localized prayer title using switch expression
-			Title = PrayerId switch
+			try
 			{
-				"falsefajr" => AppResources.FecriKazip,
-				"fajr" => AppResources.FecriSadik,
-				"sunrise" => AppResources.SabahSonu,
-				"dhuhr" => AppResources.Ogle,
-				"asr" => AppResources.Ikindi,
-				"maghrib" => AppResources.Aksam,
-				"isha" => AppResources.Yatsi,
-				"endofisha" => AppResources.YatsiSonu,
-				_ => Title
-			};
+				// Set localized prayer title using switch expression
+				Title = PrayerId switch
+				{
+					"falsefajr" => AppResources.FecriKazip,
+					"fajr" => AppResources.FecriSadik,
+					"sunrise" => AppResources.SabahSonu,
+					"dhuhr" => AppResources.Ogle,
+					"asr" => AppResources.Ikindi,
+					"maghrib" => AppResources.Aksam,
+					"isha" => AppResources.Yatsi,
+					"endofisha" => AppResources.YatsiSonu,
+					_ => Title
+				};
 
-			// Load saved preferences
-			Time = Preferences.Get(PrayerId, "");
-			Enabled = Preferences.Get(PrayerId + "Enabled", false);
-			NotificationTime = Preferences.Get(PrayerId + "NotificationTime", 0);
-			OnPropertyChanged(nameof(ShowAdvancedOptions));
+				// Load saved preferences
+				Time = Preferences.Get(PrayerId, "");
+				Enabled = Preferences.Get(PrayerId + "Enabled", false);
+				NotificationTime = Preferences.Get(PrayerId + "NotificationTime", 0);
+				OnPropertyChanged(nameof(ShowAdvancedOptions));
 
-			// Load selected sound or default to "kus" (bird chirping)
-			var savedSound = Preferences.Get(PrayerId + "AlarmSound", "kus");
-			SelectedSound = AvailableSounds?.FirstOrDefault(n => n.FileName == savedSound)
-							?? AvailableSounds?.FirstOrDefault(n => n.FileName == "kus")
-							?? AvailableSounds?.FirstOrDefault();
-		}
-		catch (Exception ex)
-		{
-			Debug.WriteLine($"Failed to load prayer detail: {ex.Message}");
+				// Load selected sound or default to "kus" (bird chirping)
+				var savedSound = Preferences.Get(PrayerId + "AlarmSound", "kus");
+				SelectedSound = AvailableSounds?.FirstOrDefault(n => n.FileName == savedSound)
+								?? AvailableSounds?.FirstOrDefault(n => n.FileName == "kus")
+								?? AvailableSounds?.FirstOrDefault();
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"Failed to load prayer detail: {ex.Message}");
+			}
 		}
 	}
 

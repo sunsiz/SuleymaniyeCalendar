@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -30,33 +30,104 @@ namespace SuleymaniyeCalendar
 		private static readonly TimeSpan MinRescheduleInterval = TimeSpan.FromHours(6);
 		private static readonly TimeSpan RescheduleThreshold = TimeSpan.FromDays(-3);
 		
-		private NotificationManager _notificationManager;
+		private NotificationManager? _notificationManager;
 		private readonly string _channelName = AppResources.SuleymaniyeVakfiTakvimi;
-		private Notification _notification;
+		private Notification? _notification;
 		private bool _isStarted;
 		private bool _isInForeground;
-		private Handler _handler;
-		private Action _runnable;
+		private Handler? _handler;
+		private Action? _runnable;
 		private int _updateCounter;
 		private DateTime _lastRescheduleAttemptUtc = DateTime.MinValue;
 		
-		public override IBinder OnBind(Intent intent)
+		/// <summary>
+		/// Critical system events that should bypass anti-spam protection for alarm scheduling.
+		/// These events require immediate rescheduling to maintain accurate prayer notifications.
+		/// </summary>
+		private static readonly string[] CriticalSystemEvents =
 		{
-			// Return null because this is a pure started service. A hybrid service would return a binder that would
-			// allow access to the GetFormattedRemainingTime() method.
+			Intent.ActionBootCompleted,
+			Intent.ActionTimeChanged,
+			Intent.ActionTimezoneChanged,
+			Intent.ActionMyPackageReplaced
+		};
+		
+		/// <summary>
+		/// Determines if the start reason is a critical system event that should bypass anti-spam protection.
+		/// </summary>
+		private static bool IsCriticalSystemEvent(string startReason)
+		{
+			if (string.IsNullOrEmpty(startReason)) return false;
+			
+			foreach (var evt in CriticalSystemEvents)
+			{
+				if (startReason == evt) return true;
+			}
+			return false;
+		}
+		
+		public override IBinder? OnBind(Intent? intent)
+		{
 			return null;
 		}
 
-		public void SetAlarm(DateTime date, TimeSpan triggerTimeSpan, int timeOffset, string name)
-		{
-			System.Diagnostics.Debug.WriteLine("TimeStamp-SetAlarm-Start", $"Setting alarm for {date} {triggerTimeSpan} {timeOffset} for {name} at {DateTime.Now:MM/dd/yyyy hh:mm:ss.fff tt}");
-			AlarmScheduler.SchedulePrayer(date, triggerTimeSpan, timeOffset, name);
-		}
+        public void SetAlarm(DateTime alarmTime, int requestCode, NotificationSettings settings)
+        {
+            var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
+            intent.PutExtra("name", settings.PrayerName);
+            intent.PutExtra("time", alarmTime.ToString("HH:mm"));
+            
+            var pendingIntent = PendingIntent.GetBroadcast(
+                Application.Context, 
+                requestCode, 
+                intent, 
+                PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
 
-		public void CancelAlarm()
-		{
-			AlarmScheduler.CancelAll();
-		}
+            var alarmManager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager;
+            if (alarmManager == null || pendingIntent == null) return;
+            
+            // Convert to UTC milliseconds
+            long triggerMillis = (long)(alarmTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            {
+                alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
+            }
+            else
+            {
+                alarmManager.SetExact(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
+            }
+        }
+
+        public void CancelAllAlarms()
+        {
+            var alarmManager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager;
+            if (alarmManager == null) return;
+            
+            var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
+            
+            // Loop through next 33 days * 8 prayers to cover all potential alarms
+            var startDate = DateTime.Today.AddDays(-1);
+            for (int i = 0; i < 33; i++)
+            {
+                var date = startDate.AddDays(i);
+                for (int p = 0; p < 8; p++)
+                {
+                    int requestCode = (date.DayOfYear * 100) + p;
+                    var pendingIntent = PendingIntent.GetBroadcast(
+                        Application.Context, 
+                        requestCode, 
+                        intent, 
+                        PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
+                    
+                    if (pendingIntent != null)
+                    {
+                        alarmManager.Cancel(pendingIntent);
+                        pendingIntent.Cancel();
+                    }
+                }
+            }
+        }
 
 		private void TryRescheduleAlarms()
 		{
@@ -83,7 +154,14 @@ namespace SuleymaniyeCalendar
 					try
 					{
 						var dataService = GetDataService();
-						await dataService.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+                        if (dataService != null)
+                        {
+                            var location = await dataService.GetCurrentLocationAsync(false);
+                            if (location != null)
+                            {
+						        await dataService.SetMonthlyAlarmsAsync(location).ConfigureAwait(false);
+                            }
+                        }
 					}
 					catch (Exception ex)
 					{
@@ -97,29 +175,35 @@ namespace SuleymaniyeCalendar
 			}
 		}
 
-		private DataService GetDataService()
+		private DataService? GetDataService()
 		{
-			return (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-				?? new DataService(this);
+            return IPlatformApplication.Current?.Services?.GetService<DataService>();
 		}
 
 		public override void OnCreate()
 		{
 			base.OnCreate();
-			_handler = new Handler(Looper.MainLooper);
-			_notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+			var mainLooper = Looper.MainLooper;
+			if (mainLooper != null)
+			{
+				_handler = new Handler(mainLooper);
+			}
+			_notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
 			NotificationChannelManager.CreateAlarmNotificationChannels();
 
 			_runnable = new Action(() =>
 			{
-				if (_handler is null)
+				if (_handler is null || _runnable is null)
 				{
 					return;
 				}
 
 				_handler.PostDelayed(_runnable, NOTIFICATION_UPDATE_INTERVAL_MS);
 				SetNotification();
-				_notificationManager.Notify(NOTIFICATION_ID, _notification);
+				if (_notification != null)
+				{
+					_notificationManager?.Notify(NOTIFICATION_ID, _notification);
+				}
 				_updateCounter++;
 				if (_updateCounter < WIDGET_REFRESH_CYCLES)
 				{
@@ -129,7 +213,7 @@ namespace SuleymaniyeCalendar
 				var intent = new Intent(ApplicationContext, typeof(WidgetService));
 				try
 				{
-					ApplicationContext.StartService(intent);
+					ApplicationContext?.StartService(intent);
 				}
 				catch (Exception exception)
 				{
@@ -176,7 +260,7 @@ namespace SuleymaniyeCalendar
 					LightColor = 1,
 					LockscreenVisibility = NotificationVisibility.Public
 				};
-				_notificationManager.CreateNotificationChannel(channel);
+				_notificationManager?.CreateNotificationChannel(channel);
 				
 				var builder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
 					.SetContentTitle(notificationTitle)
@@ -210,7 +294,7 @@ namespace SuleymaniyeCalendar
 		/// user taps on the notification; it will take them to the main activity of the app.
 		/// </summary>
 		/// <returns>The content intent.</returns>
-		PendingIntent BuildIntentToShowMainActivity()
+		PendingIntent? BuildIntentToShowMainActivity()
 		{
 			var notificationIntent = new Intent(this, typeof(MainActivity));
 			notificationIntent.SetAction("Alarm.action.MAIN_ACTIVITY");
@@ -226,7 +310,9 @@ namespace SuleymaniyeCalendar
 		private string GetFormattedRemainingTime()
 		{
 			var dataService = GetDataService();
-			var calendar = dataService.calendar;
+			var calendar = dataService?.calendar;
+            if (calendar == null) return AppResources.Yenileniyor;
+
 			var currentTime = DateTime.Now.TimeOfDay;
 			
 			try
@@ -273,7 +359,8 @@ namespace SuleymaniyeCalendar
 		private string GetTodaysPrayerTimes()
 		{
 			var dataService = GetDataService();
-			var calendar = dataService.calendar;
+			var calendar = dataService?.calendar;
+            if (calendar == null) return string.Empty;
 			
 			return $"{AppResources.FecriKazip}: {calendar.FalseFajr}\n" +
 				   $"{AppResources.FecriSadik}: {calendar.Fajr}\n" +
@@ -285,7 +372,7 @@ namespace SuleymaniyeCalendar
 				   $"{AppResources.YatsiSonu}: {calendar.EndOfIsha}";
 		}
 
-		public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId)
+		public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
 		{
 			var action = intent?.Action;
 			if (string.IsNullOrWhiteSpace(action))
@@ -304,9 +391,9 @@ namespace SuleymaniyeCalendar
 			{
 				case StartAction:
 					BeginNotificationLoop();
+					var startReason = intent?.GetStringExtra(ExtraStartReason) ?? string.Empty;
 					if (!_isInForeground)
 					{
-						var startReason = intent?.GetStringExtra(ExtraStartReason) ?? string.Empty;
 						_isInForeground = TryStartForeground(startReason);
 					}
 
@@ -316,15 +403,41 @@ namespace SuleymaniyeCalendar
 						break;
 					}
 
+					// System events (boot, time change, etc.) should bypass anti-spam protection
+					var forceReschedule = IsCriticalSystemEvent(startReason);
+					
 					_ = Task.Run(async () =>
 					{
 						try
 						{
-							await Task.Delay(7000).ConfigureAwait(false);
-							System.Diagnostics.Debug.WriteLine($"OnStartCommand: Starting alarm scheduling at {DateTime.Now}");
+                            // Ensure data is loaded for the notification
+                            var dataService = GetDataService();
+                            if (dataService != null && dataService.calendar == null)
+                            {
+                                var cal = await dataService.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
+                                if (cal != null)
+                                {
+                                    dataService.calendar = cal;
+                                    // Refresh notification immediately with loaded data
+                                    MainThread.BeginInvokeOnMainThread(() => 
+                                    {
+                                        SetNotification();
+                                        _notificationManager.Notify(NOTIFICATION_ID, _notification);
+                                    });
+                                }
+                            }
 
-							var dataService = GetDataService();
-							await dataService.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+							await Task.Delay(7000).ConfigureAwait(false);
+							System.Diagnostics.Debug.WriteLine($"OnStartCommand: Starting alarm scheduling at {DateTime.Now} (forceReschedule={forceReschedule}, reason={startReason})");
+
+                            if (dataService != null)
+                            {
+                                var loc = await dataService.GetCurrentLocationAsync(false);
+                                if (loc != null)
+                                {
+							        await dataService.SetMonthlyAlarmsAsync(loc, forceReschedule).ConfigureAwait(false);
+                                }
+                            }
 						}
 						catch (System.Exception ex)
 						{
@@ -471,7 +584,6 @@ namespace SuleymaniyeCalendar
 			{
 				Log.Warn(nameof(AlarmForegroundService), $"StartForeground rejected: {ex.Message}");
 				Preferences.Set(PendingForegroundRestartPreferenceKey, true);
-				AlarmRescheduleJobIntentService.Enqueue(Application.Context, reason ?? "fgs_not_allowed");
 				StopNotificationLoop();
 				return false;
 			}

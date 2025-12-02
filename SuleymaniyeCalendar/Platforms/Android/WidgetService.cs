@@ -18,14 +18,14 @@ namespace SuleymaniyeCalendar
 		private const string TAG = "WidgetService";
 		
 		[Obsolete]
-		public override void OnStart (Intent intent, int startId)
+		public override void OnStart (Intent? intent, int startId)
 		{
 			UpdateWidgetSafely(intent);
 		}
 		
-		public override IBinder OnBind(Intent intent) => null;
+		public override IBinder? OnBind(Intent? intent) => null;
 
-		protected override void OnHandleIntent(Intent intent)
+		protected override void OnHandleIntent(Intent? intent)
 		{
 			UpdateWidgetSafely(intent);
 		}
@@ -33,7 +33,7 @@ namespace SuleymaniyeCalendar
 		/// <summary>
 		/// Safe widget update with comprehensive error handling and performance optimization
 		/// </summary>
-		private void UpdateWidgetSafely(Intent intent)
+		private void UpdateWidgetSafely(Intent? intent)
 		{
 			try
 			{
@@ -113,9 +113,9 @@ namespace SuleymaniyeCalendar
 			{
 				localizedConfiguration = new Configuration(context.Resources?.Configuration);
 				var newLocaleLanguage = new Locale(language);
-				if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+			if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
 				{
-					Locale.SetDefault(Locale.Category.Display, newLocaleLanguage);
+					Locale.SetDefault(Locale.Category.Display!, newLocaleLanguage);
 					localizedConfiguration.SetLocale(newLocaleLanguage);
 					localizedConfiguration.SetLayoutDirection(newLocaleLanguage);
 				}
@@ -147,8 +147,21 @@ namespace SuleymaniyeCalendar
 			};
 
 			// Resolve DataService via DI to avoid new DataService()
-			var dataService = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-						?? new DataService(new NullAlarmService());
+			var dataService = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService);
+            
+            if (dataService == null)
+            {
+                // Fallback for widget update when app is not running
+                var perf = new PerformanceService();
+                var cache = new PrayerCacheService(perf);
+                var json = new JsonApiService(perf);
+                var xml = new XmlApiService(perf);
+                var repo = new PrayerTimesRepository(json, xml, cache, perf);
+                var loc = new LocationService(perf);
+                var alarm = new NullAlarmService();
+                var scheduler = new NotificationSchedulerService(alarm, repo, perf);
+                dataService = new DataService(loc, repo, scheduler, perf);
+            }
 			var calendar = dataService.calendar;
 
 			// Select appropriate layout based on theme and RTL

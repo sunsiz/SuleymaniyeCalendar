@@ -48,11 +48,11 @@ namespace SuleymaniyeCalendar.Tests
                 new Calendar { Date = "2024-12-30", Fajr = "05:58", Dhuhr = "12:14" }
             };
 
-            _mockJsonApiService.Setup(j => j.GetMonthlyPrayerTimesAsync(41.0082, 28.9784, 12, 0))
+            _mockJsonApiService.Setup(j => j.GetMonthlyPrayerTimesAsync(41.0082, 28.9784, 12, 0, It.IsAny<int?>()))
                 .ReturnsAsync(monthlyData);
 
             // Act
-            var result = await _mockJsonApiService.Object.GetMonthlyPrayerTimesAsync(41.0082, 28.9784, 12, 0);
+            var result = await _mockJsonApiService.Object.GetMonthlyPrayerTimesAsync(41.0082, 28.9784, 12, 0, null);
 
             // Assert
             result.Should().NotBeNull();
@@ -84,27 +84,28 @@ namespace SuleymaniyeCalendar.Tests
         {
             // Arrange
             var prayerTime = DateTime.Now.AddHours(2);
+            var settings = new NotificationSettings { Title = "Fajr" };
 
-            _mockAlarmService.Setup(a => a.SetAlarm(It.IsAny<DateTime>(), It.IsAny<TimeSpan>(), It.IsAny<int>(), It.IsAny<string>()));
+            _mockAlarmService.Setup(a => a.SetAlarm(It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<NotificationSettings>()));
 
             // Act
-            _mockAlarmService.Object.SetAlarm(prayerTime, TimeSpan.Zero, 1, "Fajr");
+            _mockAlarmService.Object.SetAlarm(prayerTime, 1, settings);
 
             // Assert
-            _mockAlarmService.Verify(a => a.SetAlarm(prayerTime, TimeSpan.Zero, 1, "Fajr"), Times.Once);
+            _mockAlarmService.Verify(a => a.SetAlarm(prayerTime, 1, settings), Times.Once);
         }
 
         [TestMethod]
         public void AlarmService_CancelAlarmFunctionality()
         {
             // Arrange
-            _mockAlarmService.Setup(a => a.CancelAlarm());
+            _mockAlarmService.Setup(a => a.CancelAllAlarms());
 
             // Act
-            _mockAlarmService.Object.CancelAlarm();
+            _mockAlarmService.Object.CancelAllAlarms();
 
             // Assert
-            _mockAlarmService.Verify(a => a.CancelAlarm(), Times.Once);
+            _mockAlarmService.Verify(a => a.CancelAllAlarms(), Times.Once);
         }
 
         [TestMethod]

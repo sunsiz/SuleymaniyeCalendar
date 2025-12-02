@@ -1,18 +1,17 @@
-﻿namespace SuleymaniyeCalendar.Models;
+﻿using SuleymaniyeCalendar.Helpers;
+
+namespace SuleymaniyeCalendar.Models;
 
 /// <summary>
 /// Represents a supported language with RTL detection.
 /// </summary>
 public sealed class Language
 {
-    /// <summary>RTL language codes (Arabic, Farsi, Hebrew, Kurdish, etc.).</summary>
-    private static readonly HashSet<string> RtlLanguages = ["ar", "fa", "he", "ku", "ps", "sd", "ug", "ur", "yi"];
-
     public Language(string name, string cultureCode)
     {
         Name = name;
         CI = cultureCode;
-        IsRtl = IsRtlLanguage(cultureCode);
+        IsRtl = AppConstants.IsRtlLanguage(cultureCode);
         FlowDirection = IsRtl ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
     }
 
@@ -29,12 +28,5 @@ public sealed class Language
     public FlowDirection FlowDirection { get; set; }
 
     /// <summary>Enable Picker to display without ItemDisplayBinding.</summary>
-    public override string ToString() => Name ?? base.ToString();
-
-    private static bool IsRtlLanguage(string languageCode)
-    {
-        if (string.IsNullOrEmpty(languageCode)) return false;
-        var baseCode = languageCode.Split('-')[0].ToLowerInvariant();
-        return RtlLanguages.Contains(baseCode);
-    }
+    public override string ToString() => Name;
 }

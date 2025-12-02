@@ -1,23 +1,44 @@
 ﻿namespace SuleymaniyeCalendar.Models;
 
 /// <summary>
+/// Theme preference values for app appearance.
+/// </summary>
+public enum ThemeMode
+{
+    /// <summary>Dark theme - dark backgrounds, light text.</summary>
+    Dark = 0,
+    
+    /// <summary>Light theme - light backgrounds, dark text.</summary>
+    Light = 1,
+    
+    /// <summary>System default - follows device setting.</summary>
+    System = 2
+}
+
+/// <summary>
 /// Static helper for managing app theme preference.
 /// </summary>
-/// <remarks>
-/// Theme values: 0 = Dark, 1 = Light, 2 = System (default).
-/// </remarks>
 public static class Theme
 {
-    private const string PreferenceKey = nameof(Tema);
-    private const int DefaultTheme = 2; // System theme
+    private const string PreferenceKey = "Tema";
+    private const ThemeMode DefaultTheme = ThemeMode.System;
 
     /// <summary>
-    /// Gets or sets the current theme.
-    /// 0 = Dark, 1 = Light, 2 = System (follows device setting).
+    /// Gets or sets the current theme mode.
     /// </summary>
+    public static ThemeMode CurrentTheme
+    {
+        get => (ThemeMode)Preferences.Get(PreferenceKey, (int)DefaultTheme);
+        set => Preferences.Set(PreferenceKey, (int)value);
+    }
+
+    /// <summary>
+    /// Legacy property for backward compatibility.
+    /// </summary>
+    [Obsolete("Use CurrentTheme instead. This property is kept for backward compatibility.")]
     public static int Tema
     {
-        get => Preferences.Get(PreferenceKey, DefaultTheme);
-        set => Preferences.Set(PreferenceKey, value);
+        get => (int)CurrentTheme;
+        set => CurrentTheme = (ThemeMode)value;
     }
 }

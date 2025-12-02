@@ -158,7 +158,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <Button Style="{StaticResource GlassButtonPrimaryIntense}" Command="{Binding GoBackCommand}" Text="{localization:Translate Kapat}" />
+                <Button Style="{StaticResource GlassButtonPrimaryIntense}" Command="{Binding SaveCommand}" Text="{localization:Translate Kaydet}" />
             </VerticalStackLayout>
         </ScrollView>
 

@@ -20,5 +20,5 @@ public sealed class Sound
     /// <summary>
     /// Allows Picker to display item text without ItemDisplayBinding.
     /// </summary>
-    public override string ToString() => Name ?? base.ToString();
+    public override string ToString() => Name;
 }

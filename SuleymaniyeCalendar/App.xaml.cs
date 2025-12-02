@@ -23,7 +23,7 @@ public partial class App : Application
         BaseViewModel.InitializeFontSize();
     }
 
-    protected override Window CreateWindow(IActivationState activationState)
+    protected override Window CreateWindow(IActivationState? activationState)
     {
         return new Window(new AppShell());
     }
@@ -53,10 +53,10 @@ public partial class App : Application
     {
         if (Application.Current is null) return;
 
-        Application.Current.UserAppTheme = Theme.Tema switch
+        Application.Current.UserAppTheme = Theme.CurrentTheme switch
         {
-            0 => AppTheme.Dark,
-            1 => AppTheme.Light,
+            ThemeMode.Dark => AppTheme.Dark,
+            ThemeMode.Light => AppTheme.Light,
             _ => AppTheme.Unspecified // System default
         };
 

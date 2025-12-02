@@ -11,16 +11,16 @@ namespace SuleymaniyeCalendar.Models;
 public class PrayerActivityData : NSObject
 {
     [Export("prayerName")]
-    public string PrayerName { get; set; }
+    public string PrayerName { get; set; } = string.Empty;
 
     [Export("remainingTime")]
-    public string RemainingTime { get; set; }
+    public string RemainingTime { get; set; } = string.Empty;
 
     [Export("prayerTime")]
-    public string PrayerTime { get; set; }
+    public string PrayerTime { get; set; } = string.Empty;
 
     [Export("nextPrayerName")]
-    public string NextPrayerName { get; set; }
+    public string NextPrayerName { get; set; } = string.Empty;
 
     [Export("timestamp")]
     public NSDate Timestamp { get; set; }

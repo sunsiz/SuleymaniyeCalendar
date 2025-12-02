@@ -1,4 +1,6 @@
-﻿namespace SuleymaniyeCalendar.Models;
+﻿#nullable enable
+
+namespace SuleymaniyeCalendar.Models;
 
 /// <summary>
 /// Represents a single day's prayer times and location data.
@@ -26,29 +28,29 @@ public sealed class Calendar
     public double DayLightSaving { get; set; }
 
     /// <summary>False dawn time (Fecr-i Kazib) - HH:mm format.</summary>
-    public string FalseFajr { get; set; }
+    public string FalseFajr { get; set; } = string.Empty;
 
     /// <summary>True dawn time (Fecr-i Sadık / Imsak) - HH:mm format.</summary>
-    public string Fajr { get; set; }
+    public string Fajr { get; set; } = string.Empty;
 
     /// <summary>Sunrise time (Güneş) - HH:mm format.</summary>
-    public string Sunrise { get; set; }
+    public string Sunrise { get; set; } = string.Empty;
 
     /// <summary>Noon prayer time (Öğle) - HH:mm format.</summary>
-    public string Dhuhr { get; set; }
+    public string Dhuhr { get; set; } = string.Empty;
 
     /// <summary>Afternoon prayer time (İkindi) - HH:mm format.</summary>
-    public string Asr { get; set; }
+    public string Asr { get; set; } = string.Empty;
 
     /// <summary>Sunset prayer time (Akşam) - HH:mm format.</summary>
-    public string Maghrib { get; set; }
+    public string Maghrib { get; set; } = string.Empty;
 
     /// <summary>Night prayer time (Yatsı) - HH:mm format.</summary>
-    public string Isha { get; set; }
+    public string Isha { get; set; } = string.Empty;
 
     /// <summary>End of night prayer window (Yatsının Sonu) - HH:mm format.</summary>
-    public string EndOfIsha { get; set; }
+    public string EndOfIsha { get; set; } = string.Empty;
 
     /// <summary>Date in dd/MM/yyyy format.</summary>
-    public string Date { get; set; }
+    public string Date { get; set; } = string.Empty;
 }
