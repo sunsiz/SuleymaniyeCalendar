@@ -23,10 +23,10 @@ public class BootReceiver : BroadcastReceiver
         Intent.ActionMyPackageReplaced
     };
 
-    public override void OnReceive(Context context, Intent intent)
+    public override void OnReceive(Context? context, Intent? intent)
     {
         var action = intent?.Action;
-        if (action is null) return;
+        if (action is null || context is null) return;
 
         if (IsRescheduleAction(action))
         {

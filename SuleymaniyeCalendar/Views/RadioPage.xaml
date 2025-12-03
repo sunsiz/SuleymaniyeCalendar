@@ -197,7 +197,7 @@
                         <Setter Property="IsVisible" Value="True" />
                     </DataTrigger>
                 </Grid.Triggers>
-                    <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="80" HeightRequest="80" />
+                <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="80" HeightRequest="80" />
             </Grid>
         </Grid>
     </ContentPage.Content>

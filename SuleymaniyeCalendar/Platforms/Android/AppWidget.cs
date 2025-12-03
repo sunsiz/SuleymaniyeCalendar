@@ -20,7 +20,8 @@ namespace SuleymaniyeCalendar
 			try
 			{
 				// To prevent any ANR timeouts, we perform the update in a service
-				context.StartService(new Intent(context, typeof(WidgetService)));
+				if (context != null)
+					context.StartService(new Intent(context, typeof(WidgetService)));
 			}
 			catch (System.Exception ex)
 			{
@@ -36,7 +37,8 @@ namespace SuleymaniyeCalendar
 			try
 			{
 				// To prevent any ANR timeouts, we perform the update in a service
-				context.StartService(new Intent(context, typeof(WidgetService)));
+				if (context != null)
+					context.StartService(new Intent(context, typeof(WidgetService)));
 			}
 			catch (System.Exception ex)
 			{

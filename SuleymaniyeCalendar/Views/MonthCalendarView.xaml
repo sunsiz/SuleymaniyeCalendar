@@ -144,8 +144,8 @@
                                        Color="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}"
                                        HorizontalOptions="Center"
                                        VerticalOptions="Center"
-                                       HeightRequest="48"
-                                       WidthRequest="48" />
+                                       HeightRequest="80"
+                                       WidthRequest="80" />
                     
                 </VerticalStackLayout>
             </Border>

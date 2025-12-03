@@ -108,7 +108,7 @@ namespace SuleymaniyeCalendar
 			}
 			
 			// Enhanced locale configuration with better error handling
-			Configuration localizedConfiguration = null;
+			Configuration? localizedConfiguration = null;
 			try
 			{
 				localizedConfiguration = new Configuration(context.Resources?.Configuration);
@@ -126,7 +126,7 @@ namespace SuleymaniyeCalendar
 			}
 			
 			// Create a localizedContext if needed in the future (avoid deprecated UpdateConfiguration)  
-			Context localizedContext = null;
+			Context? localizedContext = null;
 			try
 			{
 				if (localizedConfiguration != null)
@@ -312,7 +312,7 @@ namespace SuleymaniyeCalendar
 				var timeFontSize = (float)(baseFontSize * 1.35);   // Prayer times (more prominent)
 				var headerFontSize = (float)(baseFontSize * 1.1);  // App name
 				var captionFontSize = (float)(baseFontSize * 1.0); // Last refreshed, city
-				var iconFontSize = (float)(baseFontSize * 1.6);    // Refresh icon
+				var iconFontSize = (float)(baseFontSize * 1.8);    // Refresh icon (larger for touch)
 				
 				// Use ComplexUnitSp for scalable pixels (respects system accessibility settings)
 				var unit = (int)Android.Util.ComplexUnitType.Sp;
@@ -352,7 +352,7 @@ namespace SuleymaniyeCalendar
 			}
 		}
 
-		private PendingIntent GetPendingSelfIntent(Context context, string action)
+		private PendingIntent? GetPendingSelfIntent(Context context, string action)
 		{
 			var intent = new Intent(context, typeof(AppWidget));
 			intent.SetAction(action);

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout
 	xmlns:android="http://schemas.android.com/apk/res/android"
 	android:background="@android:drawable/dialog_holo_light_frame"
@@ -34,8 +34,8 @@
 				<ImageView
 					android:id="@+id/widgetAppIcon"
 					android:src="@drawable/app_logo"
-					android:layout_marginLeft="5dip"
-					android:layout_marginRight="-5dip"
+					android:layout_marginStart="5dip"
+					android:layout_marginEnd="-5dip"
 					android:layout_marginBottom="-5dip"
 					android:layout_gravity="center_vertical|start"
 					android:baselineAlignBottom="false"
@@ -49,35 +49,43 @@
 					android:id="@+id/widgetAppName"
 					android:text="@string/app_name"
 					android:textColor="#5c3021"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="5dp"
-					android:layout_marginLeft="-5dp"
+					android:layout_marginStart="-5dp"
 					android:layout_gravity="center_vertical|center_horizontal"
-					android:textSize="15dp"
-					android:gravity="start" />
+					android:textSize="18dp"
+					android:gravity="start"
+					android:textAlignment="viewStart"
+					android:maxLines="2"
+					android:ellipsize="end" />
 				<TextView
 					android:id="@+id/widgetLastRefreshed"
 					android:textColor="#5c3021"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_marginTop="5dp"
-					android:layout_marginLeft="8dip"
-					android:layout_marginRight="3dip"
+					android:layout_marginStart="8dip"
+					android:layout_marginEnd="3dip"
 					android:layout_gravity="center_vertical|end"
+					android:textAlignment="viewEnd"
 					android:textSize="14dp" />
 				<TextView
 					android:id="@+id/widgetRefreshIcon"
 					android:text="↻"
 					android:textColor="#5c3021"
-					android:layout_marginLeft="3dip"
-					android:layout_marginTop="5dip"
+					android:layout_marginStart="3dip"
 					android:layout_gravity="center_vertical|end"
 					android:baselineAlignBottom="false"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:textSize="22dp"
+					android:minWidth="36dp"
+					android:minHeight="36dp"
+					android:padding="4dp"
+					android:textSize="28dp"
 					android:textStyle="bold"
+					android:gravity="center"
 					android:contentDescription="@string/refresh"
 					android:pointerIcon="hand"/>
 			</LinearLayout>
@@ -93,18 +101,23 @@
 					android:id="@+id/widgetFecriKazip"
 					android:text="@string/fecri_kazip"
 					android:textColor="#000000"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
 					android:gravity="start"
-					android:textSize="16dp" />
+					android:textAlignment="viewStart"
+					android:textSize="16dp"
+					android:maxLines="1"
+					android:ellipsize="end" />
 				<TextView
 					android:id="@+id/widgetFecriKazipVakit"
 					android:textColor="#5c3021"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
 					android:gravity="end"
+					android:textAlignment="viewEnd"
 					android:textSize="18dp" />
 			</LinearLayout>
 			<LinearLayout
@@ -119,17 +132,23 @@
 					android:id="@+id/widgetFecriSadik"
 					android:text="@string/fecri_sadik"
 					android:textColor="#000000"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
-					android:textSize="16dp" />
+					android:gravity="start"
+					android:textAlignment="viewStart"
+					android:textSize="16dp"
+					android:maxLines="1"
+					android:ellipsize="end" />
 				<TextView
 					android:id="@+id/widgetFecriSadikVakit"
 					android:textColor="#5c3021"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
 					android:gravity="end"
+					android:textAlignment="viewEnd"
 					android:textSize="18dp" />
 			</LinearLayout>
 			<LinearLayout
@@ -144,17 +163,23 @@
 					android:id="@+id/widgetSabahSonu"
 					android:text="@string/sabah_sonu"
 					android:textColor="#000000"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
-					android:textSize="16dp" />
+					android:gravity="start"
+					android:textAlignment="viewStart"
+					android:textSize="16dp"
+					android:maxLines="1"
+					android:ellipsize="end" />
 				<TextView
 					android:id="@+id/widgetSabahSonuVakit"
 					android:textColor="#5c3021"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
 					android:gravity="end"
+					android:textAlignment="viewEnd"
 					android:textSize="18dp" />
 			</LinearLayout>
 			<LinearLayout
@@ -169,17 +194,23 @@
 					android:id="@+id/widgetOgle"
 					android:text="@string/ogle"
 					android:textColor="#000000"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
-					android:textSize="16dp" />
+					android:gravity="start"
+					android:textAlignment="viewStart"
+					android:textSize="16dp"
+					android:maxLines="1"
+					android:ellipsize="end" />
 				<TextView
 					android:id="@+id/widgetOgleVakti"
 					android:textColor="#5c3021"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
 					android:gravity="end"
+					android:textAlignment="viewEnd"
 					android:textSize="18dp" />
 			</LinearLayout>
 			<LinearLayout
@@ -194,17 +225,23 @@
 					android:id="@+id/widgetIkindi"
 					android:text="@string/ikindi"
 					android:textColor="#000000"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
-					android:textSize="16dp" />
+					android:gravity="start"
+					android:textAlignment="viewStart"
+					android:textSize="16dp"
+					android:maxLines="1"
+					android:ellipsize="end" />
 				<TextView
 					android:id="@+id/widgetIkindiVakit"
 					android:textColor="#5c3021"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
 					android:gravity="end"
+					android:textAlignment="viewEnd"
 					android:textSize="18dp" />
 			</LinearLayout>
 			<LinearLayout
@@ -219,17 +256,23 @@
 					android:id="@+id/widgetAksam"
 					android:text="@string/aksam"
 					android:textColor="#000000"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
-					android:textSize="16dp" />
+					android:gravity="start"
+					android:textAlignment="viewStart"
+					android:textSize="16dp"
+					android:maxLines="1"
+					android:ellipsize="end" />
 				<TextView
 					android:id="@+id/widgetAksamVakit"
 					android:textColor="#5c3021"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
 					android:gravity="end"
+					android:textAlignment="viewEnd"
 					android:textSize="18dp" />
 			</LinearLayout>
 			<LinearLayout
@@ -244,17 +287,23 @@
 					android:id="@+id/widgetYatsi"
 					android:text="@string/yatsi"
 					android:textColor="#000000"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
-					android:textSize="16dp" />
+					android:gravity="start"
+					android:textAlignment="viewStart"
+					android:textSize="16dp"
+					android:maxLines="1"
+					android:ellipsize="end" />
 				<TextView
 					android:id="@+id/widgetYatsiVakit"
 					android:textColor="#5c3021"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
 					android:gravity="end"
+					android:textAlignment="viewEnd"
 					android:textSize="18dp" />
 			</LinearLayout>
 			<LinearLayout
@@ -269,17 +318,23 @@
 					android:id="@+id/widgetYatsiSonu"
 					android:text="@string/yatsi_sonu"
 					android:textColor="#000000"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
-					android:textSize="16dp" />
+					android:gravity="start"
+					android:textAlignment="viewStart"
+					android:textSize="16dp"
+					android:maxLines="1"
+					android:ellipsize="end" />
 				<TextView
 					android:id="@+id/widgetYatsiSonuVakit"
 					android:textColor="#5c3021"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
 					android:gravity="end"
+					android:textAlignment="viewEnd"
 					android:textSize="18dp" />
 			</LinearLayout>
 			<LinearLayout
@@ -293,18 +348,23 @@
 				<TextView
 					android:id="@+id/widgetSehirAdi"
 					android:textColor="#000000"
-					android:layout_width="wrap_content"
+					android:layout_width="0dp"
+					android:layout_weight="1"
 					android:layout_height="wrap_content"
 					android:layout_margin="5dp"
 					android:gravity="start"
-					android:textSize="16dp" />
+					android:textAlignment="viewStart"
+					android:textSize="16dp"
+					android:maxLines="1"
+					android:ellipsize="end" />
 				<TextView
 					android:id="@+id/widgetSehir"
 					android:text="@string/sehir"
 					android:textColor="#5c3021"
-					android:layout_width="match_parent"
+					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:gravity="end"
+					android:textAlignment="viewEnd"
 					android:layout_margin="5dp"
 					android:textSize="18dp" />
 			</LinearLayout>
