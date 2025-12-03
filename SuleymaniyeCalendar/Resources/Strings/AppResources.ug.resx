@@ -147,6 +147,15 @@
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>ئايلىق كالېندار مۇۋەپپەقىيەتلىك يېڭىلاندى</value>
   </data>
+  <data name="AyVeriIndirildi" xml:space="preserve">
+    <value>{0} سانلىق مەلۇماتى چۈشۈرۈلدى</value>
+  </data>
+  <data name="AyVeriYukle" xml:space="preserve">
+    <value>بۇ ئاينى چۈشۈرۈش</value>
+  </data>
+  <data name="AylikVeriYenilemeIste" xml:space="preserve">
+    <value>ئايلىق سانلىق مەلۇماتنى يۈكلەش ئۈچۈن يېڭىلاڭ</value>
+  </data>
   <data name="BesDakikaOnceden" xml:space="preserve">
     <value>بەش مىنۇت بۇرۇن</value>
   </data>
@@ -164,6 +173,9 @@
   </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>ئۇقتۇرۇش كۆرسىتىش</value>
+  </data>
+  <data name="BildirimIzniGerekli" xml:space="preserve">
+    <value>ناماز ئەسكەرتكۈچلىرىنى پىلانلاش ئۈچۈن ئۇقتۇرۇش ئىجازىتى لازىم.</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>ئەسكەرتىش ۋاقتى: </value>
@@ -224,6 +236,12 @@
   </data>
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>فىترەت تېلېۋىزىيەسى Youtube قانىلى</value>
+  </data>
+  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+    <value>ناماز ئەسكەرتكۈچلىرىنى پىلانلاش ئۈچۈن ناماز ۋاقىتلىرىنى يۈكلىيەلمىدى</value>
+  </data>
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+    <value>ناماز ئەسكەرتكۈچلىرى 30 كۈنگىچە پىلانلاندى</value>
   </data>
   <data name="Hakkinda" xml:space="preserve">
     <value>ھەققمىزدە</value>

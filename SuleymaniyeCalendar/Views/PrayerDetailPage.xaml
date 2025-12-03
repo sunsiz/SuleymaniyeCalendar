@@ -8,175 +8,125 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     x:DataType="viewModels:PrayerDetailViewModel"
-    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}"
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}"
     FlowDirection="{DynamicResource FlowDirection}">
 
     <Grid>
-    <ScrollView x:DataType="viewModels:PrayerDetailViewModel" VerticalScrollBarVisibility="Never">
-        <VerticalStackLayout
+        <ScrollView x:DataType="viewModels:PrayerDetailViewModel" VerticalScrollBarVisibility="Never">
+            <VerticalStackLayout
             Padding="{StaticResource PagePaddingMobile}"
             x:DataType="viewModels:PrayerDetailViewModel"
             Spacing="{StaticResource SpacingDefault}">
-            
-            <!--  Compact Prayer Title Card  -->
-            <Border Style="{StaticResource iOS26Tile}">
-                <VerticalStackLayout Spacing="12">
-                    <Label
+
+                <!--  Prayer Title Card  -->
+                <Border Style="{StaticResource GlassCardSecondaryTint}" Padding="12,21">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label
                         FontAttributes="Bold"
                         HorizontalTextAlignment="Center"
                         Style="{StaticResource HeadlineLargeStyle}"
                         TextColor="{AppThemeBinding Light={StaticResource Neutral99},
                                                     Dark={StaticResource Neutral10}}"
                         Text="{Binding Title}" />
-                    <BoxView
-                        HeightRequest="2"
+                        <BoxView
+                        HeightRequest="3"
                         HorizontalOptions="Center"
                         WidthRequest="90"
-                        Color="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                Dark={StaticResource Primary30}}" />
-                </VerticalStackLayout>
-            </Border>
+                        Color="{AppThemeBinding Light={StaticResource Primary50},
+                                                Dark={StaticResource Primary40}}" />
+                    </VerticalStackLayout>
+                </Border>
 
-            <!--  Compact Time & Enable Card  -->
-            <Border Style="{StaticResource FrostGlassCardFrozen}">
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6" RowDefinitions="Auto,Auto" RowSpacing="2">
-                    <!-- Time Section -->
-                    <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="4">
-                        <Label
-                            Style="{StaticResource BodyMediumStyle}"
+                <!--  Time & Enable Card  -->
+                <Border Style="{StaticResource iOSLiquidGlassCard}">
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="6" RowDefinitions="Auto,Auto" Padding="8,6,8,0">
+                        <!-- Time Section -->
+                        <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="4">
+                            <Label
+                            FontSize="{DynamicResource DefaultFontSize}"
+                            FontAttributes="Bold"
                             Text="{localization:Translate Vakti}"
-                            TextColor="{AppThemeBinding Light={StaticResource Neutral90}, Dark={StaticResource Neutral10}}" />
-                        <Label
+                            TextColor="{AppThemeBinding Light={StaticResource CardLabelLight}, Dark={StaticResource CardLabelDark}}" />
+                            <Label
                             FontAttributes="Bold"
                             FontSize="{DynamicResource SubHeaderFontSize}"
                             Text="{Binding Time}"
-                            TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}" />
-                    </VerticalStackLayout>
-                    
-                    <!-- Enable Switch Section -->
-                    <VerticalStackLayout Grid.Column="1" Grid.Row="0" HorizontalOptions="End" Spacing="4">
-                        <Label
+                            TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
+                        </VerticalStackLayout>
+
+                        <!-- Enable Switch Section -->
+                        <VerticalStackLayout Grid.Column="1" Grid.Row="0" HorizontalOptions="End" Spacing="2">
+                            <Label
                             HorizontalTextAlignment="Center"
                             Style="{StaticResource BodySmallStyle}"
                             Text="{localization:Translate EtkinlestirSwitch}"
-                            TextColor="{AppThemeBinding Light={StaticResource Neutral90}, Dark={StaticResource Neutral10}}" />
-                        <Switch
+                            TextColor="{AppThemeBinding Light={StaticResource CardLabelLight}, Dark={StaticResource CardLabelDark}}" />
+                            <Switch
                             HorizontalOptions="Center"
                             AutomationProperties.IsInAccessibleTree="True"
                             IsToggled="{Binding Enabled}"
-                            OnColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                      Dark={StaticResource Primary30}}"
-                            SemanticProperties.Description="{localization:Translate EtkinlestirSwitchAciklama}"
-                            ThumbColor="{AppThemeBinding Light={StaticResource OnPrimaryColor},
-                                                         Dark={StaticResource OnPrimaryColor}}" />
-                    </VerticalStackLayout>
-                </Grid>
-            </Border>
-
-            <!--  Advanced options (platform dependent)  -->
-            <!--<Border IsVisible="{Binding ShowAdvancedOptions}" Style="{StaticResource Card}">
-                <VerticalStackLayout Spacing="8">
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                        <Switch
-                            Grid.Column="0"
-                            AutomationProperties.IsInAccessibleTree="True"
-                            IsToggled="{Binding Vibration}"
-                            SemanticProperties.Description="{localization:Translate TitresimSwitch}">
-                            <Switch.Behaviors>
-                                <toolkit:EventToCommandBehavior
-                                    Command="{Binding VibrationCheckedChangedCommand}"
-                                    CommandParameter="{Binding Vibration}"
-                                    EventName="Toggled" />
-                            </Switch.Behaviors>
-                        </Switch>
-                        <Label
-                            Grid.Column="1"
-                            Style="{StaticResource LabelStyle}"
-                            Text="{localization:Translate TitresimSwitch}"
-                            VerticalTextAlignment="Center" />
-                    </Grid>
-                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
-                        <Switch
-                            Grid.Column="0"
-                            AutomationProperties.IsInAccessibleTree="True"
-                            IsToggled="{Binding Alarm}"
-                            SemanticProperties.Description="{localization:Translate AlarmSwitch}">
-                            <Switch.Behaviors>
-                                <toolkit:EventToCommandBehavior
-                                    Command="{Binding AlarmCheckedChangedCommand}"
-                                    CommandParameter="{Binding Alarm}"
-                                    EventName="Toggled" />
-                            </Switch.Behaviors>
-                        </Switch>
-                        <Label
-                            Grid.Column="1"
-                            Style="{StaticResource LabelStyle}"
-                            Text="{localization:Translate AlarmSwitch}"
-                            VerticalTextAlignment="Center" />
-                    </Grid>
-                </VerticalStackLayout>
-            </Border>-->
-
-            <!--  Compact Notification Settings Card  -->
-            <Border IsVisible="{Binding Enabled}" Style="{StaticResource FrostGlassCardCrystal}">
-                <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="16">
-                    <!--  Notification Time Section  -->
-                    <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="12">
-                        <VerticalStackLayout Spacing="4">
-                            <Label Style="{StaticResource TitleMediumStyle}" Text="{localization:Translate BildirmeZamani}" TextColor="{AppThemeBinding Light={StaticResource Neutral90}, Dark={StaticResource Neutral10}}" />
-                            <Label Style="{StaticResource BodyMediumStyle}" TextColor="{AppThemeBinding Light={StaticResource Neutral90}, Dark={StaticResource Neutral10}}">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span
-                                            FontAttributes="Bold"
-                                            FontSize="{DynamicResource DefaultFontSize}"
-                                            Text="{Binding NotificationTime}" />
-                                        <Span Text=" " />
-                                        <Span Text="{localization:Translate DakikaOnceden}" />
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
+                            SemanticProperties.Description="{localization:Translate EtkinlestirSwitchAciklama}" />
                         </VerticalStackLayout>
-                        
-                        <Border Style="{StaticResource GlassCardSoft}" Padding="12,8">
-                            <Slider
-                                AutomationProperties.IsInAccessibleTree="true"
-                                HeightRequest="36"
-                                HorizontalOptions="Fill"
-                                Maximum="60"
-                                MaximumTrackColor="{AppThemeBinding Light={StaticResource Neutral60},
-                                                                    Dark={StaticResource Neutral60}}"
-                                Minimum="0"
-                                MinimumTrackColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                                    Dark={StaticResource Primary30}}"
-                                SemanticProperties.Description="{localization:Translate BildirmeZamani}"
-                                ThumbColor="{AppThemeBinding Light={StaticResource PrimaryColor},
-                                                             Dark={StaticResource Primary30}}"
-                                Value="{Binding NotificationTime}" />
-                        </Border>
-                    </VerticalStackLayout>
+                    </Grid>
+                </Border>
 
-                    <!--  Sound Selection Section  -->
-                    <VerticalStackLayout Spacing="12">
-                        <Label Style="{StaticResource TitleMediumStyle}" Text="{localization:Translate Birsessecin}" TextColor="{AppThemeBinding Light={StaticResource Neutral99}, Dark={StaticResource Neutral10}}" />
-                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
-                            <Border Grid.Column="0" Style="{StaticResource GlassCardSoft}" Padding="12,8">
+                <!--  Notification Settings Card  -->
+                <Border IsVisible="{Binding Enabled}" Style="{StaticResource FrostGlassCardCrystal}">
+                    <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="8" Padding="8,6">
+                        <!--  Notification Time Section  -->
+                        <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="8">
+                            <VerticalStackLayout Spacing="8">
+                                <Label 
+                                FontSize="{DynamicResource DefaultFontSize}"
+                                FontAttributes="Bold"
+                                Text="{localization:Translate BildirmeZamani}" 
+                                TextColor="{AppThemeBinding Light={StaticResource CardLabelLight}, Dark={StaticResource CardLabelDark}}" />
+                                <Label FontSize="{DynamicResource DefaultFontSize}" 
+                                       TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span
+                                            FontAttributes="Bold"
+                                            Text="{Binding NotificationTime}" />
+                                            <Span Text=" " />
+                                            <Span Text="{localization:Translate DakikaOnceden}" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </VerticalStackLayout>
+
+                            <Slider
+                            Style="{StaticResource PremiumGoldenSlider}"
+                            AutomationProperties.IsInAccessibleTree="true"
+                            HeightRequest="44"
+                            HorizontalOptions="Fill"
+                            Maximum="60"
+                            Minimum="0"
+                            SemanticProperties.Description="{localization:Translate BildirmeZamani}"
+                            Value="{Binding NotificationTime}" />
+                        </VerticalStackLayout>
+
+                        <!--  Sound Selection Section  -->
+                        <VerticalStackLayout Spacing="8">
+                            <Label 
+                            FontSize="{DynamicResource DefaultFontSize}"
+                            FontAttributes="Bold"
+                            Text="{localization:Translate Birsessecin}" 
+                            TextColor="{AppThemeBinding Light={StaticResource CardLabelLight}, Dark={StaticResource CardLabelDark}}" />
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                                 <Picker
-                                    Title="{localization:Translate Birsessecin}"
-                                    BackgroundColor="Transparent"
-                                    HorizontalOptions="Fill"
-                                    ItemsSource="{Binding AvailableSounds}"
-                                    SelectedItem="{Binding SelectedSound}"
-                                    TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor},
-                                                                Dark={StaticResource OnSurfaceColorDark}}"
-                                    FontSize="{DynamicResource DefaultFontSize}" />
-                            </Border>
+                                Grid.Column="0"
+                                Style="{StaticResource GoldenPicker}"
+                                Title="{localization:Translate Birsessecin}"
+                                HorizontalOptions="Fill"
+                                ItemsSource="{Binding AvailableSounds}"
+                                SelectedItem="{Binding SelectedSound}" />
                                 <Button Grid.Column="1"
                                     x:DataType="viewModels:PrayerDetailViewModel"
                                     Margin="6"
-                                        Style="{StaticResource GlassButtonOutline}"
-                                        TextColor="{AppThemeBinding Light={StaticResource OnSurfaceTextColor},
-                                                                Dark={StaticResource OnSurfaceTextColorDark}}"
+                                        Style="{StaticResource iOSLiquidGlassButton}"
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                Dark={StaticResource CardValueDark}}"
                                         Command="{Binding TestButtonClickedCommand}"
                                         WidthRequest="52" HeightRequest="48">
                                     <Button.Triggers>
@@ -184,7 +134,8 @@
                                             <Setter Property="ImageSource">
                                                 <Setter.Value>
                                                     <FontImageSource FontFamily="{StaticResource IconFontFamily}"
-                                                                     Glyph="&#xf04b;" Size="{DynamicResource IconSmallFontSize}" />
+                                                                     Glyph="&#xf04b;" Size="{DynamicResource IconSmallFontSize}"
+                                                                     Color="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                                                 </Setter.Value>
                                             </Setter>
                                         </DataTrigger>
@@ -200,28 +151,22 @@
                                         </DataTrigger>
                                     </Button.Triggers>
                                 </Button>
-                        </Grid>
+                            </Grid>
+                        </VerticalStackLayout>
                     </VerticalStackLayout>
+                </Border>
+
+                <Button Style="{StaticResource GlassButtonPrimaryIntense}" Command="{Binding SaveCommand}" Text="{localization:Translate Kaydet}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
+            <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="36,24" HorizontalOptions="Center" VerticalOptions="Center">
+                <VerticalStackLayout Spacing="14" HorizontalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="80" HeightRequest="80" />
+                    <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
                 </VerticalStackLayout>
             </Border>
-
-            <!--  Close Button - Glass primary variant  -->
-            <Button
-                Style="{StaticResource GlassButtonOutline}"
-                Command="{Binding GoBackCommand}"
-                Text="{localization:Translate Kapat}" />
-        </VerticalStackLayout>
-    </ScrollView>
-
-    <!-- Scheduling overlay -->
-    <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
-        <Border Style="{StaticResource GlassCardSoft}" Padding="36,24" HorizontalOptions="Center" VerticalOptions="Center">
-            <VerticalStackLayout Spacing="14" HorizontalOptions="Center">
-                <ActivityIndicator IsRunning="True" Color="{StaticResource PrimaryColor}" WidthRequest="48" HeightRequest="48" />
-                <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
-            </VerticalStackLayout>
-        </Border>
+        </Grid>
     </Grid>
-    </Grid>
-
 </ContentPage>

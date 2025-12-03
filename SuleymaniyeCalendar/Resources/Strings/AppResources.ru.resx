@@ -170,6 +170,15 @@
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>Ежемесячный календарь успешно обновлен</value>
   </data>
+  <data name="AyVeriIndirildi" xml:space="preserve">
+    <value>Данные за {0} загружены</value>
+  </data>
+  <data name="AyVeriYukle" xml:space="preserve">
+    <value>Загрузить этот месяц</value>
+  </data>
+  <data name="AylikVeriYenilemeIste" xml:space="preserve">
+    <value>Обновите, чтобы загрузить данные месяца</value>
+  </data>
   <data name="BesDakikaOnceden" xml:space="preserve">
     <value>За пять минут раньше</value>
   </data>
@@ -187,6 +196,9 @@
   </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>Показать уведомление</value>
+  </data>
+  <data name="BildirimIzniGerekli" xml:space="preserve">
+    <value>Для планирования будильников требуется разрешение на уведомления.</value>
   </data>
   <data name="BildirimKapatma" xml:space="preserve">
     <value>Включить закрепленные уведомления</value>
@@ -275,6 +287,12 @@
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>Фитрат ТВ на ютубе</value>
   </data>
+    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+      <value>Не удалось загрузить времена молитв для планирования</value>
+    </data>
+    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+      <value>Напоминания о намазах запланированы на 30 дней</value>
+    </data>
   <data name="GotoSettings" xml:space="preserve">
     <value>Пройдите в настройки</value>
   </data>

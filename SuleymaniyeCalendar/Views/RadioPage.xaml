@@ -10,18 +10,19 @@
     Title="{Binding Title}"
     x:DataType="viewModels:RadioViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <StackLayout
-            Margin="10"
-            HeightRequest="34"
-            Orientation="Horizontal">
-            <Label
+        <Grid Margin="8,0,8,0" MinimumHeightRequest="48" ColumnDefinitions="*">
+            <Label Grid.Column="0"
                 AutomationProperties.IsInAccessibleTree="True"
+                SemanticProperties.HeadingLevel="Level1"
                 Style="{StaticResource LabelSectionHeader}"
-                Text="{localization:Translate FitratinSesi}" />
-        </StackLayout>
+                Text="{localization:Translate FitratinSesi}"
+                LineBreakMode="TailTruncation"
+                HorizontalOptions="Fill"
+                HorizontalTextAlignment="Start" />
+        </Grid>
     </Shell.TitleView>
 
     <ContentPage.Content>
@@ -32,7 +33,9 @@
                 Padding="0"
                 StrokeThickness="0"
                 Stroke="Transparent"
-                BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
+                Background="Transparent">
+                <!-- BackgroundColor="{AppThemeBinding Light={StaticResource AppBackgroundColor},
+                                                  Dark={StaticResource AppBackgroundColorDark}}" -->
                 <Image
                     Aspect="AspectFit"
                     Opacity="0.7"
@@ -40,7 +43,7 @@
             </Border>
 
             <Border
-                Style="{StaticResource GlassMediaCard}"
+                Style="{StaticResource FrostGlassCardCrystal}"
                 Grid.Row="1"
                 Margin="0,-25,0,-15">
                 <Grid
@@ -59,10 +62,13 @@
                                     <Span
                                         FontFamily="{StaticResource IconFontFamily}"
                                         FontSize="{DynamicResource IconLargeFontSize}"
-                                        Text="&#xf0ae; " />
+                                        Text="&#xf0ae; "
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Span 
                                         Text="{localization:Translate YayinAkisi}" 
-                                        FontSize="{DynamicResource BodyFontSize}" />
+                                        FontSize="{DynamicResource BodyFontSize}"
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
@@ -76,10 +82,16 @@
                         Grid.Row="0"
                         Grid.Column="1"
                         Style="{StaticResource LuminousCircularIcon}"
-                        HeightRequest="56"
-                        WidthRequest="56"
                         HorizontalOptions="Center"
-                        VerticalOptions="Center">
+                        VerticalOptions="Center">         
+                        <!-- Stroke="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}"
+                        StrokeThickness="3" -->               
+                        <Border.Shadow>
+                            <Shadow Brush="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}"
+                                    Radius="16"
+                                    Opacity="0.1"
+                                    Offset="0,2" />
+                        </Border.Shadow>
                         <Label
                             Padding="0"
                             AutomationProperties.IsInAccessibleTree="True"
@@ -92,21 +104,29 @@
                             TextColor="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}"
                             VerticalOptions="Center">
                             <Label.Triggers>
-                                <DataTrigger
-                                    Binding="{Binding IsPlaying}"
-                                    TargetType="Label"
-                                    Value="False">
-                                    <Setter Property="Text" Value="&#xf144;" />
-                                    <Setter Property="SemanticProperties.Description" Value="{localization:Translate Oynat}" />
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}" />
-                                </DataTrigger>
-                                <DataTrigger
-                                    Binding="{Binding IsPlaying}"
-                                    TargetType="Label"
-                                    Value="True">
+                                <!-- Show pause icon when Playing (bound directly to MediaElement.CurrentState) -->
+                                <DataTrigger TargetType="Label"
+                                    Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
+                                    Value="{x:Static toolkit:MediaElementState.Playing}">
                                     <Setter Property="Text" Value="&#xf28b;" />
                                     <Setter Property="SemanticProperties.Description" Value="{localization:Translate Durdur}" />
                                     <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Warning60}, Dark={StaticResource Warning30}}" />
+                                </DataTrigger>
+                                <!-- Show loading icon when Buffering
+                                <DataTrigger TargetType="Label"
+                                    Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
+                                    Value="{x:Static toolkit:MediaElementState.Buffering}">
+                                    <Setter Property="Text" Value="&#xf110;" />
+                                    <Setter Property="SemanticProperties.Description" Value="Loading" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary50}}" />
+                                </DataTrigger> -->
+                                <!-- Show loading icon when Opening -->
+                                <DataTrigger TargetType="Label"
+                                    Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
+                                    Value="{x:Static toolkit:MediaElementState.Opening}">
+                                    <Setter Property="Text" Value="&#xf110;" />
+                                    <Setter Property="SemanticProperties.Description" Value="Loading" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary50}}" />
                                 </DataTrigger>
                             </Label.Triggers>
                         </Label>
@@ -129,17 +149,17 @@
                                         FontFamily="{StaticResource IconFontFamily}"
                                         FontSize="{DynamicResource IconLargeFontSize}"
                                         Text="&#xf0ac; "
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor},
-                                                                    Dark={StaticResource Primary20}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Span 
                                         Text="{localization:Translate WebSayfa}" 
                                         FontSize="{DynamicResource BodyFontSize}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryDarkColor}, Dark={StaticResource Primary20}}" />
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
                         <StackLayout.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding TapCommand}" CommandParameter="https://www.radyofitrat.com/" />
+                            <TapGestureRecognizer Command="{Binding TapCommand}" CommandParameter="https://www.fitratradyo.com/" />
                         </StackLayout.GestureRecognizers>
                     </StackLayout>
                 </Grid>
@@ -154,24 +174,31 @@
                 HorizontalOptions="Fill"
                 IsVisible="False"
                 MetadataArtist="{localization:Translate SuleymaniyeVakfi}"
-                MetadataArtworkUrl="https://www.radyofitrat.com/img/radyo-fitrat.png"
+                MetadataArtworkUrl="https://www.fitratradyo.com/img/fitrat_radyo.png"
                 MetadataTitle="{localization:Translate RadyoFitrat}"
                 ShouldAutoPlay="False"
-                ShouldMute="False" CurrentState="Buffering"
+                ShouldMute="False"
                 ShouldShowPlaybackControls="False"
-                Source="https://www.suleymaniyevakfi.org/radio.mp3"
                 VerticalOptions="End" />
 
-            <ActivityIndicator
-                AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"
-                AbsoluteLayout.LayoutFlags="PositionProportional"
-                HeightRequest="80"
-                HorizontalOptions="Center"
-                IsRunning="{Binding IsBusy}"
-                VerticalOptions="Center"
-                Visual="Material"
-                WidthRequest="80"
-                Color="{StaticResource PrimaryColor}" />
+            <!-- Busy overlay - bound directly to MediaElement.CurrentState (Microsoft best practice) -->
+            <Grid x:Name="BusyOverlay" IsVisible="False">
+                <Grid.Triggers>
+                    <!-- Show loading indicator when Buffering -->
+                    <DataTrigger TargetType="Grid"
+                                 Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
+                                 Value="{x:Static toolkit:MediaElementState.Buffering}">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                    <!-- Show loading indicator when Opening -->
+                    <DataTrigger TargetType="Grid"
+                                 Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
+                                 Value="{x:Static toolkit:MediaElementState.Opening}">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </Grid.Triggers>
+                <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="80" HeightRequest="80" />
+            </Grid>
         </Grid>
     </ContentPage.Content>
 

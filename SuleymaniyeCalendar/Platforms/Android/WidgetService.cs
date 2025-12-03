@@ -18,14 +18,14 @@ namespace SuleymaniyeCalendar
 		private const string TAG = "WidgetService";
 		
 		[Obsolete]
-		public override void OnStart (Intent intent, int startId)
+		public override void OnStart (Intent? intent, int startId)
 		{
 			UpdateWidgetSafely(intent);
 		}
 		
-		public override IBinder OnBind(Intent intent) => null;
+		public override IBinder? OnBind(Intent? intent) => null;
 
-		protected override void OnHandleIntent(Intent intent)
+		protected override void OnHandleIntent(Intent? intent)
 		{
 			UpdateWidgetSafely(intent);
 		}
@@ -33,7 +33,7 @@ namespace SuleymaniyeCalendar
 		/// <summary>
 		/// Safe widget update with comprehensive error handling and performance optimization
 		/// </summary>
-		private void UpdateWidgetSafely(Intent intent)
+		private void UpdateWidgetSafely(Intent? intent)
 		{
 			try
 			{
@@ -108,14 +108,14 @@ namespace SuleymaniyeCalendar
 			}
 			
 			// Enhanced locale configuration with better error handling
-			Configuration localizedConfiguration = null;
+			Configuration? localizedConfiguration = null;
 			try
 			{
 				localizedConfiguration = new Configuration(context.Resources?.Configuration);
 				var newLocaleLanguage = new Locale(language);
-				if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
+			if (Build.VERSION.SdkInt >= BuildVersionCodes.N)
 				{
-					Locale.SetDefault(Locale.Category.Display, newLocaleLanguage);
+					Locale.SetDefault(Locale.Category.Display!, newLocaleLanguage);
 					localizedConfiguration.SetLocale(newLocaleLanguage);
 					localizedConfiguration.SetLayoutDirection(newLocaleLanguage);
 				}
@@ -126,7 +126,7 @@ namespace SuleymaniyeCalendar
 			}
 			
 			// Create a localizedContext if needed in the future (avoid deprecated UpdateConfiguration)  
-			Context localizedContext = null;
+			Context? localizedContext = null;
 			try
 			{
 				if (localizedConfiguration != null)
@@ -147,18 +147,59 @@ namespace SuleymaniyeCalendar
 			};
 
 			// Resolve DataService via DI to avoid new DataService()
-			var dataService = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService)
-						?? new DataService(new NullAlarmService());
+			var dataService = (Microsoft.Maui.Controls.Application.Current?.Handler?.MauiContext?.Services?.GetService(typeof(DataService)) as DataService);
+            
+            if (dataService == null)
+            {
+                // Fallback for widget update when app is not running
+                var perf = new PerformanceService();
+                var cache = new PrayerCacheService(perf);
+                var json = new JsonApiService(perf);
+                var xml = new XmlApiService(perf);
+                var repo = new PrayerTimesRepository(json, xml, cache, perf);
+                var loc = new LocationService(perf);
+                var alarm = new NullAlarmService();
+                var scheduler = new NotificationSchedulerService(alarm, repo, perf);
+                dataService = new DataService(loc, repo, scheduler, perf);
+            }
 			var calendar = dataService.calendar;
+			if (calendar is null)
+			{
+				// Try to load calendar data from cache synchronously
+				try
+				{
+					// Use Task.Run to avoid blocking but wait for result
+					calendar = Task.Run(async () => await dataService.PrepareMonthlyPrayerTimes().ConfigureAwait(false)).GetAwaiter().GetResult();
+					if (calendar != null)
+					{
+						dataService.calendar = calendar;
+					}
+				}
+				catch (Exception ex)
+				{
+					System.Diagnostics.Debug.WriteLine($"{TAG}: Failed to load calendar for widget: {ex.Message}");
+				}
+				
+				// If still null after loading attempt, show loading message
+				if (calendar is null)
+				{
+					var emptyViews = new RemoteViews(context.PackageName, Resource.Layout.Widget);
+					emptyViews.SetTextViewText(Resource.Id.widgetAppName, AppResources.Yenileniyor);
+					return emptyViews;
+				}
+			}
 
 			// Select appropriate layout based on theme and RTL
 			// Recreate RTL language set here (used only for layout selection)
-			var rtlLanguages = new HashSet<string> { "ar", "fa", "he", "ug", "ps", "sd", "ku", "dv" };
+			var rtlLanguages = new HashSet<string> { "ar", "fa", "ug" };
 			var layoutResource = GetWidgetLayout(isDarkMode, rtlLanguages.Contains(language));
 			var updateViews = new RemoteViews (context.PackageName, layoutResource);
 			
 			// Apply theme-aware colors
 			ApplyThemeColors(updateViews, isDarkMode);
+			
+			// Apply dynamic font sizes based on user preference
+			ApplyFontSizes(updateViews);
 			
 			updateViews.SetTextViewText(Resource.Id.widgetAppName, AppResources.SuleymaniyeVakfiTakvimi);
 			updateViews.SetTextViewText(Resource.Id.widgetFecriKazip, AppResources.FecriKazip);
@@ -253,7 +294,65 @@ namespace SuleymaniyeCalendar
 				System.Diagnostics.Debug.WriteLine($"Error applying widget theme colors: {ex.Message}");
 			}
 		}
-		private PendingIntent GetPendingSelfIntent(Context context, string action)
+
+		/// <summary>
+		/// Applies dynamic font sizes to widget based on user's font size preference.
+		/// Uses TypedValue.ComplexUnitSp for scalable pixels that respect accessibility settings.
+		/// </summary>
+		private void ApplyFontSizes(RemoteViews updateViews)
+		{
+			try
+			{
+				// Get user's font size preference (default 14, range 12-28)
+				var baseFontSize = Preferences.Get("FontSize", 14);
+				
+				// Calculate widget font sizes with reasonable scaling
+				// Widget needs slightly larger fonts for readability at a glance
+				var labelFontSize = (float)(baseFontSize * 1.15);  // Prayer names
+				var timeFontSize = (float)(baseFontSize * 1.35);   // Prayer times (more prominent)
+				var headerFontSize = (float)(baseFontSize * 1.1);  // App name
+				var captionFontSize = (float)(baseFontSize * 1.0); // Last refreshed, city
+				var iconFontSize = (float)(baseFontSize * 1.8);    // Refresh icon (larger for touch)
+				
+				// Use ComplexUnitSp for scalable pixels (respects system accessibility settings)
+				var unit = (int)Android.Util.ComplexUnitType.Sp;
+				
+				// App header
+				updateViews.SetTextViewTextSize(Resource.Id.widgetAppName, unit, headerFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetLastRefreshed, unit, captionFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetRefreshIcon, unit, iconFontSize);
+				
+				// Prayer name labels
+				updateViews.SetTextViewTextSize(Resource.Id.widgetFecriKazip, unit, labelFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetFecriSadik, unit, labelFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetSabahSonu, unit, labelFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetOgle, unit, labelFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetIkindi, unit, labelFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetAksam, unit, labelFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetYatsi, unit, labelFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetYatsiSonu, unit, labelFontSize);
+				
+				// Prayer time values (larger for quick reading)
+				updateViews.SetTextViewTextSize(Resource.Id.widgetFecriKazipVakit, unit, timeFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetFecriSadikVakit, unit, timeFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetSabahSonuVakit, unit, timeFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetOgleVakti, unit, timeFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetIkindiVakit, unit, timeFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetAksamVakit, unit, timeFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetYatsiVakit, unit, timeFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetYatsiSonuVakit, unit, timeFontSize);
+				
+				// City info
+				updateViews.SetTextViewTextSize(Resource.Id.widgetSehirAdi, unit, labelFontSize);
+				updateViews.SetTextViewTextSize(Resource.Id.widgetSehir, unit, timeFontSize);
+			}
+			catch (System.Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"Error applying widget font sizes: {ex.Message}");
+			}
+		}
+
+		private PendingIntent? GetPendingSelfIntent(Context context, string action)
 		{
 			var intent = new Intent(context, typeof(AppWidget));
 			intent.SetAction(action);

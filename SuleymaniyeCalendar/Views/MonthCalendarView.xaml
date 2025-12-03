@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="SuleymaniyeCalendar.Views.MonthCalendarView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
+    xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
+    x:DataType="viewModels:MonthViewModel"
+    FlowDirection="{DynamicResource FlowDirection}">
+
+    <!-- Local styles for this view -->
+    <ContentView.Resources>
+        <Style x:Key="WeekdayHeaderStyle" TargetType="Label" BasedOn="{StaticResource LabelMediumStyle}">
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="HorizontalTextAlignment" Value="Center" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
+        </Style>
+        <Style x:Key="PrayerNameStyle" TargetType="Label" BasedOn="{StaticResource BodyMediumStyle}">
+            <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+        </Style>
+        <Style x:Key="PrayerTimeStyle" TargetType="Label" BasedOn="{StaticResource TitleSmallStyle}">
+            <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="HorizontalTextAlignment" Value="End" />
+            <Setter Property="FontSize" Value="{DynamicResource SubHeaderFontSize}" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
+        </Style>
+        <Style x:Key="PrayerNameBoldStyle" TargetType="Label" BasedOn="{StaticResource BodyMediumStyle}">
+            <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
+        </Style>
+        <Style x:Key="PrayerTimeBoldStyle" TargetType="Label" BasedOn="{StaticResource TitleSmallStyle}">
+            <Setter Property="VerticalOptions" Value="Center" />
+            <Setter Property="HorizontalTextAlignment" Value="End" />
+            <Setter Property="FontAttributes" Value="Bold" />
+            <Setter Property="FontSize" Value="{DynamicResource SubHeaderFontSize}" />
+            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}" />
+        </Style>
+    </ContentView.Resources>
+
+    <ScrollView x:Name="MainScrollView">
+        <VerticalStackLayout Spacing="{StaticResource SpacingMD}" Padding="{StaticResource SpacingXS}">
+            
+            <!-- Calendar Card with Swipe Navigation -->
+            <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="12">
+                <Border.GestureRecognizers>
+                    <!-- Swipe Left → Next Month (lower threshold for better sensitivity inside ScrollView) -->
+                    <SwipeGestureRecognizer Direction="Left" Command="{Binding NextMonthCommand}" Threshold="40" />
+                    <!-- Swipe Right → Previous Month -->
+                    <SwipeGestureRecognizer Direction="Right" Command="{Binding PreviousMonthCommand}" Threshold="40" />
+                </Border.GestureRecognizers>
+                
+                <VerticalStackLayout Spacing="8">
+                    
+                    <!-- Navigation Header -->
+                    <Grid ColumnDefinitions="36,*,36,Auto" ColumnSpacing="6">
+                        <!-- Previous Month -->
+                        <Button Grid.Column="0"
+                                Text="◀"
+                                Style="{StaticResource GlassButtonSecondary}"
+                                FontSize="16"
+                                WidthRequest="36"
+                                HeightRequest="36"
+                                Padding="0"
+                                Margin="8,0,0,0"
+                                Command="{Binding PreviousMonthCommand}" />
+                        
+                        <!-- Month/Year Title (Centered) -->
+                        <Label Grid.Column="1"
+                               Text="{Binding MonthYearDisplay}"
+                               Style="{StaticResource TitleMediumStyle}"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}" />
+                        
+                        <!-- Next Month -->
+                        <Button Grid.Column="2"
+                                Text="▶"
+                                Style="{StaticResource GlassButtonSecondary}"
+                                FontSize="16"
+                                WidthRequest="36"
+                                HeightRequest="36"
+                                Padding="0"
+                                Command="{Binding NextMonthCommand}" />
+                        
+                        <!-- Today Button (Localized) -->
+                        <Button Grid.Column="3"
+                                Text="{localization:Translate Bugun}"
+                                Style="{StaticResource iOSLiquidGlassButton}"
+                                FontSize="12"
+                                Padding="12,0"
+                                HeightRequest="32"
+                                VerticalOptions="Center"
+                                Command="{Binding TodayCommand}" />
+                    </Grid>
+                    
+                    <!-- Weekday Headers -->
+                    <Grid ColumnDefinitions="*,*,*,*,*,*,*" ColumnSpacing="4">
+                        <Label Grid.Column="0" Text="{Binding WeekdayHeaders[0]}" Style="{StaticResource WeekdayHeaderStyle}" />
+                        <Label Grid.Column="1" Text="{Binding WeekdayHeaders[1]}" Style="{StaticResource WeekdayHeaderStyle}" />
+                        <Label Grid.Column="2" Text="{Binding WeekdayHeaders[2]}" Style="{StaticResource WeekdayHeaderStyle}" />
+                        <Label Grid.Column="3" Text="{Binding WeekdayHeaders[3]}" Style="{StaticResource WeekdayHeaderStyle}" />
+                        <Label Grid.Column="4" Text="{Binding WeekdayHeaders[4]}" Style="{StaticResource WeekdayHeaderStyle}" />
+                        <Label Grid.Column="5" Text="{Binding WeekdayHeaders[5]}" Style="{StaticResource WeekdayHeaderStyle}" />
+                        <Label Grid.Column="6" Text="{Binding WeekdayHeaders[6]}" Style="{StaticResource WeekdayHeaderStyle}" />
+                    </Grid>
+
+                    <!-- Calendar Days Grid (7×6 = 42 cells) -->
+                    <Grid x:Name="CalendarGrid"
+                          ColumnDefinitions="*,*,*,*,*,*,*"
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                          ColumnSpacing="4"
+                          RowSpacing="4" />
+                    
+                    <!-- Download Prompt (shown when selected day has no data) -->
+                    <Border Style="{StaticResource FrostGlassCardFrozen}"
+                            Padding="10,16"
+                            IsVisible="{Binding ShowDownloadPrompt}">
+                        <FlexLayout Direction="Row" 
+                                    Wrap="Wrap" 
+                                    JustifyContent="Center" 
+                                    AlignItems="Center"
+                                    AlignContent="Center">
+                            <Label Text="📅" 
+                                   FontSize="18" 
+                                   Margin="3,3,8,3" />
+                            <Label Text="{localization:Translate AylikVeriYenilemeIste}"
+                                   Style="{StaticResource BodySmallStyle}"
+                                   Margin="3,3,10,3"
+                                   TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}" />
+                            <Button Text="{localization:Translate AyVeriYukle}"
+                                    Style="{StaticResource iOSLiquidGlassButton}"
+                                    Command="{Binding DownloadDisplayedMonthCommand}"
+                                    HeightRequest="48"
+                                    FontSize="16"
+                                    Padding="12,8" />
+                        </FlexLayout>
+                    </Border>
+                    
+                    <!-- Loading Indicator -->
+                    <ActivityIndicator IsRunning="{Binding IsLoadingMonth}"
+                                       IsVisible="{Binding IsLoadingMonth}"
+                                       Color="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}"
+                                       HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       HeightRequest="80"
+                                       WidthRequest="80" />
+                    
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Selected Day Detail Card -->
+            <Border x:Name="SelectedDayCard"
+                    Style="{StaticResource FrostGlassCardFrozen}" 
+                    Padding="20,16"
+                    IsVisible="{Binding HasSelectedDayData}">
+                <VerticalStackLayout Spacing="9">
+                    <Label Text="{Binding SelectedDate, StringFormat='{0:dddd, dd MMMM yyyy}'}"
+                           Style="{StaticResource TitleMediumStyle}"
+                           TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary50}}" />
+                    
+                    <BoxView HeightRequest="1" Opacity="0.15"
+                             Color="{AppThemeBinding Light={StaticResource Primary80}, Dark={StaticResource Primary30}}" />
+                    
+                    <!-- Prayer Times Grid -->
+                    <Grid ColumnDefinitions="*,Auto" 
+                          RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto,Auto,Auto"
+                          ColumnSpacing="20" RowSpacing="12">
+                        
+                        <!-- Fajr (secondary) -->
+                        <Label Grid.Row="0" Grid.Column="0" Text="{localization:Translate FecriKazip}" Style="{StaticResource PrayerNameStyle}" />
+                        <Label Grid.Row="0" Grid.Column="1" Text="{Binding SelectedDayData.FalseFajr}" Style="{StaticResource PrayerTimeStyle}" />
+                        
+                        <!-- True Fajr (primary) -->
+                        <Label Grid.Row="1" Grid.Column="0" Text="{localization:Translate FecriSadik}" Style="{StaticResource PrayerNameBoldStyle}" />
+                        <Label Grid.Row="1" Grid.Column="1" Text="{Binding SelectedDayData.Fajr}" Style="{StaticResource PrayerTimeBoldStyle}" />
+                        
+                        <!-- Sunrise (secondary) -->
+                        <Label Grid.Row="2" Grid.Column="0" Text="{localization:Translate SabahSonu}" Style="{StaticResource PrayerNameStyle}" />
+                        <Label Grid.Row="2" Grid.Column="1" Text="{Binding SelectedDayData.Sunrise}" Style="{StaticResource PrayerTimeStyle}" />
+                        
+                        <!-- Dhuhr (primary) -->
+                        <Label Grid.Row="3" Grid.Column="0" Text="{localization:Translate Ogle}" Style="{StaticResource PrayerNameBoldStyle}" />
+                        <Label Grid.Row="3" Grid.Column="1" Text="{Binding SelectedDayData.Dhuhr}" Style="{StaticResource PrayerTimeBoldStyle}" />
+                        
+                        <!-- Asr (primary) -->
+                        <Label Grid.Row="4" Grid.Column="0" Text="{localization:Translate Ikindi}" Style="{StaticResource PrayerNameBoldStyle}" />
+                        <Label Grid.Row="4" Grid.Column="1" Text="{Binding SelectedDayData.Asr}" Style="{StaticResource PrayerTimeBoldStyle}" />
+                        
+                        <!-- Maghrib (primary) -->
+                        <Label Grid.Row="5" Grid.Column="0" Text="{localization:Translate Aksam}" Style="{StaticResource PrayerNameBoldStyle}" />
+                        <Label Grid.Row="5" Grid.Column="1" Text="{Binding SelectedDayData.Maghrib}" Style="{StaticResource PrayerTimeBoldStyle}" />
+                        
+                        <!-- Isha (primary) -->
+                        <Label Grid.Row="6" Grid.Column="0" Text="{localization:Translate Yatsi}" Style="{StaticResource PrayerNameBoldStyle}" />
+                        <Label Grid.Row="6" Grid.Column="1" Text="{Binding SelectedDayData.Isha}" Style="{StaticResource PrayerTimeBoldStyle}" />
+                        
+                        <!-- End of Isha (secondary) -->
+                        <Label Grid.Row="7" Grid.Column="0" Text="{localization:Translate YatsiSonu}" Style="{StaticResource PrayerNameStyle}" />
+                        <Label Grid.Row="7" Grid.Column="1" Text="{Binding SelectedDayData.EndOfIsha}" Style="{StaticResource PrayerTimeStyle}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>

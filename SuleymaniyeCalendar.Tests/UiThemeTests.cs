@@ -263,23 +263,21 @@ namespace SuleymaniyeCalendar.Tests
         [TestMethod]
         public void BaseViewModel_ToastMessageFunctionality()
         {
-            // Arrange & Act
-            BaseViewModel.ShowToast("Test message");
+            // Arrange & Act - Toast functionality requires UI context, just verify no exception
+            var action = () => BaseViewModel.ShowToast("Test message");
 
             // Assert - No exception should be thrown
-            // Toast functionality requires UI context, so we just test it doesn't crash
-            Assert.IsTrue(true);
+            action.Should().NotThrow();
         }
 
         [TestMethod]
         public void BaseViewModel_AlertFunctionality()
         {
-            // Arrange & Act
-            BaseViewModel.Alert("Test Title", "Test Message");
+            // Arrange & Act - Alert functionality requires UI context, just verify no exception
+            var action = () => BaseViewModel.Alert("Test Title", "Test Message");
 
             // Assert - No exception should be thrown
-            // Alert functionality requires UI context, so we just test it doesn't crash
-            Assert.IsTrue(true);
+            action.Should().NotThrow();
         }
 
         [TestMethod]

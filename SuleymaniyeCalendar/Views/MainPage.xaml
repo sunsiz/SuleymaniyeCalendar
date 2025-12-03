@@ -11,32 +11,33 @@
     Title="{Binding Title}"
     x:DataType="viewModels:MainViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <Grid Margin="10" x:DataType="viewModels:MainViewModel" HeightRequest="40"
-              ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+        <Grid Margin="8,0,0,0" x:DataType="viewModels:MainViewModel" MinimumHeightRequest="48"
+              ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4">
             <Label Grid.Column="0"
                    AutomationProperties.IsInAccessibleTree="True"
-                   FontAttributes="Bold"
-                   FontSize="{DynamicResource HeaderFontSize}"
                    SemanticProperties.Description="{localization:Translate Takvim}"
                    SemanticProperties.HeadingLevel="Level1"
                    Style="{StaticResource LabelSectionHeader}"
                    Text="{localization:Translate PageTitle}"
-                   VerticalTextAlignment="Start" />
+                   LineBreakMode="TailTruncation"
+                   HorizontalTextAlignment="Start" />
             <Image Grid.Column="1"
                    x:DataType="viewModels:MainViewModel"
-                   Margin="10,0,12,0"
+                   Margin="0,0,4,0"
                    AutomationProperties.IsInAccessibleTree="True"
                    VerticalOptions="Center"
+                   WidthRequest="40"
+                   HeightRequest="40"
                    SemanticProperties.Description="{localization:Translate UygulamaAyarlari}">
                 <Image.Source>
                     <FontImageSource
                         FontAutoScalingEnabled="True"
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf013;"
-                        Size="{DynamicResource IconLargeFontSize}"
+                        Size="22"
                         Color="{AppThemeBinding Light=White, Dark={StaticResource OnSurfaceColorDark}}" />
                 </Image.Source>
                 <Image.GestureRecognizers>
@@ -45,15 +46,17 @@
             </Image>
             <Image Grid.Column="2"
                    x:DataType="viewModels:MainViewModel"
-                   Margin="10,0,20,0"
+                   Margin="4,0,8,0"
                    AutomationProperties.IsInAccessibleTree="True"
                    VerticalOptions="Center"
+                   WidthRequest="40"
+                   HeightRequest="40"
                    SemanticProperties.Description="{localization:Translate Yenile}">
                 <Image.Source>
                     <FontImageSource
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="{DynamicResource IconLargeFontSize}"
+                        Size="22"
                         Color="{AppThemeBinding Light=White, Dark={StaticResource OnSurfaceColorDark}}" />
                 </Image.Source>
                 <Image.GestureRecognizers>
@@ -64,7 +67,7 @@
     </Shell.TitleView>
 
     <ContentPage.Content>
-        <RefreshView Command="{Binding RefreshLocationCommand}" IsRefreshing="{Binding IsRefreshing}">
+        <!--<RefreshView Command="{Binding RefreshLocationCommand}" IsRefreshing="{Binding IsRefreshing}">-->
             <Grid ColumnDefinitions="*" RowDefinitions="*" HorizontalOptions="Fill" Margin="0" Padding="0" >
                 <CollectionView
                     x:Name="PrayersView"
@@ -76,20 +79,31 @@
                     VerticalOptions="Fill"
                     VerticalScrollBarVisibility="Never">
                     <CollectionView.ItemsLayout>
-                        <!-- Reduced ItemSpacing to tighten vertical layout -->
-                        <LinearItemsLayout ItemSpacing="4" Orientation="Vertical" />
+                        <LinearItemsLayout ItemSpacing="0" Orientation="Vertical" />
                     </CollectionView.ItemsLayout>
                     <CollectionView.Header>
                         <StackLayout x:DataType="viewModels:MainViewModel">
-                            <!--  Remaining Time Card - Simplified icon ✅  -->
+                            <!-- Remaining Time Card -->
                             <Border
-                                Margin="{StaticResource CardMarginList}"
-                                Padding="{StaticResource CardPaddingTight}"
-                                Style="{StaticResource iOSGlassCard}"
+                                Style="{StaticResource GlassCardOptimized}"
+                                Margin="12,8"
+                                Padding="0"
                                 HorizontalOptions="Fill">
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="{StaticResource SpacingTight}">
-                                    <!--  Simplified clock icon  -->
-                                    <Label
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                        <!-- Remaining time portion -->
+                                        <GradientStop Color="{AppThemeBinding Light=#E8B08A, Dark=#C0885511}" Offset="0" />
+                                        <GradientStop Color="{AppThemeBinding Light=#E8B08A, Dark=#C0664410}" Offset="{Binding TimeProgress}" />
+                                        <!-- Sharp transition zone (clear boundary) -->
+                                        <GradientStop Color="{AppThemeBinding Light=#DC925E, Dark=#40775520}" Offset="{Binding TimeProgress}" />
+                                        <!-- Consumed time portion -->
+                                        <GradientStop Color="{AppThemeBinding Light=#DC925E, Dark=#20443308}" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Border.Background>
+
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="12,10">
+                                    <!-- Clock icon -->
+                                    <Border
                                         Grid.Column="0"
                                         FontFamily="{StaticResource IconFontFamily}"
                                         FontSize="22"
@@ -97,8 +111,19 @@
                                         TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
                                         VerticalOptions="Center"
                                         WidthRequest="44"
-                                        HorizontalTextAlignment="Center" />
-                                    
+                                        HeightRequest="44"
+                                        Background="{AppThemeBinding Light={StaticResource SurfaceContainerLowestLight}, Dark={StaticResource SurfaceContainerDark}}"
+                                        StrokeShape="RoundRectangle 22"
+                                        VerticalOptions="Center">
+                                        <Label
+                                            FontFamily="{StaticResource IconFontFamily}"
+                                            FontSize="24"
+                                            Text="&#xf017;"
+                                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark=#D0FFD700}"
+                                            VerticalOptions="Center"
+                                            HorizontalTextAlignment="Center" />
+                                    </Border>
+
                                     <Label
                                         Grid.Column="1"
                                         AutomationProperties.IsInAccessibleTree="True"
@@ -112,172 +137,176 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="models:Prayer">
-                            <ContentView Padding="0" Margin="7,0">
+                            <ContentView Padding="0">
+                                <ContentView.Triggers>
+                                    <!-- Past prayers: compact -->
+                                    <DataTrigger Binding="{Binding IsPast}" TargetType="ContentView" Value="True">
+                                        <Setter Property="Margin" Value="8,0,8,0" />
+                                    </DataTrigger>
+                                    <!-- Current prayer: generous -->
+                                    <DataTrigger Binding="{Binding IsActive}" TargetType="ContentView" Value="True">
+                                        <Setter Property="Margin" Value="10,4,10,4" />
+                                    </DataTrigger>
+                                    <!-- Standard margin for upcoming prayers -->
+                                    <MultiTrigger TargetType="ContentView">
+                                        <MultiTrigger.Conditions>
+                                            <BindingCondition Binding="{Binding IsActive}" Value="False" />
+                                            <BindingCondition Binding="{Binding IsPast}" Value="False" />
+                                        </MultiTrigger.Conditions>
+                                        <Setter Property="Margin" Value="10,2,10,2" />
+                                    </MultiTrigger>
+                                </ContentView.Triggers>
                                 <Grid>
-                                <!-- ⚡ Performance-Optimized Prayer Card (Phase 5.1 Enhanced) -->
-                                <!-- Uses solid colors with strong visual differentiation -->
-                                <Border
-                                    Style="{StaticResource FrostGlassCardFrozen}">
-                                    <Border.Triggers>
-                                        <!-- 🎨 Phase 5.2.4: Glassmorphism matte for past prayers -->
-                                        <DataTrigger
-                                            Binding="{Binding IsPast}"
-                                            TargetType="Border"
-                                            Value="True">
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardPastGradientLight}, Dark={StaticResource PrayerCardPastGradientDark}}" />
-                                            <!-- <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardPastBorderLight}, Dark={StaticResource PrayerCardPastBorderDark}}" /> -->
-                                            <Setter Property="Opacity" Value="0.99" />
-                                            <Setter Property="Shadow">
-                                                <Shadow Brush="{AppThemeBinding Light={StaticResource FrostGlassFrozenLight}, Dark={StaticResource FrostGlassFrozenDark}}" Radius="0" Offset="0,0" />
-                                            </Setter>
-                                        </DataTrigger>
-                                        <!-- 🎨 Phase 5.2.4: Glassmorphism ULTRA GREEN for current prayer -->
-                                        <DataTrigger
-                                            Binding="{Binding IsActive}"
-                                            TargetType="Border"
-                                            Value="True">
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerCardCurrentBackgroundLight}, Dark={StaticResource PrayerCardCurrentBackgroundDark}}" />
-                                            <!-- <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardCurrentBorderLight}, Dark={StaticResource PrayerCardCurrentBorderDark}}" /> -->
-                                            <!-- <Setter Property="StrokeThickness" Value="2.5" /> -->
-                                            <Setter Property="Shadow">
-                                                <Shadow Brush="{AppThemeBinding Light={StaticResource PrayerCardCurrentShadowLight}, Dark={StaticResource PrayerCardCurrentShadowDark}}" Radius="0" Offset="0,1" />
-                                            </Setter>
-                                        </DataTrigger>
-                                        <!-- 🎨 Phase 5.2.4: Glassmorphism ULTRA AMBER for upcoming -->
-                                        <MultiTrigger TargetType="Border">
-                                            <MultiTrigger.Conditions>
-                                                <BindingCondition Binding="{Binding IsActive}" Value="False" />
-                                                <BindingCondition Binding="{Binding IsPast}" Value="False" />
-                                            </MultiTrigger.Conditions>
-                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource FrostGlassFrozenLight}, Dark={StaticResource FrostGlassFrozenDark}}" />
-                                            <!-- <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrayerCardUpcomingBorderLight}, Dark={StaticResource PrayerCardUpcomingBorderDark}}" /> -->
-                                            <Setter Property="Shadow">
-                                                <Shadow Brush="{AppThemeBinding Light={StaticResource FrostGlassFrozenLight}, Dark={StaticResource FrostGlassFrozenDark}}" Radius="0" Offset="0,0" />
-                                            </Setter>
-                                        </MultiTrigger>
-                                    </Border.Triggers>
+                                    <Border Style="{StaticResource FrostGlassCardCrystal}">
+                                        <Border.Triggers>
+                                            <!-- Past prayer style -->
+                                            <DataTrigger Binding="{Binding IsPast}" TargetType="Border" Value="True">
+                                                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource PrayerPastBackgroundColor}, Dark={StaticResource PrayerPastBackgroundColorDark}}" />
+                                                <Setter Property="Stroke" Value="#40A8896F" />
+                                                <Setter Property="StrokeThickness" Value="0.7" />
+                                                <Setter Property="Opacity" Value="0.9" />
+                                                <Setter Property="MinimumHeightRequest" Value="52" />
+                                                <Setter Property="Padding" Value="8,3" />
+                                            </DataTrigger>
+                                            <!-- Current prayer style -->
+                                            <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
+                                                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowestLight}, Dark={StaticResource SurfaceContainerLowestDark}}"/>
+                                                <Setter Property="Shadow">
+                                                    <Shadow Brush="{AppThemeBinding Light={StaticResource Secondary20}, Dark=#50FFA500}" Radius="32" Offset="0,12" Opacity="0.05" />
+                                                </Setter>
+                                                <Setter Property="MinimumHeightRequest" Value="100" />
+                                                <Setter Property="Padding" Value="10,6" />
+                                            </DataTrigger>
+                                            <!-- Upcoming prayer style -->
+                                            <MultiTrigger TargetType="Border">
+                                                <MultiTrigger.Conditions>
+                                                    <BindingCondition Binding="{Binding IsActive}" Value="False" />
+                                                    <BindingCondition Binding="{Binding IsPast}" Value="False" />
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassStrongLight}, Dark={StaticResource GlassStrongDark}}"/>
+                                                <Setter Property="Opacity" Value="0.98" />
+                                                <Setter Property="Shadow">
+                                                    <Shadow Brush="{AppThemeBinding Light={StaticResource Secondary30}, Dark=#30FFA500}" Radius="3" Offset="0,0" Opacity="0.95" />
+                                                </Setter>
+                                            </MultiTrigger>
+                                        </Border.Triggers>
 
-                                    <Grid
-                                        ColumnDefinitions="Auto,*,Auto,Auto"
-                                        ColumnSpacing="8">
+                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="6">
 
-                                        <!-- Animated Prayer Icon -->
-                                        <Border
-                                            Grid.Column="0"
-                                            WidthRequest="40"
-                                            HeightRequest="40"
-                                            BackgroundColor="Transparent"
-                                            Background="#F5917D3C"
-        									Stroke="{StaticResource GlassStrokeBrush}"
-                                            VerticalOptions="Center">
-                                            <Image
-                                                Source="{Binding IconPath}"
-                                                Aspect="AspectFit"
-                                                WidthRequest="32"
-                                                HeightRequest="32"
-                                                VerticalOptions="Center"
-                                                HorizontalOptions="Center">
-                                                <Image.Triggers>
-                                                    <!-- Past prayers: Better visibility in light mode, more subtle in dark mode -->
-                                                    <DataTrigger
-                                                        Binding="{Binding IsPast}"
-                                                        TargetType="Image"
-                                                        Value="True">
-                                                        <Setter Property="Opacity" Value="{AppThemeBinding Light=0.65, Dark=0.6}" />
+                                            <!-- Prayer Icon -->
+                                            <Border Grid.Column="0" WidthRequest="38" HeightRequest="38"
+                                                    Style="{StaticResource LuminousCircularIcon}"
+                                                    BackgroundColor="Transparent"
+                                                    Background="{StaticResource Secondary80}"
+                                                    Stroke="{StaticResource GlassStrokeBrush}"
+                                                    VerticalOptions="Center">
+                                                <Border.Triggers>
+                                                    <!-- Past: compact -->
+                                                    <DataTrigger Binding="{Binding IsPast}" TargetType="Border" Value="True">
+                                                        <Setter Property="WidthRequest" Value="28" />
+                                                        <Setter Property="HeightRequest" Value="28" />
+                                                        <Setter Property="Opacity" Value="0.7" />
                                                     </DataTrigger>
-                                                    <!-- Current prayer: Full visibility with enhanced scaling -->
-                                                    <DataTrigger
-                                                        Binding="{Binding IsActive}"
-                                                        TargetType="Image"
-                                                        Value="True">
-                                                        <Setter Property="Opacity" Value="1.0" />
-                                                        <Setter Property="Scale" Value="1.1" />
+                                                    <!-- Current: enhanced but compact -->
+                                                    <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
+                                                        <!-- <Setter Property="Background" Value="{StaticResource Primary30}" /> -->
+                                                        <Setter Property="WidthRequest" Value="46" />
+                                                        <Setter Property="HeightRequest" Value="46" />
+                                                        <Setter Property="Shadow">
+                                                            <Shadow Brush="{StaticResource Primary50}" Radius="12" Offset="0,3" Opacity="0.1" />
+                                                        </Setter>
                                                     </DataTrigger>
-                                                    <!-- Upcoming prayers: High visibility in both modes -->
-                                                    <MultiTrigger TargetType="Image">
+                                                </Border.Triggers>
+                                                <Image Source="{Binding IconPath}" Aspect="AspectFit"
+                                                       WidthRequest="32" HeightRequest="32"
+                                                       VerticalOptions="Center" HorizontalOptions="Center">
+                                                    <Image.Triggers>
+                                                        <!-- Past: smaller -->
+                                                        <DataTrigger Binding="{Binding IsPast}" TargetType="Image" Value="True">
+                                                            <Setter Property="WidthRequest" Value="20" />
+                                                            <Setter Property="HeightRequest" Value="20" />
+                                                            <Setter Property="Opacity" Value="{AppThemeBinding Light=0.6, Dark=0.55}" />
+                                                        </DataTrigger>
+                                                        <!-- Current: larger but proportional -->
+                                                        <DataTrigger Binding="{Binding IsActive}" TargetType="Image" Value="True">
+                                                            <Setter Property="Opacity" Value="1.0" />
+                                                            <Setter Property="Scale" Value="1.2" />
+                                                            <Setter Property="WidthRequest" Value="36" />
+                                                            <Setter Property="HeightRequest" Value="36" />
+                                                        </DataTrigger>
+                                                        <!-- Upcoming prayers: High visibility in both modes -->
+                                                        <MultiTrigger TargetType="Image">
+                                                            <MultiTrigger.Conditions>
+                                                                <BindingCondition Binding="{Binding IsActive}" Value="False" />
+                                                                <BindingCondition Binding="{Binding IsPast}" Value="False" />
+                                                            </MultiTrigger.Conditions>
+                                                            <Setter Property="Opacity" Value="{AppThemeBinding Light=0.95, Dark=0.85}" />
+                                                        </MultiTrigger>
+                                                    </Image.Triggers>
+                                                </Image>
+                                            </Border>
+
+                                            <!-- Prayer Name -->
+                                            <Label Grid.Column="1" Style="{StaticResource PrayerNameStyle}" Text="{Binding Name}" VerticalOptions="Center">
+                                                <Label.Triggers>
+                                                    <!-- Past -->
+                                                    <DataTrigger Binding="{Binding IsPast}" TargetType="Label" Value="True">
+                                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerPastTextColor}, Dark={StaticResource PrayerPastTextColorDark}}" />
+                                                        <Setter Property="FontSize" Value="{DynamicResource BodySmallFontSize}" />
+                                                        <Setter Property="Opacity" Value="0.9" />
+                                                    </DataTrigger>
+                                                    <!-- Current -->
+                                                    <DataTrigger Binding="{Binding IsActive}" TargetType="Label" Value="True">
+                                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
+                                                        <Setter Property="FontAttributes" Value="Bold" />
+                                                        <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
+                                                        <Setter Property="CharacterSpacing" Value="0.5" />
+                                                    </DataTrigger>
+                                                    <MultiTrigger TargetType="Label">
                                                         <MultiTrigger.Conditions>
                                                             <BindingCondition Binding="{Binding IsActive}" Value="False" />
                                                             <BindingCondition Binding="{Binding IsPast}" Value="False" />
                                                         </MultiTrigger.Conditions>
-                                                        <Setter Property="Opacity" Value="{AppThemeBinding Light=0.95, Dark=0.85}" />
+                                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerUpcomingTextColor}, Dark={StaticResource PrayerUpcomingTextColorDark}}" />
                                                     </MultiTrigger>
-                                                </Image.Triggers>
-                                            </Image>
-                                        </Border>
+                                                </Label.Triggers>
+                                            </Label>
 
-                                        <!-- Prayer Name with State-Based Colors -->
-                                        <Label
-                                            Grid.Column="1"
-                                            Style="{StaticResource PrayerNameStyle}"
-                                            Text="{Binding Name}"
-                                            VerticalOptions="Center">
-                                            <Label.Triggers>
-                                                <DataTrigger
-                                                    Binding="{Binding IsPast}"
-                                                    TargetType="Label"
-                                                    Value="True">
-                                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerPastTextColor}, Dark={StaticResource PrayerPastTextColorDark}}" />
-                                                </DataTrigger>
-                                                <DataTrigger
-                                                    Binding="{Binding IsActive}"
-                                                    TargetType="Label"
-                                                    Value="True">
-                                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
-                                                    <Setter Property="FontAttributes" Value="Bold" />
-                                                </DataTrigger>
-                                                <MultiTrigger TargetType="Label">
-                                                    <MultiTrigger.Conditions>
-                                                        <BindingCondition Binding="{Binding IsActive}" Value="False" />
-                                                        <BindingCondition Binding="{Binding IsPast}" Value="False" />
-                                                    </MultiTrigger.Conditions>
-                                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerUpcomingTextColor}, Dark={StaticResource PrayerUpcomingTextColorDark}}" />
-                                                </MultiTrigger>
-                                            </Label.Triggers>
-                                        </Label>
+                                            <!-- Prayer Time -->
+                                            <Label Grid.Column="2" HorizontalTextAlignment="End"
+                                                   Style="{StaticResource PrayerTimeStyle}" Text="{Binding Time}"
+                                                   VerticalOptions="Center">
+                                                <Label.Triggers>
+                                                    <!-- Past -->
+                                                    <DataTrigger Binding="{Binding IsPast}" TargetType="Label" Value="True">
+                                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerPastTextColor}, Dark={StaticResource PrayerPastTextColorDark}}" />
+                                                        <Setter Property="FontSize" Value="{DynamicResource BodySmallFontSize}" />
+                                                        <Setter Property="Opacity" Value="0.9" />
+                                                    </DataTrigger>
+                                                    <!-- Current -->
+                                                    <DataTrigger Binding="{Binding IsActive}" TargetType="Label" Value="True">
+                                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
+                                                        <Setter Property="FontAttributes" Value="Bold" />
+                                                        <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
+                                                        <Setter Property="CharacterSpacing" Value="0.5" />
+                                                    </DataTrigger>
+                                                    <MultiTrigger TargetType="Label">
+                                                        <MultiTrigger.Conditions>
+                                                            <BindingCondition Binding="{Binding IsActive}" Value="False" />
+                                                            <BindingCondition Binding="{Binding IsPast}" Value="False" />
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerUpcomingTextColor}, Dark={StaticResource PrayerUpcomingTextColorDark}}" />
+                                                    </MultiTrigger>
+                                                </Label.Triggers>
+                                            </Label>
 
-                                        <!-- Prayer Time with State-Based Colors -->
-                                        <Label
-                                            Grid.Column="2"
-                                            HorizontalTextAlignment="End"
-                                            Style="{StaticResource PrayerTimeStyle}"
-                                            Text="{Binding Time}"
-                                            VerticalOptions="Center">
-                                            <Label.Triggers>
-                                                <DataTrigger
-                                                    Binding="{Binding IsPast}"
-                                                    TargetType="Label"
-                                                    Value="True">
-                                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerPastTextColor}, Dark={StaticResource PrayerPastTextColorDark}}" />
-                                                </DataTrigger>
-                                                <DataTrigger
-                                                    Binding="{Binding IsActive}"
-                                                    TargetType="Label"
-                                                    Value="True">
-                                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
-                                                    <Setter Property="FontAttributes" Value="Bold" />
-                                                </DataTrigger>
-                                                <MultiTrigger TargetType="Label">
-                                                    <MultiTrigger.Conditions>
-                                                        <BindingCondition Binding="{Binding IsActive}" Value="False" />
-                                                        <BindingCondition Binding="{Binding IsPast}" Value="False" />
-                                                    </MultiTrigger.Conditions>
-                                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerUpcomingTextColor}, Dark={StaticResource PrayerUpcomingTextColorDark}}" />
-                                                </MultiTrigger>
-                                            </Label.Triggers>
-                                        </Label>
-
-                                        <!-- Enhanced Notification Bell with Better Visual Distinction -->
-                                        <Border
-                                            Grid.Column="3"
-                                            BackgroundColor="Transparent"
-                                            Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
-        									Stroke="{StaticResource GlassStrokeBrush}"
-                                            StrokeThickness="0.75"
-                                            StrokeShape="RoundRectangle 16"
-                                            WidthRequest="36"
-                                            HeightRequest="36"
-                                            VerticalOptions="Center">
-                                            <Label
+                                            <!-- Notification Bell -->
+                                            <Border Grid.Column="3" BackgroundColor="Transparent"
+                                                    Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
+                                                    Stroke="{StaticResource GlassStrokeBrush}" StrokeThickness="0.75"
+                                                    StrokeShape="RoundRectangle 16" WidthRequest="38" HeightRequest="38"
+                                                    VerticalOptions="Center">
+                                                <Label
                                                 AutomationProperties.IsInAccessibleTree="True"
                                                 FontFamily="{StaticResource IconFontFamily}"
                                                 FontSize="{DynamicResource IconMediumFontSize}"
@@ -285,58 +314,66 @@
                                                 VerticalOptions="Center"
                                                 Text="&#xe7f6;"
                                                 TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}">
-                                                <Label.Triggers>
-                                                    <DataTrigger
-                                                        Binding="{Binding Enabled}"
-                                                        TargetType="Label"
-                                                        Value="False">
-                                                        <Setter Property="Text" Value="&#xf1f6;" />
-                                                        <Setter Property="SemanticProperties.Description" Value="{localization:Translate DevreDisi}" />
-                                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource HighContrastOutline}, Dark={StaticResource HighContrastOutlineDark}}" />
-                                                        <Setter Property="Opacity" Value="0.6" />
-                                                    </DataTrigger>
-                                                    <DataTrigger
-                                                        Binding="{Binding Enabled}"
-                                                        TargetType="Label"
-                                                        Value="True">
-                                                        <Setter Property="Text" Value="&#xf0f3;" />
-                                                        <Setter Property="SemanticProperties.Description" Value="{localization:Translate Etkin}" />
-                                                        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Success60}, Dark={StaticResource Success30}}" />
-                                                        <Setter Property="Opacity" Value="1.0" />
-                                                    </DataTrigger>
-                                                </Label.Triggers>
-                                            </Label>
-                                            <Border.GestureRecognizers>
-                                                <TapGestureRecognizer x:DataType="models:Prayer"
+                                                    <Label.Triggers>
+                                                        <DataTrigger Binding="{Binding Enabled}" TargetType="Label" Value="False">
+                                                            <Setter Property="Text" Value="&#xf1f6;" />
+                                                            <Setter Property="SemanticProperties.Description" Value="{localization:Translate DevreDisi}" />
+                                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource HighContrastOutline}, Dark={StaticResource HighContrastOutlineDark}}" />
+                                                            <Setter Property="Opacity" Value="0.6" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Enabled}" TargetType="Label" Value="True">
+                                                            <Setter Property="Text" Value="&#xf0f3;" />
+                                                            <Setter Property="SemanticProperties.Description" Value="{localization:Translate Etkin}" />
+                                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}" />
+                                                            <Setter Property="Opacity" Value="1.0" />
+                                                        </DataTrigger>
+                                                        <!-- Enabled current -->
+                                                        <MultiTrigger TargetType="Label">
+                                                            <MultiTrigger.Conditions>
+                                                                <BindingCondition Binding="{Binding IsActive}" Value="True" />
+                                                                <BindingCondition Binding="{Binding Enabled}" Value="True" />
+                                                            </MultiTrigger.Conditions>
+                                                            <Setter Property="TextColor" Value="{StaticResource Primary50}" />
+                                                            <Setter Property="Scale" Value="1.1" />
+                                                        </MultiTrigger>
+                                                    </Label.Triggers>
+                                                </Label>
+                                                <Border.GestureRecognizers>
+                                                    <TapGestureRecognizer x:DataType="models:Prayer"
                                                     Command="{Binding NavigateCommand}" />
-                                            </Border.GestureRecognizers>
-                                            <Border.Triggers>
-                                                <DataTrigger
-                                                    Binding="{Binding Enabled}"
-                                                    TargetType="Border"
-                                                    Value="True">
-                                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Success10}, Dark={StaticResource Success95}}" />
-                                                    <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Success40}, Dark={StaticResource Success60}}" />
-                                                    <Setter Property="StrokeThickness" Value="1.25" />
-                                                </DataTrigger>
-                                                <DataTrigger
-                                                    Binding="{Binding Enabled}"
-                                                    TargetType="Border"
-                                                    Value="False">
-                                                    <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
-                                                    <Setter Property="StrokeThickness" Value="0.75" />
-                                                </DataTrigger>
-                                            </Border.Triggers>
-                                        </Border>
-                                    </Grid>
-                                </Border></Grid>
+                                                </Border.GestureRecognizers>
+                                                <Border.Triggers>
+                                                    <DataTrigger Binding="{Binding Enabled}" TargetType="Border" Value="True">
+                                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary10}, Dark={StaticResource Primary95}}" />
+                                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary60}}" />
+                                                        <Setter Property="StrokeThickness" Value="1.25" />
+                                                    </DataTrigger>
+                                                    <!-- Enabled current -->
+                                                    <MultiTrigger TargetType="Border">
+                                                        <MultiTrigger.Conditions>
+                                                            <BindingCondition Binding="{Binding IsActive}" Value="True" />
+                                                            <BindingCondition Binding="{Binding Enabled}" Value="True" />
+                                                        </MultiTrigger.Conditions>
+                                                        <Setter Property="Background" Value="{StaticResource Amber30}" />
+                                                        <Setter Property="Stroke" Value="{StaticResource Primary50}" />
+                                                        <Setter Property="StrokeThickness" Value="1.5" />
+                                                    </MultiTrigger>
+                                                    <DataTrigger Binding="{Binding Enabled}" TargetType="Border" Value="False">
+                                                        <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
+                                                        <Setter Property="StrokeThickness" Value="0.75" />
+                                                    </DataTrigger>
+                                                </Border.Triggers>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
                             </ContentView>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
 
                     <CollectionView.Footer>
                         <StackLayout x:DataType="viewModels:MainViewModel" Orientation="Vertical" Spacing="{StaticResource SpacingTight}" Margin="0,4,0,4">
-                            <!--  Monthly Calendar Button - 8px grid spacing ✅  -->
+                            <!-- Monthly Calendar Button -->
                             <Button
                                 Margin="32,0,32,0"
                                 Style="{StaticResource GlassButtonPillSecondary}"
@@ -348,20 +385,21 @@
                                     <FontImageSource
                                         FontFamily="{StaticResource IconFontFamily}"
                                         Glyph="&#xf073;"
-                                        Size="{DynamicResource IconMediumSize}"
-                                        Color="{AppThemeBinding Light={StaticResource Primary95}, Dark={StaticResource Primary10}}" />
+                                        Size="{DynamicResource IconMediumFontSize}"
+                                        Color="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
                                 </Button.ImageSource>
                             </Button>
 
-                            <!--  City Location Card - 8px grid spacing ✅  -->
+                            <!-- City Location Card -->
                             <Border
                                 Margin="32,0,32,8"
                                 HorizontalOptions="Fill"
                                 IsEnabled="{Binding IsNotBusy}"
-                                Style="{StaticResource FrostGlassCardFrozen}">
+                                Style="{StaticResource GlassCardSecondaryTint}"
+                                StrokeShape="RoundRectangle 22">
                                 <Label
                                     Margin="3,0"
-                                    Padding="3"
+                                    Padding="0"
                                     x:DataType="viewModels:MainViewModel"
                                     AutomationProperties.IsInAccessibleTree="True"
                                     HorizontalOptions="Center"
@@ -372,7 +410,7 @@
                                         <FormattedString>
                                             <Span
                                                 FontFamily="{StaticResource IconFontFamily}"
-                                                FontSize="{DynamicResource SubHeaderFontSize}"
+                                                FontSize="{DynamicResource IconMediumFontSize}"
                                                 Text="&#xf3c5; " />
                                             <Span Text="{Binding City}" TextTransform="Uppercase" />
                                         </FormattedString>
@@ -386,16 +424,24 @@
                     </CollectionView.Footer>
                 </CollectionView>
 
-                <!-- Long running overlay (location refresh) -->
+                <ActivityIndicator IsRunning="{Binding IsBusy}" 
+                                   IsVisible="{Binding IsBusy}"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Color="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryColor}}"
+                                   HeightRequest="80"
+                                   WidthRequest="80" />
+
+                <!-- Loading overlay -->
                 <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
-                    <Border Style="{StaticResource GlassCardSoft}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
                         <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
-                            <ActivityIndicator IsRunning="True" Color="{StaticResource PrimaryColor}" WidthRequest="40" HeightRequest="40" />
+                            <ActivityIndicator IsRunning="True" Color="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary40}}" WidthRequest="80" HeightRequest="80" />
                             <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
                         </VerticalStackLayout>
                     </Border>
                 </Grid>
             </Grid>
-        </RefreshView>
+        <!--</RefreshView>-->
     </ContentPage.Content>
 </ContentPage>

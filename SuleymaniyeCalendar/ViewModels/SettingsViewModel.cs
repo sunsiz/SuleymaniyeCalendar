@@ -1,12 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.Input;
 using SuleymaniyeCalendar.Resources.Strings;
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LocalizationResourceManager.Maui;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Services;
@@ -15,481 +9,543 @@ using Android.Content;
 using Android.OS;
 #endif
 
-namespace SuleymaniyeCalendar.ViewModels
+namespace SuleymaniyeCalendar.ViewModels;
+
+/// <summary>
+/// ViewModel for the settings page.
+/// Handles theme selection, language switching, and service toggles.
+/// </summary>
+/// <remarks>
+/// Features:
+/// - Light/Dark/System theme modes with instant switching
+/// - 11 supported languages with RTL support
+/// - Android foreground service toggle for persistent notifications
+/// - Widget updates on theme/language changes
+/// </remarks>
+public partial class SettingsViewModel : BaseViewModel
 {
-	public partial class SettingsViewModel : BaseViewModel
+	#region Fields
+
+	private readonly PerformanceService _perf;
+	private readonly ILocalizationResourceManager _resourceManager;
+	private readonly IRtlService _rtlService;
+
+	/// <summary>Guard flag to prevent recursive language reload loops.</summary>
+	private bool _updatingLanguages;
+
+	/// <summary>Prevents re-entrant theme updates when toggling via gestures and radios.</summary>
+	private bool _suppressThemeUpdates;
+
+	#endregion
+
+	#region Properties - Language
+
+	private IList<Language> _supportedLanguages = [];
+
+	/// <summary>List of supported UI languages.</summary>
+	public IList<Language> SupportedLanguages
 	{
-		private readonly PerformanceService _perf;
-		// Guard flags to prevent recursive language reload loops
-		private bool _updatingLanguages;
-		// Prevent re-entrant/duplicated theme updates when toggling via gestures and radios
-		private bool suppressThemeUpdates;
-		private IList<Language> supportedLanguages = Enumerable.Empty<Language>().ToList();
-		public IList<Language> SupportedLanguages { get => supportedLanguages; set => SetProperty(ref supportedLanguages, value); }
+		get => _supportedLanguages;
+		set => SetProperty(ref _supportedLanguages, value);
+	}
 
-		// Original simple placeholder; real selection loaded in constructor via LoadLanguagesInternal.
-		private Language selectedLanguage = new Language(AppResources.English, "en");
-		// (Reverted) Simplified language change logic – advanced debounce removed due to hang issues.
-		public Language SelectedLanguage
+	private Language _selectedLanguage = new("English", "en");
+
+	/// <summary>
+	/// Currently selected UI language.
+	/// Setting this changes the app culture, saves preference, and updates widget.
+	/// </summary>
+	public Language SelectedLanguage
+	{
+		get => _selectedLanguage;
+		set
 		{
-			get => selectedLanguage;
-			set
+			// Prevent infinite recursion when rebuilding SupportedLanguages
+			if (_updatingLanguages)
 			{
-				// Prevent infinite recursion when we rebuild SupportedLanguages or set selection programmatically
-				if (_updatingLanguages)
-				{
-					selectedLanguage = value;
-					OnPropertyChanged(nameof(SelectedLanguage));
-					return;
-				}
-
-				if (SetProperty(ref selectedLanguage, value))
-				{
-					if (value is null) return;
-					// Skip if already active culture
-					if (string.Equals(resourceManager?.CurrentCulture?.TwoLetterISOLanguageName, value.CI, StringComparison.OrdinalIgnoreCase))
-						return;
-					_updatingLanguages = true;
-					try
-					{
-						using (_perf.StartTimer("Settings.ChangeLanguage"))
-						{
-							var ci = CultureInfo.GetCultureInfo(value.CI);
-							resourceManager.CurrentCulture = ci;
-							AppResources.Culture = ci;
-							Preferences.Set("SelectedLanguage", value.CI);
-							rtlService.ApplyFlowDirection(value.CI);
-							Title = AppResources.UygulamaAyarlari;
-	#if ANDROID
-							UpdateWidget();
-	#endif
-						}
-					}
-					finally
-					{
-						_updatingLanguages = false;
-					}
-
-					// OPTIONAL: Refresh displayed language names asynchronously without rebuilding the list structure.
-					_ = Task.Run(() =>
-					{
-						try
-						{
-							// Capture localized names after culture switch
-							var updated = new Dictionary<string, string>
-							{
-								{"ar", AppResources.Arabic},
-								{"az", AppResources.Azerbaijani},
-								{"zh", AppResources.Chinese},
-								{"de", AppResources.Deutsch},
-								{"en", AppResources.English},
-								{"fa", AppResources.Farsi},
-								{"fr", AppResources.French},
-								{"ru", AppResources.Russian},
-								{"tr", AppResources.Turkish},
-								{"ug", AppResources.Uyghur},
-								{"uz", AppResources.Uzbek}
-							};
-							MainThread.BeginInvokeOnMainThread(() =>
-							{
-								bool anyChanged = false;
-								foreach (var lang in SupportedLanguages)
-								{
-									if (updated.TryGetValue(lang.CI, out var newName) && lang.Name != newName)
-									{
-										lang.Name = newName;
-										anyChanged = true;
-									}
-								}
-								if (anyChanged)
-								{
-									OnPropertyChanged(nameof(SupportedLanguages));
-									// Also trigger SelectedLanguage PropertyChanged so Picker refreshes display
-									OnPropertyChanged(nameof(SelectedLanguage));
-								}
-							});
-						}
-						catch { /* ignore background refresh issues */ }
-					});
-				}
+				_selectedLanguage = value;
+				OnPropertyChanged(nameof(SelectedLanguage));
+				return;
 			}
-		}
 
-		private bool dark;
-		public bool Dark { get => dark; set => SetProperty(ref dark, value); }
+			if (!SetProperty(ref _selectedLanguage, value) || value is null) return;
 
-		private int currentTheme;
-		public int CurrentTheme
-		{
-			get => currentTheme;
-			set
-			{
-				if (SetProperty(ref currentTheme, value))
-				{
-					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(value));
-				}
-			}
-		}
-
-		private bool lightChecked;
-		public bool LightChecked
-		{
-			get => lightChecked;
-			set
-			{
-				if (!SetProperty(ref lightChecked, value)) return;
-				if (suppressThemeUpdates) return;
-				if (value)
-				{
-					ApplyThemeInternal(1);
-					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(1));
-				}
-			}
-		}
-
-		private bool darkChecked;
-		public bool DarkChecked
-		{
-			get => darkChecked;
-			set
-			{
-				if (!SetProperty(ref darkChecked, value)) return;
-				if (suppressThemeUpdates) return;
-				if (value)
-				{
-					ApplyThemeInternal(0);
-					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(0));
-				}
-			}
-		}
-
-		private bool systemChecked;
-		public bool SystemChecked
-		{
-			get => systemChecked;
-			set
-			{
-				if (!SetProperty(ref systemChecked, value)) return;
-				if (suppressThemeUpdates) return;
-				if (value)
-				{
-					ApplyThemeInternal(2);
-					MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(2));
-				}
-			}
-		}
-
-		//private int alarmDuration;
-		//public int AlarmDuration { get => alarmDuration; set => SetProperty(ref alarmDuration, value); }
-
-		private bool alwaysRenewLocationEnabled;
-		public bool AlwaysRenewLocationEnabled
-		{
-			get => alwaysRenewLocationEnabled;
-			set
-			{
-				if (SetProperty(ref alwaysRenewLocationEnabled, value))
-				{
-					Preferences.Set("AlwaysRenewLocationEnabled", value);
-				}
-			}
-		}
-
-		private bool notificationPrayerTimesEnabled;
-		public bool NotificationPrayerTimesEnabled
-		{
-			get => notificationPrayerTimesEnabled;
-			set
-			{
-				if (SetProperty(ref notificationPrayerTimesEnabled, value))
-				{
-					Preferences.Set("NotificationPrayerTimesEnabled", value);
-#if ANDROID
-					try
-					{
-						// If the service is running, ask it to refresh the notification now
-						if (Preferences.Get("ForegroundServiceEnabled", true))
-						{
-							var ctx = Android.App.Application.Context;
-							var refreshIntent = new Intent(ctx, typeof(AlarmForegroundService))
-								.SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
-							if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-								ctx.StartForegroundService(refreshIntent);
-							else
-								ctx.StartService(refreshIntent);
-						}
-					}
-					catch (System.Exception ex)
-					{
-						System.Diagnostics.Debug.WriteLine($"Error refreshing notification: {ex}");
-					}
-#endif
-				}
-			}
-		}
-
-		// UI helper: Only show the notification content option when sticky notification (foreground service) is enabled on Android
-		public bool ShowNotificationPrayerOption
-		{
-			get => DeviceInfo.Platform == DevicePlatform.Android && ForegroundServiceEnabled;
-		}
-
-		private bool foregroundServiceEnabled;
-		public bool ForegroundServiceEnabled
-		{
-			get => foregroundServiceEnabled;
-			set
-			{
-				if (SetProperty(ref foregroundServiceEnabled, value))
-				{
-					Preferences.Set("ForegroundServiceEnabled", value);
-#if ANDROID
-					// When turning off the sticky notification, also disable showing prayer times in it and update UI visibility
-					if (!value)
-					{
-						NotificationPrayerTimesEnabled = false;
-						Preferences.Set("ForegroundServiceEnabled", value);
-					}
-#endif
-					OnPropertyChanged(nameof(ShowNotificationPrayerOption));
-#if ANDROID
-					try
-					{
-						var ctx = Android.App.Application.Context;
-						if (!value)
-						{
-							// Stop the foreground service if it's running
-							var stopIntent = new Intent(ctx, typeof(AlarmForegroundService));
-							stopIntent.SetAction("SuleymaniyeTakvimi.action.STOP_SERVICE");
-							if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-								ctx.StartForegroundService(stopIntent);
-							else
-								ctx.StartService(stopIntent);
-						}
-						else
-						{
-							// Start the foreground service
-							var startIntent = new Intent(ctx, typeof(AlarmForegroundService));
-							startIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
-							if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-								ctx.StartForegroundService(startIntent);
-							else
-								ctx.StartService(startIntent);
-						}
-					}
-					catch (System.Exception ex)
-					{
-						System.Diagnostics.Debug.WriteLine($"Error toggling foreground service: {ex}");
-					}
-#endif
-				}
-			}
-		}
-		private readonly ILocalizationResourceManager resourceManager;
-		private readonly IRtlService rtlService;
-		// Property change side-effects moved into property setters below for AOT safety
-
-		public bool IsNecessary => !((DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 10) || DeviceInfo.Platform == DevicePlatform.iOS);
-
-		public SettingsViewModel(ILocalizationResourceManager resourceManager, IRtlService rtlService, PerformanceService perf = null)
-		{
-			_perf = perf ?? new PerformanceService();
-			IsBusy = true;
-			this.resourceManager = resourceManager;
-			this.rtlService = rtlService;
-			// Ensure resource manager reflects saved language before loading list/selection
-			var savedCi = Preferences.Get("SelectedLanguage", "tr");
-			this.resourceManager.CurrentCulture = CultureInfo.GetCultureInfo(savedCi);
-			
-			// Apply RTL for the saved language
-			rtlService.ApplyFlowDirection(savedCi);
-			
-			LoadLanguages(); // sets SelectedLanguage based on resourceManager culture
-			// Use saved theme (0=Dark,1=Light,2=System)
-			CurrentTheme = Theme.Tema;
-			// Initialize radio flags from current theme (suppress side-effects to avoid loops)
-			suppressThemeUpdates = true;
-			LightChecked = CurrentTheme == 1;
-			DarkChecked = CurrentTheme == 0;
-			SystemChecked = CurrentTheme == 2;
-			suppressThemeUpdates = false;
-			//AlarmDuration = Preferences.Get("AlarmDuration", 4);
-			ForegroundServiceEnabled = Preferences.Get("ForegroundServiceEnabled", true);
-			NotificationPrayerTimesEnabled = Preferences.Get("NotificationPrayerTimesEnabled", false);
-			AlwaysRenewLocationEnabled = Preferences.Get("AlwaysRenewLocationEnabled", false);
-			IsBusy = false;
-		}
-		// Property change side-effects are applied in SelectedLanguage setter
-
-		[RelayCommand]
-		private void RadioButtonCheckedChanged(object obj)
-		{
-			var radiobutton = obj as RadioButton;
-			// Only react when the button becomes checked (ignore uncheck events)
-			if (radiobutton is null || !radiobutton.IsChecked || radiobutton.Value is null)
+			// Skip if already the active culture
+			if (string.Equals(_resourceManager?.CurrentCulture?.TwoLetterISOLanguageName, 
+				value.CI, StringComparison.OrdinalIgnoreCase))
 				return;
 
-			int themeValue = Convert.ToInt32(radiobutton.Value.ToString()); // 0=Dark,1=Light,2=System
-			ApplyThemeInternal(themeValue);
-
-			// Apply immediately on the UI thread
-			MainThread.BeginInvokeOnMainThread(() =>
-			{
-				SetUserAppTheme(themeValue);
-			});
-		}
-
-		// Allow tapping the entire row to set theme: 0=Dark,1=Light,2=System
-		[RelayCommand]
-		private void SetThemeByIndex(object parameter)
-		{
-			int index = 2; // default to System
+			_updatingLanguages = true;
 			try
 			{
-				// Convert parameter to int robustly (handles string, boxed int, null)
-				if (parameter is int i)
-					index = i;
-				else if (parameter is string s && int.TryParse(s, out var parsed))
-					index = parsed;
-			}
-			catch { /* ignore and use default */ }
-			index = Math.Clamp(index, 0, 2);
-			try
-			{
-				suppressThemeUpdates = true;
-				LightChecked = index == 1;
-				DarkChecked = index == 0;
-				SystemChecked = index == 2;
+				ApplyLanguageChange(value);
 			}
 			finally
 			{
-				suppressThemeUpdates = false;
-			}
-			ApplyThemeInternal(index);
-			MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(index));
-		}
-
-		// CurrentTheme setter contains the UI theme application logic
-
-		// Radio button check setters below trigger ApplyThemeInternal
-
-		// See property setters
-
-		// See property setters
-
-		private void ApplyThemeInternal(int themeValue)
-		{
-			// Idempotency: skip full apply if no change
-			if (Theme.Tema == themeValue && CurrentTheme == themeValue && Dark == (themeValue == 0))
-				return;
-
-			using (_perf.StartTimer("Settings.ApplyThemeInternal"))
-			{
-				// Persist selection first
-				Theme.Tema = themeValue;
-				var previousTheme = CurrentTheme;
-				CurrentTheme = themeValue; // triggers SetUserAppTheme via setter if used elsewhere
-				Dark = themeValue == 0;
-
-				using (_perf.StartTimer("Settings.ApplyThemeInternal.SavePrefs"))
-				{
-					Preferences.Set("SelectedTheme", themeValue switch
-					{
-						0 => "Dark",
-						1 => "Light",
-						2 => "System",
-						_ => "System"
-					});
-				}
-
-				// Optional simplified gradient mode to test theme speed differences
-				bool simplifiedGradients = Preferences.Get("SimplifiedGradients", false);
-				if (simplifiedGradients)
-				{
-					using (_perf.StartTimer("Settings.ApplyThemeInternal.Simplify"))
-					{
-						var app = Application.Current;
-						if (app?.Resources != null)
-						{
-							// Replace heavy gradient brushes with flat color placeholders (non-destructive test)
-							if (app.Resources.ContainsKey("PrimaryGradientBrush"))
-								app.Resources["PrimaryGradientBrush"] = new SolidColorBrush((Color)app.Resources["PrimaryColor"]);
-							if (app.Resources.ContainsKey("SurfaceGlassBrushLight"))
-								app.Resources["SurfaceGlassBrushLight"] = new SolidColorBrush((Color)app.Resources["SurfaceVariantColor"]);
-							if (app.Resources.ContainsKey("SurfaceGlassBrushDark"))
-								app.Resources["SurfaceGlassBrushDark"] = new SolidColorBrush((Color)app.Resources["SurfaceVariantColorDark"]);
-						}
-					}
-				}
-
-#if ANDROID
-				using (_perf.StartTimer("Settings.ApplyThemeInternal.UpdateWidget"))
-				{
-					UpdateWidget();
-				}
-#endif
+				_updatingLanguages = false;
 			}
 		}
-
-		private static void SetUserAppTheme(int themeValue)
-		{
-			var app = Application.Current;
-			if (app == null) return;
-			app.UserAppTheme = themeValue switch
-			{
-				0 => AppTheme.Dark,
-				1 => AppTheme.Light,
-				2 => AppTheme.Unspecified,
-				_ => AppTheme.Unspecified
-			};
-		}
-
-#if ANDROID
-		private void UpdateWidget()
-		{
-			try
-			{
-				var context = Platform.CurrentActivity ?? Android.App.Application.Context;
-				if (context != null)
-				{
-					context.StartService(new Android.Content.Intent(context, typeof(WidgetService)));
-				}
-			}
-			catch (System.Exception ex)
-			{
-				System.Diagnostics.Debug.WriteLine($"Error updating widget: {ex.Message}");
-			}
-		}
-#endif
-
-		[RelayCommand]
-		private void GotoSettings(){AppInfo.ShowSettingsUI();}
-
-		[RelayCommand]
-		private void GoBack() { Shell.Current.GoToAsync(".."); }
-		private void LoadLanguagesInternal(string reselectCi = null)
-		{
-			SupportedLanguages = new List<Language>()
-			{
-				new Language(AppResources.Arabic, "ar"),
-				new Language(AppResources.Azerbaijani, "az"),
-				new Language(AppResources.Chinese, "zh"),
-				new Language(AppResources.Deutsch, "de"),
-				new Language(AppResources.English, "en"),
-				new Language(AppResources.Farsi, "fa"),
-				new Language(AppResources.French, "fr"),
-				new Language(AppResources.Russian, "ru"),
-				new Language(AppResources.Turkish, "tr"),
-				new Language(AppResources.Uyghur, "ug"),
-				{ new Language(AppResources.Uzbek, "uz") }
-			};
-			var targetCi = reselectCi ?? resourceManager?.CurrentCulture.TwoLetterISOLanguageName;
-			var match = SupportedLanguages.FirstOrDefault(l => l.CI == targetCi) ?? SupportedLanguages.FirstOrDefault();
-			// Directly set backing field under guard to avoid recursion
-			selectedLanguage = match;
-			OnPropertyChanged(nameof(SelectedLanguage));
-		}
-
-		void LoadLanguages() => LoadLanguagesInternal();
 	}
+
+	#endregion
+
+	#region Properties - Theme
+
+	private bool _dark;
+	/// <summary>Whether dark theme is active.</summary>
+	public bool Dark
+	{
+		get => _dark;
+		set => SetProperty(ref _dark, value);
+	}
+
+	private int _currentTheme;
+	/// <summary>Current theme index: 0=Dark, 1=Light, 2=System.</summary>
+	public int CurrentTheme
+	{
+		get => _currentTheme;
+		set
+		{
+			if (SetProperty(ref _currentTheme, value))
+				MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(value));
+		}
+	}
+
+	private bool _lightChecked;
+	/// <summary>Whether light theme radio button is checked.</summary>
+	public bool LightChecked
+	{
+		get => _lightChecked;
+		set
+		{
+			if (!SetProperty(ref _lightChecked, value) || _suppressThemeUpdates || !value) return;
+			ApplyThemeInternal(1);
+			_ = ApplyThemeDeferredAsync(1);
+		}
+	}
+
+	private bool _darkChecked;
+	/// <summary>Whether dark theme radio button is checked.</summary>
+	public bool DarkChecked
+	{
+		get => _darkChecked;
+		set
+		{
+			if (!SetProperty(ref _darkChecked, value) || _suppressThemeUpdates || !value) return;
+			ApplyThemeInternal(0);
+			_ = ApplyThemeDeferredAsync(0);
+		}
+	}
+
+	private bool _systemChecked;
+	/// <summary>Whether system theme radio button is checked.</summary>
+	public bool SystemChecked
+	{
+		get => _systemChecked;
+		set
+		{
+			if (!SetProperty(ref _systemChecked, value) || _suppressThemeUpdates || !value) return;
+			ApplyThemeInternal(2);
+			_ = ApplyThemeDeferredAsync(2);
+		}
+	}
+
+	#endregion
+
+	#region Properties - Service Settings
+
+	private bool _alwaysRenewLocationEnabled;
+	/// <summary>Whether location is refreshed on every app launch.</summary>
+	public bool AlwaysRenewLocationEnabled
+	{
+		get => _alwaysRenewLocationEnabled;
+		set
+		{
+			if (SetProperty(ref _alwaysRenewLocationEnabled, value))
+				Preferences.Set("AlwaysRenewLocationEnabled", value);
+		}
+	}
+
+	private bool _notificationPrayerTimesEnabled;
+	/// <summary>Whether prayer times are shown in the persistent notification.</summary>
+	public bool NotificationPrayerTimesEnabled
+	{
+		get => _notificationPrayerTimesEnabled;
+		set
+		{
+			if (!SetProperty(ref _notificationPrayerTimesEnabled, value)) return;
+			Preferences.Set("NotificationPrayerTimesEnabled", value);
+#if ANDROID
+			RefreshForegroundServiceNotification();
+#endif
+		}
+	}
+
+	/// <summary>
+	/// Whether to show notification content option.
+	/// Only visible when sticky notification is enabled on Android.
+	/// </summary>
+	public bool ShowNotificationPrayerOption =>
+		DeviceInfo.Platform == DevicePlatform.Android && ForegroundServiceEnabled;
+
+	private bool _foregroundServiceEnabled;
+	/// <summary>
+	/// Whether Android foreground service is enabled for persistent notifications.
+	/// Toggling starts/stops the AlarmForegroundService.
+	/// </summary>
+	public bool ForegroundServiceEnabled
+	{
+		get => _foregroundServiceEnabled;
+		set
+		{
+			if (!SetProperty(ref _foregroundServiceEnabled, value)) return;
+			Preferences.Set("ForegroundServiceEnabled", value);
+#if ANDROID
+			// When turning off, also disable prayer times in notification
+			if (!value)
+			{
+				NotificationPrayerTimesEnabled = false;
+			}
+#endif
+			OnPropertyChanged(nameof(ShowNotificationPrayerOption));
+#if ANDROID
+			ToggleForegroundService(value);
+#endif
+		}
+	}
+
+	/// <summary>Whether advanced alarm options are necessary (Android 9 and below).</summary>
+	public bool IsNecessary => !(DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 10)
+							   && DeviceInfo.Platform != DevicePlatform.iOS;
+
+	#endregion
+
+	#region Constructor
+
+	/// <summary>
+	/// Initializes settings ViewModel with localization and RTL services.
+	/// </summary>
+	/// <param name="resourceManager">Localization resource manager for culture switching.</param>
+	/// <param name="rtlService">RTL layout service for bidirectional languages.</param>
+	/// <param name="perf">Optional performance monitoring service.</param>
+	public SettingsViewModel(ILocalizationResourceManager resourceManager, IRtlService rtlService, PerformanceService? perf = null)
+	{
+		_perf = perf ?? new PerformanceService();
+		_resourceManager = resourceManager;
+		_rtlService = rtlService;
+
+		using (_perf.StartTimer("Settings.Constructor.Total"))
+		{
+			IsBusy = true;
+			InitializeSettings();
+			IsBusy = false;
+		}
+
+		// Log perf summary after a short delay to capture any async operations
+		Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("SettingsView"));
+	}
+
+	#endregion
+
+	#region Commands
+
+	/// <summary>
+	/// Handles radio button theme selection.
+	/// Defers theme application to avoid blocking UI during animation.
+	/// </summary>
+	[RelayCommand]
+	private void RadioButtonCheckedChanged(object obj)
+	{
+		if (obj is not RadioButton { IsChecked: true, Value: not null } radiobutton) return;
+
+		int themeValue = Convert.ToInt32(radiobutton.Value.ToString());
+		ApplyThemeInternal(themeValue);
+		// Defer theme application to next frame to avoid blocking radio button animation
+		_ = ApplyThemeDeferredAsync(themeValue);
+	}
+
+	/// <summary>
+	/// Sets theme by index when tapping entire row.
+	/// </summary>
+	/// <param name="parameter">Theme index: 0=Dark, 1=Light, 2=System.</param>
+	[RelayCommand]
+	private void SetThemeByIndex(object parameter)
+	{
+		int index = ParseThemeIndex(parameter);
+		try
+		{
+			_suppressThemeUpdates = true;
+			LightChecked = index == 1;
+			DarkChecked = index == 0;
+			SystemChecked = index == 2;
+		}
+		finally
+		{
+			_suppressThemeUpdates = false;
+		}
+		ApplyThemeInternal(index);
+		// Defer theme application to next frame
+		_ = ApplyThemeDeferredAsync(index);
+	}
+	
+	/// <summary>
+	/// Applies theme change on next frame to avoid blocking current UI operations.
+	/// </summary>
+	private async Task ApplyThemeDeferredAsync(int themeValue)
+	{
+		await Task.Yield(); // Yield to next frame
+		MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(themeValue));
+	}
+
+	/// <summary>Opens system app settings.</summary>
+	[RelayCommand]
+	private void GotoSettings() => AppInfo.ShowSettingsUI();
+
+	/// <summary>Navigates back to previous page.</summary>
+	[RelayCommand]
+	private async Task GoBackAsync() => await Shell.Current.GoToAsync("..");
+
+	#endregion
+
+	#region Private Methods - Initialization
+
+	/// <summary>
+	/// Initializes all settings from saved preferences.
+	/// </summary>
+	private void InitializeSettings()
+	{
+		// Restore saved language and apply RTL
+		using (_perf.StartTimer("Settings.Init.Language"))
+		{
+			var savedCi = Preferences.Get("SelectedLanguage", "tr");
+			_resourceManager.CurrentCulture = CultureInfo.GetCultureInfo(savedCi);
+			_rtlService.ApplyFlowDirection(savedCi);
+		}
+
+		// Load language list
+		using (_perf.StartTimer("Settings.Init.LoadLanguages"))
+		{
+			LoadLanguagesInternal();
+		}
+
+		// Restore theme settings
+		using (_perf.StartTimer("Settings.Init.Theme"))
+		{
+			CurrentTheme = (int)Theme.CurrentTheme;
+			_suppressThemeUpdates = true;
+			LightChecked = CurrentTheme == 1;
+			DarkChecked = CurrentTheme == 0;
+			SystemChecked = CurrentTheme == 2;
+			_suppressThemeUpdates = false;
+		}
+
+		// Restore service settings
+		using (_perf.StartTimer("Settings.Init.ServiceSettings"))
+		{
+			ForegroundServiceEnabled = Preferences.Get("ForegroundServiceEnabled", true);
+			NotificationPrayerTimesEnabled = Preferences.Get("NotificationPrayerTimesEnabled", false);
+			AlwaysRenewLocationEnabled = Preferences.Get("AlwaysRenewLocationEnabled", false);
+		}
+	}
+
+	/// <summary>
+	/// Loads supported languages and sets current selection.
+	/// Uses native script names for universal recognition.
+	/// </summary>
+	/// <param name="reselectCi">Optional culture to reselect after loading.</param>
+	private void LoadLanguagesInternal(string? reselectCi = null)
+	{
+		// Use native script names so users can find their language regardless of current UI language
+		SupportedLanguages =
+		[
+			new Language("العربية", "ar"),           // Arabic
+			new Language("Azərbaycan", "az"),        // Azerbaijani
+			new Language("中文", "zh"),               // Chinese
+			new Language("Deutsch", "de"),           // German
+			new Language("English", "en"),           // English
+			new Language("فارسی", "fa"),             // Farsi/Persian
+			new Language("Français", "fr"),          // French
+			new Language("Русский", "ru"),           // Russian
+			new Language("Türkçe", "tr"),            // Turkish
+			new Language("ئۇيغۇرچە", "ug"),          // Uyghur
+			new Language("Oʻzbekcha", "uz")          // Uzbek
+		];
+
+		var targetCi = reselectCi ?? _resourceManager?.CurrentCulture.TwoLetterISOLanguageName;
+		var match = SupportedLanguages.FirstOrDefault(l => l.CI == targetCi) ?? SupportedLanguages.First();
+		_selectedLanguage = match;
+		OnPropertyChanged(nameof(SelectedLanguage));
+	}
+
+	#endregion
+
+	#region Private Methods - Language
+
+	/// <summary>
+	/// Applies language change to app culture, resources, and widgets.
+	/// Widget update is dispatched to background to avoid UI blocking.
+	/// </summary>
+	private void ApplyLanguageChange(Language language)
+	{
+		using (_perf.StartTimer("Settings.ChangeLanguage"))
+		{
+			var ci = CultureInfo.GetCultureInfo(language.CI);
+			_resourceManager.CurrentCulture = ci;
+			AppResources.Culture = ci;
+			Preferences.Set("SelectedLanguage", language.CI);
+			_rtlService.ApplyFlowDirection(language.CI);
+			Title = AppResources.UygulamaAyarlari;
+		}
+#if ANDROID
+		// Update widget asynchronously to avoid blocking UI
+		_ = Task.Run(() => MainThread.BeginInvokeOnMainThread(UpdateWidget));
+#endif
+	}
+
+	#endregion
+
+	#region Private Methods - Theme
+
+	/// <summary>
+	/// Parses theme index from command parameter.
+	/// </summary>
+	private static int ParseThemeIndex(object parameter)
+	{
+		int index = parameter switch
+		{
+			int i => i,
+			string s when int.TryParse(s, out var parsed) => parsed,
+			_ => 2 // Default to System
+		};
+		return Math.Clamp(index, 0, 2);
+	}
+
+	/// <summary>
+	/// Applies theme internally and persists selection.
+	/// Widget update is dispatched asynchronously to avoid blocking UI.
+	/// </summary>
+	private void ApplyThemeInternal(int themeValue)
+	{
+		var themeMode = (ThemeMode)themeValue;
+
+		// Idempotency check
+		if (Theme.CurrentTheme == themeMode && CurrentTheme == themeValue && Dark == (themeValue == 0))
+			return;
+
+		using (_perf.StartTimer("Settings.ApplyThemeInternal"))
+		{
+			Theme.CurrentTheme = themeMode;
+			CurrentTheme = themeValue;
+			Dark = themeValue == 0;
+
+			using (_perf.StartTimer("Settings.ApplyThemeInternal.SavePrefs"))
+			{
+				Preferences.Set("SelectedTheme", themeValue switch
+				{
+					0 => "Dark",
+					1 => "Light",
+					_ => "System"
+				});
+			}
+		}
+
+#if ANDROID
+		// Update widget asynchronously to avoid blocking UI
+		_ = Task.Run(() =>
+		{
+			using (_perf.StartTimer("Settings.ApplyThemeInternal.UpdateWidget"))
+			{
+				MainThread.BeginInvokeOnMainThread(UpdateWidget);
+			}
+		});
+#endif
+	}
+
+	/// <summary>
+	/// Sets the application theme mode.
+	/// </summary>
+	private static void SetUserAppTheme(int themeValue)
+	{
+		var app = Application.Current;
+		if (app == null) return;
+
+		app.UserAppTheme = themeValue switch
+		{
+			0 => AppTheme.Dark,
+			1 => AppTheme.Light,
+			_ => AppTheme.Unspecified
+		};
+	}
+
+	#endregion
+
+#if ANDROID
+	#region Private Methods - Android Platform
+
+	/// <summary>
+	/// Updates Android home screen widget after theme/language change.
+	/// </summary>
+	private void UpdateWidget()
+	{
+		try
+		{
+			var context = Platform.CurrentActivity ?? Android.App.Application.Context;
+			context?.StartService(new Intent(context, typeof(WidgetService)));
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error updating widget: {ex.Message}");
+		}
+	}
+
+	/// <summary>
+	/// Refreshes foreground service notification content.
+	/// </summary>
+	private void RefreshForegroundServiceNotification()
+	{
+		try
+		{
+			if (!Preferences.Get("ForegroundServiceEnabled", true)) return;
+
+			var ctx = Android.App.Application.Context;
+			var refreshIntent = new Intent(ctx, typeof(AlarmForegroundService))
+				.SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
+
+			if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+				ctx.StartForegroundService(refreshIntent);
+			else
+				ctx.StartService(refreshIntent);
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error refreshing notification: {ex}");
+		}
+	}
+
+	/// <summary>
+	/// Starts or stops the alarm foreground service.
+	/// </summary>
+	private void ToggleForegroundService(bool enable)
+	{
+		try
+		{
+			var ctx = Android.App.Application.Context;
+			var intent = new Intent(ctx, typeof(AlarmForegroundService))
+				.SetAction(enable 
+					? "SuleymaniyeTakvimi.action.START_SERVICE" 
+					: "SuleymaniyeTakvimi.action.STOP_SERVICE");
+
+			if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+				ctx.StartForegroundService(intent);
+			else
+				ctx.StartService(intent);
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"Error toggling foreground service: {ex}");
+		}
+	}
+
+	#endregion
+#endif
 }

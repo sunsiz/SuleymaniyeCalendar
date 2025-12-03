@@ -1,24 +1,30 @@
-using CommunityToolkit.Maui.Views;
+﻿using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Maui.Core.Primitives;
 using SuleymaniyeCalendar.Resources.Strings;
 
 namespace SuleymaniyeCalendar.Services
 {
+    /// <summary>
+    /// Radio service for streaming audio playback.
+    /// Note: Loading/buffering indicators are now handled by XAML DataTriggers 
+    /// bound directly to MediaElement.CurrentState (Microsoft best practice).
+    /// </summary>
     public class RadioService : IRadioService
     {
-        private MediaElement _mediaElement;
+        private MediaElement? _mediaElement;
         private bool _isPlaying;
-        private bool _isLoading;
         private string _currentTitle = AppResources.FitratinSesi;
         private const string RadioStreamUrl = "https://www.suleymaniyevakfi.org/radio.mp3";
 
         public bool IsPlaying => _isPlaying;
-        public bool IsLoading => _isLoading;
+        public bool IsLoading => false; // Loading is now handled by XAML DataTriggers
         public string CurrentTitle => _currentTitle;
 
-        public event EventHandler<bool> PlaybackStateChanged;
-        public event EventHandler<bool> LoadingStateChanged;
-        public event EventHandler<string> TitleChanged;
+        public event EventHandler<bool>? PlaybackStateChanged;
+#pragma warning disable CS0067 // Event is never used - kept for interface compatibility
+        public event EventHandler<bool>? LoadingStateChanged; // Loading is now handled by XAML DataTriggers
+#pragma warning restore CS0067
+        public event EventHandler<string>? TitleChanged;
 
         public void SetMediaElement(MediaElement mediaElement)
         {
@@ -49,26 +55,32 @@ namespace SuleymaniyeCalendar.Services
 
             try
             {
-                SetLoadingState(true);
-                
+                // iOS: Initialize audio session before playing
+                if (DeviceInfo.Platform == DevicePlatform.iOS)
+                {
+#if __IOS__
+                    Platforms.iOS.AudioSessionManager.InitializeAudioSession();
+#endif
+                }
+
                 // Create media source with metadata for better media control display
                 var mediaSource = MediaSource.FromUri(RadioStreamUrl);
                 
                 // Set metadata directly on MediaElement for proper media controls
                 _mediaElement.MetadataTitle = AppResources.RadyoFitrat; // "Radio Fitrat"
                 _mediaElement.MetadataArtist = AppResources.FitratinSesi; // "Radio Fitrat - The Voice of Fitrah"
-                _mediaElement.MetadataArtworkUrl = "https://www.kurandersi.com/resimler/fitrat-radyo-logo-alt.png"; // No artwork for radio stream
+                _mediaElement.MetadataArtworkUrl = "https://www.fitratradyo.com/img/fitrat_radyo.png";
                 
                 // Set the source
                 _mediaElement.Source = mediaSource;
 
                 _mediaElement.Play();
+                System.Diagnostics.Debug.WriteLine("📻 Radio Play() called");
                 await Task.CompletedTask;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Radio play error: {ex.Message}");
-                SetLoadingState(false);
+                System.Diagnostics.Debug.WriteLine($"❌ Radio play error: {ex.Message}");
                 SetPlaybackState(false);
             }
         }
@@ -97,59 +109,56 @@ namespace SuleymaniyeCalendar.Services
             {
                 _mediaElement.Stop();
                 SetPlaybackState(false);
-                SetLoadingState(false);
+        
+                // iOS: Deactivate audio session
+                if (DeviceInfo.Platform == DevicePlatform.iOS)
+                {
+#if __IOS__
+                    Platforms.iOS.AudioSessionManager.DeactivateAudioSession();
+#endif
+                }
+
+                System.Diagnostics.Debug.WriteLine("✅ Radio stopped");
                 await Task.CompletedTask;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Radio stop error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Radio stop error: {ex.Message}");
             }
         }
 
-        private void OnMediaOpened(object sender, EventArgs e)
+        private void OnMediaOpened(object? sender, EventArgs e)
         {
-            SetLoadingState(false);
             SetPlaybackState(true);
-            System.Diagnostics.Debug.WriteLine("Radio media opened successfully");
+            System.Diagnostics.Debug.WriteLine("📻 Radio media opened successfully");
         }
 
-        private void OnMediaFailed(object sender, EventArgs e)
-        {
-            SetLoadingState(false);
-            SetPlaybackState(false);
-            System.Diagnostics.Debug.WriteLine($"Radio media failed");
-        }
-
-        private void OnMediaEnded(object sender, EventArgs e)
+        private void OnMediaFailed(object? sender, EventArgs e)
         {
             SetPlaybackState(false);
-            System.Diagnostics.Debug.WriteLine("Radio media ended");
+            System.Diagnostics.Debug.WriteLine("❌ Radio media failed");
         }
 
-        private void OnStateChanged(object sender, EventArgs e)
+        private void OnMediaEnded(object? sender, EventArgs e)
+        {
+            SetPlaybackState(false);
+            System.Diagnostics.Debug.WriteLine("📻 Radio media ended");
+        }
+
+        private void OnStateChanged(object? sender, EventArgs e)
         {
             if (_mediaElement == null) return;
             
-            System.Diagnostics.Debug.WriteLine($"Radio state changed: {_mediaElement.CurrentState}");
+            var state = _mediaElement.CurrentState.ToString();
+            System.Diagnostics.Debug.WriteLine($"📻 Radio state: {state}");
             
-            // Simple state handling without complex enum checks
-            if (_mediaElement.CurrentState.ToString().Contains("Playing"))
+            // Only update playback state - loading indicator is now handled by XAML DataTriggers
+            if (state == "Playing")
             {
-                SetLoadingState(false);
                 SetPlaybackState(true);
             }
-            else if (_mediaElement.CurrentState.ToString().Contains("Paused") || 
-                     _mediaElement.CurrentState.ToString().Contains("Stopped"))
+            else if (state == "Paused" || state == "Stopped")
             {
-                SetPlaybackState(false);
-            }
-            else if (_mediaElement.CurrentState.ToString().Contains("Buffering"))
-            {
-                SetLoadingState(true);
-            }
-            else if (_mediaElement.CurrentState.ToString().Contains("Failed"))
-            {
-                SetLoadingState(false);
                 SetPlaybackState(false);
             }
         }
@@ -159,16 +168,8 @@ namespace SuleymaniyeCalendar.Services
             if (_isPlaying != isPlaying)
             {
                 _isPlaying = isPlaying;
+                System.Diagnostics.Debug.WriteLine($"📻 SetPlaybackState: {isPlaying}");
                 PlaybackStateChanged?.Invoke(this, _isPlaying);
-            }
-        }
-
-        private void SetLoadingState(bool isLoading)
-        {
-            if (_isLoading != isLoading)
-            {
-                _isLoading = isLoading;
-                LoadingStateChanged?.Invoke(this, _isLoading);
             }
         }
 

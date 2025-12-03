@@ -170,6 +170,15 @@
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>تقویم ماهانه با موفقیت تجدید شد</value>
   </data>
+  <data name="AyVeriIndirildi" xml:space="preserve">
+    <value>داده‌های {0} دانلود شد</value>
+  </data>
+  <data name="AyVeriYukle" xml:space="preserve">
+    <value>دانلود این ماه</value>
+  </data>
+  <data name="AylikVeriYenilemeIste" xml:space="preserve">
+    <value>لطفاً برای بارگیری داده‌های ماهانه تازه‌سازی کنید</value>
+  </data>
   <data name="BesDakikaOnceden" xml:space="preserve">
     <value>5 دقیقه قبل</value>
   </data>
@@ -187,6 +196,9 @@
   </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>نمایش هشدار</value>
+  </data>
+  <data name="BildirimIzniGerekli" xml:space="preserve">
+    <value>برای برنامه‌ریزی هشدارها، مجوز اعلان لازم است.</value>
   </data>
   <data name="BildirimKapatma" xml:space="preserve">
     <value>هشدار چسبنده را فعال کنید</value>
@@ -260,6 +272,12 @@
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>کانال یوتیوب تی وی فطرت</value>
   </data>
+    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+      <value>بارگیری زمان نماز برای برنامه‌ریزی ناموفق بود</value>
+    </data>
+    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+      <value>یادآوری‌های نماز برای 30 روز برنامه‌ریزی شده‌اند</value>
+    </data>
   <data name="GotoSettings" xml:space="preserve">
     <value>به تنظیمات بروید</value>
   </data>

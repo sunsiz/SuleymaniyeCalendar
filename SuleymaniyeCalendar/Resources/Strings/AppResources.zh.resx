@@ -147,6 +147,15 @@
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>成功更新月历</value>
   </data>
+  <data name="AyVeriIndirildi" xml:space="preserve">
+    <value>{0}数据已下载</value>
+  </data>
+  <data name="AyVeriYukle" xml:space="preserve">
+    <value>下载本月数据</value>
+  </data>
+  <data name="AylikVeriYenilemeIste" xml:space="preserve">
+    <value>请刷新以加载月度数据</value>
+  </data>
   <data name="BesDakikaOnceden" xml:space="preserve">
     <value>提前5分钟</value>
   </data>
@@ -164,6 +173,9 @@
   </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>显示通知</value>
+  </data>
+  <data name="BildirimIzniGerekli" xml:space="preserve">
+    <value>计划闹钟需要通知权限。</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>提醒时间： </value>
@@ -224,6 +236,12 @@
   </data>
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>Fitrat TV （菲特拉电视台） Youtube 频道</value>
+  </data>
+  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+    <value>无法加载祈祷时间以进行安排</value>
+  </data>
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+    <value>祈祷提醒已安排 30 天</value>
   </data>
   <data name="Hakkinda" xml:space="preserve">
     <value>关于</value>

@@ -1,38 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Maui.Controls;
+﻿using SuleymaniyeCalendar.Helpers;
 
-namespace SuleymaniyeCalendar.Models
+namespace SuleymaniyeCalendar.Models;
+
+/// <summary>
+/// Represents a supported language with RTL detection.
+/// </summary>
+public sealed class Language
 {
-	public class Language
-	{
-		public Language(string name, string ci)
-		{
-			Name = name;
-			CI = ci;
-			IsRtl = DetermineIfRtl(ci);
-			FlowDirection = IsRtl ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-		}
-		
-		public string Name { get; set; }
-		public string CI { get; set; }
-		public bool IsRtl { get; set; }
-		public FlowDirection FlowDirection { get; set; }
+    public Language(string name, string cultureCode)
+    {
+        Name = name;
+        CI = cultureCode;
+        IsRtl = AppConstants.IsRtlLanguage(cultureCode);
+        FlowDirection = IsRtl ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+    }
 
-		public override string ToString()
-		{
-			// Enable Picker to display without ItemDisplayBinding and avoid XamlC warnings
-			return Name ?? base.ToString();
-		}
-		
-		private static bool DetermineIfRtl(string languageCode)
-		{
-			var rtlLanguages = new HashSet<string> { "ar", "fa", "he", "ku", "ps", "sd", "ug", "ur", "yi" };
-			var langCode = languageCode?.Split('-')[0].ToLower();
-			return !string.IsNullOrEmpty(langCode) && rtlLanguages.Contains(langCode);
-		}
-	}
+    /// <summary>Display name of the language (localized).</summary>
+    public string Name { get; set; }
+
+    /// <summary>Culture/language code (e.g., "en", "tr", "ar").</summary>
+    public string CI { get; set; }
+
+    /// <summary>Whether this language uses right-to-left text direction.</summary>
+    public bool IsRtl { get; set; }
+
+    /// <summary>XAML FlowDirection for this language.</summary>
+    public FlowDirection FlowDirection { get; set; }
+
+    /// <summary>Enable Picker to display without ItemDisplayBinding.</summary>
+    public override string ToString() => Name;
 }

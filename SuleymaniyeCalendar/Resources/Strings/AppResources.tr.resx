@@ -147,6 +147,15 @@
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>Aylık Takvim Başarıyla Yenilendi</value>
   </data>
+  <data name="AyVeriIndirildi" xml:space="preserve">
+    <value>{0} verisi indirildi</value>
+  </data>
+  <data name="AyVeriYukle" xml:space="preserve">
+    <value>Bu Ayı İndir</value>
+  </data>
+  <data name="AylikVeriYenilemeIste" xml:space="preserve">
+    <value>Aylık verileri yüklemek için lütfen yenileyin</value>
+  </data>
   <data name="BesDakikaOnceden" xml:space="preserve">
     <value>5 dakika önceden</value>
   </data>
@@ -164,6 +173,9 @@
   </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>Bildirim Göster</value>
+  </data>
+  <data name="BildirimIzniGerekli" xml:space="preserve">
+    <value>Alarm planlamak için bildirim izni gerekiyor.</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>Hatırlatma Zamanı: </value>
@@ -221,6 +233,12 @@
   </data>
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>Fıtrat TV Youtube Kanalı</value>
+  </data>
+  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+    <value>Planlama için namaz vakitleri yüklenemedi</value>
+  </data>
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+    <value>30 gün için namaz hatırlatıcıları planlandı</value>
   </data>
   <data name="Hakkinda" xml:space="preserve">
     <value>Hakkında</value>

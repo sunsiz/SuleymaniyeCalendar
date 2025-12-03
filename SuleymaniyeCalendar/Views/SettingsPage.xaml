@@ -10,7 +10,7 @@
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     x:DataType="viewModels:SettingsViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <!-- Windows: explicit back navigation (Shell back button not always visible)
     <ContentPage.ToolbarItems>
@@ -26,17 +26,16 @@
             Padding="{StaticResource PagePaddingMobile}">
             <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="{StaticResource SpacingDefault}">
 
-                <!--  Language Selection - Compact  -->
-                <!--  Language Selection - Simplified icon ✅  -->
-                <Border Style="{StaticResource SettingsCard}">
-                    <Grid x:DataType="viewModels:SettingsViewModel" Padding="16,12" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <!--  Simplified icon - direct Label with semantic color  -->
+                <!--  Language Selection  -->
+                <Border Style="{StaticResource SettingsCardOptimized}">
+                    <Grid x:DataType="viewModels:SettingsViewModel" Padding="8,6" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                        <!--  Golden language icon with increased visibility  -->
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
-                            FontSize="22"
+                            FontSize="{DynamicResource IconLargeFontSize}"
                             Text="&#xf0ac;"
-                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                            TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                             VerticalOptions="Center"
                             WidthRequest="44"
                             HorizontalTextAlignment="Center" />
@@ -71,18 +70,17 @@
                     ItemsSource="{Binding SupportedLanguages}"
                     SelectedItem="{Binding SelectedLanguage}" />
 
-                <!--  Theme Selection - Compact  -->
-                <!--  Theme Selection - Simplified icon ✅  -->
-                <Border Style="{StaticResource SettingsCard}">
-                    <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Padding="16,12" Spacing="16">
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <!--  Simplified icon - direct Label with semantic color  -->
+                <!--  Theme Selection  -->
+                <Border Style="{StaticResource iOSLiquidGlassCard}">
+                    <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Padding="8,6" Spacing="12">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+                            <!--  Golden theme icon with increased visibility  -->
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="22"
+                                FontSize="{DynamicResource IconLargeFontSize}"
                                 Text="&#xf042;"
-                                TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 VerticalOptions="Center"
                                 WidthRequest="44"
                                 HorizontalTextAlignment="Center" />
@@ -95,92 +93,86 @@
                         </Grid>
 
                         <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="8">
-                            <Border Style="{StaticResource Chip}">
+                            <Border Style="{StaticResource Chip}"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    SemanticProperties.Description="{localization:Translate AcikTema}">
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" 
                                            FontFamily="{StaticResource IconFontFamily}" 
-                                           FontSize="{DynamicResource IconSmallFontSize}" 
+                                           FontSize="{DynamicResource IconMediumFontSize}" 
                                            Text="&#xf185;"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
                                            VerticalOptions="Center" />
                                     <Label Grid.Column="1" 
                                            Text="{localization:Translate AcikTema}" 
-                                           Style="{StaticResource BodyMediumStyle}"
+                                           Style="{DynamicResource BodyMediumStyle}"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
+                                           FontSize="{DynamicResource BodyFontSize}"
                                            VerticalOptions="Center" />
-                                    <RadioButton Grid.Column="2" 
-                                                 GroupName="ThemeGroup"
-                                                 Value="1"
-                                                 IsChecked="{Binding LightChecked}" />
+                                    <RadioButton Grid.Column="2" GroupName="ThemeGroup" Value="1" IsChecked="{Binding LightChecked}" />
                                 </Grid>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer x:DataType="viewModels:SettingsViewModel" Command="{Binding SetThemeByIndexCommand}" CommandParameter="1" />
                                 </Border.GestureRecognizers>
                                 <Border.Triggers>
                                     <DataTrigger Binding="{Binding LightChecked}" Value="True" TargetType="Border">
-                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary10}, Dark={StaticResource Primary90}}" />
-                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource HighContrastPrimary}, Dark={StaticResource HighContrastPrimaryDark}}" />
-                                        <Setter Property="StrokeThickness" Value="0.5" />
+                                        <Setter Property="Background" Value="{StaticResource Amber30}" />
                                     </DataTrigger>
                                 </Border.Triggers>
                             </Border>
                             
-                            <Border Style="{StaticResource Chip}">
+                            <Border Style="{StaticResource Chip}"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    SemanticProperties.Description="{localization:Translate KoyuTema}">
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" 
                                            FontFamily="{StaticResource IconFontFamily}" 
-                                           FontSize="{DynamicResource IconSmallFontSize}" 
+                                           FontSize="{DynamicResource IconMediumFontSize}" 
                                            Text="&#xf186;"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
                                            VerticalOptions="Center" />
                                     <Label Grid.Column="1" 
                                            Text="{localization:Translate KoyuTema}" 
-                                           Style="{StaticResource BodyMediumStyle}"
+                                           Style="{DynamicResource BodyMediumStyle}"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
+                                           FontSize="{DynamicResource BodyFontSize}"
                                            VerticalOptions="Center" />
-                                    <RadioButton Grid.Column="2" 
-                                                 GroupName="ThemeGroup"
-                                                 Value="0"
-                                                 IsChecked="{Binding DarkChecked}" />
+                                    <RadioButton Grid.Column="2" GroupName="ThemeGroup" Value="0" IsChecked="{Binding DarkChecked}" />
                                 </Grid>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer x:DataType="viewModels:SettingsViewModel" Command="{Binding SetThemeByIndexCommand}" CommandParameter="0" />
                                 </Border.GestureRecognizers>
                                 <Border.Triggers>
                                     <DataTrigger Binding="{Binding DarkChecked}" Value="True" TargetType="Border">
-                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary20}, Dark={StaticResource Primary90}}" />
-                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource HighContrastPrimary}, Dark={StaticResource HighContrastPrimaryDark}}" />
-                                        <Setter Property="StrokeThickness" Value="2.5" />
+                                        <Setter Property="Background" Value="{StaticResource Amber30}" />
                                     </DataTrigger>
                                 </Border.Triggers>
                             </Border>
                             
-                            <Border Style="{StaticResource Chip}">
+                            <Border Style="{StaticResource Chip}"
+                                    AutomationProperties.IsInAccessibleTree="True"
+                                    SemanticProperties.Description="{localization:Translate SistemTemasi}">
                                 <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                                     <Label Grid.Column="0" 
                                            FontFamily="{StaticResource IconFontFamily}" 
-                                           FontSize="{DynamicResource IconSmallFontSize}" 
+                                           FontSize="{DynamicResource IconMediumFontSize}" 
                                            Text="&#xf3ce;"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
                                            VerticalOptions="Center" />
                                     <Label Grid.Column="1" 
                                            Text="{localization:Translate SistemTemasi}" 
-                                           Style="{StaticResource BodyMediumStyle}"
+                                           Style="{DynamicResource BodyMediumStyle}"
                                            TextColor="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}"
+                                           FontSize="{DynamicResource BodyFontSize}"
                                            VerticalOptions="Center" />
-                                    <RadioButton Grid.Column="2" 
-                                                 GroupName="ThemeGroup"
-                                                 Value="2"
-                                                 IsChecked="{Binding SystemChecked}" />
+                                    <RadioButton Grid.Column="2" GroupName="ThemeGroup" Value="2" IsChecked="{Binding SystemChecked}" />
                                 </Grid>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer x:DataType="viewModels:SettingsViewModel" Command="{Binding SetThemeByIndexCommand}" CommandParameter="2" />
                                 </Border.GestureRecognizers>
                                 <Border.Triggers>
                                     <DataTrigger Binding="{Binding SystemChecked}" Value="True" TargetType="Border">
-                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary20}, Dark={StaticResource Primary90}}" />
-                                        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource HighContrastPrimary}, Dark={StaticResource HighContrastPrimaryDark}}" />
-                                        <Setter Property="StrokeThickness" Value="2.5" />
+                                        <Setter Property="Background" Value="{StaticResource Amber30}" />
                                     </DataTrigger>
                                 </Border.Triggers>
                             </Border>
@@ -188,17 +180,17 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  Font Size - Simplified icon ✅  -->
-                <Border Style="{StaticResource SettingsCard}" Padding="16,12">
-                    <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                            <!--  Simplified icon  -->
+                <!--  Font Size  -->
+                <Border Style="{StaticResource SettingsCardOptimized}" Padding="16,12">
+                    <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="8">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                            <!--  Golden font size icon with increased visibility  -->
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="22"
+                                FontSize="{DynamicResource IconLargeFontSize}"
                                 Text="&#xf031;"
-                                TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 VerticalOptions="Center"
                                 WidthRequest="44"
                                 HorizontalTextAlignment="Center" />
@@ -209,44 +201,46 @@
                                 Text="{localization:Translate YaziBoyutu}"
                                 VerticalOptions="Center" />
                             
+                            <!-- Font size badge -->
                             <Border 
                                 Grid.Column="2"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource Primary10}, Dark={StaticResource Primary95}}"
+                                Background="{StaticResource Amber30}"
+                                Stroke="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary40}}"
+                                StrokeThickness="1.5"
                                 StrokeShape="RoundRectangle 10"
-                                Padding="10,4"
+                                Padding="8,4"
                                 VerticalOptions="Center">
                                 <Label
                                     Text="{Binding FontSize, StringFormat='{0:F0}'}"
                                     Style="{StaticResource LabelMediumStyle}"
-                                    TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary30}}"
+                                    TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary30}}"
                                     FontAttributes="Bold" />
                             </Border>
                         </Grid>
                         
-                        <Border Style="{StaticResource GlassCardSoft}" Padding="12,6">
-                            <Slider
-                                AutomationProperties.IsInAccessibleTree="true"
-                                HeightRequest="44"
-                                HorizontalOptions="Fill"
-                                Maximum="24"
-                                Minimum="12"
-                                SemanticProperties.Description="{localization:Translate YaziBoyutu}"
-                                Style="{StaticResource PremiumSlider}"
-                                Value="{Binding FontSize}" />
-                        </Border>
+                        <Slider
+                            AutomationProperties.IsInAccessibleTree="true"
+                            HeightRequest="44"
+                            HorizontalOptions="Fill"
+                            Margin="0,4,0,0"
+                            Maximum="28"
+                            Minimum="10"
+                            SemanticProperties.Description="{localization:Translate YaziBoyutu}"
+                            Style="{StaticResource PremiumGoldenSlider}"
+                            Value="{Binding FontSize}" />
                     </VerticalStackLayout>
                 </Border>
 
-                <!--  Location Settings - Simplified icon ✅  -->
-                <Border Style="{StaticResource SettingsCard}" Padding="16,12">
-                    <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <!--  Simplified icon  -->
+                <!--  Location Settings  -->
+                <Border Style="{StaticResource iOSLiquidGlassCard}" Padding="14,10">
+                    <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                        <!--  Golden location icon with increased visibility  -->
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
-                            FontSize="22"
+                            FontSize="{DynamicResource IconLargeFontSize}"
                             Text="&#xf3c5;"
-                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                            TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                             VerticalOptions="Center"
                             WidthRequest="44"
                             HorizontalTextAlignment="Center" />
@@ -269,16 +263,16 @@
                     </Grid>
                 </Border>
 
-                <!--  Android Notifications - Simplified icon ✅  -->
-                <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource SettingsCard}" Padding="16,12">
-                    <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                        <!--  Simplified icon  -->
+                <!--  Android Notifications  -->
+                <Border IsVisible="{OnPlatform Android=True, iOS=False}" Style="{StaticResource SettingsCardOptimized}" Padding="14,10">
+                    <Grid x:DataType="viewModels:SettingsViewModel" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                        <!--  Golden notification icon with increased visibility  -->
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
-                            FontSize="22"
+                            FontSize="{DynamicResource IconLargeFontSize}"
                             Text="&#xf0f3;"
-                            TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                            TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                             VerticalOptions="Center"
                             WidthRequest="44"
                             HorizontalTextAlignment="Center" />
@@ -294,17 +288,17 @@
                     </Grid>
                 </Border>
 
-                <!--  Android Foreground Service - Simplified icon ✅  -->
-                <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource SettingsCard}" Padding="16,12">
+                <!--  Android Foreground Service  -->
+                <Border IsVisible="{OnPlatform Android=true, iOS=false}" Style="{StaticResource FrostGlassCardCrystal}" Padding="14,10">
                     <VerticalStackLayout x:DataType="viewModels:SettingsViewModel" Spacing="12">
-                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                            <!--  Simplified icon  -->
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="6">
+                            <!--  Golden service icon with increased visibility  -->
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="22"
+                                FontSize="{DynamicResource IconLargeFontSize}"
                                 Text="&#xf1e6;"
-                                TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 VerticalOptions="Center"
                                 WidthRequest="44"
                                 HorizontalTextAlignment="Center" />
@@ -314,6 +308,7 @@
                                     Style="{StaticResource HeadlineMediumStyle}"
                                     Text="{localization:Translate BildirimKapatma}" />
                                 <Label
+                                    LineHeight="0.9"
                                     Style="{StaticResource BodySmallStyle}"
                                     Text="{localization:Translate BildirimUyari}"
                                     Opacity="0.8" />
@@ -326,10 +321,10 @@
                                 VerticalOptions="Center" />
                         </Grid>
 
-                        <!-- Settings button - glass secondary for higher contrast -->
                         <Button
-                            Margin="8,0,8,16"
-                            Style="{StaticResource GlassButtonOutline}"
+                            Margin="8,0,8,10"
+                            Style="{StaticResource GlassButtonPrimaryIntense}"
+                            TextColor="{AppThemeBinding Light={StaticResource OnPrimaryContainerLight}, Dark={StaticResource Primary30}}"
                             Command="{Binding GotoSettingsCommand}"
                             Text="{localization:Translate GotoSettings}"
                             TextColor="{AppThemeBinding Light={StaticResource OnSurfaceTextColor}, Dark={StaticResource OnSurfaceTextColorDark}}" />

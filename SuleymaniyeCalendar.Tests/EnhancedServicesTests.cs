@@ -57,9 +57,8 @@ namespace SuleymaniyeCalendar.Tests
             // Act
             var isActive = _accessibilityService.IsScreenReaderActive();
 
-            // Assert - verify it returns a boolean value
-            Assert.IsNotNull(isActive);
-            Assert.IsInstanceOfType(isActive, typeof(bool));
+            // Assert - verify it returns a valid boolean (either true or false is valid)
+            isActive.Should().Be(isActive); // Simply verify the value is consistent
         }
 
         [TestMethod]
@@ -82,9 +81,8 @@ namespace SuleymaniyeCalendar.Tests
             // Act
             var isHighContrast = _accessibilityService.IsHighContrastMode();
 
-            // Assert
-            Assert.IsNotNull(isHighContrast);
-            Assert.IsInstanceOfType(isHighContrast, typeof(bool));
+            // Assert - verify it returns a valid boolean (either true or false is valid)
+            isHighContrast.Should().Be(isHighContrast); // Simply verify the value is consistent
         }
 
         #endregion

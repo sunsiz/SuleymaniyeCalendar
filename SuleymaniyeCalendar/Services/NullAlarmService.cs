@@ -1,10 +1,13 @@
-namespace SuleymaniyeCalendar.Services
+namespace SuleymaniyeCalendar.Services;
+
+/// <summary>
+/// No-op implementation of IAlarmService for platforms without alarm support (iOS, Windows).
+/// All methods are intentionally empty.
+/// </summary>
+public sealed class NullAlarmService : IAlarmService
 {
-	public sealed class NullAlarmService : IAlarmService
-	{
-		public void CancelAlarm() { }
-		public void SetAlarm(DateTime date, TimeSpan triggerTimeSpan, int timeOffset, string name) { }
-		public void StartAlarmForegroundService() { }
-		public void StopAlarmForegroundService() { }
-	}
+    public void SetAlarm(DateTime alarmTime, int requestCode, NotificationSettings settings) { }
+    public void CancelAllAlarms() { }
+    public void StartAlarmForegroundService() { }
+    public void StopAlarmForegroundService() { }
 }

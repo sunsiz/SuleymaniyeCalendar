@@ -173,6 +173,15 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>Oylik taqvim muvaffaqiyatli yangilandi</value>
   </data>
+  <data name="AyVeriIndirildi" xml:space="preserve">
+    <value>{0} ma'lumotlari yuklandi</value>
+  </data>
+  <data name="AyVeriYukle" xml:space="preserve">
+    <value>Bu oyni yuklab olish</value>
+  </data>
+  <data name="AylikVeriYenilemeIste" xml:space="preserve">
+    <value>Oylik ma'lumotlarni yuklash uchun yangilang</value>
+  </data>
   <data name="Azerbaijani" xml:space="preserve">
     <value>Ozarbayjoncha</value>
   </data>
@@ -196,6 +205,9 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>Bildirishnomani ko'rsatish</value>
+  </data>
+  <data name="BildirimIzniGerekli" xml:space="preserve">
+    <value>Signallarni rejalashtirish uchun bildirishnoma ruxsati talab qilinadi.</value>
   </data>
   <data name="BildirimKapatma" xml:space="preserve">
     <value>Muqim bildirishnomani yoqish</value>
@@ -290,6 +302,12 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>Fitrat TV youtube kanali</value>
   </data>
+    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+      <value>Namoz vaqtlarini rejalashtirish uchun yuklashda xatolik yuz berdi</value>
+    </data>
+    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+      <value>Namoz eslatmalari 30 kun uchun rejalandi</value>
+    </data>
   <data name="French" xml:space="preserve">
     <value>Fransuzcha</value>
   </data>

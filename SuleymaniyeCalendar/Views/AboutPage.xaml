@@ -8,15 +8,13 @@
     x:DataType="viewModels:AboutViewModel"
     Title="{Binding Title}"
     FlowDirection="{DynamicResource FlowDirection}"
-    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <StackLayout
-            Margin="10"
-            HeightRequest="34"
-            Orientation="Horizontal">
+        <StackLayout Margin="8" HeightRequest="48" Orientation="Horizontal">
             <Label
                 AutomationProperties.IsInAccessibleTree="True"
+                SemanticProperties.HeadingLevel="Level1"
                 Style="{StaticResource LabelSectionHeader}"
                 Text="{localization:Translate SuleymaniyeVakfi}" />
         </StackLayout>
@@ -27,18 +25,16 @@
             HorizontalOptions="Fill"
             Orientation="Vertical"
             VerticalOptions="Fill">
-            <VerticalStackLayout
-                Padding="{StaticResource CardPaddingTight}"
-                Spacing="{StaticResource SpacingTight}">
-
+            <VerticalStackLayout Padding="{StaticResource CardPaddingTight}" Spacing="{StaticResource SpacingTight}">
                 <!--  Hero Section with App Description (with subtle halo)  -->
                 <Grid>
-                    <BoxView Background="{StaticResource PrimaryHaloBrush}" />
-                    <Border Style="{StaticResource GlassCardSoft}">
+                    <!--<BoxView Background="{StaticResource PrimaryHaloBrush}" />-->
+                    <Border Style="{StaticResource FrostGlassCardCrystal}">
                         <VerticalStackLayout Spacing="10">
                         <Label Style="{StaticResource HeadlineLargeStyle}"
                                Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
-                               HorizontalTextAlignment="Center" />
+                               HorizontalTextAlignment="Center"
+                               TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                         
                         <Label TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}"
                                Style="{StaticResource BodyLargeStyle}"
@@ -59,27 +55,16 @@
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
-
-                        <!-- Version Info -->
-                        <Label HorizontalTextAlignment="Center"
-                               Style="{StaticResource LabelLargeStyle}"
-                               TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="{Binding VersionNumber}" />
-                                    <Span Text="{localization:Translate Version}" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
                         </VerticalStackLayout>
                     </Border>
                 </Grid>
 
                 <!--  Social Media Section  -->
-                <Border Style="{StaticResource NeoGlassCard}">
+                <Border Style="{StaticResource FrostGlassCardFrozen}">
                     <VerticalStackLayout Spacing="12">
                         <Label Text="{localization:Translate SosyalMedyaBaglantisi}"
                                Style="{StaticResource TitleLargeStyle}"
+                               TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                HorizontalTextAlignment="Center" />
                                
                         <Grid
@@ -92,8 +77,6 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://www.suleymaniyevakfi.org/"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfi}"
                                 Source="app_logo.png" />
 
@@ -102,8 +85,6 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://www.facebook.com/suleymaniyevakfi/"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiFacebook}"
                                 Source="facebook.png" />
 
@@ -112,8 +93,6 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://twitter.com/suleymaniye_vkf"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiTwitter}"
                                 Source="twitter.png" />
 
@@ -122,8 +101,6 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://www.instagram.com/suleymaniyevakfi"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="{localization:Translate SuleymaniyeVakfiInstagram}"
                                 Source="instagram.png" />
                         </Grid>
@@ -131,10 +108,11 @@
                 </Border>
 
                 <!--  App Store Section  -->
-        <Border Style="{StaticResource FrostGlassCardCrystal}">
+        <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="16,12">
                     <VerticalStackLayout Spacing="12">
                         <Label Text="{localization:Translate SuleymaniyeVakfiTakvimi}"
                                Style="{StaticResource TitleLargeStyle}"
+                               TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                HorizontalTextAlignment="Center" />
                                
                         <Grid
@@ -147,8 +125,6 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://play.google.com/store/apps/details?id=org.suleymaniyevakfi"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="Google Play Store"
                                 Source="google_play.png" />
 
@@ -157,633 +133,32 @@
                                 Style="{StaticResource ModernImageButton}"
                                 Command="{Binding LinkButtonClickedCommand}"
                                 CommandParameter="https://apps.apple.com/app/id688657265"
-                                HeightRequest="48"
-                                WidthRequest="48"
                                 SemanticProperties.Description="Apple App Store"
                                 Source="app_store.png" />
                         </Grid>
+
+                        <!-- Version Info -->
+                        <Label HorizontalTextAlignment="Center"
+                               Style="{StaticResource LabelLargeStyle}"
+                               TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}">
+                            <Label.FormattedText>
+                                <FormattedString>
+                                    <Span Text="{Binding VersionNumber}" />
+                                    <Span Text="{localization:Translate Version}" />
+                                </FormattedString>
+                            </Label.FormattedText>
+                        </Label>
                     </VerticalStackLayout>
                 </Border>
 
                 <!--  Action Section  -->
-                <Border Style="{StaticResource GlassCardSoft}" IsVisible="{Binding ShowButtons}" Padding="12,10">
+                <Border Style="{StaticResource FrostGlassCardCrystal}" IsVisible="{Binding ShowButtons}" Padding="12,10">
                     <Button
                         Style="{StaticResource PrimaryButton}"
                         Command="{Binding SettingsCommand}"
                         SemanticProperties.Description="{localization:Translate UygulamaAyarlari}"
                         Text="{localization:Translate UygulamaAyarlari}" />
                 </Border>
-
-                <!--  Design Showcase Toggle Button  -->
-                <Border Style="{StaticResource GlassCardSoft}" Padding="16,12">
-                    <VerticalStackLayout Spacing="8">
-                        <Label Text="🎨 Design System Showcase" 
-                               Style="{StaticResource LabelLargeStyle}" 
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="Explore the complete glassmorphism design system with interactive examples"
-                               Style="{StaticResource CaptionStyle}" 
-                               HorizontalTextAlignment="Center"
-                               Opacity="0.8" />
-                        <Button 
-                            Style="{StaticResource GlassButtonPillSecondary}"
-                            Command="{Binding ToggleShowcaseCommand}"
-                            HorizontalOptions="Fill"
-                            Margin="0,8,0,0">
-                            <Button.Triggers>
-                                <DataTrigger TargetType="Button" Binding="{Binding ShowDesignShowcase}" Value="False">
-                                    <Setter Property="Text" Value="👁️ Show Design Showcase" />
-                                </DataTrigger>
-                                <DataTrigger TargetType="Button" Binding="{Binding ShowDesignShowcase}" Value="True">
-                                    <Setter Property="Text" Value="🔒 Hide Design Showcase" />
-                                </DataTrigger>
-                            </Button.Triggers>
-                        </Button>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!--  ALL SHOWCASE SECTIONS - Hidden by default for performance  -->
-                <VerticalStackLayout IsVisible="{Binding ShowDesignShowcase}" Spacing="24">
-
-                <!--  SHOWCASE INTRODUCTION  -->
-                <Border Style="{StaticResource GlassCardPrimaryTint}" Padding="20,16">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="📐 Design System Documentation" 
-                               Style="{StaticResource HeadlineMediumStyle}" 
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="This showcase demonstrates the complete Material Design 3 implementation with premium glassmorphism effects used throughout the app."
-                               Style="{StaticResource BodySmallStyle}" 
-                               HorizontalTextAlignment="Center"
-                               Opacity="0.9" />
-                        <BoxView HeightRequest="1" 
-                                 Color="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}"
-                                 Opacity="0.3"
-                                 Margin="0,8,0,0" />
-                        <Label Text="Use these patterns for consistent user experience across all features"
-                               Style="{StaticResource CaptionStyle}" 
-                               HorizontalTextAlignment="Center"
-                               FontAttributes="Italic"
-                               Opacity="0.7" />
-                    </VerticalStackLayout>
-                </Border>
-
-                <!--  iOS Glass Aesthetic Showcase  -->
-                <Label Text="🍎 iOS 26 Glass System" 
-                       Style="{StaticResource TitleLargeStyle}" 
-                       HorizontalTextAlignment="Start"
-                       Margin="4,8,0,0" />
-                <Border Style="{StaticResource iOSGlassCard}">
-                    <VerticalStackLayout Spacing="12">
-                        <Label Text="iOS 26 Style Glass" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Label Text="Layered translucent panels with subtle gradient stroke + tint variations." Style="{StaticResource BodySmallStyle}" HorizontalTextAlignment="Center" />
-                        <VerticalStackLayout Spacing="14">
-                            <!-- Liquid Glass Variant -->
-                            <Border Style="{StaticResource iOSLiquidGlassCard}" Padding="0">
-                                <Grid Padding="14,10">
-                                    <!-- Specular diagonal band overlay -->
-                                    <BoxView Opacity="1">
-                                        <BoxView.Background>
-                                            <AppThemeBinding Light="{StaticResource iOSLiquidSpecularLight}" Dark="{StaticResource iOSLiquidSpecularDark}" />
-                                        </BoxView.Background>
-                                    </BoxView>
-                                    <!-- optional inner glow accent -->
-                                    <BoxView>
-                                        <BoxView.Background>
-                                            <AppThemeBinding Light="{StaticResource iOSLiquidInnerGlowLight}" Dark="{StaticResource iOSLiquidInnerGlowDark}" />
-                                        </BoxView.Background>
-                                    </BoxView>
-                                    <VerticalStackLayout Spacing="4">
-                                        <Label Text="Liquid Glass" Style="{StaticResource LabelLargeStyle}" />
-                                        <Label Text="Luminous and fluid specular band over frosted base." Style="{StaticResource BodySmallStyle}" />
-                                    </VerticalStackLayout>
-                                </Grid>
-                            </Border>
-                            <Border Style="{StaticResource iOSGlassCard}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Base Layer" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Neutral frosted panel with gradient edge stroke." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Style="{StaticResource iOSGlassCardPrimaryTint}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Primary Tint" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Subtle brand hue infusion over layered translucency." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Style="{StaticResource iOSGlassCardSecondaryTint}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Secondary Tint" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Cooler tonal variant ideal for dashboards." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <!-- iOS 26 Icon Tile (with rim highlight + icon glow overlays) -->
-                            <Border Style="{StaticResource iOS26IconTile}" Padding="0">
-                                <Grid Padding="16,12">
-                                    <!-- Rim highlight at the very top edge (rounded to tile radius) -->
-                                    <Border HeightRequest="16" VerticalOptions="Start" StrokeShape="RoundRectangle 26" InputTransparent="True">
-                                        <Border.Background>
-                                            <AppThemeBinding Light="{StaticResource iOS26RimHighlightLight}" Dark="{StaticResource iOS26RimHighlightDark}" />
-                                        </Border.Background>
-                                    </Border>
-                                    <!-- Faint top-left icon glow (rounded to tile radius) -->
-                                    <Border StrokeShape="RoundRectangle 26" InputTransparent="True">
-                                        <Border.Background>
-                                            <AppThemeBinding Light="{StaticResource iOS26IconGlowLight}" Dark="{StaticResource iOS26IconGlowDark}" />
-                                        </Border.Background>
-                                    </Border>
-                                    <!-- Inset inner stroke illusion -->
-                                    <Border StrokeShape="RoundRectangle 24" StrokeThickness="1">
-                                        <Border.Stroke>
-                                            <AppThemeBinding Light="{StaticResource iOS26InnerStrokeLight}" Dark="{StaticResource iOS26InnerStrokeDark}" />
-                                        </Border.Stroke>
-                                        <Border.Background>
-                                            <SolidColorBrush Color="Transparent" />
-                                        </Border.Background>
-                                    </Border>
-                                    <VerticalStackLayout Spacing="4">
-                                        <Label Text="iOS 26 Icon Tile" Style="{StaticResource LabelLargeStyle}" BackgroundColor="Transparent" />
-                                        <Label Text="Warm translucent tile with rim highlight and inner glow." Style="{StaticResource BodySmallStyle}" />
-                                    </VerticalStackLayout>
-                                </Grid>
-                            </Border>
-                            <!-- iOS 26 Pill Control (with specular band overlay) -->
-                            <Border Style="{StaticResource iOS26Pill}" Padding="0">
-                                <Grid Padding="14,10">
-                                    <!-- Specular band running diagonally across the pill -->
-                                    <BoxView>
-                                        <BoxView.Background>
-                                            <AppThemeBinding Light="{StaticResource iOS26PillSpecularLight}" Dark="{StaticResource iOS26PillSpecularDark}" />
-                                        </BoxView.Background>
-                                    </BoxView>
-                                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12" Padding="6,0">
-                                        <Label Grid.Column="0" Text="◀" Style="{StaticResource LabelLargeStyle}" />
-                                        <Label Grid.Column="1" Text="Pill Control" HorizontalTextAlignment="Center" Style="{StaticResource BodySmallStyle}" />
-                                        <Label Grid.Column="2" Text="▶" Style="{StaticResource LabelLargeStyle}" />
-                                    </Grid>
-                                </Grid>
-                            </Border>
-                        </VerticalStackLayout>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!--  Glass Effects Showcase  -->
-                <Label Text="💎 Glass Effects Library" 
-                       Style="{StaticResource TitleLargeStyle}" 
-                       HorizontalTextAlignment="Start"
-                       Margin="4,8,0,0" />
-                <Border Style="{StaticResource GlassCard}">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="Glass Effects Showcase" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Label Text="Comparison of different frosted glass treatments used in the app." Style="{StaticResource BodySmallStyle}" HorizontalTextAlignment="Center" />
-                        <VerticalStackLayout Spacing="12">
-                            <!-- Soft Glass -->
-                            <Border Style="{StaticResource GlassCardSoft}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Soft Glass" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Gentle diffusion, light shadow – subtle background separation." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <!-- Strong Glass -->
-                            <Border Style="{StaticResource GlassCardStrong}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Strong Glass" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Higher contrast, stronger outline &amp; elevation for emphasis." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <!-- Primary Tint -->
-                            <Border Style="{StaticResource GlassCardPrimaryTint}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Primary Tint" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Subtle brand color infusion using primary tonal layer." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <!-- Secondary Tint -->
-                            <Border Style="{StaticResource GlassCardSecondaryTint}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Secondary Tint" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Cool neutral look with secondary tonal emphasis." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <!-- Accent Gradient -->
-                            <Border Style="{StaticResource GlassCardAccentGradient}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Accent Gradient" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Diagonal color wash for hero/feature highlight sections." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </VerticalStackLayout>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!--  Advanced Glass Design Lab -->
-                <Label Text="🧪 Advanced Glass Design Lab" 
-                       Style="{StaticResource TitleLargeStyle}" 
-                       HorizontalTextAlignment="Start"
-                       Margin="4,8,0,0" />
-                <Border Style="{StaticResource GlassDemoDuotone}">
-                    <VerticalStackLayout Spacing="12">
-                        <Label Text="Advanced Glass Design Lab" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Label Text="Exploration of semantic tinted, duotone, edge-highlight and spotlight glass patterns." Style="{StaticResource BodySmallStyle}" HorizontalTextAlignment="Center" />
-                        <VerticalStackLayout Spacing="14">
-                            <!-- iOS Liquid Buttons -->
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowSpacing="10">
-                                <Button Grid.Column="0" Text="iOS Liquid" Style="{StaticResource iOSLiquidGlassButton}" />
-                                <Button Grid.Column="1" Text="iOS Liquid (Disabled)" Style="{StaticResource iOSLiquidGlassButton}" IsEnabled="False" />
-                            </Grid>
-                            <!-- Windows Vista / Aero Glass Showcase -->
-                            <Border Style="{StaticResource VistaGlassCard}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Vista Aero Glass" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Cool blue-tinted translucent panel with signature Aero stroke." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Style="{StaticResource VistaGlassCard}" Padding="0">
-                                <Grid Padding="14,10">
-                                    <!-- Gloss band at the top (rounded to card radius) -->
-                                    <Border HeightRequest="28" VerticalOptions="Start" StrokeShape="RoundRectangle 14" InputTransparent="True">
-                                        <Border.Background>
-                                            <AppThemeBinding Light="{StaticResource VistaGlossHighlightLight}" Dark="{StaticResource VistaGlossHighlightDark}" />
-                                        </Border.Background>
-                                    </Border>
-                                    <!-- Soft blue glow across panel (rounded to card radius) -->
-                                    <Border StrokeShape="RoundRectangle 14" InputTransparent="True">
-                                        <Border.Background>
-                                            <AppThemeBinding Light="{StaticResource VistaAeroGlowLight}" Dark="{StaticResource VistaAeroGlowDark}" />
-                                        </Border.Background>
-                                    </Border>
-                                    <VerticalStackLayout Spacing="4">
-                                        <Label Text="Aero Glass + Gloss" Style="{StaticResource LabelLargeStyle}" />
-                                        <Label Text="Top gloss strip and soft blue glow for classic Vista look." Style="{StaticResource BodySmallStyle}" />
-                                    </VerticalStackLayout>
-                                </Grid>
-                            </Border>
-                            <!-- Vista Aero Rainbow Overlay (colorful transparency) -->
-                            <Border Style="{StaticResource VistaAeroRainbowCard}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Aero Rainbow" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Diagonal rainbow overlay for colorful, transparent Aero." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <!-- Vista/Aero Buttons -->
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowSpacing="10">
-                                <Button Grid.Column="0" Text="Aero Button" Style="{StaticResource VistaAeroGlassButton}" />
-                                <Button Grid.Column="1" Text="Aero (Disabled)" Style="{StaticResource VistaAeroGlassButton}" IsEnabled="False" />
-                            </Grid>
-                            <Border Style="{StaticResource GlassDemoSuccess}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Success Tint" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Subtle success state infusion for positive confirmations." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Style="{StaticResource GlassDemoWarning}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Warning Tint" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Amber caution tone for soft alerts and pre-errors." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Style="{StaticResource GlassDemoError}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Error Tint" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Subtle red diffusion for non-blocking errors." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Style="{StaticResource GlassDemoEdge}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Edge Highlight" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="High clarity edges, faint center for crisp separation." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Style="{StaticResource GlassDemoSpotlight}" Padding="14,10">
-                                <VerticalStackLayout Spacing="4">
-                                    <Label Text="Spotlight Glass" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Radial focus center ideal for hero stats or key figures." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </VerticalStackLayout>
-                        <!--  Glass Buttons Showcase -->
-                        <Label Text="Glass Button Variants" Style="{StaticResource LabelLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Primary" Style="{StaticResource GlassButtonPrimary}" />
-                            <Button Grid.Column="1" Text="Secondary" Style="{StaticResource GlassButtonSecondary}" />
-                            <Button Grid.Column="2" Text="Success" Style="{StaticResource GlassButtonSuccess}" />
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Warning" Style="{StaticResource GlassButtonWarning}" />
-                            <Button Grid.Column="1" Text="Danger" Style="{StaticResource GlassButtonDanger}" />
-                            <Button Grid.Column="2" Text="Outline" Style="{StaticResource GlassButtonOutline}" />
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Gradient" Style="{StaticResource GlassButtonGradient}" />
-                            <Button Grid.Column="1" Text="Ghost" Style="{StaticResource GlassButtonGhost}" />
-                            <Button Grid.Column="2" Text="Pill" Style="{StaticResource GlassButtonPillPrimary}" />
-                        </Grid>
-
-                        <!-- Intense Glass Buttons (stronger backgrounds) -->
-                        <Label Text="Intense Glass Buttons" Style="{StaticResource LabelLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Primary" Style="{StaticResource GlassButtonPrimaryIntense}" />
-                            <Button Grid.Column="1" Text="Secondary" Style="{StaticResource GlassButtonSecondaryIntense}" />
-                            <Button Grid.Column="2" Text="Success" Style="{StaticResource GlassButtonSuccessIntense}" />
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Warning" Style="{StaticResource GlassButtonWarningIntense}" />
-                            <Button Grid.Column="1" Text="Danger" Style="{StaticResource GlassButtonDangerIntense}" />
-                            <Button Grid.Column="2" Text="Disabled" IsEnabled="False" />
-                        </Grid>
-
-                        <!-- Super Intense Glass Buttons (maximum contrast) -->
-                        <Label Text="Super Intense Glass Buttons" Style="{StaticResource LabelLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Primary" Style="{StaticResource GlassButtonPrimarySuperIntense}" />
-                            <Button Grid.Column="1" Text="Secondary" Style="{StaticResource GlassButtonSecondarySuperIntense}" />
-                            <Button Grid.Column="2" Text="Success" Style="{StaticResource GlassButtonSuccessSuperIntense}" />
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Warning" Style="{StaticResource GlassButtonWarningSuperIntense}" />
-                            <Button Grid.Column="1" Text="Danger" Style="{StaticResource GlassButtonDangerSuperIntense}" />
-                            <Button Grid.Column="2" Text="Disabled" IsEnabled="False" />
-                        </Grid>
-
-                        <!-- Flat Variant Glass Buttons (no gradient) -->
-                        <Label Text="Flat Variant Glass Buttons" Style="{StaticResource LabelLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Primary" Style="{StaticResource GlassButtonPrimaryFlat}" />
-                            <Button Grid.Column="1" Text="Secondary" Style="{StaticResource GlassButtonSecondaryFlat}" />
-                            <Button Grid.Column="2" Text="Success" Style="{StaticResource GlassButtonSuccessFlat}" />
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Warning" Style="{StaticResource GlassButtonWarningFlat}" />
-                            <Button Grid.Column="1" Text="Danger" Style="{StaticResource GlassButtonDangerFlat}" />
-                            <Button Grid.Column="2" Text="Disabled" IsEnabled="False" />
-                        </Grid>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!--  Glass Morphism Style Showcase (New)  -->
-                <Label Text="✨ Glass Morphism Patterns" 
-                       Style="{StaticResource TitleLargeStyle}" 
-                       HorizontalTextAlignment="Start"
-                       Margin="4,8,0,0" />
-                <Border Style="{StaticResource GlassCardStrong}">
-                    <VerticalStackLayout Spacing="14">
-                        <Label Text="Glass Morphism Showcase" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Label Text="A curated set of frosted translucency patterns &amp; layered buttons." Style="{StaticResource BodySmallStyle}" HorizontalTextAlignment="Center" />
-                        <!-- Card Variants Row 1 -->
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowSpacing="12">
-                            <Border Grid.Column="0" Style="{StaticResource GlassCardSoft}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Soft" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Low contrast diffuse panel." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1" Style="{StaticResource GlassCardStrong}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Strong" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Higher edge &amp; outline emphasis." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </Grid>
-                        <!-- Card Variants Row 2 -->
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowSpacing="12">
-                            <Border Grid.Column="0" Style="{StaticResource GlassCardPrimaryTint}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Primary Tint" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Subtle brand hue wash." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1" Style="{StaticResource GlassCardSecondaryTint}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Secondary Tint" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Cool neutral variant." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </Grid>
-                        <!-- Gradient & Accent Cards -->
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowSpacing="12">
-                            <Border Grid.Column="0" Style="{StaticResource GlassCardAccentGradient}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Accent Gradient" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Diagonal multi‑stop blend." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1" Style="{StaticResource GlassDemoSpotlight}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Spotlight" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Radial focus flare." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </Grid>
-                        <!-- Buttons Diversity -->
-                        <Label Text="Buttons" Style="{StaticResource LabelLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Primary" Style="{StaticResource GlassButtonPrimary}" />
-                            <Button Grid.Column="1" Text="Gradient" Style="{StaticResource GlassButtonGradient}" />
-                            <Button Grid.Column="2" Text="Ghost" Style="{StaticResource GlassButtonGhost}" />
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Pill" Style="{StaticResource GlassButtonPillPrimary}" />
-                            <Button Grid.Column="1" Text="Success" Style="{StaticResource GlassButtonSuccess}" />
-                            <Button Grid.Column="2" Text="Warning" Style="{StaticResource GlassButtonWarning}" />
-                        </Grid>
-                        <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" RowSpacing="10">
-                            <Button Grid.Column="0" Text="Flat" Style="{StaticResource GlassButtonPrimaryFlat}" />
-                            <Button Grid.Column="1" Text="Outline" Style="{StaticResource GlassButtonOutline}" />
-                            <Button Grid.Column="2" Text="Disabled" Style="{StaticResource GlassButtonSecondary}" IsEnabled="False" />
-                        </Grid>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!--  Frosted Glass Transparency Scale Showcase (New) -->
-                <Label Text="🌡️ Frosted Transparency Scale" 
-                       Style="{StaticResource TitleLargeStyle}" 
-                       HorizontalTextAlignment="Start"
-                       Margin="4,8,0,0" />
-                <Border Style="{StaticResource FrostShowcaseContainer}">
-                    <VerticalStackLayout Spacing="14">
-                        <Label Text="Frosted Transparency Scale" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Label Text="Progressive diffusion levels from ultra thin film to near-opaque frost." Style="{StaticResource BodySmallStyle}" HorizontalTextAlignment="Center" />
-                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" ColumnSpacing="12" RowSpacing="12">
-                            <Border Grid.ColumnSpan="2" Grid.Row="0" Style="{StaticResource FrostGlassCardUltraThin}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Ultra Thin" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Almost clear – minimal separation." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="0" Grid.Row="1" Style="{StaticResource FrostGlassCardThin}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Thin" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Light veil over content." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1" Grid.Row="1" Style="{StaticResource FrostGlassCardMedium}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Medium" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Balanced frosted panel." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="0" Grid.Row="2" Style="{StaticResource FrostGlassCardHeavy}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Heavy" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Strong diffusion &amp; separation." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1" Grid.Row="2" Style="{StaticResource FrostGlassCardOpaque}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Opaque" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Near-solid frosted surface." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="0" Grid.Row="3" Style="{StaticResource FrostGlassCardHeavyInner}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Heavy+Inner" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Edge glow emphasized." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1" Grid.Row="3" Style="{StaticResource FrostGlassCardOpaqueInner}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Opaque+Inner" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Rim-highlighted solid frost." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="0" Grid.Row="4" Style="{StaticResource FrostGlassCardFrozen}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Frozen" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="High-opacity iced panel." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1" Grid.Row="4" Style="{StaticResource FrostGlassCardCrystal}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Crystal" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Maximum clarity &amp; mass." Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="0" Grid.Row="5" Style="{StaticResource NeoGlassCardPrimary}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Primary" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Neo Glass Primary" Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                            <Border Grid.Column="1" Grid.Row="5" Style="{StaticResource NeoGlassCardSecondary}" Padding="12,8">
-                                <VerticalStackLayout Spacing="2">
-                                    <Label Text="Secondary" Style="{StaticResource LabelLargeStyle}" />
-                                    <Label Text="Neo Glass Secondary" Style="{StaticResource BodySmallStyle}" />
-                                </VerticalStackLayout>
-                            </Border>
-                        </Grid>
-                        <Label Text="Tip: Ultra=overlays • Thin=toolbars • Medium=cards • Heavy=panels • Frozen/Crystal=dialogs." Style="{StaticResource CaptionStyle}" HorizontalTextAlignment="Center" />
-                    </VerticalStackLayout>
-                </Border>
-
-                <!-- Interactive Theme & Elevation Preview -->
-                <Label Text="🎛️ Interactive Preview Lab" 
-                       Style="{StaticResource TitleLargeStyle}" 
-                       HorizontalTextAlignment="Start"
-                       Margin="4,8,0,0" />
-                <Border Style="{StaticResource GlassCardSoft}">
-                    <VerticalStackLayout Spacing="12">
-                        <Label Text="Interactive Preview" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Label Text="Toggle dark mode locally and adjust live elevation (shadow depth)." Style="{StaticResource BodySmallStyle}" HorizontalTextAlignment="Center" />
-                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <Label Text="Dark Mode" VerticalOptions="Center" Style="{StaticResource BodySmallStyle}" />
-                            <Switch x:Name="ThemeToggle" Toggled="OnThemeToggleToggled" HorizontalOptions="Start" />
-                        </Grid>
-                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*" RowSpacing="4">
-                            <Label Text="Elevation" Style="{StaticResource BodySmallStyle}" />
-                            <Slider x:Name="ElevationSlider" Minimum="2" Maximum="48" Value="18" ValueChanged="OnElevationSliderValueChanged" />
-                        </Grid>
-                        <Border x:Name="ElevationPreviewCard" Style="{StaticResource GlassCardSoft}" Padding="18,12">
-                            <Border.Shadow>
-                                <Shadow Radius="18" Offset="0,7" Opacity="0.30" Brush="{StaticResource StrongShadowOverlayBrush}" />
-                            </Border.Shadow>
-                            <VerticalStackLayout Spacing="4">
-                                <Label Text="Elevation Preview" Style="{StaticResource LabelLargeStyle}" />
-                                <Label x:Name="ElevationValueLabel" Text="Radius: 18 • Offset: 7 • Opacity: 0.30" Style="{StaticResource BodySmallStyle}" />
-                                <Label Text="(Adjust slider to see real-time shadow changes)" Style="{StaticResource CaptionStyle}" />
-                            </VerticalStackLayout>
-                        </Border>
-                        <Label Text="Hint: Theme change here is temporary for comparison; it restores when leaving page." Style="{StaticResource CaptionStyle}" HorizontalTextAlignment="Center" />
-                    </VerticalStackLayout>
-                </Border>
-
-                <!--  Neo Glass & Floating Icon Buttons Showcase (New) -->
-                <Label Text="🎨 Neo Glass Premium Panel" 
-                       Style="{StaticResource TitleLargeStyle}" 
-                       HorizontalTextAlignment="Start"
-                       Margin="4,8,0,0" />
-                <Border Style="{StaticResource NeoGlassCard}">
-                    <VerticalStackLayout Spacing="16">
-                        <Label Text="Neo Glass Panel" Style="{StaticResource TitleLargeStyle}" HorizontalTextAlignment="Center" />
-                        <Label Text="High-elevation frosted card with subtle internal spotlight &amp; grid structure." Style="{StaticResource BodySmallStyle}" HorizontalTextAlignment="Center" />
-                        <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto" ColumnSpacing="14" RowSpacing="18">
-                            <!-- Left icon vertical stack -->
-                            <VerticalStackLayout Grid.RowSpan="2" Spacing="18" VerticalOptions="Center">
-                                <Border Style="{StaticResource LuminousCircularIcon}">
-                                    <Image Source="app_logo.png" WidthRequest="30" HeightRequest="30">
-                                        <Image.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding LinkButtonClickedCommand}" CommandParameter="https://www.suleymaniyevakfi.org/" />
-                                        </Image.GestureRecognizers>
-                                    </Image>
-                                </Border>
-                                <Border Style="{StaticResource LuminousCircularIcon}">
-                                    <Image Source="facebook.png" WidthRequest="30" HeightRequest="30">
-                                        <Image.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding LinkButtonClickedCommand}" CommandParameter="https://www.facebook.com/suleymaniyevakfi/" />
-                                        </Image.GestureRecognizers>
-                                    </Image>
-                                </Border>
-                            </VerticalStackLayout>
-                            <!-- Center content -->
-                            <VerticalStackLayout Grid.Column="1" Spacing="6">
-                                <Label Text="Unified Experience" Style="{StaticResource HeadlineMediumStyle}" />
-                                <Label Text="Consistent glass surfaces across light &amp; dark with adaptive elevation and motion states." Style="{StaticResource BodySmallStyle}" />
-                                <Label Text="These floating circular actions use layered translucency, inner glow and dynamic shadows for depth." Style="{StaticResource CaptionStyle}" />
-                            </VerticalStackLayout>
-                            <!-- Right icons -->
-                            <VerticalStackLayout Grid.Column="2" Spacing="18" VerticalOptions="Center">
-                                <Border Style="{StaticResource LuminousCircularIcon}">
-                                    <Image Source="twitter.png" WidthRequest="30" HeightRequest="30">
-                                        <Image.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding LinkButtonClickedCommand}" CommandParameter="https://twitter.com/suleymaniye_vkf" />
-                                        </Image.GestureRecognizers>
-                                    </Image>
-                                </Border>
-                                <Border Style="{StaticResource LuminousCircularIcon}">
-                                    <Image Source="instagram.png" WidthRequest="30" HeightRequest="30">
-                                        <Image.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding LinkButtonClickedCommand}" CommandParameter="https://www.instagram.com/suleymaniyevakfi" />
-                                        </Image.GestureRecognizers>
-                                    </Image>
-                                </Border>
-                            </VerticalStackLayout>
-                            <!-- Bottom row call-to-action spanning center -->
-                            <Button Grid.Row="1" Grid.Column="1" Text="Explore Settings" Style="{StaticResource PrimaryButton}" Command="{Binding SettingsCommand}" />
-                        </Grid>
-                    </VerticalStackLayout>
-                </Border>
-
-                <!--  SHOWCASE CONCLUSION  -->
-                <Border Style="{StaticResource GlassCardAccentGradient}" Padding="20,16">
-                    <VerticalStackLayout Spacing="10">
-                        <Label Text="🏆 Premium Design Excellence" 
-                               Style="{StaticResource HeadlineMediumStyle}" 
-                               HorizontalTextAlignment="Center" />
-                        <Label Text="You've explored 85+ hand-crafted gradient brushes and Material Design 3 components that power this app's premium experience."
-                               Style="{StaticResource BodySmallStyle}" 
-                               HorizontalTextAlignment="Center"
-                               Opacity="0.9" />
-                        <BoxView HeightRequest="1" 
-                                 Color="{AppThemeBinding Light={StaticResource OutlineColor}, Dark={StaticResource OutlineColorDark}}"
-                                 Opacity="0.3"
-                                 Margin="0,8,0,0" />
-                        <Label Text="Every card, button, and animation is optimized for 60fps performance while maintaining stunning visual quality."
-                               Style="{StaticResource CaptionStyle}" 
-                               HorizontalTextAlignment="Center"
-                               FontAttributes="Italic"
-                               Opacity="0.7" />
-                    </VerticalStackLayout>
-                </Border>
-
-                </VerticalStackLayout>
-                <!--  END OF SHOWCASE SECTIONS  -->
 
             </VerticalStackLayout>
         </ScrollView>

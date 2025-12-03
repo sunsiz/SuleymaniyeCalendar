@@ -8,21 +8,17 @@
     Title="{Binding Title}"
     x:DataType="viewModels:CompassViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    BackgroundColor="{AppThemeBinding Light={StaticResource CardBackgroundWarmLight}, Dark={StaticResource CardBackgroundWarmDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <Grid
-            Margin="10"
-            ColumnDefinitions="*,Auto" ColumnSpacing="8"
-            HeightRequest="40">
+        <Grid Margin="8" ColumnDefinitions="*,Auto" ColumnSpacing="8" HeightRequest="48">
             <Label
                 Grid.Column="0"
-                FontSize="{DynamicResource HeaderFontSize}"
                 AutomationProperties.IsInAccessibleTree="True"
                 SemanticProperties.HeadingLevel="Level1"
                 Style="{StaticResource LabelSectionHeader}"
                 Text="{localization:Translate KibleGostergesi}"
-                VerticalOptions="Start" />
+                HorizontalTextAlignment="Start" />
             <ImageButton
                 Grid.Column="1"
                 Margin="10,0,12,0"
@@ -35,7 +31,7 @@
                         FontAutoScalingEnabled="True"
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="{DynamicResource IconLargeFontSize}"
+                        Size="{DynamicResource IconLargerFontSize}"
                         Color="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColorDark}}" />
                 </ImageButton.Source>
             </ImageButton>
@@ -45,19 +41,16 @@
     <ContentPage.Content>
         <Grid>
             <ScrollView>
-                <VerticalStackLayout
-                    Padding="{StaticResource PagePaddingMobile}"
-                    Spacing="{StaticResource SpacingTight}">
-
+                <VerticalStackLayout Padding="{StaticResource CardMarginCompact}" Spacing="{StaticResource SpacingTight}">
                     <!--  Compass Section  -->
-                    <Border Style="{StaticResource FrostGlassCardFrozen}">
-                        <VerticalStackLayout Spacing="16">
+                    <Border Style="{StaticResource FrostGlassCardCrystal}">
+                        <VerticalStackLayout Spacing="1">
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 Text="{localization:Translate KibleGostergesi}" />
-
-                            <Grid HeightRequest="260" HorizontalOptions="Center">
+                            <Grid HeightRequest="360" HorizontalOptions="Center" Padding="-10">
                                 <Image
                                     x:Name="CompassImage"
                                     Aspect="AspectFit"
@@ -69,7 +62,7 @@
                                     Aspect="AspectFit"
                                     HorizontalOptions="Center"
                                     Rotation="{Binding Heading}"
-                                    Scale="0.72"
+                                    Scale="0.82"
                                     Source="isaretci.png"
                                     VerticalOptions="Center" />
                             </Grid>
@@ -78,10 +71,11 @@
 
                     <!--  Location Information  -->
                     <Border Style="{StaticResource FrostGlassCardCrystal}">
-                        <VerticalStackLayout Spacing="16">
+                        <VerticalStackLayout Spacing="4">
                             <Label
                                 HorizontalTextAlignment="Center"
                                 Style="{StaticResource TitleLargeStyle}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 Text="{localization:Translate KonumBilgileri}" />
 
                             <!--  Coordinates Grid  -->
@@ -99,7 +93,9 @@
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
-                                        Text="{localization:Translate EnlemFormatsiz}" />
+                                        Text="{localization:Translate EnlemFormatsiz}"
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -115,7 +111,9 @@
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
-                                        Text="{localization:Translate BoylamFormatsiz}" />
+                                        Text="{localization:Translate BoylamFormatsiz}"
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -131,7 +129,9 @@
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
-                                        Text="{localization:Translate YukseklikFormatsiz}" />
+                                        Text="{localization:Translate YukseklikFormatsiz}"
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -147,7 +147,9 @@
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource LabelLargeStyle}"
-                                        Text="{localization:Translate Aci}" />
+                                        Text="{localization:Translate Aci}"
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -164,7 +166,9 @@
                                         FontAttributes="Bold"
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource TitleMediumStyle}"
-                                        Text="{localization:Translate Adres}" />
+                                        Text="{localization:Translate Adres}"
+                                        TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
+                                                                    Dark={StaticResource CardValueDark}}" />
                                     <Label
                                         HorizontalTextAlignment="Center"
                                         Style="{StaticResource BodyLargeStyle}"
@@ -174,8 +178,9 @@
 
                             <!--  Action Button - Glass primary -->
                             <Button
-                                Margin="12,0,12,12"
-                                Style="{StaticResource GlassButtonPillTertiaryFlat}"
+                                Margin="12,4,12,12"
+                                Style="{StaticResource VistaAeroGlassButton}"
+                                TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 Command="{Binding GoToMapCommand}"
                                 Text="{localization:Translate HaritadaGoster}" />
                         </VerticalStackLayout>
@@ -183,14 +188,11 @@
                 </VerticalStackLayout>
             </ScrollView>
 
-            <!--  Busy overlay  -->
-            <Grid BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}" IsVisible="{Binding IsBusy}">
-                <ActivityIndicator
-                    Style="{StaticResource ActivityIndicator}"
-                    HorizontalOptions="Center"
-                    IsRunning="True"
-                    VerticalOptions="Center"
-                    Color="{StaticResource PrimaryColor}" />
+            <!-- 🎨 PHASE 15: Busy overlay with FrostGlassCardCrystal + GoldenActivityIndicator -->
+            <Grid BackgroundColor="#80000000" IsVisible="{Binding IsBusy}">
+                <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                    <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="80" HeightRequest="80" />
+                </Border>
             </Grid>
         </Grid>
     </ContentPage.Content>

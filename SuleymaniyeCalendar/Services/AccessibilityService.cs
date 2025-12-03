@@ -19,7 +19,7 @@ namespace SuleymaniyeCalendar.Services
         /// <summary>
         /// Announce prayer time changes to screen readers
         /// </summary>
-        public void AnnouncePrayerTime(string prayerName, string time, string timeRemaining = null)
+        public void AnnouncePrayerTime(string prayerName, string time, string? timeRemaining = null)
         {
             var announcement = $"{prayerName} prayer time: {time}";
             if (!string.IsNullOrEmpty(timeRemaining))
@@ -41,7 +41,7 @@ namespace SuleymaniyeCalendar.Services
         /// <summary>
         /// Announce navigation changes for better screen reader support
         /// </summary>
-        public void AnnounceNavigation(string pageName, string description = null)
+        public void AnnounceNavigation(string pageName, string? description = null)
         {
             var announcement = $"Navigated to {pageName}";
             if (!string.IsNullOrEmpty(description))

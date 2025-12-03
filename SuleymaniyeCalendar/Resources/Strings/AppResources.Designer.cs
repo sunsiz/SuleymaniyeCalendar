@@ -251,6 +251,33 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please refresh to load monthly data.
+        /// </summary>
+        internal static string AylikVeriYenilemeIste {
+            get {
+                return ResourceManager.GetString("AylikVeriYenilemeIste", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} data downloaded.
+        /// </summary>
+        internal static string AyVeriIndirildi {
+            get {
+                return ResourceManager.GetString("AyVeriIndirildi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Download This Month.
+        /// </summary>
+        internal static string AyVeriYukle {
+            get {
+                return ResourceManager.GetString("AyVeriYukle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Azerbaijani.
         /// </summary>
         internal static string Azerbaijani {
@@ -310,6 +337,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         internal static string BildirimGosterSwitch {
             get {
                 return ResourceManager.GetString("BildirimGosterSwitch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notification permission required to schedule alarms..
+        /// </summary>
+        internal static string BildirimIzniGerekli {
+            get {
+                return ResourceManager.GetString("BildirimIzniGerekli", resourceCulture);
             }
         }
         
@@ -940,6 +976,24 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         internal static string Oynat {
             get {
                 return ResourceManager.GetString("Oynat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to load prayer times for scheduling.
+        /// </summary>
+        internal static string OtuzGunHatirlaticiHatasi {
+            get {
+                return ResourceManager.GetString("OtuzGunHatirlaticiHatasi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prayer reminders scheduled for 30 days.
+        /// </summary>
+        internal static string OtuzGunHatirlaticiPlanlandi {
+            get {
+                return ResourceManager.GetString("OtuzGunHatirlaticiPlanlandi", resourceCulture);
             }
         }
         

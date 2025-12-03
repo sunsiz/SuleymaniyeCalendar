@@ -79,9 +79,19 @@ public class AlarmNotificationReceiver : BroadcastReceiver
 
         var content = $"{name} {Resources.Strings.AppResources.Vakti} {timeStr}";
 
+        // Defensive bitmap handling to prevent recycled bitmap crashes
+        Bitmap largeIcon = null;
+        try
+        {
+            largeIcon = BitmapFactory.DecodeResource(context.Resources, Resource.Drawable.app_logo);
+        }
+        catch (Exception bitmapEx)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to decode large icon: {bitmapEx.Message}");
+        }
+
         var builder = new NotificationCompat.Builder(context, channelId)
             .SetSmallIcon(Resource.Drawable.app_logo)
-            .SetLargeIcon(BitmapFactory.DecodeResource(context.Resources, Resource.Drawable.app_logo))
             .SetContentTitle(title)
             .SetContentText(content)
             .SetPriority((int)NotificationPriority.Max)
@@ -89,6 +99,12 @@ public class AlarmNotificationReceiver : BroadcastReceiver
             .SetAutoCancel(true)
             .SetContentIntent(contentPi)
             .SetDefaults(0);
+
+        // Only set large icon if bitmap is valid and not recycled
+        if (largeIcon != null && !largeIcon.IsRecycled)
+        {
+            builder.SetLargeIcon(largeIcon);
+        }
 
         nm.Notify(NotificationId, builder.Build());
     }

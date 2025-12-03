@@ -82,14 +82,39 @@ Widget layouts include RTL variants: `Widget.axml` and `WidgetRtl.axml`.
 - **Prayer times**: Fetches from `http://servis.suleymaniyetakvimi.com/servis.asmx` (XML), caches to `%LOCALAPPDATA%/monthlycalendar.xml`
 - **JSON API**: Primary data source via `JsonApiService` at `api.suleymaniyetakvimi.com` with local JSON caching
 - **Location**: Handles permissions, GPS, geocoding with robust fallbacks
-- **Alarms**: Schedules up to 15 days via `IAlarmService` using user notification offsets
+- **Alarms**: Schedules 30 days via `SetMonthlyAlarmsAsync()` using `EnsureDaysRangeAsync()` for month boundary handling
 - **Network resilience**: Uses cached data when offline, shows appropriate toasts
+
+## 30-day alarm scheduling architecture
+Critical pattern for scheduling alarms across month boundaries:
+```csharp
+// EnsureDaysRangeAsync collects exactly 30 days by progressive month fetching
+var daysToSchedule = await EnsureDaysRangeAsync(startDate, 30);
+
+// Loop through collected days without break conditions
+foreach (var day in daysToSchedule) {
+    try {
+        // Schedule each prayer with defensive error handling
+        await _alarmService.SetAlarm(prayerTime, requestCode, notificationSettings);
+    } catch (Exception ex) {
+        Debug.WriteLine($"❌ Alarm failed for {prayerName}: {ex.Message}");
+        // Continue scheduling remaining alarms even if one fails
+    }
+}
+```
+**Key principles:**
+- Use `while (collectedDays.Count < daysNeeded)` not `while (cursor <= endDate)` to ensure exact count
+- Filter month data before adding: `daysInRange.Where(day => dayDate >= fromDate && dayDate <= toDate)`
+- Never break loop early with `if (dayCounter >= 30) break;` patterns
+- Each alarm gets defensive try-catch to prevent cascade failures
+- AlarmForegroundService auto-reschedules, so 30 days is optimal for performance vs coverage
 
 ## JsonApiService integration
 - **Endpoint pattern**: `https://api.suleymaniyetakvimi.com/api/TimeCalculation/TimeCalculate[ByMonth]`
-- **Response models**: `JsonPrayerTimeResponse` (single day), `JsonMonthlyPrayerTimeResponse` (full month)
-- **Error handling**: Always check `IsSuccess` property before using `Data`
-- **Fallback strategy**: XML API used when JSON fails or returns null
+- **Response models**: `TimeCalcDto` (internal DTO) → `Calendar` (app model) via `ConvertJsonDataToCalendar()`
+- **Error handling**: Returns `null` on failure; no `IsSuccess` wrapper in current API version
+- **Fallback strategy**: XML API used when JSON returns `null` or throws exception
+- **DTO flexibility**: Uses `[JsonPropertyName]` for multiple field variants (e.g., `fajrBeginTime` vs `fajr`)
 
 ## Navigation patterns
 - Tab navigation declared in `AppShell.xaml`, extra routes registered in `AppShell.xaml.cs`
@@ -127,12 +152,154 @@ dotnet run --framework net9.0-android  # Run on Android
 - Delete `%LOCALAPPDATA%/monthlycalendar.xml` to force fresh prayer time fetch
 - Use VS Code or VS for debugging with hot reload
 
+## Android Java interop patterns (critical for alarm scheduling)
+**PendingIntent creation for AlarmManager:**
+```csharp
+// ❌ WRONG: Causes "Type is not derived from a java type" error
+var showIntent = new Intent(Application.Context, typeof(NotificationChannelManager));
+
+// ✅ CORRECT: Use PackageManager to get launch intent
+var showIntent = Application.Context.PackageManager?.GetLaunchIntentForPackage(Application.Context.PackageName);
+
+// Create PendingIntent with Android 12+ Immutable flag
+var pendingShowIntent = PendingIntent.GetActivity(
+    Application.Context, 
+    requestCode, 
+    showIntent, 
+    PendingIntentFlags.Immutable | PendingIntentFlags.UpdateCurrent
+);
+```
+**Key rules:**
+- Only Activities, Services, or BroadcastReceivers can be used in `Intent(context, typeof(T))`
+- For AlarmClockInfo showIntent, use `PackageManager.GetLaunchIntentForPackage()` to get app's main activity
+- Android 12+ requires `PendingIntentFlags.Immutable` for security (apps targeting API 31+)
+- Always combine with `UpdateCurrent` to refresh pending intents: `Immutable | UpdateCurrent`
+
+## Foreground service architecture (Android)
+**AlarmForegroundService patterns:**
+```csharp
+public override StartCommandResult OnStartCommand(Intent intent, StartCommandFlags flags, int startId) {
+    // 1. Call StartForeground IMMEDIATELY (within 5 seconds or ANR)
+    StartForeground(NotificationId, CreateNotification());
+    
+    // 2. Move heavy work to background thread using Task.Run
+    _ = Task.Run(async () => {
+        try {
+            await data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+        } catch (Exception ex) {
+            Debug.WriteLine($"Background scheduling failed: {ex.Message}");
+        }
+    });
+    
+    return StartCommandResult.Sticky;
+}
+```
+**Handler-based periodic updates:**
+```csharp
+private readonly Handler _handler = new Handler(Looper.MainLooper);
+private readonly Action _runnable;
+
+_runnable = new Action(() => {
+    // ❌ WRONG: Synchronous work on main thread causes ANR
+    SetNotification();
+    
+    // ✅ CORRECT: Background thread for notification updates
+    Task.Run(() => {
+        try {
+            SetNotification();
+        } catch (Exception ex) {
+            Debug.WriteLine($"SetNotification failed: {ex.Message}");
+        }
+    });
+    
+    _handler.PostDelayed(_runnable, 30000); // 30 second interval
+});
+```
+**ANR prevention checklist:**
+- Call `StartForeground()` within 5 seconds of `startForegroundService()`
+- Move `SetMonthlyAlarmsAsync()` to `Task.Run()` background thread
+- Never block main thread with synchronous I/O, database, or network calls
+- Use `ConfigureAwait(false)` for all `await` calls in background tasks
+- Handler callbacks should dispatch heavy work to `Task.Run()`
+
+## Background task patterns
+**Prefer `Task.Run()` over `new Task()`:**
+```csharp
+// ❌ WRONG: new Task requires manual Start() and doesn't use thread pool
+var task = new Task(async () => await DoWorkAsync());
+task.Start();
+
+// ✅ CORRECT: Task.Run automatically queues on thread pool
+_ = Task.Run(async () => await DoWorkAsync().ConfigureAwait(false));
+
+// For fire-and-forget with explicit discard
+_ = Task.Run(async () => {
+    try {
+        await DoWorkAsync().ConfigureAwait(false);
+    } catch (Exception ex) {
+        Debug.WriteLine($"Background task failed: {ex.Message}");
+    }
+});
+```
+**When to use each pattern:**
+- `Task.Run(() => SyncWork())`: CPU-bound synchronous work
+- `Task.Run(async () => await AsyncWork())`: Async work on background thread
+- `await Task.Run(() => DoWork())`: When you need the result back
+- `_ = Task.Run(() => DoWork())`: Fire-and-forget background work
+
+## Compass sensor lifecycle (MAUI)
+**Critical initialization order in CompassViewModel:**
+```csharp
+public CompassViewModel(DataService dataService) {
+    _dataService = dataService;
+    UpdateLocationFromPreferences(); // Load cached location first
+    
+    try {
+        if (!Compass.IsMonitoring) {
+            // ✅ MUST subscribe BEFORE Compass.Start() or readings are lost
+            Compass.ReadingChanged += Compass_ReadingChanged;
+            Compass.Start(SensorSpeed.UI, applyLowPassFilter: true);
+        }
+    } catch (FeatureNotSupportedException ex) {
+        // Handle devices without compass hardware
+    }
+}
+```
+**Proper disposal pattern:**
+```csharp
+public void Dispose() {
+    try {
+        if (Compass.IsMonitoring) {
+            Compass.ReadingChanged -= Compass_ReadingChanged; // Unsubscribe first
+            Compass.Stop(); // Then stop sensor
+        }
+    } catch (Exception ex) {
+        Debug.WriteLine($"Compass disposal error: {ex.Message}");
+    }
+}
+```
+**Event handler pattern:**
+```csharp
+private void Compass_ReadingChanged(object sender, CompassChangedEventArgs e) {
+    // Calculate Qibla direction relative to magnetic north
+    var qiblaLocation = new Location(_qiblaLatitude, _qiblaLongitude);
+    var currentPosition = new Location(_currentLatitude, _currentLongitude);
+    var targetHeading = (360 - DistanceCalculator.Bearing(currentPosition, qiblaLocation)) % 360;
+    
+    var currentHeading = 360 - e.Reading.HeadingMagneticNorth;
+    Heading = currentHeading - targetHeading; // Relative rotation for UI
+}
+```
+
 ## Common gotchas
 - Android 10+ disables alarm flags in constructor (legacy workaround)
 - WinUI location permissions treated as always granted
-- Compass disposal requires explicit cleanup in `CompassViewModel.Dispose()`
+- Compass disposal requires explicit cleanup in `CompassViewModel.Dispose()` - MUST unsubscribe before Stop()
 - FontAwesome icons use Unicode glyphs: `FontFamily="{StaticResource IconFontFamily}"`
-- JSON deserialization: Check `JsonResponse.IsSuccess` before accessing `Data` property
+- JSON API returns bare objects/arrays, not wrapped in `{isSuccess, data}` structure
 - Widget icons: Use Unicode symbols instead of FontAwesome for better compatibility
+- PendingIntent requires `PendingIntentFlags.Immutable` on Android 12+ or scheduling fails
+- AlarmForegroundService must call `StartForeground()` within 5 seconds or ANR warning appears
+- Compass.ReadingChanged subscription MUST happen before Compass.Start() or no updates occur
 
-Quick file pointers: `MauiProgram.cs` (DI), `DataService.cs` (core logic), `BaseViewModel.cs` (MVVM foundation), `AppShell.xaml` (navigation), `Resources/Styles/` (Material Design 3 theming).
+Quick file pointers: `MauiProgram.cs` (DI), `DataService.cs` (core logic), `BaseViewModel.cs` (MVVM foundation), `AppShell.xaml` (navigation), `Resources/Styles/` (Material Design 3 theming), `AlarmForegroundService.cs` (Android alarm lifecycle).

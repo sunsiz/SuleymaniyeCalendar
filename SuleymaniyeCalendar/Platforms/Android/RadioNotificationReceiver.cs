@@ -8,7 +8,7 @@ namespace SuleymaniyeCalendar.Platforms.Android
     [IntentFilter(new[] { "RADIO_PAUSE_ACTION" })]
     public class RadioNotificationReceiver : BroadcastReceiver
     {
-        public override void OnReceive(Context context, Intent intent)
+        public override void OnReceive(Context? context, Intent? intent)
         {
             if (intent?.Action == "RADIO_PAUSE_ACTION")
             {

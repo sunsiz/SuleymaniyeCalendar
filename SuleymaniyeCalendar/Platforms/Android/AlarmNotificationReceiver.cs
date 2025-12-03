@@ -12,8 +12,10 @@ public class AlarmNotificationReceiver : BroadcastReceiver
 {
     private const int NotificationId = 2025;
 
-    public override void OnReceive(Context context, Intent intent)
+    public override void OnReceive(Context? context, Intent? intent)
     {
+        if (context == null) return;
+        
         var name = intent?.GetStringExtra("name") ?? string.Empty;
         var timeStr = intent?.GetStringExtra("time") ?? string.Empty;
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(timeStr))
@@ -22,23 +24,26 @@ public class AlarmNotificationReceiver : BroadcastReceiver
         // Ensure channels exist (no-op if already created)
         NotificationChannelManager.CreateAlarmNotificationChannels();
 
-        var nm = (NotificationManager)context.GetSystemService(Context.NotificationService);
+        var nm = context.GetSystemService(Context.NotificationService) as NotificationManager;
+        if (nm == null) return;
 
-    var pkg = context.PackageName;
+        var pkg = context.PackageName;
 
-        // Pick channel by user selection (same ids as before)
-        var channelId = name switch
+        // Pick channel by user selection (unified key with PrayerDetailViewModel)
+        string prayerId = name switch
         {
-            "Fecri Kazip" => Preferences.Get("fecrikazipAlarmSesi", "alarm"),
-            "Fecri Sadık" => Preferences.Get("fecrisadikAlarmSesi", "alarm"),
-            "Sabah Sonu" => Preferences.Get("sabahsonuAlarmSesi", "alarm"),
-            "Öğle"       => Preferences.Get("ogleAlarmSesi", "alarm"),
-            "İkindi"     => Preferences.Get("ikindiAlarmSesi", "alarm"),
-            "Akşam"      => Preferences.Get("aksamAlarmSesi", "alarm"),
-            "Yatsı"      => Preferences.Get("yatsiAlarmSesi", "alarm"),
-            "Yatsı Sonu" => Preferences.Get("yatsisonuAlarmSesi", "alarm"),
-            _            => "alarm"
-        } switch
+            "Fecri Kazip" => "falsefajr",
+            "Fecri Sadık" => "fajr",
+            "Sabah Sonu"  => "sunrise",
+            "Öğle"        => "dhuhr",
+            "İkindi"      => "asr",
+            "Akşam"       => "maghrib",
+            "Yatsı"       => "isha",
+            "Yatsı Sonu"  => "endofisha",
+            _              => "asr" // fallback
+        };
+        var soundPref = Preferences.Get(prayerId + "AlarmSound", "kus");
+        var channelId = soundPref switch
         {
             "kus"   => "SuleymaniyeTakvimialarmbirdchannelId",
             "horoz" => "SuleymaniyeTakvimialarmroosterchannelId",
@@ -77,9 +82,19 @@ public class AlarmNotificationReceiver : BroadcastReceiver
 
         var content = $"{name} {Resources.Strings.AppResources.Vakti} {timeStr}";
 
+        // Create large icon bitmap safely - decode fresh copy to avoid recycled bitmap issues
+        Bitmap? largeIcon = null;
+        try
+        {
+            largeIcon = BitmapFactory.DecodeResource(context.Resources, Resource.Drawable.app_logo);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to decode large icon: {ex.Message}");
+        }
+
         var builder = new NotificationCompat.Builder(context, channelId)
             .SetSmallIcon(Resource.Drawable.app_logo)
-            .SetLargeIcon(BitmapFactory.DecodeResource(context.Resources, Resource.Drawable.app_logo))
             .SetContentTitle(title)
             .SetContentText(content)
             .SetPriority((int)NotificationPriority.Max)
@@ -88,6 +103,16 @@ public class AlarmNotificationReceiver : BroadcastReceiver
             .SetContentIntent(contentPi)
             .SetDefaults(0);
 
-        nm.Notify(NotificationId, builder.Build());
+        // Only set large icon if bitmap was successfully created and not recycled
+        if (largeIcon != null && !largeIcon.IsRecycled)
+        {
+            builder.SetLargeIcon(largeIcon);
+        }
+
+        var notification = builder.Build();
+        if (notification != null)
+        {
+            nm.Notify(NotificationId, notification);
+        }
     }
 }

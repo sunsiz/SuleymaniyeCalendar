@@ -1,4 +1,4 @@
-﻿using _Microsoft.Android.Resource.Designer;
+using _Microsoft.Android.Resource.Designer;
 using Android.App;
 using Android.Content;
 using Android.Graphics;
@@ -14,7 +14,7 @@ namespace SuleymaniyeCalendar
 	//[BroadcastReceiver(Enabled = true, Exported = false)]
 	public class NotificationChannelManager// : BroadcastReceiver
 	{
-	private static NotificationManager _notificationManager;
+	private static NotificationManager? _notificationManager;
 		private static string _alarmBirdChannelId = "SuleymaniyeTakvimialarmbirdchannelId";
 		private static string _alarmRoosterChannelId = "SuleymaniyeTakvimialarmroosterchannelId";
 		private static string _alarmAdhanChannelId = "SuleymaniyeTakvimialarmadhanchannelId";
@@ -46,7 +46,9 @@ namespace SuleymaniyeCalendar
         internal static void CreateAlarmNotificationChannels()
         {
             _notificationManager =
-                (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+                Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
+            if (_notificationManager == null) return;
+            
             // Channel sounds (note: channel attributes are immutable once created)
             var pkg = Application.Context.PackageName;
 
@@ -143,7 +145,7 @@ namespace SuleymaniyeCalendar
 		//		if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(timeStr)) return;
 		//		var time = TimeSpan.Parse(timeStr);
 		//		//Toast.MakeText(context, "Received intent! " + name + ": " + time, ToastLength.Short).Show();
-		//		_notificationManager = (NotificationManager)Application.Context.GetSystemService(Context.NotificationService);
+		//		_notificationManager = Application.Context.GetSystemService(Context.NotificationService) as NotificationManager;
 		//		var pendingIntentFlags = (Build.VERSION.SdkInt > BuildVersionCodes.R)
 		//			? PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable
 		//			: PendingIntentFlags.UpdateCurrent;
@@ -281,13 +283,13 @@ namespace SuleymaniyeCalendar
 		//		fileName = name switch
 		//		{
 		//			"Fecri Kazip" => Preferences.Get("fecrikazipAlarmSesi", "alarm"),
-		//			"Fecri Sadık" => Preferences.Get("fecrisadikAlarmSesi", "alarm"),
+		//			"Fecri Sadik" => Preferences.Get("fecrisadikAlarmSesi", "alarm"),
 		//			"Sabah Sonu" => Preferences.Get("sabahsonuAlarmSesi", "alarm"),
-		//			"Öğle" => Preferences.Get("ogleAlarmSesi", "alarm"),
-		//			"İkindi" => Preferences.Get("ikindiAlarmSesi", "alarm"),
-		//			"Akşam" => Preferences.Get("aksamAlarmSesi", "alarm"),
-		//			"Yatsı" => Preferences.Get("yatsiAlarmSesi", "alarm"),
-		//			"Yatsı Sonu" => Preferences.Get("yatsisonuAlarmSesi", "alarm"),
+		//			"�gle" => Preferences.Get("ogleAlarmSesi", "alarm"),
+		//			"Ikindi" => Preferences.Get("ikindiAlarmSesi", "alarm"),
+		//			"Aksam" => Preferences.Get("aksamAlarmSesi", "alarm"),
+		//			"Yatsi" => Preferences.Get("yatsiAlarmSesi", "alarm"),
+		//			"Yatsi Sonu" => Preferences.Get("yatsisonuAlarmSesi", "alarm"),
 		//			//_ => "ezan"
 		//		};
 		//	return fileName;
@@ -311,14 +313,14 @@ namespace SuleymaniyeCalendar
 		//		return name switch
 		//		{
 		//			"Fecri Kazip" => $"{AppResources.FecriKazip} {AppResources.Vakti} {time}",
-		//			"Fecri Sadık" => $"{AppResources.FecriSadik} {AppResources.Vakti} {time}",
+		//			"Fecri Sadik" => $"{AppResources.FecriSadik} {AppResources.Vakti} {time}",
 		//			"Sabah Sonu" => $"{AppResources.SabahSonu} {AppResources.Vakti} {time}",
-		//			"Öğle" => $"{AppResources.Ogle} {AppResources.Vakti} {time}",
-		//			"İkindi" => $"{AppResources.Ikindi} {AppResources.Vakti} {time}",
-		//			"Akşam" => $"{AppResources.Aksam} {AppResources.Vakti} {time}",
-		//			"Yatsı" => $"{AppResources.Yatsi} {AppResources.Vakti} {time}",
-		//			"Yatsı Sonu" => $"{AppResources.YatsiSonu} {AppResources.Vakti} {time}",
-		//			//_ => $"şimdiki zaman: {time}"
+		//			"�gle" => $"{AppResources.Ogle} {AppResources.Vakti} {time}",
+		//			"Ikindi" => $"{AppResources.Ikindi} {AppResources.Vakti} {time}",
+		//			"Aksam" => $"{AppResources.Aksam} {AppResources.Vakti} {time}",
+		//			"Yatsi" => $"{AppResources.Yatsi} {AppResources.Vakti} {time}",
+		//			"Yatsi Sonu" => $"{AppResources.YatsiSonu} {AppResources.Vakti} {time}",
+		//			//_ => $"simdiki zaman: {time}"
 		//		};
 
 		//	return "";
@@ -330,14 +332,14 @@ namespace SuleymaniyeCalendar
 		//		return name switch
 		//		{
 		//			"Fecri Kazip" => AppResources.FecriKazip + " " + AppResources.Alarmi,
-		//			"Fecri Sadık" => AppResources.FecriSadik + " " + AppResources.Alarmi,
+		//			"Fecri Sadik" => AppResources.FecriSadik + " " + AppResources.Alarmi,
 		//			"Sabah Sonu" => AppResources.SabahSonu + " " + AppResources.Alarmi,
-		//			"Öğle" => AppResources.Ogle + " " + AppResources.Alarmi,
-		//			"İkindi" => AppResources.Ikindi + " " + AppResources.Alarmi,
-		//			"Akşam" => AppResources.Aksam + " " + AppResources.Alarmi,
-		//			"Yatsı" => AppResources.Yatsi + " " + AppResources.Alarmi,
-		//			"Yatsı Sonu" => AppResources.YatsiSonu + " " + AppResources.Alarmi,
-		//			//_ => "Test Alarmı",
+		//			"�gle" => AppResources.Ogle + " " + AppResources.Alarmi,
+		//			"Ikindi" => AppResources.Ikindi + " " + AppResources.Alarmi,
+		//			"Aksam" => AppResources.Aksam + " " + AppResources.Alarmi,
+		//			"Yatsi" => AppResources.Yatsi + " " + AppResources.Alarmi,
+		//			"Yatsi Sonu" => AppResources.YatsiSonu + " " + AppResources.Alarmi,
+		//			//_ => "Test Alarmi",
 		//		};
 		//	return "";
 		//}

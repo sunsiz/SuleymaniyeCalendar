@@ -1,66 +1,163 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
+﻿#nullable enable
+
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using SuleymaniyeCalendar.Models;
-using SuleymaniyeCalendar.Resources.Strings;
 using System.Globalization;
 using CommunityToolkit.Mvvm.Input;
+using SuleymaniyeCalendar.Helpers;
+using SuleymaniyeCalendar.Models;
+using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.Services;
 using SuleymaniyeCalendar.Views;
 using Calendar = SuleymaniyeCalendar.Models.Calendar;
-using Microsoft.Maui.ApplicationModel;
 
-namespace SuleymaniyeCalendar.ViewModels
+namespace SuleymaniyeCalendar.ViewModels;
+
+/// <summary>
+/// Main ViewModel for the prayer times home page.
+/// Displays current day's prayer times with countdown timer and location info.
+/// </summary>
+/// <remarks>
+/// Key responsibilities:
+/// - Display 8 prayer times with temporal states (Past/Current/Future)
+/// - Update countdown timer every second with animated progress
+/// - Handle location refresh and geocoding for city display
+/// - Schedule monthly alarms when reminders are enabled
+/// - Detect midnight rollover for automatic day transitions
+/// </remarks>
+public partial class MainViewModel : BaseViewModel
 {
-    public partial class MainViewModel : BaseViewModel
-    {
-        private Calendar _calendar;
-        private DataService _data;
-        private Task _startupRefreshTask;
-        private Task _weeklyAlarmsTask;
-    // (Removed legacy _skipWindowsGeocoding flag; Windows geocoding guarded by token check in GetCityAsync.)
+    #region Private Fields
 
-        // Throttle refreshes to avoid duplicate work during navigation churn
-        private DateTimeOffset _lastUiRefresh = DateTimeOffset.MinValue;
-        private static readonly TimeSpan UiRefreshThrottle = TimeSpan.FromSeconds(2);
+    /// <summary>
+    /// Current day's prayer calendar data.
+    /// Access is thread-safe via volatile read/write.
+    /// </summary>
+    private volatile Calendar? _calendar;
 
-        // Single-flight guard for UI refresh
-        private int _refreshing; // 0 = idle, 1 = running
-    // Single-flight guard for manual location refresh pipeline (pull-to-refresh and refresh button)
-    private int _locationRefreshing; // 0 = idle, 1 = running
+    /// <summary>
+    /// Cached parsed prayer times to avoid repeated TimeSpan.Parse calls.
+    /// Updated only when _calendar changes, not every second.
+    /// </summary>
+    private CachedPrayerTimes? _cachedTimes;
 
-    private ObservableCollection<Prayer> prayers;
-    public ObservableCollection<Prayer> Prayers { get => prayers; set => SetProperty(ref prayers, value); }
+    /// <summary>
+    /// Data service for prayer times, location, and alarm scheduling.
+    /// </summary>
+    private DataService _data = null!;
 
-    private string remainingTime;
+    /// <summary>
+    /// Background task for initial data loading on startup.
+    /// </summary>
+    private Task? _startupRefreshTask;
+
+    /// <summary>
+    /// Background task for weekly alarm scheduling.
+    /// </summary>
+    private Task? _weeklyAlarmsTask;
+
+    /// <summary>
+    /// Timestamp of last UI refresh to throttle duplicate updates.
+    /// </summary>
+    private DateTimeOffset _lastUiRefresh = DateTimeOffset.MinValue;
+
+    /// <summary>
+    /// Minimum interval between UI refreshes to prevent churn.
+    /// </summary>
+    private static readonly TimeSpan UiRefreshThrottle = TimeSpan.FromSeconds(2);
+
+    /// <summary>
+    /// Track current date for midnight rollover detection (PHASE 18).
+    /// </summary>
+    private DateTime _lastKnownDate = DateTime.Today;
+
+    /// <summary>
+    /// Track last minute to detect prayer window changes and optimize state updates.
+    /// </summary>
+    private int _lastMinute = DateTime.Now.Minute;
+
+    /// <summary>
+    /// Single-flight guard for UI refresh. 0 = idle, 1 = running.
+    /// </summary>
+    private int _refreshing;
+
+    /// <summary>
+    /// Single-flight guard for manual location refresh (pull-to-refresh). 0 = idle, 1 = running.
+    /// </summary>
+    private int _locationRefreshing;
+
+    /// <summary>
+    /// Timer for countdown tick updates every second.
+    /// </summary>
+    private IDispatcherTimer? _ticker;
+
+    /// <summary>
+    /// Handler for ticker events, stored for proper unsubscription.
+    /// </summary>
+    private EventHandler? _tickHandler;
+
+    /// <summary>
+    /// Prevents double navigation on fast taps.
+    /// </summary>
+    private bool _isNavigating;
+
+    /// <summary>
+    /// Performance monitoring service for timing operations.
+    /// </summary>
+    private readonly PerformanceService _perf;
+
+    #endregion
+
+    #region Observable Properties
+
+    /// <summary>
+    /// Gets or sets the collection of prayer times displayed in the UI.
+    /// </summary>
+    private ObservableCollection<Prayer>? prayers;
+    public ObservableCollection<Prayer>? Prayers { get => prayers; set => SetProperty(ref prayers, value); }
+
+    /// <summary>
+    /// Gets or sets the formatted remaining time until next prayer.
+    /// </summary>
+    private string remainingTime = string.Empty;
     public string RemainingTime { get => remainingTime; set => SetProperty(ref remainingTime, value); }
 
-    private string city;
-    public string City { get => city; set => SetProperty(ref city, value); }
-        private IDispatcherTimer _ticker;
-        private EventHandler _tickHandler;
+    /// <summary>
+    /// Gets or sets the progress percentage (0.0 to 1.0) for animated gradient (PHASE 17).
+    /// </summary>
+    private double timeProgress;
+    public double TimeProgress { get => timeProgress; set => SetProperty(ref timeProgress, value); }
 
-        // Dedicated flag for pull-to-refresh to avoid coupling with IsBusy
+    /// <summary>
+    /// Gets or sets the current city name from geocoding.
+    /// </summary>
+    private string city = string.Empty;
+    public string City { get => city; set => SetProperty(ref city, value); }
+
+    /// <summary>
+    /// Gets or sets whether pull-to-refresh is active. Separate from IsBusy to avoid coupling.
+    /// </summary>
     private bool isRefreshing;
     public bool IsRefreshing { get => isRefreshing; set => SetProperty(ref isRefreshing, value); }
 
-        // Bind CollectionView.SelectedItem to this
-    private Prayer selectedPrayer;
-    public Prayer SelectedPrayer { get => selectedPrayer; set => SetProperty(ref selectedPrayer, value); }
+    /// <summary>
+    /// Gets or sets the currently selected prayer for CollectionView binding.
+    /// </summary>
+    private Prayer? selectedPrayer;
+    public Prayer? SelectedPrayer { get => selectedPrayer; set => SetProperty(ref selectedPrayer, value); }
 
-        // Prevent double navigation/reentrancy on fast taps/selection churn
-        private bool _isNavigating;
+    #endregion
 
-        private readonly PerformanceService _perf;
+    #region Constructor
 
-        public MainViewModel(DataService dataService, PerformanceService perf = null)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MainViewModel"/> class.
+    /// </summary>
+    /// <param name="dataService">The data service for prayer times and location.</param>
+    /// <param name="perf">Optional performance monitoring service.</param>
+    public MainViewModel(DataService dataService, PerformanceService? perf = null)
         {
+            IsBusy = true; // Show loading indicator initially
             _perf = perf ?? new PerformanceService();
             Debug.WriteLine("TimeStamp-MainViewModel-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
             if (DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 10)
@@ -81,13 +178,18 @@ namespace SuleymaniyeCalendar.ViewModels
             Prayers = new ObservableCollection<Prayer>();
             _data = dataService;
             _calendar = _data.calendar;
+            try
+            {
+                // Lightweight initial population; deeper refresh is coalesced in OnAppearing
+                LoadPrayers();
 
-            // Lightweight initial population; deeper refresh is coalesced in OnAppearing
-            LoadPrayers();
-
-            // Fire and forget non-UI work
-            _ = Task.Run(() => GetCity());
-
+                // Fire and forget non-UI work
+                _ = Task.Run(() => GetCity());
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"MainViewModel initialization error: {ex.Message}");
+            }
 #if WINDOWS
             // On Windows we run in MOCK mode: no permission prompts, no geolocation queries.
             // Ensure a mock/cached city is visible immediately and skip first-run auto location logic.
@@ -98,29 +200,45 @@ namespace SuleymaniyeCalendar.ViewModels
             if (DeviceInfo.Platform != DevicePlatform.WinUI)
             {
                 if (!Preferences.Get("LocationSaved", false))
+                {
                     _ = CheckLocationInfoAsync(3000);
+                }
+                else
+                {
+                    _ = InitializeDataFromCacheAsync();
+                }
             }
 
             if (DeviceInfo.Platform != DevicePlatform.WinUI && Preferences.Get("AlwaysRenewLocationEnabled", false))
                 _startupRefreshTask = RefreshLocationCommand.ExecuteAsync(null);
-
-            var lastAlarmDateStr = Preferences.Get("LastAlarmDate", "Empty");
-            if (lastAlarmDateStr != "Empty")
+            if (_data.CheckRemindersEnabledAny())
             {
-                DateTime lastAlarm;
-                if (DateTime.TryParse(lastAlarmDateStr, out lastAlarm) || DateTime.TryParseExact(lastAlarmDateStr, new[] {"dd/MM/yyyy","dd-MM-yyyy","yyyy-MM-dd"}, CultureInfo.InvariantCulture, DateTimeStyles.None, out lastAlarm))
+                var lastAlarmDateStr = Preferences.Get("LastAlarmDate", "Empty");
+                if (lastAlarmDateStr != "Empty")
                 {
-                    if ((lastAlarm - DateTime.Today).Days > 4)
-                        _weeklyAlarmsTask = _data.SetMonthlyAlarmsAsync();
+                    DateTime lastAlarm;
+                    if (DateTime.TryParse(lastAlarmDateStr, out lastAlarm) || DateTime.TryParseExact(lastAlarmDateStr, new[] { "dd/MM/yyyy", "dd-MM-yyyy", "yyyy-MM-dd" }, CultureInfo.InvariantCulture, DateTimeStyles.None, out lastAlarm))
+                    {
+                        if ((lastAlarm - DateTime.Today).Days > 4)
+                            _weeklyAlarmsTask = _data.SetMonthlyAlarmsAsync();
+                    }
                 }
             }
+            IsBusy = false;
             Debug.WriteLine("TimeStamp-ItemsViewModel-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 
             // Icon/UI refresh is handled by OnAppearing -> RefreshUiAsync()
         }
 
+    #endregion
+
+    #region Commands
+
+        /// <summary>
+        /// Opens the device's map application centered on the current location.
+        /// </summary>
         [RelayCommand]
-        public async Task GoToMap()
+        private async Task GoToMap()
         {
             try
             {
@@ -133,6 +251,11 @@ namespace SuleymaniyeCalendar.ViewModels
                     return;
                 }
 #endif
+                if (_calendar == null)
+                {
+                    ShowToast(AppResources.HaritaHatasi);
+                    return;
+                }
                 var location = new Location(Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat));
                 var placeMark = await Geocoding.Default.GetPlacemarksAsync(Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat)).ConfigureAwait(true);
                 var options = new MapLaunchOptions { Name = placeMark.FirstOrDefault()?.Thoroughfare ?? placeMark.FirstOrDefault()?.CountryName };
@@ -144,6 +267,10 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
+        /// <summary>
+        /// Refreshes the current location and updates prayer times.
+        /// Used by pull-to-refresh and refresh button. Shows overlay during operation.
+        /// </summary>
         [RelayCommand]
         public async Task RefreshLocation()
         {
@@ -200,14 +327,17 @@ namespace SuleymaniyeCalendar.ViewModels
                     _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
                     if (_calendar != null)
                     {
+                        _cachedTimes = null; // Invalidate cached times
                         _data.calendar = _calendar; // sync service state
                     }
 
                     // Refresh monthly data (alarms depend on this); network may take time
                     var monthlyData = await _data.GetMonthlyPrayerTimesHybridAsync(location, forceRefresh: true).ConfigureAwait(false);
-
-                    // Schedule notifications (can be slow on Android); keep off UI thread
-                    await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+                    if (_data.CheckRemindersEnabledAny())
+                    {
+                        // Schedule notifications (can be slow on Android); keep off UI thread
+                        await _data.SetMonthlyAlarmsAsync(forceReschedule: true).ConfigureAwait(false);
+                    }                    
 
                     // Coalesced UI update after background work
                     await RefreshUiAsync(force: true).ConfigureAwait(false);
@@ -243,7 +373,10 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
-        // Changed: parameterless; uses SelectedPrayer (bound from XAML)
+        /// <summary>
+        /// Navigates to the prayer detail page when a prayer is selected.
+        /// Uses SelectedPrayer bound from XAML CollectionView.
+        /// </summary>
         [RelayCommand]
         private async Task PrayerSelected()
         {
@@ -268,6 +401,9 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
+        /// <summary>
+        /// Navigates to the monthly prayer times calendar page.
+        /// </summary>
         [RelayCommand]
         private async Task GoToMonth()
         {
@@ -283,6 +419,9 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
+        /// <summary>
+        /// Navigates to the application settings page.
+        /// </summary>
         [RelayCommand]
         private async Task Settings()
         {
@@ -291,8 +430,13 @@ namespace SuleymaniyeCalendar.ViewModels
             IsBusy = false;
         }
 
+        /// <summary>
+        /// Toggles the enabled state of a prayer's notification.
+        /// Reschedules alarms in the background after the toggle.
+        /// </summary>
+        /// <param name="prayer">The prayer to toggle.</param>
         [RelayCommand]
-        private void TogglePrayerEnabled(Prayer prayer)
+        private void TogglePrayerEnabled(Prayer? prayer)
         {
             if (prayer == null) return;
 
@@ -305,7 +449,7 @@ namespace SuleymaniyeCalendar.ViewModels
                 {
                     try
                     {
-                        await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+                        await _data.SetMonthlyAlarmsAsync(forceReschedule: true).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
@@ -319,13 +463,21 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
-    private async Task GetCityAsync()
+    #endregion
+
+    #region Private Methods - Location
+
+        /// <summary>
+        /// Performs reverse geocoding to get the city name from current coordinates.
+        /// Uses a 5-second timeout to prevent hanging. Falls back to cached city on failure.
+        /// </summary>
+        private async Task GetCityAsync()
         {
             try
             {
                 // Add timeout to prevent hanging
                 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-                
+
 #if WINDOWS
                 // Provide mock city immediately when no token; avoids any Geocoding API call (which crashes without token).
                 var mapToken = Preferences.Get("MapServiceToken", string.Empty);
@@ -338,6 +490,11 @@ namespace SuleymaniyeCalendar.ViewModels
                 }
 #endif
                 // Non-Windows OR Windows with valid token proceeds to real reverse geocoding.
+                if (_calendar == null)
+                {
+                    Debug.WriteLine("GetCityAsync: _calendar is null, using cached city");
+                    return;
+                }
                 var placemark = await Geocoding.Default
                     .GetPlacemarksAsync(
                         Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat),
@@ -372,13 +529,35 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
-        // Legacy method - keep for backward compatibility but make it non-blocking
-        private async void GetCity()
+        /// <summary>
+        /// Legacy synchronous wrapper for <see cref="GetCityAsync"/>.
+        /// Kept for backward compatibility with fire-and-forget calls.
+        /// </summary>
+        private void GetCity()
         {
-            await GetCityAsync();
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await GetCityAsync();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"GetCity error: {ex.Message}");
+                }
+            });
         }
 
+        /// <summary>
+        /// Tracks whether initial location check has been performed.
+        /// </summary>
         private bool _initialLocationChecked;
+
+        /// <summary>
+        /// Checks location permission and fetches prayer times on first app launch.
+        /// Shows overlay during operation and schedules alarms if reminders enabled.
+        /// </summary>
+        /// <param name="timeDelay">Initial delay in milliseconds (clamped to max 500ms).</param>
         private async Task CheckLocationInfoAsync(int timeDelay)
         {
             if (_initialLocationChecked)
@@ -418,29 +597,42 @@ namespace SuleymaniyeCalendar.ViewModels
             await Task.Delay(timeDelay).ConfigureAwait(false);
             var calendar = _data.calendar;
             calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
-            if ((calendar.Altitude == 114.0 && calendar.Latitude == 41.0 && calendar.Longitude == 29.0) || (calendar.Altitude == 0 && calendar.Latitude == 0 && calendar.Longitude == 0))
+            
+            // Ensure we capture the calendar if we got one, even if we don't enter the default coordinates block
+            if (calendar != null)
+            {
+                _calendar = calendar;
+                _cachedTimes = null; // Invalidate cached times
+                _data.calendar = calendar;
+            }
+
+            if (calendar != null && ((calendar.Altitude == 114.0 && calendar.Latitude == 41.0 && calendar.Longitude == 29.0) || (calendar.Altitude == 0 && calendar.Latitude == 0 && calendar.Longitude == 0)))
             {
                 // Default coordinates detected, need fresh location
                 _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
                 if (_calendar != null)
                 {
+                    _cachedTimes = null; // Invalidate cached times
                     _data.calendar = _calendar; // keep service field synchronized
                 }
                 var location = await _data.GetCurrentLocationAsync(false).ConfigureAwait(false);
                 if (location != null && location.Latitude != 0 && location.Longitude != 0)
                 {
-                    var monthly = _data.GetMonthlyPrayerTimes(location, false);
+                    var monthly = await _data.FetchSpecificMonthAsync(location, DateTime.Now.Month, DateTime.Now.Year).ConfigureAwait(false);
                     // If monthly data contains today, update calendars before UI refresh
-                    var today = monthly?.FirstOrDefault(d => d.Date == DateTime.Today.ToString("dd/MM/yyyy"));
+                    var today = monthly?.FirstOrDefault(d => d.Date == DateTime.Today.ToString("dd.MM.yyyy") || d.Date == DateTime.Today.ToString("dd/MM/yyyy"));
                     if (today != null)
                     {
                         _calendar = today;
+                        _cachedTimes = null; // Invalidate cached times
                         _data.calendar = today;
                     }
                 }
             }
-
-            await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+            if (_data.CheckRemindersEnabledAny())
+            {
+                await _data.SetMonthlyAlarmsAsync().ConfigureAwait(false);
+            }            
 
             // Coalesced UI update
             await RefreshUiAsync(force: true).ConfigureAwait(false);
@@ -457,7 +649,35 @@ namespace SuleymaniyeCalendar.ViewModels
             _initialLocationChecked = true;
         }
 
-        private ObservableCollection<Prayer> LoadPrayers()
+        private async Task InitializeDataFromCacheAsync()
+        {
+            try 
+            {
+                var calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
+                if (calendar != null)
+                {
+                    _calendar = calendar;
+                    _cachedTimes = null; // Invalidate cached times
+                    _data.calendar = calendar;
+                    await RefreshUiAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"InitializeDataFromCacheAsync error: {ex.Message}");
+            }
+        }
+
+    #endregion
+
+    #region Private Methods - Prayer Loading
+
+        /// <summary>
+        /// Loads prayer times from the calendar model, computes temporal states, and updates the UI.
+        /// Uses differential updates to minimize collection churn.
+        /// </summary>
+        /// <returns>The updated prayer collection.</returns>
+        private ObservableCollection<Prayer>? LoadPrayers()
         {
             Debug.WriteLine("TimeStamp-MainViewModel-ExecuteLoadItemsCommand-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
 
@@ -468,8 +688,14 @@ namespace SuleymaniyeCalendar.ViewModels
             }
             if (_calendar == null)
             {
-                Debug.WriteLine("[MainViewModel] No calendar available yet; skipping LoadPrayers.");
-                return Prayers ?? new ObservableCollection<Prayer>();
+                Debug.WriteLine("[MainViewModel] No calendar available yet; showing placeholder prayers.");
+                // Show placeholder prayers immediately for better perceived performance
+                if (Prayers == null || Prayers.Count == 0)
+                {
+                    Prayers = CreatePlaceholderPrayers();
+                    RemainingTime = AppResources.Yenileniyor + "...";
+                }
+                return Prayers;
             }
 
             try
@@ -493,7 +719,7 @@ namespace SuleymaniyeCalendar.ViewModels
 
                 DateTime ParseTimeOrMin(string s)
                 {
-                    try { return DateTime.Parse(s); } catch { return DateTime.MinValue; }
+                    try { return DateTime.Parse(s, CultureInfo.InvariantCulture); } catch { return DateTime.MinValue; }
                 }
 
                 foreach (var id in seq)
@@ -542,6 +768,11 @@ namespace SuleymaniyeCalendar.ViewModels
             return Prayers;
         }
 
+        /// <summary>
+        /// Applies differential updates to the Prayers collection to minimize UI churn.
+        /// Only updates changed properties rather than replacing the entire collection.
+        /// </summary>
+        /// <param name="newList">The new prayer list to merge into the current collection.</param>
         private void ApplyPrayerDiff(List<Prayer> newList)
         {
             if (Prayers == null || Prayers.Count != newList.Count)
@@ -558,6 +789,7 @@ namespace SuleymaniyeCalendar.ViewModels
                     // Also update localized Name when language changes – previously omitted so prayer names stayed stale after culture switch.
                     if (existing.Name != incoming.Name) existing.Name = incoming.Name;
                     if (existing.Time != incoming.Time) existing.Time = incoming.Time;
+                    if (existing.IconPath != incoming.IconPath) existing.IconPath = incoming.IconPath;
                     if (existing.State != incoming.State)
                     {
                         existing.State = incoming.State;
@@ -571,6 +803,32 @@ namespace SuleymaniyeCalendar.ViewModels
             Debug.WriteLine("[MainViewModel] ApplyPrayerDiff completed");
         }
 
+        /// <summary>
+        /// Creates placeholder prayer items with loading indicators for immediate UI feedback.
+        /// Displayed while actual prayer times are being fetched.
+        /// </summary>
+        /// <returns>Collection of placeholder prayers with "--:--" times.</returns>
+        private ObservableCollection<Prayer> CreatePlaceholderPrayers()
+        {
+            return new ObservableCollection<Prayer>
+            {
+                new Prayer { Id = "falsefajr", Name = AppResources.FecriKazip, Time = "--:--", IconPath = PrayerIconService.GetPrayerIconById("falsefajr"), State = "Waiting" },
+                new Prayer { Id = "fajr", Name = AppResources.FecriSadik, Time = "--:--", IconPath = PrayerIconService.GetPrayerIconById("fajr"), State = "Waiting" },
+                new Prayer { Id = "sunrise", Name = AppResources.SabahSonu, Time = "--:--", IconPath = PrayerIconService.GetPrayerIconById("sunrise"), State = "Waiting" },
+                new Prayer { Id = "dhuhr", Name = AppResources.Ogle, Time = "--:--", IconPath = PrayerIconService.GetPrayerIconById("dhuhr"), State = "Waiting" },
+                new Prayer { Id = "asr", Name = AppResources.Ikindi, Time = "--:--", IconPath = PrayerIconService.GetPrayerIconById("asr"), State = "Waiting" },
+                new Prayer { Id = "maghrib", Name = AppResources.Aksam, Time = "--:--", IconPath = PrayerIconService.GetPrayerIconById("maghrib"), State = "Waiting" },
+                new Prayer { Id = "isha", Name = AppResources.Yatsi, Time = "--:--", IconPath = PrayerIconService.GetPrayerIconById("isha"), State = "Waiting" },
+                new Prayer { Id = "endofisha", Name = AppResources.YatsiSonu, Time = "--:--", IconPath = PrayerIconService.GetPrayerIconById("endofisha"), State = "Waiting" }
+            };
+        }
+
+        /// <summary>
+        /// Determines the temporal state of a prayer based on current and next prayer times.
+        /// </summary>
+        /// <param name="current">Start time of this prayer window.</param>
+        /// <param name="next">Start time of the next prayer window.</param>
+        /// <returns>"Passed", "Happening", or "Waiting" based on current time.</returns>
         private string CheckState(DateTime current, DateTime next)
         {
             var state = "";
@@ -580,7 +838,12 @@ namespace SuleymaniyeCalendar.ViewModels
             return state;
         }
 
-        private string GetStateDescription(string state)
+        /// <summary>
+        /// Converts state code to human-readable description for accessibility.
+        /// </summary>
+        /// <param name="state">The state code (Happening/Passed/Waiting).</param>
+        /// <returns>User-friendly state description.</returns>
+        private string GetStateDescription(string? state)
         {
             return state?.ToLower() switch
             {
@@ -591,6 +854,13 @@ namespace SuleymaniyeCalendar.ViewModels
             };
         }
 
+    #endregion
+
+    #region Lifecycle Methods
+
+        /// <summary>
+        /// Called when the page appears. Starts the countdown timer and refreshes UI.
+        /// </summary>
         public void OnAppearing()
         {
             // Ensure any stuck pull-to-refresh indicator is cleared when navigating back to this page
@@ -607,9 +877,39 @@ namespace SuleymaniyeCalendar.ViewModels
 
             if (_ticker == null)
             {
-                _ticker = Application.Current.Dispatcher.CreateTimer();
+                var dispatcher = Application.Current?.Dispatcher;
+                if (dispatcher == null) return;
+                _ticker = dispatcher.CreateTimer();
                 _ticker.Interval = TimeSpan.FromSeconds(1);
-                _tickHandler = (s, e) => RemainingTime = GetRemainingTime();
+                // 🎨 PHASE 17: Update both RemainingTime and TimeProgress for animated gradient
+                // 🔄 PHASE 18: Detect date changes + recalculate states when minute changes
+                _tickHandler = (s, e) =>
+                {
+                    // Always update remaining time and progress (text updates every second)
+                    RemainingTime = GetRemainingTime();
+
+                    var now = DateTime.Now;
+                    var today = now.Date;
+                    var currentMinute = now.Minute;
+
+                    // Check if date has changed (midnight crossed or system date changed)
+                    if (today != _lastKnownDate)
+                    {
+                        Debug.WriteLine($"[MainViewModel] Date changed from {_lastKnownDate:yyyy-MM-dd} to {today:yyyy-MM-dd} - fetching new day's data");
+                        _lastKnownDate = today;
+                        _lastMinute = currentMinute;
+                        // Date changed - need to fetch new day's prayer times from server
+                        _ = LoadPrayers();
+                    }
+                    // 🔄 PHASE 18: Recalculate prayer states when minute changes
+                    // This ensures "current prayer" updates correctly (e.g., when crossing prayer boundaries)
+                    // Only recalculate once per minute to optimize performance
+                    else if (currentMinute != _lastMinute)
+                    {
+                        _lastMinute = currentMinute;
+                        Application.Current?.Dispatcher.Dispatch(() => LoadPrayers());
+                    }
+                };
                 _ticker.Tick += _tickHandler;
                 _ticker.Start();
             }
@@ -634,6 +934,9 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
+        /// <summary>
+        /// Called when the page disappears. Stops the countdown timer to conserve resources.
+        /// </summary>
         public void OnDisappearing()
         {
             if (_ticker != null)
@@ -645,7 +948,10 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
-        // Coalesced + throttled UI refresh
+        /// <summary>
+        /// Coalesced and throttled UI refresh. Prevents duplicate updates during navigation churn.
+        /// </summary>
+        /// <param name="force">When true, bypasses throttle and forces immediate refresh.</param>
         private async Task RefreshUiAsync(bool force = false)
         {
             var now = DateTimeOffset.UtcNow;
@@ -663,13 +969,14 @@ namespace SuleymaniyeCalendar.ViewModels
                 await Task.Yield();
 
                 // Ensure any UI-bound collection updates happen on the main thread
-                using (_perf.StartTimer("UI.LoadPrayers"))
+                // Timer inside dispatch to measure actual work, not queue wait time
+                await MainThread.InvokeOnMainThreadAsync(() =>
                 {
-                    await MainThread.InvokeOnMainThreadAsync(() =>
-                {
-                    LoadPrayers();
+                    using (_perf.StartTimer("UI.LoadPrayers"))
+                    {
+                        LoadPrayers();
+                    }
                 });
-                }
 
                 // Start city lookup in background without blocking UI
                 _ = Task.Run(async () => await GetCityAsync());
@@ -684,54 +991,167 @@ namespace SuleymaniyeCalendar.ViewModels
             }
         }
 
+    #endregion
+
+    #region Time Calculation Methods
+
+        /// <summary>
+        /// Calculates the progress percentage (0.0 to 1.0) for animated gradient display (PHASE 17).
+        /// </summary>
+        /// <param name="startTime">Start of the current prayer window.</param>
+        /// <param name="endTime">End of the current prayer window.</param>
+        /// <param name="currentTime">Current time of day.</param>
+        private void CalculateTimeProgress(TimeSpan startTime, TimeSpan endTime, TimeSpan currentTime)
+        {
+            var totalDuration = endTime - startTime;
+            var elapsed = currentTime - startTime;
+
+            if (totalDuration.TotalSeconds > 0)
+            {
+                TimeProgress = Math.Clamp(elapsed.TotalSeconds / totalDuration.TotalSeconds, 0.0, 1.0);
+            }
+            else
+            {
+                TimeProgress = 0.0;
+            }
+        }
+
+        /// <summary>
+        /// Calculates and formats the remaining time until the next prayer.
+        /// Also updates <see cref="TimeProgress"/> for gradient animation.
+        /// Uses cached parsed times for performance (avoids TimeSpan.Parse every second).
+        /// </summary>
+        /// <returns>Formatted remaining time string with localized prayer name.</returns>
         private string GetRemainingTime()
         {
             var currentTime = DateTime.Now.TimeOfDay;
+            var cal = _calendar;
+            if (cal is null)
+            {
+                TimeProgress = 0.0;
+                return "";
+            }
+
+            // Lazy-initialize cached times when calendar is available
+            _cachedTimes ??= CachedPrayerTimes.FromCalendar(cal);
+            var t = _cachedTimes;
+
             try
             {
-                if (currentTime < TimeSpan.Parse(_calendar.FalseFajr))
+                if (currentTime < t.FalseFajr)
+                {
+                    CalculateTimeProgress(TimeSpan.Zero, t.FalseFajr, currentTime);
                     return AppResources.FecriKazibingirmesinekalanvakit +
-                              (TimeSpan.Parse(_calendar.FalseFajr) - currentTime).ToString(@"hh\:mm\:ss");
-                if (currentTime >= TimeSpan.Parse(_calendar.FalseFajr) && currentTime <= TimeSpan.Parse(_calendar.Fajr))
+                              (t.FalseFajr - currentTime).ToString(@"hh\:mm\:ss");
+                }
+                if (currentTime >= t.FalseFajr && currentTime <= t.Fajr)
+                {
+                    CalculateTimeProgress(t.FalseFajr, t.Fajr, currentTime);
                     return AppResources.FecriSadikakalanvakit +
-                           (TimeSpan.Parse(_calendar.Fajr) - currentTime).ToString(@"hh\:mm\:ss");
-                if (currentTime >= TimeSpan.Parse(_calendar.Fajr) && currentTime <= TimeSpan.Parse(_calendar.Sunrise))
+                           (t.Fajr - currentTime).ToString(@"hh\:mm\:ss");
+                }
+                if (currentTime >= t.Fajr && currentTime <= t.Sunrise)
+                {
+                    CalculateTimeProgress(t.Fajr, t.Sunrise, currentTime);
                     return AppResources.SabahSonunakalanvakit +
-                           (TimeSpan.Parse(_calendar.Sunrise) - currentTime).ToString(@"hh\:mm\:ss");
-                if (currentTime >= TimeSpan.Parse(_calendar.Sunrise) && currentTime <= TimeSpan.Parse(_calendar.Dhuhr))
+                           (t.Sunrise - currentTime).ToString(@"hh\:mm\:ss");
+                }
+                if (currentTime >= t.Sunrise && currentTime <= t.Dhuhr)
+                {
+                    CalculateTimeProgress(t.Sunrise, t.Dhuhr, currentTime);
                     return AppResources.Ogleningirmesinekalanvakit +
-                           (TimeSpan.Parse(_calendar.Dhuhr) - currentTime).ToString(@"hh\:mm\:ss");
-                if (currentTime >= TimeSpan.Parse(_calendar.Dhuhr) && currentTime <= TimeSpan.Parse(_calendar.Asr))
+                           (t.Dhuhr - currentTime).ToString(@"hh\:mm\:ss");
+                }
+                if (currentTime >= t.Dhuhr && currentTime <= t.Asr)
+                {
+                    CalculateTimeProgress(t.Dhuhr, t.Asr, currentTime);
                     return AppResources.Oglenincikmasinakalanvakit +
-                           (TimeSpan.Parse(_calendar.Asr) - currentTime).ToString(@"hh\:mm\:ss");
-                if (currentTime >= TimeSpan.Parse(_calendar.Asr) && currentTime <= TimeSpan.Parse(_calendar.Maghrib))
+                           (t.Asr - currentTime).ToString(@"hh\:mm\:ss");
+                }
+                if (currentTime >= t.Asr && currentTime <= t.Maghrib)
+                {
+                    CalculateTimeProgress(t.Asr, t.Maghrib, currentTime);
                     return AppResources.Ikindinincikmasinakalanvakit +
-                           (TimeSpan.Parse(_calendar.Maghrib) - currentTime).ToString(@"hh\:mm\:ss");
-                if (currentTime >= TimeSpan.Parse(_calendar.Maghrib) && currentTime <= TimeSpan.Parse(_calendar.Isha))
+                           (t.Maghrib - currentTime).ToString(@"hh\:mm\:ss");
+                }
+                if (currentTime >= t.Maghrib && currentTime <= t.Isha)
+                {
+                    CalculateTimeProgress(t.Maghrib, t.Isha, currentTime);
                     return AppResources.Aksamincikmasnakalanvakit +
-                           (TimeSpan.Parse(_calendar.Isha) - currentTime).ToString(@"hh\:mm\:ss");
-                if (currentTime >= TimeSpan.Parse(_calendar.Isha) && currentTime <= TimeSpan.Parse(_calendar.EndOfIsha))
+                           (t.Isha - currentTime).ToString(@"hh\:mm\:ss");
+                }
+                if (currentTime >= t.Isha && currentTime <= t.EndOfIsha)
+                {
+                    CalculateTimeProgress(t.Isha, t.EndOfIsha, currentTime);
                     return AppResources.Yatsinincikmasinakalanvakit +
-                           (TimeSpan.Parse(_calendar.EndOfIsha) - currentTime).ToString(@"hh\:mm\:ss");
-                if (currentTime >= TimeSpan.Parse(_calendar.EndOfIsha))
+                           (t.EndOfIsha - currentTime).ToString(@"hh\:mm\:ss");
+                }
+                if (currentTime >= t.EndOfIsha)
+                {
+                    // After EndOfIsha, show full progress (100%)
+                    TimeProgress = 1.0;
                     return AppResources.Yatsininciktigindangecenvakit +
-                           (currentTime - TimeSpan.Parse(_calendar.EndOfIsha)).ToString(@"hh\:mm\:ss");
+                           (currentTime - t.EndOfIsha).ToString(@"hh\:mm\:ss");
+                }
             }
             catch (Exception exception)
             {
                 System.Diagnostics.Debug.WriteLine(
-                    $"GetFormattedRemainingTime exception: {exception.Message}. Location: {_calendar.Latitude}, {_calendar.Longitude}");
+                    $"GetFormattedRemainingTime exception: {exception.Message}. Location: {cal?.Latitude}, {cal?.Longitude}");
             }
 
             return "";
         }
 
+        /// <summary>
+        /// Updates the prayer time display and iOS Live Activity.
+        /// Called when prayer states need to be refreshed.
+        /// </summary>
+        public async Task UpdatePrayerTimeDisplayAsync()
+        {
+            // Update UI
+            Application.Current?.Dispatcher.Dispatch(() =>
+            {
+                LoadPrayers(); // Recalculate states immediately
+            });
+
+            // Update iOS Live Activity if supported
+            if (DeviceInfo.Platform == DevicePlatform.iOS)
+            {
+#if __IOS__
+                var currentPrayer = Prayers?.FirstOrDefault(p => p.IsActive);
+                if (currentPrayer != null)
+                {
+                    var remainingTime = GetRemainingTime();
+                    var nextPrayer = Prayers?.FirstOrDefault(p => p.IsUpcoming);
+                
+                    await Platforms.iOS.LiveActivityService.StartPrayerActivityAsync(
+                        currentPrayer.Name,
+                        currentPrayer.Time,
+                        remainingTime,
+                        nextPrayer?.Name ?? "---");
+                }
+                else if (currentPrayer is null)
+                {
+                    await Platforms.iOS.LiveActivityService.StopPrayerActivityAsync();
+                }
+#endif
+            }
+        }
+
+        /// <summary>
+        /// Fetches fresh prayer times with location refresh and saves to preferences.
+        /// Shows toast on failure.
+        /// </summary>
         private async Task GetPrayersAsync()
         {
             // GetPrayersAsync is called when user needs fresh prayer times, so refresh location
             _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
-            if (_calendar.Latitude != 0)
+            if (_calendar != null && _calendar.Latitude != 0)
             {
+                // Invalidate cached times when calendar changes
+                _cachedTimes = null;
+                
                 Preferences.Set("latitude", _calendar.Latitude);
                 Preferences.Set("longitude", _calendar.Longitude);
                 Preferences.Set("altitude", _calendar.Altitude);
@@ -757,5 +1177,41 @@ namespace SuleymaniyeCalendar.ViewModels
                     ShowToast(AppResources.KonumKapali);
             }
         }
+
+    #endregion
+
+    #region Nested Types
+
+    /// <summary>
+    /// Cached parsed prayer times to avoid repeated TimeSpan.Parse calls.
+    /// Parsing is done once when calendar changes, not every second.
+    /// </summary>
+    private sealed class CachedPrayerTimes
+    {
+        public TimeSpan FalseFajr { get; init; }
+        public TimeSpan Fajr { get; init; }
+        public TimeSpan Sunrise { get; init; }
+        public TimeSpan Dhuhr { get; init; }
+        public TimeSpan Asr { get; init; }
+        public TimeSpan Maghrib { get; init; }
+        public TimeSpan Isha { get; init; }
+        public TimeSpan EndOfIsha { get; init; }
+
+        public static CachedPrayerTimes FromCalendar(Calendar cal)
+        {
+            return new CachedPrayerTimes
+            {
+                FalseFajr = AppConstants.ParseTimeSpan(cal.FalseFajr),
+                Fajr = AppConstants.ParseTimeSpan(cal.Fajr),
+                Sunrise = AppConstants.ParseTimeSpan(cal.Sunrise),
+                Dhuhr = AppConstants.ParseTimeSpan(cal.Dhuhr),
+                Asr = AppConstants.ParseTimeSpan(cal.Asr),
+                Maghrib = AppConstants.ParseTimeSpan(cal.Maghrib),
+                Isha = AppConstants.ParseTimeSpan(cal.Isha),
+                EndOfIsha = AppConstants.ParseTimeSpan(cal.EndOfIsha)
+            };
+        }
     }
-}
+
+    #endregion
+    }

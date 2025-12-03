@@ -20,9 +20,26 @@ public partial class CompassPage : ContentPage
 
 	protected override async void OnAppearing()
 	{
-		base.OnAppearing();
-		
-		// Refresh location data from current app state when page appears
-		await _viewModel.RefreshLocationFromAppAsync();
+		try
+		{
+			base.OnAppearing();
+			
+			// Restart compass sensor if it was stopped
+			_viewModel.StartCompass();
+			
+			// Refresh location data from current app state when page appears
+			await _viewModel.RefreshLocationFromAppAsync();
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"CompassPage.OnAppearing error: {ex.Message}");
+		}
+	}
+
+	protected override void OnDisappearing()
+	{
+		base.OnDisappearing();
+		// Stop compass to save battery, will restart in OnAppearing
+		_viewModel?.StopCompass();
 	}
 }

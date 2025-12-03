@@ -1,38 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿#nullable enable
 
-namespace SuleymaniyeCalendar.Models
+namespace SuleymaniyeCalendar.Models;
+
+/// <summary>
+/// Represents a single day's prayer times and location data.
+/// This is the core data model used throughout the application.
+/// </summary>
+/// <remarks>
+/// Prayer times are stored as string representations (HH:mm format) for display.
+/// Coordinates use double precision for accurate calculations.
+/// </remarks>
+public sealed class Calendar
 {
-	public class Calendar
-	{
-		public double Latitude { get; set; }
+    /// <summary>Geographic latitude in decimal degrees.</summary>
+    public double Latitude { get; set; }
 
-		public double Longitude { get; set; }
+    /// <summary>Geographic longitude in decimal degrees.</summary>
+    public double Longitude { get; set; }
 
-		public double Altitude { get; set; }
+    /// <summary>Altitude above sea level in meters.</summary>
+    public double Altitude { get; set; }
 
-		public double TimeZone { get; set; }
+    /// <summary>UTC offset in hours (e.g., 3 for UTC+3).</summary>
+    public double TimeZone { get; set; }
 
-		public double DayLightSaving { get; set; }
+    /// <summary>Daylight saving time indicator (1 = active, 0 = inactive).</summary>
+    public double DayLightSaving { get; set; }
 
-		public string FalseFajr { get; set; }
+    /// <summary>False dawn time (Fecr-i Kazib) - HH:mm format.</summary>
+    public string FalseFajr { get; set; } = string.Empty;
 
-		public string Fajr { get; set; }
+    /// <summary>True dawn time (Fecr-i Sadık / Imsak) - HH:mm format.</summary>
+    public string Fajr { get; set; } = string.Empty;
 
-		public string Sunrise { get; set; }
+    /// <summary>Sunrise time (Güneş) - HH:mm format.</summary>
+    public string Sunrise { get; set; } = string.Empty;
 
-		public string Dhuhr { get; set; }
+    /// <summary>Noon prayer time (Öğle) - HH:mm format.</summary>
+    public string Dhuhr { get; set; } = string.Empty;
 
-		public string Asr { get; set; }
+    /// <summary>Afternoon prayer time (İkindi) - HH:mm format.</summary>
+    public string Asr { get; set; } = string.Empty;
 
-		public string Maghrib { get; set; }
+    /// <summary>Sunset prayer time (Akşam) - HH:mm format.</summary>
+    public string Maghrib { get; set; } = string.Empty;
 
-		public string Isha { get; set; }
+    /// <summary>Night prayer time (Yatsı) - HH:mm format.</summary>
+    public string Isha { get; set; } = string.Empty;
 
-		public string EndOfIsha { get; set; }
-		public string Date { get; set; }
-	}
+    /// <summary>End of night prayer window (Yatsının Sonu) - HH:mm format.</summary>
+    public string EndOfIsha { get; set; } = string.Empty;
+
+    /// <summary>Date in dd/MM/yyyy format.</summary>
+    public string Date { get; set; } = string.Empty;
 }

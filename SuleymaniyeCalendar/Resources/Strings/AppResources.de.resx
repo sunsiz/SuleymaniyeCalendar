@@ -172,6 +172,15 @@ Diese Anwendung wurde entwickelt, um einen sicheren und schnellen Zugriff auf Ge
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>Monatliche Gebetszeiten erfolgreich aktualisiert</value>
   </data>
+  <data name="AyVeriIndirildi" xml:space="preserve">
+    <value>{0} Daten heruntergeladen</value>
+  </data>
+  <data name="AyVeriYukle" xml:space="preserve">
+    <value>Diesen Monat herunterladen</value>
+  </data>
+  <data name="AylikVeriYenilemeIste" xml:space="preserve">
+    <value>Bitte aktualisieren, um Monatsdaten zu laden</value>
+  </data>
   <data name="Azerbaijani" xml:space="preserve">
     <value>Aserbaidschanisch</value>
   </data>
@@ -192,6 +201,9 @@ Diese Anwendung wurde entwickelt, um einen sicheren und schnellen Zugriff auf Ge
   </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>Benachrichtigung anzeigen</value>
+  </data>
+  <data name="BildirimIzniGerekli" xml:space="preserve">
+    <value>Zum Planen von Alarmen ist die Benachrichtigungsberechtigung erforderlich.</value>
   </data>
   <data name="BildirimKapatma" xml:space="preserve">
     <value>Sticky-Benachrichtigung aktivieren</value>
@@ -280,6 +292,12 @@ Diese Anwendung wurde entwickelt, um einen sicheren und schnellen Zugriff auf Ge
   <data name="French" xml:space="preserve">
     <value>Französisch</value>
   </data>
+    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+      <value>Gebetszeiten konnten für die Planung nicht geladen werden</value>
+    </data>
+    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+      <value>Gebetserinnerungen für 30 Tage geplant</value>
+    </data>
   <data name="GotoSettings" xml:space="preserve">
     <value>Gehe zu den Einstellungen</value>
   </data>

@@ -6,23 +6,25 @@ using SuleymaniyeCalendar.Services;
 using SuleymaniyeCalendar.ViewModels;
 using SuleymaniyeCalendar.Views;
 
-// Keep this if you use other handlers elsewhere
-using Microsoft.Maui.Handlers;
-
 #if ANDROID
-using Microsoft.Maui.Controls.Handlers.Items;     // CollectionViewHandler
-using AndroidX.RecyclerView.Widget;               // RecyclerView
-using AndroidX.Core.View;                         // ViewCompat.SetNestedScrollingEnabled
-using AndroidX.Core.Widget;                       // NestedScrollView
+using Microsoft.Maui.Controls.Handlers.Items;
+using Microsoft.Maui.Handlers;
+using AndroidX.RecyclerView.Widget;
+using AndroidX.Core.View;
+using AndroidX.Core.Widget;
 #endif
 
 namespace SuleymaniyeCalendar;
 
+/// <summary>
+/// Application configuration and dependency injection setup.
+/// </summary>
 public static class MauiProgram
 {
-            public static MauiApp CreateMauiApp()
+    public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
+
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
@@ -32,8 +34,6 @@ public static class MauiProgram
                 settings.AddResource(AppResources.ResourceManager);
                 settings.RestoreLatestCulture(true);
             })
-            // Explicit runtime registration improves reliability on Windows where alias resolution
-            // occasionally fails to bind to <MauiFont> aliases alone (observed missing glyphs).
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("FontAwesome6FreeSolid.otf", "FontAwesomeSolid");
@@ -41,9 +41,24 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        ConfigurePlatformHandlers();
+        RegisterServices(builder.Services);
+
+#if DEBUG
+        builder.Logging.AddDebug();
+#endif
+
+        return builder.Build();
+    }
+
+    /// <summary>
+    /// Configure platform-specific handlers (e.g., Android nested scrolling).
+    /// </summary>
+    private static void ConfigurePlatformHandlers()
+    {
 #if ANDROID
-        // Allow CollectionView (RecyclerView) to scroll vertically inside a horizontal ScrollView
-        CollectionViewHandler.Mapper.AppendToMapping("EnableNestedScrolling", (handler, view) =>
+        // Enable nested scrolling for CollectionView inside ScrollView
+        CollectionViewHandler.Mapper.AppendToMapping("EnableNestedScrolling", (handler, _) =>
         {
             if (handler.PlatformView is RecyclerView rv)
             {
@@ -52,55 +67,76 @@ public static class MauiProgram
             }
         });
 
-        // Also ensure ScrollView participates in nested scrolling
-        ScrollViewHandler.Mapper.AppendToMapping("EnableNestedScrolling", (handler, view) =>
+        ScrollViewHandler.Mapper.AppendToMapping("EnableNestedScrolling", (handler, _) =>
         {
             if (handler.PlatformView is NestedScrollView nsv)
             {
                 nsv.NestedScrollingEnabled = true;
                 ViewCompat.SetNestedScrollingEnabled(nsv, true);
-                nsv.FillViewport = true; // improves child measurement in nested scenarios
+                nsv.FillViewport = true;
             }
         });
 #endif
+    }
 
+    /// <summary>
+    /// Register all services and view models with dependency injection.
+    /// </summary>
+    private static void RegisterServices(IServiceCollection services)
+    {
+        // Platform services
 #if ANDROID
-        builder.Services.AddSingleton<IAlarmService, AlarmForegroundService>();
+        services.AddSingleton<IAlarmService, AlarmForegroundService>();
 #else
-        builder.Services.AddSingleton<IAlarmService, NullAlarmService>();
+        services.AddSingleton<IAlarmService, NullAlarmService>();
 #endif
-        builder.Services.AddSingleton<IAudioPreviewService, AudioPreviewService>();
-        builder.Services.AddSingleton<IRadioService, RadioService>();
-        builder.Services.AddSingleton<IRtlService, RtlService>();
-    builder.Services.AddSingleton<JsonApiService>();
-    builder.Services.AddSingleton<DataService>();
-        
-        // Enhanced services for better user experience  
-        builder.Services.AddSingleton<AccessibilityService>();
-        builder.Services.AddSingleton<PerformanceService>();
-        builder.Services.AddSingleton<BackgroundDataPreloader>();
+        services.AddSingleton<IAudioPreviewService, AudioPreviewService>();
+        services.AddSingleton<IRadioService, RadioService>();
+        services.AddSingleton<IRtlService, RtlService>();
 
-    builder.Services.AddSingleton<MainViewModel>();
-        builder.Services.AddSingleton<MainPage>();
-        builder.Services.AddSingleton<AboutViewModel>();
-        builder.Services.AddSingleton<AboutPage>();
-        builder.Services.AddSingleton<RadioViewModel>();
-        builder.Services.AddSingleton<RadioPage>();
-        builder.Services.AddSingleton<PrayerDetailViewModel>();
-        builder.Services.AddSingleton<PrayerDetailPage>();
-        builder.Services.AddSingleton<SettingsViewModel>();
-        builder.Services.AddSingleton<SettingsPage>();
-        builder.Services.AddSingleton<CompassViewModel>();
-        builder.Services.AddSingleton<CompassPage>();
+        // Core services
+        services.AddSingleton<PerformanceService>();
+        services.AddSingleton<LocationService>();
+        services.AddSingleton<PrayerTimesRepository>();
+        services.AddSingleton<NotificationSchedulerService>();
+        services.AddSingleton<JsonApiService>();
+        services.AddSingleton<XmlApiService>();
+        services.AddSingleton<PrayerCacheService>();
+        services.AddSingleton<DataService>();
+        services.AddSingleton<AccessibilityService>();
+        services.AddSingleton<BackgroundDataPreloader>();
 
-        // Transient Month page/VM
-    builder.Services.AddTransient<MonthViewModel>();
-        builder.Services.AddTransient<MonthPage>();
+        // Set up global exception handlers
+        Initialize();
 
-#if DEBUG
-        builder.Logging.AddDebug();
-#endif
+        // Singleton pages (main tabs)
+        services.AddSingleton<MainViewModel>();
+        services.AddSingleton<MainPage>();
+        services.AddSingleton<AboutViewModel>();
+        services.AddSingleton<AboutPage>();
+        services.AddSingleton<RadioViewModel>();
+        services.AddSingleton<RadioPage>();
+        services.AddSingleton<CompassViewModel>();
+        services.AddSingleton<CompassPage>();
+        services.AddSingleton<PrayerDetailViewModel>();
+        services.AddSingleton<PrayerDetailPage>();
+        services.AddSingleton<SettingsViewModel>();
+        services.AddSingleton<SettingsPage>();
 
-        return builder.Build();
+        // Transient pages (fresh instance each navigation)
+        services.AddTransient<MonthViewModel>();
+        services.AddTransient<MonthPage>();
+    }
+
+    /// <summary>
+    /// Set up global exception handlers for debugging.
+    /// </summary>
+    public static void Initialize()
+    {
+        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
+            System.Diagnostics.Debug.WriteLine($"Unhandled exception: {e.ExceptionObject}");
+
+        TaskScheduler.UnobservedTaskException += (_, e) =>
+            System.Diagnostics.Debug.WriteLine($"Unobserved task exception: {e.Exception}");
     }
 }

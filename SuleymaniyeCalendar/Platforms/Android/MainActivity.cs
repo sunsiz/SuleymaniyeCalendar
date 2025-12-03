@@ -1,4 +1,4 @@
-﻿using Android.App;
+using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
@@ -8,33 +8,55 @@ namespace SuleymaniyeCalendar;
 [Activity(Theme = "@style/Maui.SplashTheme", MainLauncher = true, LaunchMode = LaunchMode.SingleTop, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.Density)]
 public class MainActivity : MauiAppCompatActivity
 {
-	protected override async void OnCreate(Bundle savedInstanceState)
-	{
-		base.OnCreate(savedInstanceState);
-        // Yield once to keep async signature purposeful (avoids analyzer warning after deferring tasks)
-        await Task.Yield();
-
-        // Defer notification permission so location permission (requested by first page ViewModel) can surface first
-        _ = Task.Run(async () =>
+    protected override async void OnCreate(Bundle? savedInstanceState)
+    {
+        try
         {
-            await Task.Delay(2500); // allow initial UI + location permission
-            await MainThread.InvokeOnMainThreadAsync(async () => await EnsureNotificationPermissionAsync());
-        });
+            base.OnCreate(savedInstanceState);
+            System.Diagnostics.Debug.WriteLine("MainActivity.OnCreate: Starting initialization...");
+            // Yield once to keep async signature purposeful (avoids analyzer warning after deferring tasks)
+            await Task.Yield();
 
-        EnsureExactAlarmCapability();
+            // Defer notification permission so location permission (requested by first page ViewModel) can surface first
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(2500); // allow initial UI + location permission
+                await MainThread.InvokeOnMainThreadAsync(async () => await EnsureNotificationPermissionAsync());
+            });
 
-        if (Preferences.Get("ForegroundServiceEnabled", true))
-		{
-            var startServiceIntent = new Intent(this, typeof(AlarmForegroundService));
-            startServiceIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
+            if (AnyRemindersEnabled())
+            {
+                EnsureExactAlarmCapability();
+            }
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-                StartForegroundService(startServiceIntent);
-            else
-                StartService(startServiceIntent);
-		}
-	}
-	
+            if (Preferences.Get("ForegroundServiceEnabled", true))
+            {
+                var startServiceIntent = new Intent(this, typeof(AlarmForegroundService));
+                startServiceIntent.SetAction("SuleymaniyeTakvimi.action.START_SERVICE");
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    StartForegroundService(startServiceIntent);
+                else
+                    StartService(startServiceIntent);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"MainActivity.OnCreate: Exception - {ex.Message}");
+        }
+    }
+
+    private bool AnyRemindersEnabled()
+    {
+        return Preferences.Get("falsefajrEnabled", false) ||
+           Preferences.Get("fajrEnabled", false) ||
+           Preferences.Get("sunriseEnabled", false) ||
+           Preferences.Get("dhuhrEnabled", false) ||
+           Preferences.Get("asrEnabled", false) ||
+           Preferences.Get("maghribEnabled", false) ||
+           Preferences.Get("ishaEnabled", false) ||
+           Preferences.Get("endofishaEnabled", false);
+    }
 
     async Task EnsureNotificationPermissionAsync()
     {
@@ -83,7 +105,7 @@ public class MainActivity : MauiAppCompatActivity
     {
         if (OperatingSystem.IsAndroidVersionAtLeast(31))
         {
-            var am = (AlarmManager)GetSystemService(AlarmService);
+            var am = GetSystemService(AlarmService) as AlarmManager;
             if (am != null && !am.CanScheduleExactAlarms())
             {
                 var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm);

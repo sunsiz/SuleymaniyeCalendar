@@ -172,6 +172,15 @@
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>تم تحديث مواقيت الصلاة الشهرية بنجاح</value>
   </data>
+  <data name="AyVeriIndirildi" xml:space="preserve">
+    <value>تم تحميل بيانات {0}</value>
+  </data>
+  <data name="AyVeriYukle" xml:space="preserve">
+    <value>تحميل هذا الشهر</value>
+  </data>
+  <data name="AylikVeriYenilemeIste" xml:space="preserve">
+    <value>يرجى التحديث لتحميل بيانات الشهر</value>
+  </data>
   <data name="Azerbaijani" xml:space="preserve">
     <value>الأذربيجانية</value>
   </data>
@@ -192,6 +201,9 @@
   </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>إظهار الإخطار</value>
+  </data>
+  <data name="BildirimIzniGerekli" xml:space="preserve">
+    <value>يلزم إذن الإشعارات لجدولة التنبيهات.</value>
   </data>
   <data name="BildirimKapatma" xml:space="preserve">
     <value>تفعيل الإشعارات اللاصقة</value>
@@ -280,6 +292,12 @@
   <data name="French" xml:space="preserve">
     <value>الفرنسية</value>
   </data>
+    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+      <value>تعذر تحميل أوقات الصلاة لجدولتها</value>
+    </data>
+    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+      <value>تم جدولة تذكيرات الصلاة لمدة ٣٠ يومًا</value>
+    </data>
   <data name="GotoSettings" xml:space="preserve">
     <value>اذهب للاعدادات</value>
   </data>

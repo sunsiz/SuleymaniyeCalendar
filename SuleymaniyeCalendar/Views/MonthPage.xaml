@@ -7,7 +7,8 @@
              xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
              Title="{Binding Title}" 
              x:DataType="viewModels:MonthViewModel"
-             FlowDirection="{DynamicResource FlowDirection}">
+             FlowDirection="{DynamicResource FlowDirection}"
+             Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
 <ContentPage.Content>
     <Grid RowDefinitions="*,Auto" Padding="{StaticResource SpacingXS}" RowSpacing="{StaticResource SpacingXS}">
@@ -17,19 +18,19 @@
             <!-- Lightweight host; we will inject the heavy table after first frame -->
             <ContentView x:Name="ListHost" />
 
-            <!-- Loading Indicator Overlay - shows above everything when loading -->
+            <!--  Loading Indicator Overlay  -->
             <Grid IsVisible="{Binding IsBusy}" 
                   BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}"
                   InputTransparent="False">
-        <Border Style="{StaticResource GlassCardSoft}" 
+        <Border Style="{StaticResource FrostGlassCardCrystal}" 
             VerticalOptions="Center" 
             HorizontalOptions="Center"
             Padding="40,24">
                     <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
                         <ActivityIndicator IsRunning="{Binding IsBusy}"
-                                           Color="{StaticResource PrimaryColor}"
-                                           HeightRequest="48"
-                                           WidthRequest="48" />
+                                           Style="{StaticResource GoldenActivityIndicator}"
+                                           HeightRequest="80"
+                                           WidthRequest="80" />
                         <Label Text="{localization:Translate IcerikYukleniyor}"
                                Style="{StaticResource TitleMediumStyle}"
                                HorizontalTextAlignment="Center"
@@ -38,30 +39,33 @@
                 </Border>
             </Grid>
 
-            <!-- Optional overlay (reserved for future extended operations) -->
+            <!--  Extended overlay  -->
             <Grid IsVisible="{Binding ShowOverlay}" BackgroundColor="#80000000">
-                <Border Style="{StaticResource GlassCardSoft}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
+                <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
                     <VerticalStackLayout Spacing="12" HorizontalOptions="Center">
-                        <ActivityIndicator IsRunning="True" Color="{StaticResource PrimaryColor}" WidthRequest="40" HeightRequest="40" />
+                        <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="80" HeightRequest="80" />
                         <Label Text="{Binding OverlayMessage}" Style="{StaticResource BodyLargeStyle}" HorizontalTextAlignment="Center" />
                     </VerticalStackLayout>
                 </Border>
             </Grid>
         </Grid>
 
-        <!-- Action Buttons with Border (Android CornerRadius Workaround) -->
+        <!-- Action Buttons -->
         <Grid Grid.Row="1" ColumnDefinitions="*,*,*" ColumnSpacing="12">
             <Button Grid.Column="0"
                     Style="{StaticResource GlassButtonOutline}"
+                    TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                     Text="{localization:Translate Kapat}"
                     Command="{Binding GoBackCommand}" />
             <Button Grid.Column="1"
                     Style="{StaticResource GlassButtonWarning}"
                     IsVisible="{Binding ShowShare}"
+                    TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                     Text="{localization:Translate Paylas}"
                     Command="{Binding ShareCommand}" />
             <Button Grid.Column="2"
-                    Style="{StaticResource GlassButtonPrimary}"
+                    Style="{StaticResource GlassButtonPrimaryIntense}"
+                    TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                     Text="{localization:Translate KonumYenileButton}"
                     Command="{Binding RefreshCommand}"
                     IsEnabled="{Binding IsNotBusy}" />
