@@ -14,29 +14,30 @@
     Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <Grid Margin="8" x:DataType="viewModels:MainViewModel" HeightRequest="48"
-              ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+        <Grid Margin="8,0,0,0" x:DataType="viewModels:MainViewModel" MinimumHeightRequest="48"
+              ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4">
             <Label Grid.Column="0"
                    AutomationProperties.IsInAccessibleTree="True"
                    SemanticProperties.Description="{localization:Translate Takvim}"
                    SemanticProperties.HeadingLevel="Level1"
                    Style="{StaticResource LabelSectionHeader}"
                    Text="{localization:Translate PageTitle}"
+                   LineBreakMode="TailTruncation"
                    HorizontalTextAlignment="Start" />
             <Image Grid.Column="1"
                    x:DataType="viewModels:MainViewModel"
-                   Margin="0"
+                   Margin="0,0,4,0"
                    AutomationProperties.IsInAccessibleTree="True"
                    VerticalOptions="Center"
-                   WidthRequest="44"
-                   HeightRequest="44"
+                   WidthRequest="40"
+                   HeightRequest="40"
                    SemanticProperties.Description="{localization:Translate UygulamaAyarlari}">
                 <Image.Source>
                     <FontImageSource
                         FontAutoScalingEnabled="True"
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf013;"
-                        Size="{DynamicResource IconLargerFontSize}"
+                        Size="22"
                         Color="{AppThemeBinding Light=White, Dark={StaticResource OnSurfaceColorDark}}" />
                 </Image.Source>
                 <Image.GestureRecognizers>
@@ -45,17 +46,17 @@
             </Image>
             <Image Grid.Column="2"
                    x:DataType="viewModels:MainViewModel"
-                   Margin="8,0,8,0"
+                   Margin="4,0,8,0"
                    AutomationProperties.IsInAccessibleTree="True"
                    VerticalOptions="Center"
-                   WidthRequest="44"
-                   HeightRequest="44"
+                   WidthRequest="40"
+                   HeightRequest="40"
                    SemanticProperties.Description="{localization:Translate Yenile}">
                 <Image.Source>
                     <FontImageSource
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="{DynamicResource IconLargerFontSize}"
+                        Size="22"
                         Color="{AppThemeBinding Light=White, Dark={StaticResource OnSurfaceColorDark}}" />
                 </Image.Source>
                 <Image.GestureRecognizers>
@@ -162,9 +163,7 @@
                                                 <Setter Property="StrokeThickness" Value="0.7" />
                                                 <Setter Property="Opacity" Value="0.9" />
                                                 <Setter Property="MinimumHeightRequest" Value="52" />
-                                                <Setter Property="HeightRequest" Value="52" />
-                                                <Setter Property="MaximumHeightRequest" Value="52" />
-                                                <Setter Property="Padding" Value="8,4" />
+                                                <Setter Property="Padding" Value="8,3" />
                                             </DataTrigger>
                                             <!-- Current prayer style -->
                                             <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
@@ -172,8 +171,8 @@
                                                 <Setter Property="Shadow">
                                                     <Shadow Brush="{AppThemeBinding Light={StaticResource Secondary20}, Dark=#50FFA500}" Radius="32" Offset="0,12" Opacity="0.05" />
                                                 </Setter>
-                                                <Setter Property="HeightRequest" Value="120" />
-                                                <Setter Property="Padding" Value="20,10" />
+                                                <Setter Property="MinimumHeightRequest" Value="100" />
+                                                <Setter Property="Padding" Value="10,6" />
                                             </DataTrigger>
                                             <!-- Upcoming prayer style -->
                                             <MultiTrigger TargetType="Border">
@@ -189,7 +188,7 @@
                                             </MultiTrigger>
                                         </Border.Triggers>
 
-                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="6">
 
                                             <!-- Prayer Icon -->
                                             <Border Grid.Column="0" WidthRequest="38" HeightRequest="38"
@@ -205,11 +204,11 @@
                                                         <Setter Property="HeightRequest" Value="28" />
                                                         <Setter Property="Opacity" Value="0.7" />
                                                     </DataTrigger>
-                                                    <!-- Current: enhanced -->
+                                                    <!-- Current: enhanced but compact -->
                                                     <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
                                                         <!-- <Setter Property="Background" Value="{StaticResource Primary30}" /> -->
-                                                        <Setter Property="WidthRequest" Value="54" />
-                                                        <Setter Property="HeightRequest" Value="54" />
+                                                        <Setter Property="WidthRequest" Value="46" />
+                                                        <Setter Property="HeightRequest" Value="46" />
                                                         <Setter Property="Shadow">
                                                             <Shadow Brush="{StaticResource Primary50}" Radius="12" Offset="0,3" Opacity="0.1" />
                                                         </Setter>
@@ -225,12 +224,12 @@
                                                             <Setter Property="HeightRequest" Value="20" />
                                                             <Setter Property="Opacity" Value="{AppThemeBinding Light=0.6, Dark=0.55}" />
                                                         </DataTrigger>
-                                                        <!-- Current: larger -->
+                                                        <!-- Current: larger but proportional -->
                                                         <DataTrigger Binding="{Binding IsActive}" TargetType="Image" Value="True">
                                                             <Setter Property="Opacity" Value="1.0" />
-                                                            <Setter Property="Scale" Value="1.35" />
-                                                            <Setter Property="WidthRequest" Value="40" />
-                                                            <Setter Property="HeightRequest" Value="40" />
+                                                            <Setter Property="Scale" Value="1.2" />
+                                                            <Setter Property="WidthRequest" Value="36" />
+                                                            <Setter Property="HeightRequest" Value="36" />
                                                         </DataTrigger>
                                                         <!-- Upcoming prayers: High visibility in both modes -->
                                                         <MultiTrigger TargetType="Image">
@@ -258,7 +257,7 @@
                                                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
                                                         <Setter Property="FontAttributes" Value="Bold" />
                                                         <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
-                                                        <Setter Property="CharacterSpacing" Value="1.0" />
+                                                        <Setter Property="CharacterSpacing" Value="0.5" />
                                                     </DataTrigger>
                                                     <MultiTrigger TargetType="Label">
                                                         <MultiTrigger.Conditions>
@@ -286,7 +285,7 @@
                                                         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource PrayerActiveTextColor}, Dark={StaticResource PrayerActiveTextColorDark}}" />
                                                         <Setter Property="FontAttributes" Value="Bold" />
                                                         <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
-                                                        <Setter Property="CharacterSpacing" Value="1.0" />
+                                                        <Setter Property="CharacterSpacing" Value="0.5" />
                                                     </DataTrigger>
                                                     <MultiTrigger TargetType="Label">
                                                         <MultiTrigger.Conditions>
@@ -302,7 +301,7 @@
                                             <Border Grid.Column="3" BackgroundColor="Transparent"
                                                     Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
                                                     Stroke="{StaticResource GlassStrokeBrush}" StrokeThickness="0.75"
-                                                    StrokeShape="RoundRectangle 18" WidthRequest="44" HeightRequest="44"
+                                                    StrokeShape="RoundRectangle 16" WidthRequest="38" HeightRequest="38"
                                                     VerticalOptions="Center">
                                                 <Label
                                                 AutomationProperties.IsInAccessibleTree="True"
@@ -384,7 +383,7 @@
                                         FontFamily="{StaticResource IconFontFamily}"
                                         Glyph="&#xf073;"
                                         Size="{DynamicResource IconMediumFontSize}"
-                                        Color="{AppThemeBinding Light={StaticResource Primary95}, Dark={StaticResource Primary10}}" />
+                                        Color="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
                                 </Button.ImageSource>
                             </Button>
 

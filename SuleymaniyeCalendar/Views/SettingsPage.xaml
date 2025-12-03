@@ -33,7 +33,7 @@
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
-                            FontSize="26"
+                            FontSize="{DynamicResource IconLargeFontSize}"
                             Text="&#xf0ac;"
                             TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                             VerticalOptions="Center"
@@ -79,7 +79,7 @@
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="26"
+                                FontSize="{DynamicResource IconLargeFontSize}"
                                 Text="&#xf042;"
                                 TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 VerticalOptions="Center"
@@ -190,7 +190,7 @@
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="26"
+                                FontSize="{DynamicResource IconLargeFontSize}"
                                 Text="&#xf031;"
                                 TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 VerticalOptions="Center"
@@ -241,7 +241,7 @@
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
-                            FontSize="26"
+                            FontSize="{DynamicResource IconLargeFontSize}"
                             Text="&#xf3c5;"
                             TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                             VerticalOptions="Center"
@@ -275,7 +275,7 @@
                         <Label
                             Grid.Column="0"
                             FontFamily="{StaticResource IconFontFamily}"
-                            FontSize="26"
+                            FontSize="{DynamicResource IconLargeFontSize}"
                             Text="&#xf0f3;"
                             TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                             VerticalOptions="Center"
@@ -302,7 +302,7 @@
                             <Label
                                 Grid.Column="0"
                                 FontFamily="{StaticResource IconFontFamily}"
-                                FontSize="26"
+                                FontSize="{DynamicResource IconLargeFontSize}"
                                 Text="&#xf1e6;"
                                 TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}"
                                 VerticalOptions="Center"

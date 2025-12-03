@@ -37,11 +37,12 @@ public partial class MonthPage : ContentPage
     /// <summary>
     /// Creates the calendar table with a minimal delay to allow the UI to render first.
     /// This significantly improves perceived performance by showing the page immediately.
+    /// Uses frame-based deferral for smoother rendering.
     /// </summary>
     private async Task CreateTableDeferredAsync()
     {
-        // Yield to allow page to render first
-        await Task.Delay(10).ConfigureAwait(false);
+        // Yield to allow page frame to render (use Dispatcher for better frame timing)
+        await Task.Yield();
         
         await MainThread.InvokeOnMainThreadAsync(() =>
         {

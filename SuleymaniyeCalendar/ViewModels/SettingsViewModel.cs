@@ -49,7 +49,7 @@ public partial class SettingsViewModel : BaseViewModel
 		set => SetProperty(ref _supportedLanguages, value);
 	}
 
-	private Language _selectedLanguage = new(AppResources.English, "en");
+	private Language _selectedLanguage = new("English", "en");
 
 	/// <summary>
 	/// Currently selected UI language.
@@ -84,9 +84,6 @@ public partial class SettingsViewModel : BaseViewModel
 			{
 				_updatingLanguages = false;
 			}
-
-			// Refresh language names asynchronously
-			_ = RefreshLanguageNamesAsync();
 		}
 	}
 
@@ -123,7 +120,7 @@ public partial class SettingsViewModel : BaseViewModel
 		{
 			if (!SetProperty(ref _lightChecked, value) || _suppressThemeUpdates || !value) return;
 			ApplyThemeInternal(1);
-			MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(1));
+			_ = ApplyThemeDeferredAsync(1);
 		}
 	}
 
@@ -136,7 +133,7 @@ public partial class SettingsViewModel : BaseViewModel
 		{
 			if (!SetProperty(ref _darkChecked, value) || _suppressThemeUpdates || !value) return;
 			ApplyThemeInternal(0);
-			MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(0));
+			_ = ApplyThemeDeferredAsync(0);
 		}
 	}
 
@@ -149,7 +146,7 @@ public partial class SettingsViewModel : BaseViewModel
 		{
 			if (!SetProperty(ref _systemChecked, value) || _suppressThemeUpdates || !value) return;
 			ApplyThemeInternal(2);
-			MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(2));
+			_ = ApplyThemeDeferredAsync(2);
 		}
 	}
 
@@ -254,6 +251,7 @@ public partial class SettingsViewModel : BaseViewModel
 
 	/// <summary>
 	/// Handles radio button theme selection.
+	/// Defers theme application to avoid blocking UI during animation.
 	/// </summary>
 	[RelayCommand]
 	private void RadioButtonCheckedChanged(object obj)
@@ -262,7 +260,8 @@ public partial class SettingsViewModel : BaseViewModel
 
 		int themeValue = Convert.ToInt32(radiobutton.Value.ToString());
 		ApplyThemeInternal(themeValue);
-		MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(themeValue));
+		// Defer theme application to next frame to avoid blocking radio button animation
+		_ = ApplyThemeDeferredAsync(themeValue);
 	}
 
 	/// <summary>
@@ -285,7 +284,17 @@ public partial class SettingsViewModel : BaseViewModel
 			_suppressThemeUpdates = false;
 		}
 		ApplyThemeInternal(index);
-		MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(index));
+		// Defer theme application to next frame
+		_ = ApplyThemeDeferredAsync(index);
+	}
+	
+	/// <summary>
+	/// Applies theme change on next frame to avoid blocking current UI operations.
+	/// </summary>
+	private async Task ApplyThemeDeferredAsync(int themeValue)
+	{
+		await Task.Yield(); // Yield to next frame
+		MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(themeValue));
 	}
 
 	/// <summary>Opens system app settings.</summary>
@@ -294,7 +303,7 @@ public partial class SettingsViewModel : BaseViewModel
 
 	/// <summary>Navigates back to previous page.</summary>
 	[RelayCommand]
-	private void GoBack() => Shell.Current.GoToAsync("..");
+	private async Task GoBackAsync() => await Shell.Current.GoToAsync("..");
 
 	#endregion
 
@@ -341,23 +350,25 @@ public partial class SettingsViewModel : BaseViewModel
 
 	/// <summary>
 	/// Loads supported languages and sets current selection.
+	/// Uses native script names for universal recognition.
 	/// </summary>
 	/// <param name="reselectCi">Optional culture to reselect after loading.</param>
 	private void LoadLanguagesInternal(string? reselectCi = null)
 	{
+		// Use native script names so users can find their language regardless of current UI language
 		SupportedLanguages =
 		[
-			new Language(AppResources.Arabic, "ar"),
-			new Language(AppResources.Azerbaijani, "az"),
-			new Language(AppResources.Chinese, "zh"),
-			new Language(AppResources.Deutsch, "de"),
-			new Language(AppResources.English, "en"),
-			new Language(AppResources.Farsi, "fa"),
-			new Language(AppResources.French, "fr"),
-			new Language(AppResources.Russian, "ru"),
-			new Language(AppResources.Turkish, "tr"),
-			new Language(AppResources.Uyghur, "ug"),
-			new Language(AppResources.Uzbek, "uz")
+			new Language("العربية", "ar"),           // Arabic
+			new Language("Azərbaycan", "az"),        // Azerbaijani
+			new Language("中文", "zh"),               // Chinese
+			new Language("Deutsch", "de"),           // German
+			new Language("English", "en"),           // English
+			new Language("فارسی", "fa"),             // Farsi/Persian
+			new Language("Français", "fr"),          // French
+			new Language("Русский", "ru"),           // Russian
+			new Language("Türkçe", "tr"),            // Turkish
+			new Language("ئۇيغۇرچە", "ug"),          // Uyghur
+			new Language("Oʻzbekcha", "uz")          // Uzbek
 		];
 
 		var targetCi = reselectCi ?? _resourceManager?.CurrentCulture.TwoLetterISOLanguageName;
@@ -389,52 +400,6 @@ public partial class SettingsViewModel : BaseViewModel
 		// Update widget asynchronously to avoid blocking UI
 		_ = Task.Run(() => MainThread.BeginInvokeOnMainThread(UpdateWidget));
 #endif
-	}
-
-	/// <summary>
-	/// Refreshes language display names asynchronously after culture switch.
-	/// </summary>
-	private Task RefreshLanguageNamesAsync()
-	{
-		return Task.Run(() =>
-		{
-			try
-			{
-				var updated = new Dictionary<string, string>
-				{
-					{ "ar", AppResources.Arabic },
-					{ "az", AppResources.Azerbaijani },
-					{ "zh", AppResources.Chinese },
-					{ "de", AppResources.Deutsch },
-					{ "en", AppResources.English },
-					{ "fa", AppResources.Farsi },
-					{ "fr", AppResources.French },
-					{ "ru", AppResources.Russian },
-					{ "tr", AppResources.Turkish },
-					{ "ug", AppResources.Uyghur },
-					{ "uz", AppResources.Uzbek }
-				};
-
-				MainThread.BeginInvokeOnMainThread(() =>
-				{
-					bool anyChanged = false;
-					foreach (var lang in SupportedLanguages)
-					{
-						if (updated.TryGetValue(lang.CI, out var newName) && lang.Name != newName)
-						{
-							lang.Name = newName;
-							anyChanged = true;
-						}
-					}
-					if (anyChanged)
-					{
-						OnPropertyChanged(nameof(SupportedLanguages));
-						OnPropertyChanged(nameof(SelectedLanguage));
-					}
-				});
-			}
-			catch { /* ignore background refresh issues */ }
-		});
 	}
 
 	#endregion
@@ -482,9 +447,6 @@ public partial class SettingsViewModel : BaseViewModel
 					_ => "System"
 				});
 			}
-
-			// Optional simplified gradient mode for performance testing
-			ApplySimplifiedGradientsIfEnabled();
 		}
 
 #if ANDROID
@@ -497,24 +459,6 @@ public partial class SettingsViewModel : BaseViewModel
 			}
 		});
 #endif
-	}
-
-	/// <summary>
-	/// Replaces heavy gradient brushes with flat colors if SimplifiedGradients is enabled.
-	/// </summary>
-	private static void ApplySimplifiedGradientsIfEnabled()
-	{
-		if (!Preferences.Get("SimplifiedGradients", false)) return;
-
-		var app = Application.Current;
-		if (app?.Resources == null) return;
-
-		if (app.Resources.ContainsKey("PrimaryGradientBrush"))
-			app.Resources["PrimaryGradientBrush"] = new SolidColorBrush((Color)app.Resources["PrimaryColor"]);
-		if (app.Resources.ContainsKey("SurfaceGlassBrushLight"))
-			app.Resources["SurfaceGlassBrushLight"] = new SolidColorBrush((Color)app.Resources["SurfaceVariantColor"]);
-		if (app.Resources.ContainsKey("SurfaceGlassBrushDark"))
-			app.Resources["SurfaceGlassBrushDark"] = new SolidColorBrush((Color)app.Resources["SurfaceVariantColorDark"]);
 	}
 
 	/// <summary>

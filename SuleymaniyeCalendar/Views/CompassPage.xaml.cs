@@ -24,6 +24,9 @@ public partial class CompassPage : ContentPage
 		{
 			base.OnAppearing();
 			
+			// Restart compass sensor if it was stopped
+			_viewModel.StartCompass();
+			
 			// Refresh location data from current app state when page appears
 			await _viewModel.RefreshLocationFromAppAsync();
 		}
@@ -36,6 +39,7 @@ public partial class CompassPage : ContentPage
 	protected override void OnDisappearing()
 	{
 		base.OnDisappearing();
-		_viewModel?.Dispose();
+		// Stop compass to save battery, will restart in OnAppearing
+		_viewModel?.StopCompass();
 	}
 }

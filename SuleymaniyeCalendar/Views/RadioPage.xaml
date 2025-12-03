@@ -13,13 +13,16 @@
     Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <StackLayout Margin="8" HeightRequest="48" Orientation="Horizontal">
-            <Label
+        <Grid Margin="8,0,8,0" MinimumHeightRequest="48" ColumnDefinitions="*">
+            <Label Grid.Column="0"
                 AutomationProperties.IsInAccessibleTree="True"
                 SemanticProperties.HeadingLevel="Level1"
                 Style="{StaticResource LabelSectionHeader}"
-                Text="{localization:Translate FitratinSesi}" />
-        </StackLayout>
+                Text="{localization:Translate FitratinSesi}"
+                LineBreakMode="TailTruncation"
+                HorizontalOptions="Fill"
+                HorizontalTextAlignment="Start" />
+        </Grid>
     </Shell.TitleView>
 
     <ContentPage.Content>
@@ -101,21 +104,29 @@
                             TextColor="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}"
                             VerticalOptions="Center">
                             <Label.Triggers>
-                                <DataTrigger
-                                    Binding="{Binding IsPlaying}"
-                                    TargetType="Label"
-                                    Value="False">
-                                    <Setter Property="Text" Value="&#xf144;" />
-                                    <Setter Property="SemanticProperties.Description" Value="{localization:Translate Oynat}" />
-                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}" />
-                                </DataTrigger>
-                                <DataTrigger
-                                    Binding="{Binding IsPlaying}"
-                                    TargetType="Label"
-                                    Value="True">
+                                <!-- Show pause icon when Playing (bound directly to MediaElement.CurrentState) -->
+                                <DataTrigger TargetType="Label"
+                                    Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
+                                    Value="{x:Static toolkit:MediaElementState.Playing}">
                                     <Setter Property="Text" Value="&#xf28b;" />
                                     <Setter Property="SemanticProperties.Description" Value="{localization:Translate Durdur}" />
                                     <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Warning60}, Dark={StaticResource Warning30}}" />
+                                </DataTrigger>
+                                <!-- Show loading icon when Buffering
+                                <DataTrigger TargetType="Label"
+                                    Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
+                                    Value="{x:Static toolkit:MediaElementState.Buffering}">
+                                    <Setter Property="Text" Value="&#xf110;" />
+                                    <Setter Property="SemanticProperties.Description" Value="Loading" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary50}}" />
+                                </DataTrigger> -->
+                                <!-- Show loading icon when Opening -->
+                                <DataTrigger TargetType="Label"
+                                    Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
+                                    Value="{x:Static toolkit:MediaElementState.Opening}">
+                                    <Setter Property="Text" Value="&#xf110;" />
+                                    <Setter Property="SemanticProperties.Description" Value="Loading" />
+                                    <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary50}}" />
                                 </DataTrigger>
                             </Label.Triggers>
                         </Label>
@@ -163,19 +174,30 @@
                 HorizontalOptions="Fill"
                 IsVisible="False"
                 MetadataArtist="{localization:Translate SuleymaniyeVakfi}"
-                MetadataArtworkUrl="https://www.fitratradyo.com/img/radyo-fitrat.png"
+                MetadataArtworkUrl="https://www.fitratradyo.com/img/fitrat_radyo.png"
                 MetadataTitle="{localization:Translate RadyoFitrat}"
                 ShouldAutoPlay="False"
-                ShouldMute="False" CurrentState="Buffering"
+                ShouldMute="False"
                 ShouldShowPlaybackControls="False"
-                Source="https://www.suleymaniyevakfi.org/radio.mp3"
                 VerticalOptions="End" />
 
-            <!-- Busy overlay -->
-            <Grid BackgroundColor="#80000000" IsVisible="{Binding IsBusy}">
-                <Border Style="{StaticResource FrostGlassCardCrystal}" Padding="32,20" HorizontalOptions="Center" VerticalOptions="Center">
-                    <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="40" HeightRequest="40" />
-                </Border>
+            <!-- Busy overlay - bound directly to MediaElement.CurrentState (Microsoft best practice) -->
+            <Grid x:Name="BusyOverlay" IsVisible="False">
+                <Grid.Triggers>
+                    <!-- Show loading indicator when Buffering -->
+                    <DataTrigger TargetType="Grid"
+                                 Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
+                                 Value="{x:Static toolkit:MediaElementState.Buffering}">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                    <!-- Show loading indicator when Opening -->
+                    <DataTrigger TargetType="Grid"
+                                 Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
+                                 Value="{x:Static toolkit:MediaElementState.Opening}">
+                        <Setter Property="IsVisible" Value="True" />
+                    </DataTrigger>
+                </Grid.Triggers>
+                    <ActivityIndicator IsRunning="True" Style="{StaticResource GoldenActivityIndicator}" WidthRequest="80" HeightRequest="80" />
             </Grid>
         </Grid>
     </ContentPage.Content>

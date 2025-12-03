@@ -4,6 +4,9 @@ using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using SuleymaniyeCalendar.Resources.Strings;
+#if ANDROID
+using Android.Content;
+#endif
 
 namespace SuleymaniyeCalendar.ViewModels;
 
@@ -105,9 +108,31 @@ public partial class BaseViewModel : ObservableObject
                 Preferences.Set("FontSize", clampedValue);
                 NotifyFontSizeProperties();
                 ApplyFontScaleToResources(clampedValue);
+#if ANDROID
+                // Update widget with new font size
+                UpdateAndroidWidget();
+#endif
             }
         }
     }
+
+#if ANDROID
+    /// <summary>
+    /// Updates Android home screen widget after font size change.
+    /// </summary>
+    private static void UpdateAndroidWidget()
+    {
+        try
+        {
+            var context = Platform.CurrentActivity ?? Android.App.Application.Context;
+            context?.StartService(new Intent(context, typeof(WidgetService)));
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error updating widget for font change: {ex.Message}");
+        }
+    }
+#endif
 
     // Computed font size properties for data binding
     public int HeaderFontSize => (int)(FontSize * 1.35);

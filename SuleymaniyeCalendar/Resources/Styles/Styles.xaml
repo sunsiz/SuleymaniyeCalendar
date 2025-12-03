@@ -199,7 +199,7 @@
         <Setter Property="StrokeThickness" Value="0.9" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{StaticResource StrongShadowOverlayBrush}" Opacity="0.55" Radius="34" Offset="0,14" />
+                <Shadow Brush="{StaticResource StrongShadowOverlayBrush}" Opacity="0.55" Radius="9" Offset="0,5" />
             </Setter.Value>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -209,7 +209,7 @@
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
                             <Setter Property="Shadow">
-                                <Shadow Brush="#16000000" Opacity="0.12" Radius="20" Offset="0,4" />
+                                <Shadow Brush="#16000000" Opacity="0.12" Radius="7" Offset="0,4" />
                             </Setter>
                             <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowLight}, Dark={StaticResource SurfaceContainerLowDark}}" />
                         </VisualState.Setters>
@@ -328,7 +328,7 @@
                             <Setter Property="Opacity" Value="0.75" />
                             <!-- Enhanced golden glow on press -->
                             <Setter Property="Shadow">
-                                <Shadow Opacity="0.4" Radius="20" Offset="0,6" Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" />
+                                <Shadow Opacity="0.4" Radius="10" Offset="0,6" Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" />
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>
@@ -337,7 +337,7 @@
                             <Setter Property="Scale" Value="1.08" />
                             <!-- Stronger golden glow on hover -->
                             <Setter Property="Shadow">
-                                <Shadow Opacity="0.5" Radius="24" Offset="0,8" Brush="{AppThemeBinding Light=#70FFD700, Dark=#70FFD700}" />
+                                <Shadow Opacity="0.5" Radius="14" Offset="0,8" Brush="{AppThemeBinding Light=#70FFD700, Dark=#70FFD700}" />
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>
@@ -377,7 +377,7 @@
         <Setter Property="BorderWidth" Value="0" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.18" Radius="14" Offset="0,4" />
+                <Shadow Opacity="0.18" Radius="7" Offset="0,4" />
             </Setter.Value>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -394,7 +394,7 @@
                         <VisualState.Setters>
                             <Setter Property="Scale" Value="1.03" />
                             <Setter Property="Shadow">
-                                <Shadow Opacity="0.28" Radius="22" Offset="0,6" />
+                                <Shadow Opacity="0.28" Radius="12" Offset="0,6" />
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>
@@ -414,7 +414,7 @@
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
-        <Setter Property="TextColor" Value="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary10}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary10}}" />
     </Style>
 
     <!--  🦸 PHASE 13: Outline Glass Button - Light cream/golden background with prominent border  -->
@@ -429,17 +429,17 @@
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
-        <Setter Property="TextColor" Value="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary30}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.3" Radius="16" Offset="0,6" Brush="{AppThemeBinding Light=#60FFD700, Dark=#50FFD700}" />
+                <Shadow Opacity="0.3" Radius="8" Offset="0,6" Brush="{AppThemeBinding Light=#60FFD700, Dark=#50FFD700}" />
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="GlassButtonSuccess" TargetType="Button">
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassSuccessTintLight}, Dark={StaticResource GlassSuccessTintDark}}" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary30}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
         <Setter Property="CornerRadius" Value="32" />
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
@@ -452,7 +452,7 @@
     </Style>
     <Style x:Key="GlassButtonWarning" TargetType="Button" BasedOn="{StaticResource GlassButtonBase}">
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassWarningTintLight}, Dark={StaticResource GlassWarningTintDark}}" />
-        <Setter Property="TextColor" Value="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary30}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="Padding" Value="16,8" />
@@ -493,7 +493,7 @@
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
-        <Setter Property="TextColor" Value="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary30}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
         <Setter Property="CornerRadius" Value="22" />
         <Setter Property="Padding" Value="20,12" />
         <Setter Property="Shadow">
@@ -540,7 +540,7 @@
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
-        <Setter Property="TextColor" Value="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary30}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
         <Setter Property="CornerRadius" Value="22" />
         <Setter Property="Padding" Value="18,10" />
         <Setter Property="Shadow">
@@ -561,7 +561,7 @@
                 </LinearGradientBrush>
             </Setter.Value>
         </Setter>
-        <Setter Property="TextColor" Value="{AppThemeBinding Light=#3A2E1C, Dark={StaticResource Primary30}}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
     </Style>
 
 
@@ -575,7 +575,7 @@
         <Setter Property="HorizontalOptions" Value="Fill" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="#12000000" Opacity="0.08" Radius="16" Offset="0,2" />
+                <Shadow Brush="#12000000" Opacity="0.18" Radius="6" Offset="0,2" />
             </Setter.Value>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -585,7 +585,7 @@
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
                             <Setter Property="Shadow">
-                                <Shadow Brush="#16000000" Opacity="0.12" Radius="20" Offset="0,4" />
+                                <Shadow Brush="#16000000" Opacity="0.22" Radius="10" Offset="0,4" />
                             </Setter>
                             <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowLight}, Dark={StaticResource SurfaceContainerLowDark}}" />
                         </VisualState.Setters>
@@ -600,7 +600,7 @@
         <Setter Property="Padding" Value="16,18" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" Opacity="0.10" Radius="44" Offset="0,18" />
+                <Shadow Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" Opacity="0.20" Radius="7" Offset="0,2" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -613,7 +613,7 @@
         <Setter Property="Shadow">
             <Setter.Value>
                 <!--  Enhanced golden glow  -->
-                <Shadow Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" Opacity="0.10" Radius="44" Offset="0,18" />
+                <Shadow Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" Opacity="0.20" Radius="7" Offset="0,2" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -625,7 +625,7 @@
         <Setter Property="StrokeThickness" Value="0.5" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light=#50FFD700, Dark=#50FFD700}" Opacity="0.15" Radius="40" Offset="0,16" />
+                <Shadow Brush="{AppThemeBinding Light=#50FFD700, Dark=#50FFD700}" Opacity="0.25" Radius="10" Offset="0,16" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -637,7 +637,7 @@
         <Setter Property="StrokeThickness" Value="0.75" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{StaticResource StrongShadowOverlayBrush}" Opacity="0.35" Radius="24" Offset="0,8" />
+                <Shadow Brush="{StaticResource StrongShadowOverlayBrush}" Opacity="0.35" Radius="8" Offset="0,8" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -658,10 +658,7 @@
         <!-- Reduced shadow complexity -->
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow
-                    Brush="#1A000000"
-                    Radius="8"
-                    Offset="0,2" />
+                <Shadow Brush="#1A000000" Radius="8" Offset="0,2" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -675,10 +672,7 @@
         <!-- Reduced shadow complexity -->
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow
-                    Brush="#1A000000"
-                    Radius="4"
-                    Offset="0,0" />
+                <Shadow Brush="#1A000000" Radius="4" Offset="0,0" />
             </Setter.Value>
         </Setter>
     </Style>

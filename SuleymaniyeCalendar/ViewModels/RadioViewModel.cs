@@ -9,8 +9,9 @@ namespace SuleymaniyeCalendar.ViewModels;
 /// <summary>
 /// ViewModel for Süleymaniye radio streaming page.
 /// Handles play/pause, displays track metadata, and manages audio state.
+/// Implements IDisposable to properly unsubscribe from RadioService events.
 /// </summary>
-public partial class RadioViewModel : BaseViewModel
+public partial class RadioViewModel : BaseViewModel, IDisposable
 {
 	private readonly IRadioService _radioService;
 	private readonly PerformanceService _perf = new();
@@ -38,17 +39,18 @@ public partial class RadioViewModel : BaseViewModel
 		
 		using (_perf.StartTimer("Radio.Constructor"))
 		{
-			IsBusy = true;
 			Title = AppResources.IcerikYukleniyor;
 
-			// Subscribe to radio service events
+			// Subscribe to radio service events (playback state for ViewModel sync only)
 			_radioService.PlaybackStateChanged += OnPlaybackStateChanged;
-			_radioService.LoadingStateChanged += OnLoadingStateChanged;
 			_radioService.TitleChanged += OnTitleChanged;
+			// Note: Loading indicator is now bound directly to MediaElement.CurrentState in XAML (Microsoft best practice)
 
+			// Sync initial state from service (in case radio was already playing)
+			IsPlaying = _radioService.IsPlaying;
+			
 			Title = AppResources.FitratinSesi;
 			_ = CheckInternetAsync();
-			IsBusy = false;
 		}
 		
 		// Log perf summary after delay
@@ -61,6 +63,7 @@ public partial class RadioViewModel : BaseViewModel
 
 	/// <summary>
 	/// Toggles radio playback (play/pause).
+	/// Loading indicator is shown via XAML DataTrigger bound to MediaElement.CurrentState.
 	/// </summary>
 	[RelayCommand]
 	private async Task Play()
@@ -70,9 +73,14 @@ public partial class RadioViewModel : BaseViewModel
 			using (_perf.StartTimer("Radio.TogglePlay"))
 			{
 				if (IsPlaying)
+				{
 					await _radioService.PauseAsync().ConfigureAwait(false);
+				}
 				else
+				{
+					// Loading indicator now handled by XAML DataTrigger on MediaElement.CurrentState
 					await _radioService.PlayAsync().ConfigureAwait(false);
+				}
 			}
 		}
 		else
@@ -89,12 +97,6 @@ public partial class RadioViewModel : BaseViewModel
 	private void OnPlaybackStateChanged(object? sender, bool isPlaying)
 	{
 		_ = MainThread.InvokeOnMainThreadAsync(() => IsPlaying = isPlaying);
-	}
-
-	/// <summary>Handles loading state changes (buffering indicator).</summary>
-	private void OnLoadingStateChanged(object? sender, bool isLoading)
-	{
-		_ = MainThread.InvokeOnMainThreadAsync(() => IsBusy = isLoading);
 	}
 
 	/// <summary>Handles track title/metadata changes.</summary>
@@ -122,6 +124,17 @@ public partial class RadioViewModel : BaseViewModel
 
 	/// <summary>Gets the underlying radio service (for page-level access).</summary>
 	public IRadioService GetRadioService() => _radioService;
+
+	/// <summary>
+	/// Disposes resources and unsubscribes from RadioService events.
+	/// Prevents memory leaks when navigating away from radio page.
+	/// </summary>
+	public void Dispose()
+	{
+		_radioService.PlaybackStateChanged -= OnPlaybackStateChanged;
+		_radioService.TitleChanged -= OnTitleChanged;
+		GC.SuppressFinalize(this);
+	}
 
 	#endregion
 }

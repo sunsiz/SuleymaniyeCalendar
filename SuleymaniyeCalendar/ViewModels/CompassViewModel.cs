@@ -14,8 +14,9 @@ namespace SuleymaniyeCalendar.ViewModels;
 /// <summary>
 /// ViewModel for Qibla compass page showing direction to Kaaba in Mecca.
 /// Uses device compass sensor to calculate and display Qibla direction.
+/// Implements IDisposable to properly clean up compass sensor resources.
 /// </summary>
-public partial class CompassViewModel : BaseViewModel
+public partial class CompassViewModel : BaseViewModel, IDisposable
 {
 	#region Private Fields
 
@@ -111,30 +112,8 @@ public partial class CompassViewModel : BaseViewModel
 			// Initialize address asynchronously (reverse geocoding)
 			_ = InitializeAddressAsync();
 			
-			// Start compass sensor
-			try
-			{
-				if (!Compass.IsMonitoring)
-				{
-					// MUST subscribe BEFORE Compass.Start() or no readings received
-					Compass.ReadingChanged += Compass_ReadingChanged;
-					Compass.Start(Speed, applyLowPassFilter: true);
-				}
-			}
-			catch (FeatureNotSupportedException fnsEx)
-			{
-				ShowToast(AppResources.CihazPusulaDesteklemiyor);
-				Debug.WriteLine($"Compass not supported: {fnsEx.Message}");
-			}
-			catch (Exception ex)
-			{
-				ShowToast(ex.Message);
-				Debug.WriteLine($"Compass error: {ex.Message}");
-				
-				// Show fallback values
-				LatitudeAltitude = $"{AppResources.EnlemFormatsiz}: {_currentLatitude:F2}  |  {AppResources.YukseklikFormatsiz}: {_currentAltitude:N0}";
-				DegreeLongitude = $"{AppResources.BoylamFormatsiz}: {_currentLongitude:F2}  |  {AppResources.Aci}: {Heading:####}";
-			}
+			// Note: Compass sensor is started in StartCompass() called from CompassPage.OnAppearing()
+			// This allows proper lifecycle management when page appears/disappears
 		}
 		
 		// Log perf summary after delay to capture async operations
@@ -270,10 +249,36 @@ public partial class CompassViewModel : BaseViewModel
 	}
 
 	/// <summary>
-	/// Disposes compass sensor resources.
-	/// CRITICAL: Must unsubscribe ReadingChanged before Stop() to prevent memory leaks.
+	/// Starts the compass sensor if not already running.
+	/// Called when CompassPage appears.
 	/// </summary>
-	public void Dispose()
+	public void StartCompass()
+	{
+		try
+		{
+			if (!Compass.IsMonitoring)
+			{
+				// MUST subscribe BEFORE Compass.Start() or no readings received
+				Compass.ReadingChanged += Compass_ReadingChanged;
+				Compass.Start(Speed, applyLowPassFilter: true);
+			}
+		}
+		catch (FeatureNotSupportedException fnsEx)
+		{
+			ShowToast(AppResources.CihazPusulaDesteklemiyor);
+			Debug.WriteLine($"Compass not supported: {fnsEx.Message}");
+		}
+		catch (Exception ex)
+		{
+			Debug.WriteLine($"Compass start error: {ex.Message}");
+		}
+	}
+
+	/// <summary>
+	/// Stops the compass sensor to save battery.
+	/// Called when CompassPage disappears.
+	/// </summary>
+	public void StopCompass()
 	{
 		try
 		{
@@ -285,8 +290,17 @@ public partial class CompassViewModel : BaseViewModel
 		}
 		catch (Exception ex)
 		{
-			Debug.WriteLine($"Compass disposal error: {ex.Message}");
+			Debug.WriteLine($"Compass stop error: {ex.Message}");
 		}
+	}
+
+	/// <summary>
+	/// Disposes compass sensor resources.
+	/// CRITICAL: Must unsubscribe ReadingChanged before Stop() to prevent memory leaks.
+	/// </summary>
+	public void Dispose()
+	{
+		StopCompass();
 	}
 
 	#endregion

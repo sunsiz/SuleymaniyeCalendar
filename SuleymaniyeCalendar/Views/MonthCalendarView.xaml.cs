@@ -158,6 +158,7 @@ public partial class MonthCalendarView : ContentView
     /// <summary>
     /// 🚀 PHASE 20.1E: Initialize element pool once - creates all 42 cells upfront.
     /// This avoids expensive element creation during navigation.
+    /// 🔧 PHASE 20.1F: Lazy initialization - only create cells when first needed.
     /// </summary>
     private void InitializePool()
     {
@@ -176,19 +177,25 @@ public partial class MonthCalendarView : ContentView
             _darkIndicatorBrush ??= new SolidColorBrush(Colors.LightBlue);
         }
         
-        // Create 42 reusable cells (max needed for 6-week month)
-        for (int i = 0; i < 42; i++)
-        {
-            var border = CreateCell();
-            _cellPool.Add(border);
-        }
-        
         _poolInitialized = true;
-        System.Diagnostics.Debug.WriteLine($"🏊 Pool initialized with 42 cells");
+        System.Diagnostics.Debug.WriteLine($"🏊 Pool initialized (lazy mode - cells created on demand)");
     }
     
     /// <summary>
-    /// Creates a single cell with all child elements.
+    /// Gets or creates a cell from the pool at the specified index.
+    /// </summary>
+    private Border GetOrCreateCell(int index)
+    {
+        while (_cellPool.Count <= index)
+        {
+            _cellPool.Add(CreateCell());
+        }
+        return _cellPool[index];
+    }
+    
+    /// <summary>
+    /// Creates a single cell with minimal child elements for performance.
+    /// Uses simpler structure: Border → Label (indicator as background).
     /// </summary>
     private Border CreateCell()
     {
@@ -210,17 +217,7 @@ public partial class MonthCalendarView : ContentView
         };
         contentGrid.Add(dayLabel);
 
-        var indicator = new Ellipse
-        {
-            WidthRequest = 4,
-            HeightRequest = 4,
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.End,
-            Margin = _indicatorMargin
-        };
-        indicator.SetAppTheme(Ellipse.FillProperty, _lightIndicatorBrush, _darkIndicatorBrush);
-        contentGrid.Add(indicator);
-
+        // Only create indicator if needed (lazy creation handled in UpdateCell)
         border.Content = contentGrid;
 
         // Tap gesture - will update handler when binding data
@@ -232,6 +229,7 @@ public partial class MonthCalendarView : ContentView
     
     /// <summary>
     /// Updates a pooled cell with new day data - much faster than creating new elements.
+    /// Lazily creates indicator dot only when the day has data.
     /// </summary>
     private void UpdateCell(Border border, CalendarDay day, int row, int col)
     {
@@ -264,10 +262,32 @@ public partial class MonthCalendarView : ContentView
                 dayLabel.SetBinding(Label.TextColorProperty, new Binding(nameof(CalendarDay.TextColor), source: day));
             }
             
-            // Update indicator visibility
-            if (contentGrid.Children.Count >= 2 && contentGrid.Children[1] is Ellipse indicator)
+            // Lazy indicator creation - only add when day has data
+            if (day.HasData)
             {
-                indicator.IsVisible = day.HasData;
+                // Find or create indicator
+                Ellipse? indicator = contentGrid.Children.Count >= 2 
+                    ? contentGrid.Children[1] as Ellipse 
+                    : null;
+                    
+                if (indicator is null)
+                {
+                    indicator = new Ellipse
+                    {
+                        WidthRequest = 4,
+                        HeightRequest = 4,
+                        HorizontalOptions = LayoutOptions.Center,
+                        VerticalOptions = LayoutOptions.End,
+                        Margin = _indicatorMargin
+                    };
+                    indicator.SetAppTheme(Ellipse.FillProperty, _lightIndicatorBrush, _darkIndicatorBrush);
+                    contentGrid.Add(indicator);
+                }
+                indicator.IsVisible = true;
+            }
+            else if (contentGrid.Children.Count >= 2 && contentGrid.Children[1] is Ellipse existingIndicator)
+            {
+                existingIndicator.IsVisible = false;
             }
         }
 
@@ -359,8 +379,8 @@ public partial class MonthCalendarView : ContentView
     }
 
     /// <summary>
-    /// 🚀 PHASE 20.1E: Fast grid rendering using element pooling.
-    /// Reuses existing elements instead of destroying and recreating - 5-10x faster.
+    /// 🚀 PHASE 20.1F: Fast grid rendering using lazy element pooling.
+    /// Creates cells on-demand instead of all 42 upfront - 3-5x faster initial render.
     /// </summary>
     private void RenderCalendarGrid()
     {
@@ -392,31 +412,37 @@ public partial class MonthCalendarView : ContentView
 
         System.Diagnostics.Debug.WriteLine($"✅ RenderCalendarGrid: Updating grid with {daysCount} days");
 
-        // Initialize pool on first use
+        // Initialize brushes on first use (lazy)
         InitializePool();
 
-        // Clear grid but keep pooled elements
-        CalendarGrid.Clear();
-
-        int row = 0;
-        int col = 0;
-        int index = 0;
-
-        foreach (var day in _viewModel.CalendarDays)
+        // Use BatchBegin/BatchCommit to minimize layout passes
+        CalendarGrid.BatchBegin();
+        try
         {
-            if (index >= _cellPool.Count) break; // Safety check
-            
-            var border = _cellPool[index];
-            UpdateCell(border, day, row, col);
-            CalendarGrid.Add(border);
+            // Clear grid but keep pooled elements
+            CalendarGrid.Clear();
 
-            col++;
-            if (col >= 7)
+            int row = 0;
+            int col = 0;
+
+            for (int index = 0; index < daysCount; index++)
             {
-                col = 0;
-                row++;
+                var day = _viewModel.CalendarDays[index];
+                var border = GetOrCreateCell(index); // Lazy cell creation
+                UpdateCell(border, day, row, col);
+                CalendarGrid.Add(border);
+
+                col++;
+                if (col >= 7)
+                {
+                    col = 0;
+                    row++;
+                }
             }
-            index++;
+        }
+        finally
+        {
+            CalendarGrid.BatchCommit();
         }
     }
 

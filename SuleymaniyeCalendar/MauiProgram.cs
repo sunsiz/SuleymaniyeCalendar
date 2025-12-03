@@ -106,6 +106,9 @@ public static class MauiProgram
         services.AddSingleton<AccessibilityService>();
         services.AddSingleton<BackgroundDataPreloader>();
 
+        // Set up global exception handlers
+        Initialize();
+
         // Singleton pages (main tabs)
         services.AddSingleton<MainViewModel>();
         services.AddSingleton<MainPage>();

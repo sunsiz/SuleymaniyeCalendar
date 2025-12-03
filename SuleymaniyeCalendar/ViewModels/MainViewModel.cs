@@ -719,7 +719,7 @@ public partial class MainViewModel : BaseViewModel
 
                 DateTime ParseTimeOrMin(string s)
                 {
-                    try { return DateTime.Parse(s); } catch { return DateTime.MinValue; }
+                    try { return DateTime.Parse(s, CultureInfo.InvariantCulture); } catch { return DateTime.MinValue; }
                 }
 
                 foreach (var id in seq)

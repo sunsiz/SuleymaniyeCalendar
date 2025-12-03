@@ -34,13 +34,13 @@
     <SolidColorBrush x:Key="StrongShadowOverlayBrush" Color="#33000000" />
     <LinearGradientBrush x:Key="GlassSoftLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#F2FFFBFB" />
-        <GradientStop Offset="0.5" Color="{StaticResource Primary10}" />
+        <GradientStop Offset="0.5" Color="#FFFFFDFA" />
         <GradientStop Offset="1" Color="#E0F8F1F1" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="GlassSoftDark" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#1C1B20" />
-        <GradientStop Offset="0.5" Color="{StaticResource Primary95}" />
-        <GradientStop Offset="1" Color="#2F2D32" />
+        <GradientStop Offset="0.5" Color="#FF20201F" />
+        <GradientStop Offset="1" Color="#FF222124" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="GlassSecondaryTintLight" StartPoint="0,0" EndPoint="0,1">
         <GradientStop Offset="0" Color="#F2FFFFFF" />
