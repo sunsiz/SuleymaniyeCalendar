@@ -96,6 +96,12 @@ public static class MauiProgram
         services.AddSingleton<IRadioService, RadioService>();
         services.AddSingleton<IRtlService, RtlService>();
 
+#if ANDROID
+        services.AddSingleton<IWidgetService, SuleymaniyeCalendar.Platforms.Android.AndroidWidgetServiceHelper>();
+#else
+        services.AddSingleton<IWidgetService, NullWidgetService>();
+#endif
+
         // Core services
         services.AddSingleton<PerformanceService>();
         services.AddSingleton<LocationService>();

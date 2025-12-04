@@ -4,10 +4,6 @@ using System.Globalization;
 using LocalizationResourceManager.Maui;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Services;
-#if ANDROID
-using Android.Content;
-using Android.OS;
-#endif
 
 namespace SuleymaniyeCalendar.ViewModels;
 
@@ -29,6 +25,8 @@ public partial class SettingsViewModel : BaseViewModel
 	private readonly PerformanceService _perf;
 	private readonly ILocalizationResourceManager _resourceManager;
 	private readonly IRtlService _rtlService;
+    private readonly IAlarmService _alarmService;
+    private readonly IWidgetService _widgetService;
 
 	/// <summary>Guard flag to prevent recursive language reload loops.</summary>
 	private bool _updatingLanguages;
@@ -175,9 +173,7 @@ public partial class SettingsViewModel : BaseViewModel
 		{
 			if (!SetProperty(ref _notificationPrayerTimesEnabled, value)) return;
 			Preferences.Set("NotificationPrayerTimesEnabled", value);
-#if ANDROID
-			RefreshForegroundServiceNotification();
-#endif
+            _alarmService.RefreshNotification();
 		}
 	}
 
@@ -186,7 +182,7 @@ public partial class SettingsViewModel : BaseViewModel
 	/// Only visible when sticky notification is enabled on Android.
 	/// </summary>
 	public bool ShowNotificationPrayerOption =>
-		DeviceInfo.Platform == DevicePlatform.Android && ForegroundServiceEnabled;
+		_alarmService.SupportsForegroundService && ForegroundServiceEnabled;
 
 	private bool _foregroundServiceEnabled;
 	/// <summary>
@@ -200,17 +196,17 @@ public partial class SettingsViewModel : BaseViewModel
 		{
 			if (!SetProperty(ref _foregroundServiceEnabled, value)) return;
 			Preferences.Set("ForegroundServiceEnabled", value);
-#if ANDROID
 			// When turning off, also disable prayer times in notification
 			if (!value)
 			{
 				NotificationPrayerTimesEnabled = false;
 			}
-#endif
 			OnPropertyChanged(nameof(ShowNotificationPrayerOption));
-#if ANDROID
-			ToggleForegroundService(value);
-#endif
+            
+            if (value)
+                _alarmService.StartAlarmForegroundService();
+            else
+                _alarmService.StopAlarmForegroundService();
 		}
 	}
 
@@ -227,12 +223,21 @@ public partial class SettingsViewModel : BaseViewModel
 	/// </summary>
 	/// <param name="resourceManager">Localization resource manager for culture switching.</param>
 	/// <param name="rtlService">RTL layout service for bidirectional languages.</param>
+    /// <param name="alarmService">Service for managing alarms and notifications.</param>
+    /// <param name="widgetService">Service for updating widgets.</param>
 	/// <param name="perf">Optional performance monitoring service.</param>
-	public SettingsViewModel(ILocalizationResourceManager resourceManager, IRtlService rtlService, PerformanceService? perf = null)
+	public SettingsViewModel(
+        ILocalizationResourceManager resourceManager, 
+        IRtlService rtlService, 
+        IAlarmService alarmService,
+        IWidgetService widgetService,
+        PerformanceService? perf = null)
 	{
 		_perf = perf ?? new PerformanceService();
 		_resourceManager = resourceManager;
 		_rtlService = rtlService;
+        _alarmService = alarmService;
+        _widgetService = widgetService;
 
 		using (_perf.StartTimer("Settings.Constructor.Total"))
 		{
@@ -396,10 +401,8 @@ public partial class SettingsViewModel : BaseViewModel
 			_rtlService.ApplyFlowDirection(language.CI);
 			Title = AppResources.UygulamaAyarlari;
 		}
-#if ANDROID
 		// Update widget asynchronously to avoid blocking UI
-		_ = Task.Run(() => MainThread.BeginInvokeOnMainThread(UpdateWidget));
-#endif
+		_ = Task.Run(() => MainThread.BeginInvokeOnMainThread(_widgetService.UpdateWidget));
 	}
 
 	#endregion
@@ -449,16 +452,14 @@ public partial class SettingsViewModel : BaseViewModel
 			}
 		}
 
-#if ANDROID
 		// Update widget asynchronously to avoid blocking UI
 		_ = Task.Run(() =>
 		{
 			using (_perf.StartTimer("Settings.ApplyThemeInternal.UpdateWidget"))
 			{
-				MainThread.BeginInvokeOnMainThread(UpdateWidget);
+				MainThread.BeginInvokeOnMainThread(_widgetService.UpdateWidget);
 			}
 		});
-#endif
 	}
 
 	/// <summary>
@@ -478,74 +479,4 @@ public partial class SettingsViewModel : BaseViewModel
 	}
 
 	#endregion
-
-#if ANDROID
-	#region Private Methods - Android Platform
-
-	/// <summary>
-	/// Updates Android home screen widget after theme/language change.
-	/// </summary>
-	private void UpdateWidget()
-	{
-		try
-		{
-			var context = Platform.CurrentActivity ?? Android.App.Application.Context;
-			context?.StartService(new Intent(context, typeof(WidgetService)));
-		}
-		catch (Exception ex)
-		{
-			System.Diagnostics.Debug.WriteLine($"Error updating widget: {ex.Message}");
-		}
-	}
-
-	/// <summary>
-	/// Refreshes foreground service notification content.
-	/// </summary>
-	private void RefreshForegroundServiceNotification()
-	{
-		try
-		{
-			if (!Preferences.Get("ForegroundServiceEnabled", true)) return;
-
-			var ctx = Android.App.Application.Context;
-			var refreshIntent = new Intent(ctx, typeof(AlarmForegroundService))
-				.SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
-
-			if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-				ctx.StartForegroundService(refreshIntent);
-			else
-				ctx.StartService(refreshIntent);
-		}
-		catch (Exception ex)
-		{
-			System.Diagnostics.Debug.WriteLine($"Error refreshing notification: {ex}");
-		}
-	}
-
-	/// <summary>
-	/// Starts or stops the alarm foreground service.
-	/// </summary>
-	private void ToggleForegroundService(bool enable)
-	{
-		try
-		{
-			var ctx = Android.App.Application.Context;
-			var intent = new Intent(ctx, typeof(AlarmForegroundService))
-				.SetAction(enable 
-					? "SuleymaniyeTakvimi.action.START_SERVICE" 
-					: "SuleymaniyeTakvimi.action.STOP_SERVICE");
-
-			if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-				ctx.StartForegroundService(intent);
-			else
-				ctx.StartService(intent);
-		}
-		catch (Exception ex)
-		{
-			System.Diagnostics.Debug.WriteLine($"Error toggling foreground service: {ex}");
-		}
-	}
-
-	#endregion
-#endif
 }

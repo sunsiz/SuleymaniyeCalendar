@@ -508,6 +508,29 @@ namespace SuleymaniyeCalendar
 			System.Diagnostics.Debug.WriteLine("Main Activity" + $"Main Activity StopAlarmForegroundService Finished: {DateTime.Now:HH:m:s.fff}");
 		}
 
+        public void RefreshNotification()
+        {
+            try
+            {
+                if (!Preferences.Get("ForegroundServiceEnabled", true)) return;
+
+                var ctx = Application.Context;
+                var refreshIntent = new Intent(ctx, typeof(AlarmForegroundService))
+                    .SetAction(RefreshAction);
+
+                if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+                    ctx.StartForegroundService(refreshIntent);
+                else
+                    ctx.StartService(refreshIntent);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error refreshing notification: {ex}");
+            }
+        }
+
+        public bool SupportsForegroundService => true;
+
 		// Starts the periodic notification refresh loop if it is not already running.
 		private void BeginNotificationLoop()
 		{

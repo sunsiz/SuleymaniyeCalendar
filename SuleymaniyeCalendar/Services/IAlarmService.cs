@@ -37,4 +37,14 @@ public interface IAlarmService
     /// Stops the foreground service (Android only).
     /// </summary>
     void StopAlarmForegroundService();
+
+    /// <summary>
+    /// Refreshes the persistent notification content (Android only).
+    /// </summary>
+    void RefreshNotification();
+
+    /// <summary>
+    /// Whether the platform supports foreground service for persistent notifications.
+    /// </summary>
+    bool SupportsForegroundService { get; }
 }

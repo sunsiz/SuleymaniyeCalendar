@@ -10,4 +10,6 @@ public sealed class NullAlarmService : IAlarmService
     public void CancelAllAlarms() { }
     public void StartAlarmForegroundService() { }
     public void StopAlarmForegroundService() { }
+    public void RefreshNotification() { }
+    public bool SupportsForegroundService => false;
 }

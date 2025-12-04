@@ -58,4 +58,11 @@ public class iOSAlarmService : IAlarmService
     {
         // Not applicable on iOS
     }
+
+    public void RefreshNotification()
+    {
+        // Not applicable on iOS (notifications are scheduled, not persistent)
+    }
+
+    public bool SupportsForegroundService => false;
 }
