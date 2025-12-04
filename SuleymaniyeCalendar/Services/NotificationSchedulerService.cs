@@ -61,138 +61,83 @@ public class NotificationSchedulerService
         // Check if any reminders are enabled
         bool remindersEnabled = CheckRemindersEnabledAny();
 
-        if (DeviceInfo.Platform == DevicePlatform.Android)
+        if (!remindersEnabled)
         {
-            if (!remindersEnabled)
+            _alarmService.CancelAllAlarms();
+            ClearAlarmCoverage();
+            return;
+        }
+
+        // Cancel existing alarms to ensure a clean slate (handles disabled prayers or changed times)
+        // On Android this might be expensive, but ensures consistency.
+        // On iOS it's fast.
+        // _alarmService.CancelAllAlarms(); // Optional: Enable if overwriting isn't sufficient
+
+        try
+        {
+            // Ensure we have 30 days of data
+            var startDate = DateTime.Today;
+            var daysToSchedule = await _repository.EnsureDaysRangeAsync(location, startDate, 30);
+            
+            if (daysToSchedule.Count == 0)
             {
-                _alarmService.CancelAllAlarms();
-                ClearAlarmCoverage();
+                Debug.WriteLine("❌ No days available for scheduling alarms");
                 return;
             }
 
-            try
+            int dayCounter = 0;
+            DateTime? coverageThrough = null;
+
+            foreach (var day in daysToSchedule)
             {
-                // Ensure we have 30 days of data
-                var startDate = DateTime.Today;
-                var daysToSchedule = await _repository.EnsureDaysRangeAsync(location, startDate, 30);
-                
-                if (daysToSchedule.Count == 0)
+                try
                 {
-                    Debug.WriteLine("❌ No days available for scheduling alarms");
-                    return;
+                    if (!TryParseCalendarDate(day.Date, out var baseDate)) continue;
+                    
+                    // Skip past days
+                    if (baseDate < DateTime.Today) continue;
+
+                    var now = DateTime.Now;
+                    var falseFajrTime = ParseTime(day.FalseFajr);
+                    var fajrTime = ParseTime(day.Fajr);
+                    var sunriseTime = ParseTime(day.Sunrise);
+                    var dhuhrTime = ParseTime(day.Dhuhr);
+                    var asrTime = ParseTime(day.Asr);
+                    var maghribTime = ParseTime(day.Maghrib);
+                    var ishaTime = ParseTime(day.Isha);
+                    var endOfIshaTime = ParseTime(day.EndOfIsha);
+
+                    var isToday = baseDate.Date == DateTime.Today;
+
+                    SchedulePrayerAlarmIfEnabled(baseDate, falseFajrTime, now, isToday, "falsefajr", "Fecri Kazip");
+                    SchedulePrayerAlarmIfEnabled(baseDate, fajrTime, now, isToday, "fajr", "Fecri Sadık");
+                    SchedulePrayerAlarmIfEnabled(baseDate, sunriseTime, now, isToday, "sunrise", "Sabah Sonu");
+                    SchedulePrayerAlarmIfEnabled(baseDate, dhuhrTime, now, isToday, "dhuhr", "Öğle");
+                    SchedulePrayerAlarmIfEnabled(baseDate, asrTime, now, isToday, "asr", "İkindi");
+                    SchedulePrayerAlarmIfEnabled(baseDate, maghribTime, now, isToday, "maghrib", "Akşam");
+                    SchedulePrayerAlarmIfEnabled(baseDate, ishaTime, now, isToday, "isha", "Yatsı");
+                    SchedulePrayerAlarmIfEnabled(baseDate, endOfIshaTime, now, isToday, "endofisha", "Yatsı Sonu");
+
+                    dayCounter++;
+                    coverageThrough = baseDate;
+                    
+                    if (dayCounter >= 30) break;
                 }
-
-                int dayCounter = 0;
-                DateTime? coverageThrough = null;
-
-                foreach (var day in daysToSchedule)
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        if (!TryParseCalendarDate(day.Date, out var baseDate)) continue;
-                        
-                        // Skip past days
-                        if (baseDate < DateTime.Today) continue;
-
-                        var now = DateTime.Now;
-                        var falseFajrTime = ParseTime(day.FalseFajr);
-                        var fajrTime = ParseTime(day.Fajr);
-                        var sunriseTime = ParseTime(day.Sunrise);
-                        var dhuhrTime = ParseTime(day.Dhuhr);
-                        var asrTime = ParseTime(day.Asr);
-                        var maghribTime = ParseTime(day.Maghrib);
-                        var ishaTime = ParseTime(day.Isha);
-                        var endOfIshaTime = ParseTime(day.EndOfIsha);
-
-                        var isToday = baseDate.Date == DateTime.Today;
-
-                        SchedulePrayerAlarmIfEnabled(baseDate, falseFajrTime, now, isToday, "falsefajr", "Fecri Kazip");
-                        SchedulePrayerAlarmIfEnabled(baseDate, fajrTime, now, isToday, "fajr", "Fecri Sadık");
-                        SchedulePrayerAlarmIfEnabled(baseDate, sunriseTime, now, isToday, "sunrise", "Sabah Sonu");
-                        SchedulePrayerAlarmIfEnabled(baseDate, dhuhrTime, now, isToday, "dhuhr", "Öğle");
-                        SchedulePrayerAlarmIfEnabled(baseDate, asrTime, now, isToday, "asr", "İkindi");
-                        SchedulePrayerAlarmIfEnabled(baseDate, maghribTime, now, isToday, "maghrib", "Akşam");
-                        SchedulePrayerAlarmIfEnabled(baseDate, ishaTime, now, isToday, "isha", "Yatsı");
-                        SchedulePrayerAlarmIfEnabled(baseDate, endOfIshaTime, now, isToday, "endofisha", "Yatsı Sonu");
-
-                        dayCounter++;
-                        coverageThrough = baseDate;
-                        
-                        if (dayCounter >= 30) break;
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"❌ Error processing day {day.Date}: {ex.Message}");
-                    }
-                }
-
-                if (dayCounter > 0 && coverageThrough.HasValue)
-                {
-                    PersistAlarmCoverage(coverageThrough.Value);
-                    Debug.WriteLine($"✅ Alarm scheduling complete through {coverageThrough.Value:dd/MM/yyyy}");
+                    Debug.WriteLine($"❌ Error processing day {day.Date}: {ex.Message}");
                 }
             }
-            catch (Exception exception)
+
+            if (dayCounter > 0 && coverageThrough.HasValue)
             {
-                Debug.WriteLine($"❌ SetMonthlyAlarmsAsync failed: {exception.Message}");
+                PersistAlarmCoverage(coverageThrough.Value);
+                Debug.WriteLine($"✅ Alarm scheduling complete through {coverageThrough.Value:dd/MM/yyyy}");
             }
         }
-        else if (DeviceInfo.Platform == DevicePlatform.iOS)
+        catch (Exception exception)
         {
-            if (!remindersEnabled)
-            {
-#if __IOS__
-                Platforms.iOS.NotificationService.CancelAllNotifications();
-#endif
-                ClearAlarmCoverage();
-                return;
-            }
-
-            try
-            {
-                // Ensure we have 30 days of data
-                var startDate = DateTime.Today;
-                var daysToSchedule = await _repository.EnsureDaysRangeAsync(location, startDate, 30);
-
-                if (daysToSchedule.Count == 0)
-                {
-                    Debug.WriteLine("❌ No days available for scheduling iOS notifications");
-                    return;
-                }
-
-                // Build notification minutes dictionary from preferences
-                var notificationMinutes = new Dictionary<string, int>
-                {
-                    { "falsefajr", Preferences.Get("falsefajrNotificationTime", 0) },
-                    { "fajr", Preferences.Get("fajrNotificationTime", 0) },
-                    { "sunrise", Preferences.Get("sunriseNotificationTime", 0) },
-                    { "dhuhr", Preferences.Get("dhuhrNotificationTime", 0) },
-                    { "asr", Preferences.Get("asrNotificationTime", 0) },
-                    { "maghrib", Preferences.Get("maghribNotificationTime", 0) },
-                    { "isha", Preferences.Get("ishaNotificationTime", 0) },
-                    { "endofisha", Preferences.Get("endofishaNotificationTime", 0) }
-                };
-
-#if __IOS__
-                // Cancel existing notifications before scheduling new ones
-                Platforms.iOS.NotificationService.CancelAllNotifications();
-                
-                // Schedule new notifications using iOS notification service
-                await Platforms.iOS.NotificationService.ScheduleMonthlyNotificationsAsync(daysToSchedule, notificationMinutes);
-#endif
-
-                // Persist coverage date
-                var lastDay = daysToSchedule.LastOrDefault();
-                if (lastDay != null && DateTime.TryParse(lastDay.Date, out var coverageDate))
-                {
-                    PersistAlarmCoverage(coverageDate);
-                    Debug.WriteLine($"✅ iOS notification scheduling complete through {coverageDate:dd/MM/yyyy}");
-                }
-            }
-            catch (Exception exception)
-            {
-                Debug.WriteLine($"❌ iOS SetMonthlyAlarmsAsync failed: {exception.Message}");
-            }
+            Debug.WriteLine($"❌ SetMonthlyAlarmsAsync failed: {exception.Message}");
         }
 
         Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
