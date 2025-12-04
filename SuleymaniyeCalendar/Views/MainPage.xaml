@@ -105,11 +105,6 @@
                                     <!-- Clock icon -->
                                     <Border
                                         Grid.Column="0"
-                                        FontFamily="{StaticResource IconFontFamily}"
-                                        FontSize="22"
-                                        Text="&#xf017;"
-                                        TextColor="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}"
-                                        VerticalOptions="Center"
                                         WidthRequest="44"
                                         HeightRequest="44"
                                         Background="{AppThemeBinding Light={StaticResource SurfaceContainerLowestLight}, Dark={StaticResource SurfaceContainerDark}}"

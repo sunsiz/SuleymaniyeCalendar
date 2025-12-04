@@ -105,7 +105,7 @@
                             VerticalOptions="Center">
                             <Label.Triggers>
                                 <!-- Show pause icon when Playing (bound directly to MediaElement.CurrentState) -->
-                                <DataTrigger TargetType="Label"
+                                <DataTrigger TargetType="Label" x:DataType="toolkit:MediaElement"
                                     Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
                                     Value="{x:Static toolkit:MediaElementState.Playing}">
                                     <Setter Property="Text" Value="&#xf28b;" />
@@ -121,7 +121,7 @@
                                     <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary50}}" />
                                 </DataTrigger> -->
                                 <!-- Show loading icon when Opening -->
-                                <DataTrigger TargetType="Label"
+                                <DataTrigger TargetType="Label" x:DataType="toolkit:MediaElement"
                                     Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
                                     Value="{x:Static toolkit:MediaElementState.Opening}">
                                     <Setter Property="Text" Value="&#xf110;" />
@@ -185,13 +185,13 @@
             <Grid x:Name="BusyOverlay" IsVisible="False">
                 <Grid.Triggers>
                     <!-- Show loading indicator when Buffering -->
-                    <DataTrigger TargetType="Grid"
+                    <DataTrigger TargetType="Grid" x:DataType="toolkit:MediaElement"
                                  Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
                                  Value="{x:Static toolkit:MediaElementState.Buffering}">
                         <Setter Property="IsVisible" Value="True" />
                     </DataTrigger>
                     <!-- Show loading indicator when Opening -->
-                    <DataTrigger TargetType="Grid"
+                    <DataTrigger TargetType="Grid" x:DataType="toolkit:MediaElement"
                                  Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
                                  Value="{x:Static toolkit:MediaElementState.Opening}">
                         <Setter Property="IsVisible" Value="True" />

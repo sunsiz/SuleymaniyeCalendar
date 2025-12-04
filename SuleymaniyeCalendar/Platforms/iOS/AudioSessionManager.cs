@@ -28,7 +28,7 @@ public static class AudioSessionManager
             );
             
             // Activate the session
-            NSError error = null;
+            NSError? error = null;
             // Set mode to Movie Playback (best for streaming)
             audioSession.SetMode(AVAudioSessionMode.MoviePlayback, out error);
 
@@ -52,7 +52,7 @@ public static class AudioSessionManager
         try
         {
             var audioSession = AVAudioSession.SharedInstance();
-            NSError error = null;
+            NSError? error = null;
             audioSession.SetActive(false, out error);
             
             if (error != null)

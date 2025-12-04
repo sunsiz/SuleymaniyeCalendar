@@ -301,5 +301,27 @@ private void Compass_ReadingChanged(object sender, CompassChangedEventArgs e) {
 - PendingIntent requires `PendingIntentFlags.Immutable` on Android 12+ or scheduling fails
 - AlarmForegroundService must call `StartForeground()` within 5 seconds or ANR warning appears
 - Compass.ReadingChanged subscription MUST happen before Compass.Start() or no updates occur
+- **iOS Live Activities NOT supported in .NET MAUI** - Apple requires native Swift WidgetKit extension (see below)
+
+## iOS platform limitations
+
+### Live Activities (Lock Screen / Dynamic Island)
+**iOS Live Activities CANNOT be implemented in .NET MAUI.** Apple requires Live Activities to be built as a native Swift WidgetKit extension, which runs as a separate process outside the main app.
+
+**Requirements that cannot be met from C#:**
+- `ActivityAttributes` protocol must be defined in Swift
+- `ActivityConfiguration` requires SwiftUI views
+- Widget Extension target must be created in Xcode
+- App Groups required for data sharing between app and widget
+
+**To implement Live Activities, you would need:**
+1. A separate Xcode project with a Widget Extension target
+2. Swift code defining the activity attributes and SwiftUI views
+3. Native bridging code to communicate between MAUI app and widget
+4. Building on macOS with Xcode (not possible on Windows)
+
+**Alternative:** Use standard iOS local notifications via `NotificationService.cs` for prayer time reminders instead.
+
+See: https://developer.apple.com/documentation/activitykit
 
 Quick file pointers: `MauiProgram.cs` (DI), `DataService.cs` (core logic), `BaseViewModel.cs` (MVVM foundation), `AppShell.xaml` (navigation), `Resources/Styles/` (Material Design 3 theming), `AlarmForegroundService.cs` (Android alarm lifecycle).

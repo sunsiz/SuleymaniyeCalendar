@@ -64,12 +64,10 @@
 	</ItemGroup>
   <ItemGroup>
 	  <MauiXaml Update="Views\AboutPage.xaml" Generator="MSBuild:Compile" />
-	  <MauiXaml Update="Views\MonthTableView.xaml" Generator="MSBuild:Compile" />
+	  <MauiXaml Update="Views\MonthCalendarView.xaml" Generator="MSBuild:Compile" />
 	  <MauiXaml Update="Views\PrayerDetailPage.xaml" Generator="MSBuild:Compile" />
 	  <MauiXaml Update="Views\CompassPage.xaml" Generator="MSBuild:Compile" />
 	  <MauiXaml Update="Views\MonthPage.xaml" Generator="MSBuild:Compile" />
-	  <MauiXaml Update="Views\AboutPage.xaml" Generator="MSBuild:Compile" />
-	  <MauiXaml Update="Views\PrayerDetailPage.xaml" Generator="MSBuild:Compile" />
 	  <MauiXaml Update="Views\RadioPage.xaml" Generator="MSBuild:Compile" />
 	  <MauiXaml Update="Views\SettingsPage.xaml" Generator="MSBuild:Compile" />
   </ItemGroup>

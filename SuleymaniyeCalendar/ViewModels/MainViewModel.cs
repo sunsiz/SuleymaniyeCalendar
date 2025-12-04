@@ -1104,10 +1104,19 @@ public partial class MainViewModel : BaseViewModel
         }
 
         /// <summary>
-        /// Updates the prayer time display and iOS Live Activity.
+        /// Updates the prayer time display.
         /// Called when prayer states need to be refreshed.
         /// </summary>
-        public async Task UpdatePrayerTimeDisplayAsync()
+        /// <remarks>
+        /// Note: iOS Live Activities are NOT supported in .NET MAUI.
+        /// Apple requires Live Activities to be implemented as a native Swift WidgetKit extension,
+        /// which cannot be done purely in C#. This would require:
+        /// - A separate Swift Widget Extension project in Xcode
+        /// - SwiftUI views for Lock Screen/Dynamic Island
+        /// - App Groups for data sharing
+        /// See: https://developer.apple.com/documentation/activitykit
+        /// </remarks>
+        public Task UpdatePrayerTimeDisplayAsync()
         {
             // Update UI
             Application.Current?.Dispatcher.Dispatch(() =>
@@ -1115,28 +1124,7 @@ public partial class MainViewModel : BaseViewModel
                 LoadPrayers(); // Recalculate states immediately
             });
 
-            // Update iOS Live Activity if supported
-            if (DeviceInfo.Platform == DevicePlatform.iOS)
-            {
-#if __IOS__
-                var currentPrayer = Prayers?.FirstOrDefault(p => p.IsActive);
-                if (currentPrayer != null)
-                {
-                    var remainingTime = GetRemainingTime();
-                    var nextPrayer = Prayers?.FirstOrDefault(p => p.IsUpcoming);
-                
-                    await Platforms.iOS.LiveActivityService.StartPrayerActivityAsync(
-                        currentPrayer.Name,
-                        currentPrayer.Time,
-                        remainingTime,
-                        nextPrayer?.Name ?? "---");
-                }
-                else if (currentPrayer is null)
-                {
-                    await Platforms.iOS.LiveActivityService.StopPrayerActivityAsync();
-                }
-#endif
-            }
+            return Task.CompletedTask;
         }
 
         /// <summary>

@@ -87,6 +87,8 @@ public static class MauiProgram
         // Platform services
 #if ANDROID
         services.AddSingleton<IAlarmService, AlarmForegroundService>();
+#elif IOS
+        services.AddSingleton<IAlarmService, SuleymaniyeCalendar.Platforms.iOS.iOSAlarmService>();
 #else
         services.AddSingleton<IAlarmService, NullAlarmService>();
 #endif

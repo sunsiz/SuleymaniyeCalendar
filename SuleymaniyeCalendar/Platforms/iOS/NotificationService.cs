@@ -105,17 +105,16 @@ public class NotificationService
             content.UserInfo = userInfo;
 
             // Create trigger for specific time
-            var calendar = NSCalendar.CurrentCalendar;
-            var components = calendar.Components(
-                NSCalendarUnit.Year | NSCalendarUnit.Month | NSCalendarUnit.Day, 
-                NSDate.FromTimeIntervalSinceNow(0)
-            );
-            
-            components.Hour = (int)notificationTime.Hours;
-            components.Minute = (int)notificationTime.Minutes;
-            components.Second = 0;
+            var components = new NSDateComponents
+            {
+                Year = targetDate.Year,
+                Month = targetDate.Month,
+                Day = targetDate.Day,
+                Hour = notificationTime.Hours,
+                Minute = notificationTime.Minutes,
+                Second = 0
+            };
 
-            var triggerDate = calendar.DateFromComponents(components);
             var trigger = UNCalendarNotificationTrigger.CreateTrigger(components, false);
 
             // Create notification request

@@ -1,6 +1,7 @@
 ﻿using Foundation;
 using UIKit;
 using UserNotifications;
+using SuleymaniyeCalendar.Platforms.iOS;
 
 namespace SuleymaniyeCalendar;
 
@@ -11,13 +12,16 @@ public class AppDelegate : MauiUIApplicationDelegate
 
     public override bool FinishedLaunching(UIApplication app, NSDictionary options)
     {
+        // Initialize notifications
         if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
         {
             var center = UNUserNotificationCenter.Current;
-            center.RequestAuthorization(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.Sound,
-                (approved, error) => System.Diagnostics.Debug.WriteLine($"approved: {approved}, error: {error}"));
             center.Delegate = new UserNotificationCenterDelegate();
+            
+            // Request permission and setup categories
+            Task.Run(async () => await NotificationService.InitializeNotificationsAsync());
         }
+
         return base.FinishedLaunching(app, options);
     }
 }

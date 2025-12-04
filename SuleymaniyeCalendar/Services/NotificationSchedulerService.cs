@@ -139,14 +139,60 @@ public class NotificationSchedulerService
         }
         else if (DeviceInfo.Platform == DevicePlatform.iOS)
         {
-            // iOS implementation (simplified for now, assuming NotificationService handles it)
-            // In a real refactor, we'd move the iOS logic here too or delegate to IAlarmService
-            // For now, we'll leave the iOS specific call in DataService or move it here if we can access it.
-            // Since Platforms.iOS.NotificationService is platform specific, we can't easily call it from here 
-            // without an interface. IAlarmService should ideally cover this.
-            // But for now, let's assume IAlarmService handles iOS too (which it currently doesn't fully in the original code).
-            // The original code had #if __IOS__ blocks.
-            // We will skip iOS here for now and let DataService handle it or refactor IAlarmService later.
+            if (!remindersEnabled)
+            {
+#if __IOS__
+                Platforms.iOS.NotificationService.CancelAllNotifications();
+#endif
+                ClearAlarmCoverage();
+                return;
+            }
+
+            try
+            {
+                // Ensure we have 30 days of data
+                var startDate = DateTime.Today;
+                var daysToSchedule = await _repository.EnsureDaysRangeAsync(location, startDate, 30);
+
+                if (daysToSchedule.Count == 0)
+                {
+                    Debug.WriteLine("❌ No days available for scheduling iOS notifications");
+                    return;
+                }
+
+                // Build notification minutes dictionary from preferences
+                var notificationMinutes = new Dictionary<string, int>
+                {
+                    { "falsefajr", Preferences.Get("falsefajrNotificationTime", 0) },
+                    { "fajr", Preferences.Get("fajrNotificationTime", 0) },
+                    { "sunrise", Preferences.Get("sunriseNotificationTime", 0) },
+                    { "dhuhr", Preferences.Get("dhuhrNotificationTime", 0) },
+                    { "asr", Preferences.Get("asrNotificationTime", 0) },
+                    { "maghrib", Preferences.Get("maghribNotificationTime", 0) },
+                    { "isha", Preferences.Get("ishaNotificationTime", 0) },
+                    { "endofisha", Preferences.Get("endofishaNotificationTime", 0) }
+                };
+
+#if __IOS__
+                // Cancel existing notifications before scheduling new ones
+                Platforms.iOS.NotificationService.CancelAllNotifications();
+                
+                // Schedule new notifications using iOS notification service
+                await Platforms.iOS.NotificationService.ScheduleMonthlyNotificationsAsync(daysToSchedule, notificationMinutes);
+#endif
+
+                // Persist coverage date
+                var lastDay = daysToSchedule.LastOrDefault();
+                if (lastDay != null && DateTime.TryParse(lastDay.Date, out var coverageDate))
+                {
+                    PersistAlarmCoverage(coverageDate);
+                    Debug.WriteLine($"✅ iOS notification scheduling complete through {coverageDate:dd/MM/yyyy}");
+                }
+            }
+            catch (Exception exception)
+            {
+                Debug.WriteLine($"❌ iOS SetMonthlyAlarmsAsync failed: {exception.Message}");
+            }
         }
 
         Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));

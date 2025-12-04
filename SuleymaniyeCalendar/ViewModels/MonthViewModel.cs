@@ -313,6 +313,7 @@ public partial class MonthViewModel : BaseViewModel
             {
                 cached = await _data.GetMonthlyFromCacheOrEmptyAsync(location).ConfigureAwait(false);
             }
+
             if (cached != null && cached.Count > 0)
             {
                 var normalizedCache = DeduplicateAndSort(cached);
@@ -333,11 +334,10 @@ public partial class MonthViewModel : BaseViewModel
                     IsBusy = false;
                 });
             }
-
-            // Fresh replacement (background). Spinner remains hidden; result just swaps silently unless larger.
-            _ = Task.Run(async () =>
+            else
             {
-                try
+                // No cached data available (rare - MainPage should have loaded it)
+                await MainThread.InvokeOnMainThreadAsync(() =>
                 {
                     IsBusy = false;
                     ShowToast(AppResources.AylikVeriYenilemeIste);
@@ -353,14 +353,6 @@ public partial class MonthViewModel : BaseViewModel
                 Alert($"Error: {ex.Message}", "Error");
                 IsBusy = false;
             });
-        }
-        finally
-        {
-            if (MonthlyCalendar.Count == 0)
-            {
-                // No data at all (cache empty & network likely offline) – ensure spinner off
-                await MainThread.InvokeOnMainThreadAsync(() => IsBusy = false);
-            }
         }
     }
 
@@ -833,4 +825,3 @@ public partial class MonthViewModel : BaseViewModel
 
     #endregion
 }
-

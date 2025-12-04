@@ -324,7 +324,6 @@
                         <Button
                             Margin="8,0,8,10"
                             Style="{StaticResource GlassButtonPrimaryIntense}"
-                            TextColor="{AppThemeBinding Light={StaticResource OnPrimaryContainerLight}, Dark={StaticResource Primary30}}"
                             Command="{Binding GotoSettingsCommand}"
                             Text="{localization:Translate GotoSettings}"
                             TextColor="{AppThemeBinding Light={StaticResource OnSurfaceTextColor}, Dark={StaticResource OnSurfaceTextColorDark}}" />

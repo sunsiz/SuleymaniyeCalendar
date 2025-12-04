@@ -73,7 +73,7 @@ public partial class MonthPage : ContentPage
         // Create table structure immediately, even if data is empty
         if (!_tableBuilt)
         {
-            var table = new MonthTableView { BindingContext = BindingContext };
+            var table = new MonthCalendarView { BindingContext = BindingContext };
             ListHost.Content = table;
             _tableBuilt = true;
         }
