@@ -148,7 +148,11 @@ namespace SuleymaniyeCalendar.Tests
         public void SettingsViewModel_ForegroundServiceIntegration()
         {
             // Arrange
-            var settingsViewModel = new SettingsViewModel(_mockLocalizationManager.Object, _mockRtlService.Object);
+            var settingsViewModel = new SettingsViewModel(
+                _mockLocalizationManager.Object, 
+                _mockRtlService.Object,
+                new Mock<IAlarmService>().Object,
+                new Mock<IWidgetService>().Object);
 
             // Act & Assert - Foreground service enabled shows prayer notification option
             settingsViewModel.ForegroundServiceEnabled = true;

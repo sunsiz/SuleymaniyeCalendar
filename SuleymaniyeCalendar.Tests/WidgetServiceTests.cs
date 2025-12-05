@@ -133,7 +133,11 @@ namespace SuleymaniyeCalendar.Tests
         public void Widget_LanguageChange_AutoRefresh()
         {
             // Arrange
-            var settingsViewModel = new SettingsViewModel(_mockLocalizationManager.Object, _mockRtlService.Object);
+            var settingsViewModel = new SettingsViewModel(
+                _mockLocalizationManager.Object, 
+                _mockRtlService.Object,
+                new Mock<IAlarmService>().Object,
+                new Mock<IWidgetService>().Object);
             
             // Mock language change detection
             _mockRtlService.Setup(r => r.ApplyFlowDirection("ar"));

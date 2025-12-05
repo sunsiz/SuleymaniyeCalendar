@@ -11,10 +11,16 @@ namespace SuleymaniyeCalendar.Services
     /// </summary>
     public class RadioService : IRadioService
     {
+        private readonly IAudioSessionService _audioSessionService;
         private MediaElement? _mediaElement;
         private bool _isPlaying;
         private string _currentTitle = AppResources.FitratinSesi;
         private const string RadioStreamUrl = "https://www.suleymaniyevakfi.org/radio.mp3";
+
+        public RadioService(IAudioSessionService audioSessionService)
+        {
+            _audioSessionService = audioSessionService;
+        }
 
         public bool IsPlaying => _isPlaying;
         public bool IsLoading => false; // Loading is now handled by XAML DataTriggers
@@ -55,13 +61,8 @@ namespace SuleymaniyeCalendar.Services
 
             try
             {
-                // iOS: Initialize audio session before playing
-                if (DeviceInfo.Platform == DevicePlatform.iOS)
-                {
-#if __IOS__
-                    Platforms.iOS.AudioSessionManager.InitializeAudioSession();
-#endif
-                }
+                // Initialize audio session (iOS only, no-op elsewhere)
+                _audioSessionService.InitializeAudioSession();
 
                 // Create media source with metadata for better media control display
                 var mediaSource = MediaSource.FromUri(RadioStreamUrl);

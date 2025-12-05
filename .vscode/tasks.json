@@ -9,6 +9,16 @@
 				"build"
 			],
 			"group": "build"
+		},
+		{
+			"label": "dotnet test",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"test"
+			],
+			"isBackground": false,
+			"group": "test"
 		}
 	]
 }

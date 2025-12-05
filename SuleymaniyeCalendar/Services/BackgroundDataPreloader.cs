@@ -10,15 +10,11 @@ namespace SuleymaniyeCalendar.Services
     public class BackgroundDataPreloader
     {
         private readonly DataService _dataService;
-        private readonly MainViewModel _mainViewModel;
-        private readonly MonthViewModel _monthViewModel;
-        private bool _hasPreloadedToday = false;
+        private volatile bool _hasPreloadedToday;
 
-        public BackgroundDataPreloader(DataService dataService, MainViewModel mainViewModel, MonthViewModel monthViewModel)
+        public BackgroundDataPreloader(DataService dataService)
         {
             _dataService = dataService;
-            _mainViewModel = mainViewModel;
-            _monthViewModel = monthViewModel;
         }
 
         /// <summary>
@@ -33,26 +29,25 @@ namespace SuleymaniyeCalendar.Services
                 // Start background preload after a short delay to not interfere with initial UI
                 await Task.Delay(2000);
 
-                // Preload monthly data if not already loaded
-                if (_monthViewModel?.MonthlyCalendar?.Count == 0)
+                // Preload monthly data in background
+                // We don't check ViewModel state here to avoid captive dependency on Transient MonthViewModel
+                // DataService handles caching, so this is safe to call repeatedly
+                _ = Task.Run(async () =>
                 {
-                    _ = Task.Run(async () =>
+                    try
                     {
-                        try
+                        var location = await _dataService.GetCurrentLocationAsync(false);
+                        if (location != null && location.Latitude != 0 && location.Longitude != 0)
                         {
-                            var location = await _dataService.GetCurrentLocationAsync(false);
-                            if (location != null && location.Latitude != 0 && location.Longitude != 0)
-                            {
-                                // This will cache the data for when user navigates to MonthPage
-                                await _dataService.GetMonthlyPrayerTimesHybridAsync(location, false);
-                            }
+                            // This will cache the data for when user navigates to MonthPage
+                            await _dataService.GetMonthlyPrayerTimesHybridAsync(location, false);
                         }
-                        catch (Exception ex)
-                        {
-                            System.Diagnostics.Debug.WriteLine($"Background preload failed: {ex.Message}");
-                        }
-                    });
-                }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Background preload failed: {ex.Message}");
+                    }
+                });
 
                 _hasPreloadedToday = true;
             }

@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Resources.Strings;
+using SuleymaniyeCalendar.Services;
 using SuleymaniyeCalendar.ViewModels;
 
 namespace SuleymaniyeCalendar;
@@ -11,8 +12,12 @@ namespace SuleymaniyeCalendar;
 /// </summary>
 public partial class App : Application
 {
-    public App()
+    private readonly BackgroundDataPreloader _preloader;
+
+    public App(BackgroundDataPreloader preloader)
     {
+        _preloader = preloader;
+
         // Initialize localization before components load
         var language = Preferences.Get("SelectedLanguage", "tr");
         AppResources.Culture = new CultureInfo(language);
@@ -31,6 +36,9 @@ public partial class App : Application
     protected override void OnStart()
     {
         base.OnStart();
+
+        // Start background data preloading
+        _ = _preloader.StartBackgroundPreloadAsync();
 
 #if __IOS__
         // Initialize iOS notification permissions

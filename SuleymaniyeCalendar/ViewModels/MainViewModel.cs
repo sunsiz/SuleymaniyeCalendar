@@ -256,9 +256,12 @@ public partial class MainViewModel : BaseViewModel
                     ShowToast(AppResources.HaritaHatasi);
                     return;
                 }
-                var location = new Location(Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat));
-                var placeMark = await Geocoding.Default.GetPlacemarksAsync(Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat)).ConfigureAwait(true);
-                var options = new MapLaunchOptions { Name = placeMark.FirstOrDefault()?.Thoroughfare ?? placeMark.FirstOrDefault()?.CountryName };
+                // Store local copy of volatile field for thread safety
+                var cal = _calendar;
+                var location = new Location(Convert.ToDouble(cal.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(cal.Longitude, CultureInfo.InvariantCulture.NumberFormat));
+                var placeMark = await Geocoding.Default.GetPlacemarksAsync(Convert.ToDouble(cal.Latitude, CultureInfo.InvariantCulture.NumberFormat), Convert.ToDouble(cal.Longitude, CultureInfo.InvariantCulture.NumberFormat)).ConfigureAwait(true);
+                // Handle case where all placemarks might be null
+                var options = new MapLaunchOptions { Name = placeMark.FirstOrDefault()?.Thoroughfare ?? placeMark.FirstOrDefault()?.CountryName ?? "Location" };
                 await Map.OpenAsync(location, options).ConfigureAwait(false);
             }
             catch (Exception ex)
@@ -324,7 +327,7 @@ public partial class MainViewModel : BaseViewModel
                         }
                     });
                     // Get fresh prayer times with the updated location
-                    _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
+                    _calendar = await _data.GetTodayPrayerTimesAsync(refreshLocation: true).ConfigureAwait(false);
                     if (_calendar != null)
                     {
                         _cachedTimes = null; // Invalidate cached times
@@ -596,7 +599,7 @@ public partial class MainViewModel : BaseViewModel
             Debug.WriteLine($"**** {this.GetType().Name}.{nameof(CheckLocationInfoAsync)}: Starting at {DateTime.Now}");
             await Task.Delay(timeDelay).ConfigureAwait(false);
             var calendar = _data.calendar;
-            calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
+            calendar = await _data.GetTodayPrayerTimesAsync().ConfigureAwait(false);
             
             // Ensure we capture the calendar if we got one, even if we don't enter the default coordinates block
             if (calendar != null)
@@ -609,7 +612,7 @@ public partial class MainViewModel : BaseViewModel
             if (calendar != null && ((calendar.Altitude == 114.0 && calendar.Latitude == 41.0 && calendar.Longitude == 29.0) || (calendar.Altitude == 0 && calendar.Latitude == 0 && calendar.Longitude == 0)))
             {
                 // Default coordinates detected, need fresh location
-                _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
+                _calendar = await _data.GetTodayPrayerTimesAsync(refreshLocation: true).ConfigureAwait(false);
                 if (_calendar != null)
                 {
                     _cachedTimes = null; // Invalidate cached times
@@ -653,7 +656,7 @@ public partial class MainViewModel : BaseViewModel
         {
             try 
             {
-                var calendar = await _data.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
+                var calendar = await _data.GetTodayPrayerTimesAsync().ConfigureAwait(false);
                 if (calendar != null)
                 {
                     _calendar = calendar;
@@ -700,58 +703,77 @@ public partial class MainViewModel : BaseViewModel
 
             try
             {
+                // Update cache if needed
+                if (_cachedTimes == null)
+                {
+                    _cachedTimes = CachedPrayerTimes.FromCalendar(_calendar);
+                }
+
                 // Build unified prayers from the canonical Calendar model
                 var list = _data.BuildPrayersFromCalendar(_calendar);
 
-                // Compute temporal states using the same rules as before
+                // Compute temporal states using cached times (FAST)
                 string[] seq = ["falsefajr", "fajr", "sunrise", "dhuhr", "asr", "maghrib", "isha", "endofisha"];
-                var times = new Dictionary<string, string>
+                
+                // Use cached TimeSpans to construct DateTimes for today
+                var today = DateTime.Today;
+                var times = new Dictionary<string, DateTime>
                 {
-                    ["falsefajr"] = _calendar.FalseFajr,
-                    ["fajr"] = _calendar.Fajr,
-                    ["sunrise"] = _calendar.Sunrise,
-                    ["dhuhr"] = _calendar.Dhuhr,
-                    ["asr"] = _calendar.Asr,
-                    ["maghrib"] = _calendar.Maghrib,
-                    ["isha"] = _calendar.Isha,
-                    ["endofisha"] = _calendar.EndOfIsha
+                    ["falsefajr"] = today.Add(_cachedTimes.FalseFajr),
+                    ["fajr"] = today.Add(_cachedTimes.Fajr),
+                    ["sunrise"] = today.Add(_cachedTimes.Sunrise),
+                    ["dhuhr"] = today.Add(_cachedTimes.Dhuhr),
+                    ["asr"] = today.Add(_cachedTimes.Asr),
+                    ["maghrib"] = today.Add(_cachedTimes.Maghrib),
+                    ["isha"] = today.Add(_cachedTimes.Isha),
+                    ["endofisha"] = today.Add(_cachedTimes.EndOfIsha)
                 };
-
-                DateTime ParseTimeOrMin(string s)
-                {
-                    try { return DateTime.Parse(s, CultureInfo.InvariantCulture); } catch { return DateTime.MinValue; }
-                }
 
                 foreach (var id in seq)
                 {
                     var p = list.FirstOrDefault(x => x.Id == id);
                     if (p is null) continue;
-                    string current = times[id];
-                    // For the last item, reuse FalseFajr as the next bound like the legacy logic
-                    string next = id == "endofisha" ? _calendar.FalseFajr : times[seq[Array.IndexOf(seq, id) + 1]];
+                    
+                    DateTime current = times[id];
+                    DateTime next;
+                    
+                    if (id == "endofisha")
+                    {
+                        // After EndOfIsha, next prayer is tomorrow's FalseFajr
+                        next = times["falsefajr"].AddDays(1);
+                    }
+                    else
+                    {
+                        next = times[seq[Array.IndexOf(seq, id) + 1]];
+                    }
 
-                    p.State = CheckState(ParseTimeOrMin(current), ParseTimeOrMin(next));
+                    p.State = CheckState(current, next);
                     p.StateDescription = GetStateDescription(p.State);
                     p.UpdateVisualState();
 
-                    // Wire a compiled-binding friendly navigation command on each item
-                    p.NavigateCommand = new AsyncRelayCommand(async () =>
+                    // Only create command if we are initializing the collection
+                    // ApplyPrayerDiff preserves existing commands, so we only need these for the initial population
+                    if (Prayers == null || Prayers.Count == 0)
                     {
-                        if (_isNavigating) return;
-                        _isNavigating = true;
-                        try
+                        // Wire a compiled-binding friendly navigation command on each item
+                        p.NavigateCommand = new AsyncRelayCommand(async () =>
                         {
-                            await Shell.Current.GoToAsync(
-                                nameof(PrayerDetailPage),
-                                true,
-                                new Dictionary<string, object> { { nameof(PrayerDetailViewModel.PrayerId), p.Id } }
-                            ).ConfigureAwait(false);
-                        }
-                        finally
-                        {
-                            _isNavigating = false;
-                        }
-                    });
+                            if (_isNavigating) return;
+                            _isNavigating = true;
+                            try
+                            {
+                                await Shell.Current.GoToAsync(
+                                    nameof(PrayerDetailPage),
+                                    true,
+                                    new Dictionary<string, object> { { nameof(PrayerDetailViewModel.PrayerId), p.Id } }
+                                ).ConfigureAwait(false);
+                            }
+                            finally
+                            {
+                                _isNavigating = false;
+                            }
+                        });
+                    }
                 }
 
                 // Persist raw times consistently
@@ -829,13 +851,13 @@ public partial class MainViewModel : BaseViewModel
         /// <param name="current">Start time of this prayer window.</param>
         /// <param name="next">Start time of the next prayer window.</param>
         /// <returns>"Passed", "Happening", or "Waiting" based on current time.</returns>
-        private string CheckState(DateTime current, DateTime next)
+        private static string CheckState(DateTime current, DateTime next)
         {
-            var state = "";
-            if (DateTime.Now > next) state = "Passed";
-            if (DateTime.Now > current && DateTime.Now < next) state = "Happening";
-            if (DateTime.Now < current) state = "Waiting";
-            return state;
+            var now = DateTime.Now;
+            // Use >= for boundary conditions to ensure no edge case returns empty string
+            if (now >= next) return "Passed";
+            if (now >= current) return "Happening"; // Implicitly now < next
+            return "Waiting";
         }
 
         /// <summary>
@@ -869,6 +891,17 @@ public partial class MainViewModel : BaseViewModel
                 Application.Current?.Dispatcher.Dispatch(() => IsRefreshing = false);
             }
 
+            // Check for date change immediately on appear (handles app resume after midnight)
+            var today = DateTime.Today;
+            if (today != _lastKnownDate)
+            {
+                Debug.WriteLine($"[MainViewModel.OnAppearing] Date changed from {_lastKnownDate:yyyy-MM-dd} to {today:yyyy-MM-dd} - invalidating stale data");
+                _lastKnownDate = today;
+                _lastMinute = DateTime.Now.Minute;
+                _calendar = null;
+                _cachedTimes = null;
+            }
+
             // Schedule refresh on the next loop so the first frame can render immediately
             Application.Current?.Dispatcher.Dispatch(() =>
             {
@@ -898,8 +931,31 @@ public partial class MainViewModel : BaseViewModel
                         Debug.WriteLine($"[MainViewModel] Date changed from {_lastKnownDate:yyyy-MM-dd} to {today:yyyy-MM-dd} - fetching new day's data");
                         _lastKnownDate = today;
                         _lastMinute = currentMinute;
-                        // Date changed - need to fetch new day's prayer times from server
-                        _ = LoadPrayers();
+                        
+                        // Date changed - need to fetch new day's prayer times
+                        // 1. Invalidate current calendar to force reload
+                        _calendar = null;
+                        _cachedTimes = null;
+                        
+                        // 2. Trigger data fetch and UI refresh (with error handling for fire-and-forget)
+                        _ = Task.Run(async () => 
+                        {
+                            try
+                            {
+                                // Fetch new day's data from service
+                                var newCalendar = await _data.GetTodayPrayerTimesAsync().ConfigureAwait(false);
+                                if (newCalendar != null)
+                                {
+                                    _calendar = newCalendar;
+                                    _data.calendar = newCalendar;
+                                    await RefreshUiAsync(force: true).ConfigureAwait(false);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Debug.WriteLine($"[MainViewModel] Date change refresh failed: {ex.Message}");
+                            }
+                        });
                     }
                     // 🔄 PHASE 18: Recalculate prayer states when minute changes
                     // This ensures "current prayer" updates correctly (e.g., when crossing prayer boundaries)
@@ -1134,7 +1190,7 @@ public partial class MainViewModel : BaseViewModel
         private async Task GetPrayersAsync()
         {
             // GetPrayersAsync is called when user needs fresh prayer times, so refresh location
-            _calendar = await _data.GetPrayerTimesHybridAsync(refreshLocation: true).ConfigureAwait(false);
+            _calendar = await _data.GetTodayPrayerTimesAsync(refreshLocation: true).ConfigureAwait(false);
             if (_calendar != null && _calendar.Latitude != 0)
             {
                 // Invalidate cached times when calendar changes

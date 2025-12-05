@@ -1,6 +1,8 @@
 ﻿#nullable enable
 
 using System.Collections.ObjectModel;
+using System.Globalization;
+using SuleymaniyeCalendar.Helpers;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Resources.Strings;
 using Calendar = SuleymaniyeCalendar.Models.Calendar;
@@ -52,19 +54,45 @@ public class DataService
 
     public bool HaveInternet() => _repository.HaveInternet();
 
-    public async Task<Calendar?> PrepareMonthlyPrayerTimes()
+    /// <summary>
+    /// Gets today's prayer times using cache-first strategy.
+    /// </summary>
+    /// <param name="refreshLocation">If true, forces GPS refresh before fetching times.</param>
+    /// <returns>Today's calendar data, or null if unavailable.</returns>
+    public async Task<Calendar?> GetTodayPrayerTimesAsync(bool refreshLocation = false)
     {
-        var location = await GetCurrentLocationAsync(false);
-        if (location == null) return null;
-        return await _repository.GetTodayPrayerTimesAsync(location);
+        var location = await GetCurrentLocationAsync(refreshLocation).ConfigureAwait(false);
+        if (location is null) return null;
+
+        // Cache-first: GetDailyPrayerTimesHybridAsync checks cache before API
+        var today = await _repository.GetDailyPrayerTimesHybridAsync(location, DateTime.Today).ConfigureAwait(false);
+        if (today is not null) return today;
+
+        // Fallback: If daily fetch failed, try monthly (will populate cache for future)
+        var monthly = await _repository.GetMonthlyPrayerTimesHybridAsync(location).ConfigureAwait(false);
+        if (monthly is null) return null;
+
+        var todayDate = DateTime.Today;
+        return monthly.FirstOrDefault(d => 
+        {
+            if (string.IsNullOrEmpty(d.Date)) return false;
+            var parsedDate = AppConstants.ParseCalendarDate(d.Date);
+            return parsedDate.Date == todayDate;
+        });
     }
 
-    public async Task<Calendar?> GetPrayerTimesHybridAsync(bool refreshLocation = false)
-    {
-        var location = await GetCurrentLocationAsync(refreshLocation);
-        if (location == null) return null;
-        return await GetDailyPrayerTimesHybridAsync(location, DateTime.Today);
-    }
+    /// <summary>
+    /// Alias for GetTodayPrayerTimesAsync for backward compatibility.
+    /// </summary>
+    [Obsolete("Use GetTodayPrayerTimesAsync instead")]
+    public Task<Calendar?> PrepareMonthlyPrayerTimes() => GetTodayPrayerTimesAsync(false);
+
+    /// <summary>
+    /// Alias for GetTodayPrayerTimesAsync for backward compatibility.
+    /// </summary>
+    [Obsolete("Use GetTodayPrayerTimesAsync instead")]
+    public Task<Calendar?> GetPrayerTimesHybridAsync(bool refreshLocation = false) 
+        => GetTodayPrayerTimesAsync(refreshLocation);
 
     public Task<ObservableCollection<Calendar>> GetMonthlyFromCacheOrEmptyAsync(Location location)
         => _repository.GetMonthlyFromCacheOrEmptyAsync(location);

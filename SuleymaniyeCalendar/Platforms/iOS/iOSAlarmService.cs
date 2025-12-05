@@ -27,19 +27,27 @@ public class iOSAlarmService : IAlarmService
         
         // The IAlarmService.SetAlarm receives the exact alarm time (already adjusted for offsets if any).
         // So we should pass 0 for notificationMinutesBefore.
+        // Use the actual prayer time from settings for display, not the alarm trigger time.
         
         var prayerName = settings.PrayerName;
-        var timeStr = alarmTime.ToString("HH:mm");
+        var displayTime = string.IsNullOrEmpty(settings.PrayerTime) ? alarmTime.ToString("HH:mm") : settings.PrayerTime;
         
-        // We need to run this async task
-        Task.Run(async () => 
+        // Fire-and-forget with proper error handling
+        _ = Task.Run(async () => 
         {
-            await NotificationService.SchedulePrayerNotificationAsync(
-                prayerName, 
-                timeStr, 
-                0, 
-                alarmTime.Date
-            );
+            try
+            {
+                await NotificationService.SchedulePrayerNotificationAsync(
+                    prayerName, 
+                    displayTime,  // Use actual prayer time for display
+                    0, 
+                    alarmTime.Date
+                ).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"iOS notification scheduling failed for {prayerName}: {ex.Message}");
+            }
         });
     }
 

@@ -122,8 +122,9 @@ public class PrayerCacheService
                 .OrderBy(d => ParseCalendarDateOrMin(d.Date))
                 .ToList();
 
-            // Only return if we have a reasonably complete month (28+ days)
-            if (monthDays.Count >= 28)
+            // Only return if we have a complete month (all days present)
+            var expectedDays = DateTime.DaysInMonth(year, month);
+            if (monthDays.Count >= expectedDays)
             {
                 return new ObservableCollection<PrayerCalendar>(monthDays);
             }
@@ -315,7 +316,10 @@ public class PrayerCacheService
                 foreach (var f in files)
                 {
                     try { File.Delete(f); }
-                    catch { /* ignore individual file deletion errors */ }
+                    catch (Exception ex) 
+                    { 
+                        Debug.WriteLine($"Failed to delete cache file {Path.GetFileName(f)}: {ex.Message}"); 
+                    }
                 }
 
                 Debug.WriteLine($"Cleared {files.Length} cache files due to location change");

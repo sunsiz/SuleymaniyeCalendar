@@ -39,6 +39,7 @@ namespace SuleymaniyeCalendar
 		private Action? _runnable;
 		private int _updateCounter;
 		private DateTime _lastRescheduleAttemptUtc = DateTime.MinValue;
+		private DateTime _lastKnownDate = DateTime.Today; // Track date for midnight crossing detection
 		
 		/// <summary>
 		/// Critical system events that should bypass anti-spam protection for alarm scheduling.
@@ -75,7 +76,8 @@ namespace SuleymaniyeCalendar
         {
             var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
             intent.PutExtra("name", settings.PrayerName);
-            intent.PutExtra("time", alarmTime.ToString("HH:mm"));
+            // Use actual prayer time for display, not the alarm trigger time
+            intent.PutExtra("time", string.IsNullOrEmpty(settings.PrayerTime) ? alarmTime.ToString("HH:mm") : settings.PrayerTime);
             
             var pendingIntent = PendingIntent.GetBroadcast(
                 Application.Context, 
@@ -199,6 +201,36 @@ namespace SuleymaniyeCalendar
 				}
 
 				_handler.PostDelayed(_runnable, NOTIFICATION_UPDATE_INTERVAL_MS);
+				
+				// Check for date change (midnight crossing)
+				var today = DateTime.Today;
+				if (today != _lastKnownDate)
+				{
+					System.Diagnostics.Debug.WriteLine($"[AlarmForegroundService] Date changed from {_lastKnownDate:yyyy-MM-dd} to {today:yyyy-MM-dd} - refreshing data");
+					_lastKnownDate = today;
+					
+					// Refresh calendar data for the new day
+					_ = Task.Run(async () =>
+					{
+						try
+						{
+							var dataService = GetDataService();
+							if (dataService != null)
+							{
+								var cal = await dataService.GetTodayPrayerTimesAsync().ConfigureAwait(false);
+								if (cal != null)
+								{
+									dataService.calendar = cal;
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							System.Diagnostics.Debug.WriteLine($"[AlarmForegroundService] Date change refresh failed: {ex.Message}");
+						}
+					});
+				}
+				
 				SetNotification();
 				if (_notification != null)
 				{
@@ -210,10 +242,10 @@ namespace SuleymaniyeCalendar
 					return; // Refresh widget every 30 minutes
 				}
 
-				var intent = new Intent(ApplicationContext, typeof(WidgetService));
+				var intent = new Intent(ApplicationContext ?? Application.Context, typeof(WidgetService));
 				try
 				{
-					ApplicationContext?.StartService(intent);
+					(ApplicationContext ?? Application.Context).StartService(intent);
 				}
 				catch (Exception exception)
 				{
@@ -277,14 +309,14 @@ namespace SuleymaniyeCalendar
 			else
 			{
 				var compat = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-					.SetContentTitle(notificationTitle)
-					.SetStyle(new NotificationCompat.BigTextStyle().BigText((Preferences.Get("NotificationPrayerTimesEnabled", false) ? GetTodaysPrayerTimes() : string.Empty)))
-					.SetSmallIcon(Resource.Drawable.app_logo)
-					.SetContentIntent(BuildIntentToShowMainActivity())
-					.SetWhen(Java.Lang.JavaSystem.CurrentTimeMillis())
-					.SetShowWhen(true)
-					.SetOngoing(true)
-					.SetOnlyAlertOnce(true);
+					.SetContentTitle(notificationTitle)!
+					.SetStyle(new NotificationCompat.BigTextStyle().BigText((Preferences.Get("NotificationPrayerTimesEnabled", false) ? GetTodaysPrayerTimes() : string.Empty)))!
+					.SetSmallIcon(Resource.Drawable.app_logo)!
+					.SetContentIntent(BuildIntentToShowMainActivity())!
+					.SetWhen(Java.Lang.JavaSystem.CurrentTimeMillis())!
+					.SetShowWhen(true)!
+					.SetOngoing(true)!
+					.SetOnlyAlertOnce(true)!;
 				_notification = compat.Build();
 			}
 		}
@@ -414,7 +446,7 @@ namespace SuleymaniyeCalendar
                             var dataService = GetDataService();
                             if (dataService != null && dataService.calendar == null)
                             {
-                                var cal = await dataService.PrepareMonthlyPrayerTimes().ConfigureAwait(false);
+                                var cal = await dataService.GetTodayPrayerTimesAsync().ConfigureAwait(false);
                                 if (cal != null)
                                 {
                                     dataService.calendar = cal;
@@ -588,6 +620,14 @@ namespace SuleymaniyeCalendar
 			}
 
 			SetNotification();
+			
+			// Ensure notification is created before starting foreground
+			if (_notification == null)
+			{
+				Log.Warn(nameof(AlarmForegroundService), "Failed to create notification for foreground service");
+				return false;
+			}
+			
 			try
 			{
 #pragma warning disable CA1416 // Platform compatibility

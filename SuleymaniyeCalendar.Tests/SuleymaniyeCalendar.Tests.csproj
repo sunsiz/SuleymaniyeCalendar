@@ -2,18 +2,33 @@
   <PropertyGroup>
     <TargetFramework>net9.0-windows10.0.26100</TargetFramework>
     <IsPackable>false</IsPackable>
+    <OutputType>Library</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
+  
   <ItemGroup>
+    <!-- Reference MAUI packages without build assets -->
+    <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.120">
+      <ExcludeAssets>build;buildTransitive</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="9.0.120">
+      <ExcludeAssets>build;buildTransitive</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="4.0.1" />
     <PackageReference Include="MSTest.TestFramework" Version="4.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="FluentAssertions" Version="8.7.1" />
-  <PackageReference Include="coverlet.collector" Version="6.0.4">
-    <PrivateAssets>all</PrivateAssets>
-    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-  </PackageReference>
+    <PackageReference Include="coverlet.collector" Version="6.0.4">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SuleymaniyeCalendar\SuleymaniyeCalendar.csproj" />
+    <ProjectReference Include="..\SuleymaniyeCalendar\SuleymaniyeCalendar.csproj">
+      <ExcludeAssets>build;buildTransitive</ExcludeAssets>
+    </ProjectReference>
   </ItemGroup>
 </Project>

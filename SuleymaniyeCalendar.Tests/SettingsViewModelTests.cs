@@ -15,17 +15,25 @@ namespace SuleymaniyeCalendar.Tests
     {
         private Mock<ILocalizationResourceManager> _localizationMock;
         private Mock<IRtlService> _rtlServiceMock;
+        private Mock<IAlarmService> _alarmServiceMock;
+        private Mock<IWidgetService> _widgetServiceMock;
 
         [TestInitialize]
         public void Setup()
         {
             _localizationMock = new Mock<ILocalizationResourceManager>();
             _rtlServiceMock = new Mock<IRtlService>();
+            _alarmServiceMock = new Mock<IAlarmService>();
+            _widgetServiceMock = new Mock<IWidgetService>();
         }
 
         private SettingsViewModel CreateViewModel()
         {
-            return new SettingsViewModel(_localizationMock.Object, _rtlServiceMock.Object);
+            return new SettingsViewModel(
+                _localizationMock.Object, 
+                _rtlServiceMock.Object,
+                _alarmServiceMock.Object,
+                _widgetServiceMock.Object);
         }
 
         [TestMethod]

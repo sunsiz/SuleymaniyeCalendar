@@ -169,7 +169,7 @@ namespace SuleymaniyeCalendar
 				try
 				{
 					// Use Task.Run to avoid blocking but wait for result
-					calendar = Task.Run(async () => await dataService.PrepareMonthlyPrayerTimes().ConfigureAwait(false)).GetAwaiter().GetResult();
+					calendar = Task.Run(async () => await dataService.GetTodayPrayerTimesAsync().ConfigureAwait(false)).GetAwaiter().GetResult();
 					if (calendar != null)
 					{
 						dataService.calendar = calendar;

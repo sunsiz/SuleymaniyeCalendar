@@ -7,6 +7,8 @@ public class NotificationSettings
     public string Sound { get; set; } = "kus";
     public string PrayerId { get; set; } = string.Empty;
     public string PrayerName { get; set; } = string.Empty;
+    /// <summary>The actual prayer time (HH:mm format) to display in notifications.</summary>
+    public string PrayerTime { get; set; } = string.Empty;
 }
 
 /// <summary>

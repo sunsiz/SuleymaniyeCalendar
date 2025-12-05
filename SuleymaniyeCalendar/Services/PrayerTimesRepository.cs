@@ -108,22 +108,26 @@ public class PrayerTimesRepository
         return null;
     }
 
-    public async Task<Calendar?> GetTodayPrayerTimesAsync(Location location)
-    {
-        var today = DateTime.Now;
-        // Try cache first
-        var cached = await _cacheService.TryGetDailyFromUnifiedCacheAsync(location, today).ConfigureAwait(false);
-        if (cached != null) return cached;
-
-        // Fallback to fetch
-        return await GetDailyPrayerTimesHybridAsync(location, today).ConfigureAwait(false);
-    }
+    /// <summary>
+    /// Gets today's prayer times. Delegates to GetDailyPrayerTimesHybridAsync which checks cache first.
+    /// </summary>
+    public Task<Calendar?> GetTodayPrayerTimesAsync(Location location)
+        => GetDailyPrayerTimesHybridAsync(location, DateTime.Today);
 
     public async Task<Calendar?> GetDailyPrayerTimesHybridAsync(Location location, DateTime? date = null)
     {
+        var targetDate = date ?? DateTime.Today;
+        
+        // Check cache first
+        var cached = await _cacheService.TryGetDailyFromUnifiedCacheAsync(location, targetDate).ConfigureAwait(false);
+        if (cached is not null) 
+        {
+            Debug.WriteLine("Hybrid Daily: Returning cached data");
+            return cached;
+        }
+
         if (!HaveInternet()) return null;
 
-        var targetDate = date ?? DateTime.Today;
         var altitude = location.Altitude ?? 0;
 
         // Strategy 1: Try new JSON API first
@@ -137,7 +141,7 @@ public class PrayerTimesRepository
                     location.Latitude, location.Longitude, targetDate, altitude);
             }
             
-            if (jsonResult != null)
+            if (jsonResult is not null)
             {
                 Debug.WriteLine("Hybrid Daily: JSON API success");
                 await _cacheService.SaveToUnifiedCacheAsync(location, new List<Calendar> { jsonResult }).ConfigureAwait(false);
@@ -159,10 +163,10 @@ public class PrayerTimesRepository
             {
                 var day = monthly.FirstOrDefault(d => 
                 {
-                    // Simple string match for now, assuming format consistency
-                    // Ideally use parsed dates
-                    return d.Date.StartsWith(targetDate.ToString("dd.MM.yyyy")) || 
-                           d.Date.StartsWith(targetDate.ToString("dd/MM/yyyy"));
+                    // Use proper date parsing for reliable comparison
+                    if (string.IsNullOrEmpty(d.Date)) return false;
+                    var parsedDate = AppConstants.ParseCalendarDate(d.Date);
+                    return parsedDate.Date == targetDate.Date;
                 });
                 
                 if (day != null)
@@ -312,15 +316,14 @@ public class PrayerTimesRepository
         }
 
         // Filter to range and ensure order/distinct
+        // Parse date once for better performance
         var inRange = result
-            .Where(d =>
-            {
-                var dd = ParseCalendarDateOrMin(d.Date);
-                return dd != DateTime.MinValue && dd >= startDate && dd <= endDate;
-            })
-            .GroupBy(d => d.Date) // Distinct by date string
+            .Select(d => new { Cal = d, ParsedDate = ParseCalendarDateOrMin(d.Date) })
+            .Where(x => x.ParsedDate != DateTime.MinValue && x.ParsedDate >= startDate && x.ParsedDate <= endDate)
+            .GroupBy(x => x.Cal.Date) // Distinct by date string
             .Select(g => g.First())
-            .OrderBy(d => ParseCalendarDateOrMin(d.Date))
+            .OrderBy(x => x.ParsedDate)
+            .Select(x => x.Cal)
             .ToList();
 
         return inRange;

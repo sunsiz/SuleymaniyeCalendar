@@ -102,6 +102,12 @@ public static class MauiProgram
         services.AddSingleton<IWidgetService, NullWidgetService>();
 #endif
 
+#if IOS
+        Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddSingleton<IAudioSessionService, SuleymaniyeCalendar.Platforms.iOS.iOSAudioSessionService>(services);
+#else
+        Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddSingleton<IAudioSessionService, NullAudioSessionService>(services);
+#endif
+
         // Core services
         services.AddSingleton<PerformanceService>();
         services.AddSingleton<LocationService>();

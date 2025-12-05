@@ -153,28 +153,28 @@ public class NotificationSchedulerService
             // If it's today and the time has passed, don't schedule
             if (isToday && alarmTime <= now) return;
 
-            // Unique ID generation (simple hash)
-            int requestCode = (baseDate.DayOfYear * 100) + prayerId.GetHashCode() % 100; 
-            // Note: This is a simplified ID generation. The original might have been more complex.
-            // Let's try to match the original logic if possible, or use a robust one.
-            // Original: (day.DayOfYear * 10) + prayerIndex? No, let's look at DataService.
-            
-            // Actually, let's use a better ID scheme:
-            // DayOfYear (1-366) * 100 + PrayerIndex (0-7)
+            // Unique ID generation:
+            // Include year to prevent collision across year boundaries (Dec 25 - Jan 24 spanning New Year)
+            // Format: (Year % 10) * 100000 + DayOfYear * 100 + PrayerIndex
+            // Max value: 9 * 100000 + 366 * 100 + 7 = 936607 (fits in int32)
             int prayerIndex = prayerId switch
             {
                 "falsefajr" => 0, "fajr" => 1, "sunrise" => 2, "dhuhr" => 3,
                 "asr" => 4, "maghrib" => 5, "isha" => 6, "endofisha" => 7, _ => 8
             };
-            requestCode = (baseDate.DayOfYear * 100) + prayerIndex;
+            int requestCode = ((baseDate.Year % 10) * 100000) + (baseDate.DayOfYear * 100) + prayerIndex;
 
+            // Calculate actual prayer time (alarm time + offset minutes)
+            var actualPrayerTime = alarmTime.AddMinutes(notifyTime);
+            
             var settings = new NotificationSettings
             {
                 Title = "Süleymaniye Takvimi",
                 Body = $"{prayerName} vaktine {notifyTime} dakika kaldı.",
                 Sound = Preferences.Get(prayerId + "AlarmSound", "kus"),
                 PrayerId = prayerId,
-                PrayerName = prayerName
+                PrayerName = prayerName,
+                PrayerTime = actualPrayerTime.ToString("HH:mm")
             };
 
             _alarmService.SetAlarm(alarmTime, requestCode, settings);
