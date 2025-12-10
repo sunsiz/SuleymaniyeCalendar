@@ -588,4 +588,7 @@
   <data name="Paylas" xml:space="preserve">
     <value>Paylaş</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Bu gün</value>
+  </data>
 </root>

@@ -413,6 +413,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Today.
+        /// </summary>
+        internal static string Bugun {
+            get {
+                return ResourceManager.GetString("Bugun", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Today&apos;s Prayer Times.
         /// </summary>
         internal static string BugunkuNamazVakitleri {
@@ -971,15 +980,6 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Play.
-        /// </summary>
-        internal static string Oynat {
-            get {
-                return ResourceManager.GetString("Oynat", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Failed to load prayer times for scheduling.
         /// </summary>
         internal static string OtuzGunHatirlaticiHatasi {
@@ -994,6 +994,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         internal static string OtuzGunHatirlaticiPlanlandi {
             get {
                 return ResourceManager.GetString("OtuzGunHatirlaticiPlanlandi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Play.
+        /// </summary>
+        internal static string Oynat {
+            get {
+                return ResourceManager.GetString("Oynat", resourceCulture);
             }
         }
         

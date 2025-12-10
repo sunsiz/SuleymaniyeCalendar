@@ -186,6 +186,9 @@
   <data name="BoylamFormatsiz" xml:space="preserve">
     <value>Boylam</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Bugün</value>
+  </data>
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Bugünkü Namaz Vakitleri</value>
   </data>

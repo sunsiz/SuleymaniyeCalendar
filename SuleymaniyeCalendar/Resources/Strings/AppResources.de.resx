@@ -292,10 +292,10 @@ Diese Anwendung wurde entwickelt, um einen sicheren und schnellen Zugriff auf Ge
   <data name="French" xml:space="preserve">
     <value>Französisch</value>
   </data>
-    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
       <value>Gebetszeiten konnten für die Planung nicht geladen werden</value>
     </data>
-    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
       <value>Gebetserinnerungen für 30 Tage geplant</value>
     </data>
   <data name="GotoSettings" xml:space="preserve">
@@ -588,5 +588,8 @@ Diese Anwendung wurde entwickelt, um einen sicheren und schnellen Zugriff auf Ge
   </data>
   <data name="Paylas" xml:space="preserve">
     <value>Aktie</value>
+  </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Heute</value>
   </data>
 </root>

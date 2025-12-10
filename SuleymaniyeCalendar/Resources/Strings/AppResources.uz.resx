@@ -302,10 +302,10 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>Fitrat TV youtube kanali</value>
   </data>
-    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
       <value>Namoz vaqtlarini rejalashtirish uchun yuklashda xatolik yuz berdi</value>
     </data>
-    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
       <value>Namoz eslatmalari 30 kun uchun rejalandi</value>
     </data>
   <data name="French" xml:space="preserve">
@@ -589,5 +589,8 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   </data>
   <data name="Paylas" xml:space="preserve">
     <value>Baham ko'ring</value>
+  </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Bugun</value>
   </data>
 </root>

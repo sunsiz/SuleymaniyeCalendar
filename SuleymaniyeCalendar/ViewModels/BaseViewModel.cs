@@ -41,8 +41,17 @@ public partial class BaseViewModel : ObservableObject
         ["IconLargeFontSize"] = 1.6,
         ["IconLargerFontSize"] = 2.6,
         ["IconXLFontSize"] = 3.6,
+        // PlayButtonContainerSize scales with font (CornerRadius is fixed, not scalable)
         ["PlayButtonContainerSize"] = 4.0,
-        ["PlayButtonCornerRadius"] = 2.0
+        // Prayer icon sizes that scale with font
+        ["PrayerIconSize"] = 2.3,
+        ["PrayerIconSizePast"] = 1.5,
+        ["PrayerIconSizeActive"] = 2.6,
+        ["PrayerIconContainerSize"] = 2.7,
+        ["PrayerIconContainerSizePast"] = 2.0,
+        ["PrayerIconContainerSizeActive"] = 3.3,
+        // Bell icon container scales with font (CornerRadius is fixed, not scalable)
+        ["BellIconContainerSize"] = 2.7
     };
 
     #endregion

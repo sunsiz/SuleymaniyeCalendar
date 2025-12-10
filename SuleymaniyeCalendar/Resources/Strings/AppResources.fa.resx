@@ -272,10 +272,10 @@
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>کانال یوتیوب تی وی فطرت</value>
   </data>
-    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
       <value>بارگیری زمان نماز برای برنامه‌ریزی ناموفق بود</value>
     </data>
-    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
       <value>یادآوری‌های نماز برای 30 روز برنامه‌ریزی شده‌اند</value>
     </data>
   <data name="GotoSettings" xml:space="preserve">
@@ -589,5 +589,8 @@
   </data>
   <data name="Paylas" xml:space="preserve">
     <value>اشتراک گذاری</value>
+  </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>امروز</value>
   </data>
 </root>

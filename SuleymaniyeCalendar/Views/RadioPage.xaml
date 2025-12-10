@@ -93,12 +93,15 @@
                                     Offset="0,2" />
                         </Border.Shadow>
                         <Label
-                            Padding="0"
+                            Margin="0"
+                            Padding="0,0,0,0"
                             AutomationProperties.IsInAccessibleTree="True"
                             FontAttributes="Bold"
                             FontFamily="{StaticResource IconFontFamily}"
                             FontSize="{DynamicResource IconXLFontSize}"
                             HorizontalOptions="Center"
+                            HorizontalTextAlignment="Center"
+                            VerticalTextAlignment="Center"
                             SemanticProperties.Description="{localization:Translate RadyoCal}"
                             Text="&#xf144;"
                             TextColor="{AppThemeBinding Light={StaticResource Primary60}, Dark={StaticResource Primary30}}"

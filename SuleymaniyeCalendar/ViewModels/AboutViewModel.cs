@@ -1,4 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Maui.Alerts;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.Services;
@@ -49,7 +51,25 @@ public sealed partial class AboutViewModel : BaseViewModel
     private void ToggleShowcase() => ShowDesignShowcase = !ShowDesignShowcase;
 
     [RelayCommand]
-    private async Task LinkButtonClicked(string url) => await Launcher.OpenAsync(url).ConfigureAwait(false);
+    private async Task LinkButtonClicked(string url)
+    {
+        try
+        {
+            await Launcher.OpenAsync(url).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            // iOS Simulator can't open App Store URLs - show toast instead
+            System.Diagnostics.Debug.WriteLine($"Launcher.OpenAsync failed: {ex.Message}");
+            
+            // Copy URL to clipboard as fallback
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                await Clipboard.SetTextAsync(url);
+                await Toast.Make("📋 URL copied to clipboard", ToastDuration.Short).Show();
+            });
+        }
+    }
 
     [RelayCommand]
     private async Task Settings()

@@ -166,6 +166,9 @@
   <data name="BoylamFormatsiz" xml:space="preserve">
     <value>Longitude</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Today</value>
+  </data>
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Today's Prayer Times</value>
   </data>

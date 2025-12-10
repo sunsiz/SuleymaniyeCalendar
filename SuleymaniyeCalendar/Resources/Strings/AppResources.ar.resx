@@ -292,10 +292,10 @@
   <data name="French" xml:space="preserve">
     <value>الفرنسية</value>
   </data>
-    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
       <value>تعذر تحميل أوقات الصلاة لجدولتها</value>
     </data>
-    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
       <value>تم جدولة تذكيرات الصلاة لمدة ٣٠ يومًا</value>
     </data>
   <data name="GotoSettings" xml:space="preserve">
@@ -588,5 +588,8 @@
   </data>
   <data name="Paylas" xml:space="preserve">
     <value>يشارك</value>
+  </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>اليوم</value>
   </data>
 </root>

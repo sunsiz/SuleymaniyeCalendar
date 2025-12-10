@@ -110,7 +110,7 @@ public class AlarmNotificationReceiver : BroadcastReceiver
         }
 
         var notification = builder.Build();
-        if (notification != null)
+        if (notification != null && nm != null)
         {
             nm.Notify(NotificationId, notification);
         }

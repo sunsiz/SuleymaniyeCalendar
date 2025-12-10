@@ -7,12 +7,16 @@ namespace SuleymaniyeCalendar.Services
 	{
 #if ANDROID
 		private Android.Media.MediaPlayer? _player;
+#elif IOS || MACCATALYST
+		private AVFoundation.AVAudioPlayer? _player;
 #endif
 
 		public bool IsPlaying {
 			get {
 #if ANDROID
 				return _player?.IsPlaying == true;
+#elif IOS || MACCATALYST
+				return _player?.Playing == true;
 #else
 				return false;
 #endif
@@ -38,6 +42,29 @@ namespace SuleymaniyeCalendar.Services
 				}
 			}
 			catch { /* ignore */ }
+#elif IOS || MACCATALYST
+			try
+			{
+				// Find the sound file in bundle (raw resources are embedded as bundle resources)
+				var bundlePath = Foundation.NSBundle.MainBundle.PathForResource(fileNameWithoutExtension, "mp3");
+				if (string.IsNullOrEmpty(bundlePath))
+					bundlePath = Foundation.NSBundle.MainBundle.PathForResource(fileNameWithoutExtension, "wav");
+				if (string.IsNullOrEmpty(bundlePath))
+					bundlePath = Foundation.NSBundle.MainBundle.PathForResource(fileNameWithoutExtension, "m4a");
+				
+				if (!string.IsNullOrEmpty(bundlePath))
+				{
+					var url = Foundation.NSUrl.FromFilename(bundlePath);
+					_player = AVFoundation.AVAudioPlayer.FromUrl(url, out var error);
+					if (_player != null && error == null)
+					{
+						_player.NumberOfLoops = loop ? -1 : 0; // -1 = infinite loop
+						_player.PrepareToPlay();
+						_player.Play();
+					}
+				}
+			}
+			catch { /* ignore */ }
 #else
 			await Task.CompletedTask;
 #endif
@@ -53,6 +80,17 @@ namespace SuleymaniyeCalendar.Services
 					if (_player.IsPlaying) _player.Stop();
 					_player.Reset();
 					_player.Release();
+					_player.Dispose();
+					_player = null;
+				}
+			}
+			catch { /* ignore */ }
+#elif IOS || MACCATALYST
+			try
+			{
+				if (_player != null)
+				{
+					if (_player.Playing) _player.Stop();
 					_player.Dispose();
 					_player = null;
 				}

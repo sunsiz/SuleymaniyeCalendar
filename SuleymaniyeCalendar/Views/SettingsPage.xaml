@@ -10,7 +10,10 @@
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     x:DataType="viewModels:SettingsViewModel"
     FlowDirection="{DynamicResource FlowDirection}"
-    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
+    Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}"
+    Shell.BackgroundColor="{AppThemeBinding Light={StaticResource TabBarBgColor}, Dark={StaticResource TabBarBackgroundColorDark}}"
+    Shell.ForegroundColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnSurfaceColorDark}}"
+    Shell.TitleColor="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnSurfaceColorDark}}">
 
     <!-- Windows: explicit back navigation (Shell back button not always visible)
     <ContentPage.ToolbarItems>

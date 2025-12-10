@@ -178,12 +178,16 @@ public partial class MainViewModel : BaseViewModel
             Prayers = new ObservableCollection<Prayer>();
             _data = dataService;
             _calendar = _data.calendar;
+            
+            // Initialize City from cache immediately for all platforms
+            City = Preferences.Get("sehir", AppResources.Sehir);
+            
             try
             {
                 // Lightweight initial population; deeper refresh is coalesced in OnAppearing
                 LoadPrayers();
 
-                // Fire and forget non-UI work
+                // Fire and forget non-UI work to update city from geocoding
                 _ = Task.Run(() => GetCity());
             }
             catch (Exception ex)
@@ -493,15 +497,31 @@ public partial class MainViewModel : BaseViewModel
                 }
 #endif
                 // Non-Windows OR Windows with valid token proceeds to real reverse geocoding.
-                if (_calendar == null)
+                // Try to get coordinates from _calendar first, then from preferences
+                double latitude = 0, longitude = 0;
+                
+                if (_calendar != null && _calendar.Latitude != 0 && _calendar.Longitude != 0)
                 {
-                    Debug.WriteLine("GetCityAsync: _calendar is null, using cached city");
-                    return;
+                    latitude = _calendar.Latitude;
+                    longitude = _calendar.Longitude;
                 }
+                else
+                {
+                    // Fallback to cached coordinates from preferences
+                    latitude = Preferences.Get("LastLatitude", 0.0);
+                    longitude = Preferences.Get("LastLongitude", 0.0);
+                    Debug.WriteLine($"GetCityAsync: Using cached coordinates ({latitude}, {longitude})");
+                }
+                
+                if (latitude == 0 && longitude == 0)
+                {
+                    Debug.WriteLine("GetCityAsync: No coordinates available, using cached city");
+                    // Jump to fallback
+                    throw new InvalidOperationException("No coordinates");
+                }
+                
                 var placemark = await Geocoding.Default
-                    .GetPlacemarksAsync(
-                        Convert.ToDouble(_calendar.Latitude, CultureInfo.InvariantCulture.NumberFormat),
-                        Convert.ToDouble(_calendar.Longitude, CultureInfo.InvariantCulture.NumberFormat))
+                    .GetPlacemarksAsync(latitude, longitude)
                     .ConfigureAwait(false);
 
                 var city = placemark?.FirstOrDefault()?.Locality ??
@@ -513,6 +533,7 @@ public partial class MainViewModel : BaseViewModel
                 {
                     await MainThread.InvokeOnMainThreadAsync(() => City = city);
                     Preferences.Set("sehir", city);
+                    Debug.WriteLine($"GetCityAsync: Updated city to {city}");
                 }
             }
             catch (OperationCanceledException)
@@ -521,14 +542,15 @@ public partial class MainViewModel : BaseViewModel
             }
             catch (Exception exception)
             {
-                Debug.WriteLine($"GetCityAsync error: {exception}");
+                Debug.WriteLine($"GetCityAsync error: {exception.Message}");
             }
 
-            // Fallback to cached city if geocoding failed
+            // Fallback to cached city if geocoding failed or City is still empty
             if (string.IsNullOrEmpty(City))
             {
                 var cachedCity = Preferences.Get("sehir", AppResources.Sehir);
                 await MainThread.InvokeOnMainThreadAsync(() => City = cachedCity);
+                Debug.WriteLine($"GetCityAsync: Fallback to cached city: {cachedCity}");
             }
         }
 

@@ -56,40 +56,65 @@ public class NotificationService
     /// Schedules a prayer time notification.
     /// </summary>
     /// <param name="prayerName">Prayer name (e.g., "Fajr", "Dhuhr")</param>
-    /// <param name="prayerTime">Prayer time (e.g., "05:30")</param>
-    /// <param name="notificationMinutesBefore">Minutes before prayer to notify (0-60)</param>
+    /// <param name="notificationTime">Time to fire the notification (e.g., "05:25" for 5 min before prayer)</param>
+    /// <param name="notificationMinutesBefore">Minutes before prayer (for calculating actual prayer time display)</param>
     /// <param name="date">Date to schedule notification</param>
+    /// <param name="actualPrayerTime">Optional: actual prayer time for display (e.g., "05:30")</param>
+    /// <param name="soundName">Optional: custom sound file name without extension (e.g., "kus", "ezan")</param>
     public static async Task SchedulePrayerNotificationAsync(
         string prayerName,
-        string prayerTime,
+        string notificationTime,
         int notificationMinutesBefore = 0,
-        DateTime? date = null)
+        DateTime? date = null,
+        string? actualPrayerTime = null,
+        string? soundName = null)
     {
         try
         {
             var targetDate = date ?? DateTime.Today;
 
-            // Parse prayer time
-            if (!TimeSpan.TryParse(prayerTime, out var time))
+            // Parse notification trigger time using InvariantCulture for consistent HH:mm parsing
+            if (!TimeSpan.TryParse(notificationTime, System.Globalization.CultureInfo.InvariantCulture, out var time))
             {
-                Debug.WriteLine($"❌ Invalid prayer time format: {prayerTime}");
+                Debug.WriteLine($"❌ Invalid notification time format: {notificationTime}");
                 return;
             }
 
-            // Calculate notification time (subtract minutes before)
-            var notificationTime = time.Subtract(TimeSpan.FromMinutes(notificationMinutesBefore));
-            if (notificationTime.TotalSeconds <= 0)
+            // The time passed is already the notification trigger time (offset-adjusted)
+            // No need to subtract notificationMinutesBefore again
+            var triggerTime = time;
+            if (triggerTime.TotalSeconds <= 0)
             {
-                Debug.WriteLine($"⚠️ Notification time in past: {prayerName} at {prayerTime}");
+                Debug.WriteLine($"⚠️ Notification time in past: {prayerName} at {notificationTime}");
                 return;
             }
+            
+            // Use actual prayer time for display if provided, otherwise calculate from notification time
+            var displayTime = actualPrayerTime ?? notificationTime;
 
-            // Create notification content
+            // Create notification content with custom sound
+            // iOS requires sound files to be in the app bundle (Resources/Raw folder)
+            // Sound file names should include extension (e.g., "kus.mp3")
+            UNNotificationSound notificationSound;
+            if (!string.IsNullOrEmpty(soundName))
+            {
+                // Try with .mp3 extension first, fallback to default
+                var soundFileName = soundName.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase) 
+                    ? soundName 
+                    : $"{soundName}.mp3";
+                notificationSound = UNNotificationSound.GetSound(soundFileName);
+                Debug.WriteLine($"🔊 Using custom sound: {soundFileName}");
+            }
+            else
+            {
+                notificationSound = UNNotificationSound.Default;
+            }
+
             var content = new UNMutableNotificationContent
             {
                 Title = "Prayer Time",
-                Body = $"{prayerName} - {prayerTime}",
-                Sound = UNNotificationSound.Default,
+                Body = $"{prayerName} - {displayTime}",
+                Sound = notificationSound,
                 Badge = NSNumber.FromInt32(1),
                 CategoryIdentifier = PrayerNotificationCategoryId,
                 ThreadIdentifier = "PrayerTimes"
@@ -99,19 +124,19 @@ public class NotificationService
             var userInfo = new NSMutableDictionary
             {
                 { new NSString("prayerName"), new NSString(prayerName) },
-                { new NSString("prayerTime"), new NSString(prayerTime) },
+                { new NSString("prayerTime"), new NSString(displayTime) },
                 { new NSString("date"), NSDate.FromTimeIntervalSinceNow(0) }
             };
             content.UserInfo = userInfo;
 
-            // Create trigger for specific time
+            // Create trigger for specific time using the parsed triggerTime
             var components = new NSDateComponents
             {
                 Year = targetDate.Year,
                 Month = targetDate.Month,
                 Day = targetDate.Day,
-                Hour = notificationTime.Hours,
-                Minute = notificationTime.Minutes,
+                Hour = triggerTime.Hours,
+                Minute = triggerTime.Minutes,
                 Second = 0
             };
 
@@ -124,7 +149,7 @@ public class NotificationService
             // Schedule notification
             await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
             
-            Debug.WriteLine($"✅ Scheduled: {prayerName} at {notificationTime:HH:mm} ({targetDate:yyyy-MM-dd})");
+            Debug.WriteLine($"✅ Scheduled: {prayerName} at {triggerTime:hh\\:mm} ({targetDate:yyyy-MM-dd})");
         }
         catch (Exception ex)
         {

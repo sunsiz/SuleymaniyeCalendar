@@ -125,29 +125,18 @@
                                     x:DataType="viewModels:PrayerDetailViewModel"
                                     Margin="6"
                                         Style="{StaticResource iOSLiquidGlassButton}"
+                                        FontFamily="{StaticResource IconFontFamily}"
+                                        FontSize="{DynamicResource IconSmallFontSize}"
+                                        Text="&#xf04b;"
                                         TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
                                                                 Dark={StaticResource CardValueDark}}"
                                         Command="{Binding TestButtonClickedCommand}"
                                         WidthRequest="52" HeightRequest="48">
                                     <Button.Triggers>
-                                        <DataTrigger Binding="{Binding IsPlaying}" TargetType="Button" Value="False">
-                                            <Setter Property="ImageSource">
-                                                <Setter.Value>
-                                                    <FontImageSource FontFamily="{StaticResource IconFontFamily}"
-                                                                     Glyph="&#xf04b;" Size="{DynamicResource IconSmallFontSize}"
-                                                                     Color="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
-                                                </Setter.Value>
-                                            </Setter>
-                                        </DataTrigger>
                                         <DataTrigger Binding="{Binding IsPlaying}" TargetType="Button" Value="True">
                                             <Setter Property="Style" Value="{StaticResource GlassButtonSuccess}" />
+                                            <Setter Property="Text" Value="&#xf04d;" />
                                             <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceTextColor}, Dark={StaticResource OnSurfaceTextColorDark}}" />
-                                            <Setter Property="ImageSource">
-                                                <Setter.Value>
-                                                    <FontImageSource FontFamily="{StaticResource IconFontFamily}"
-                                                                     Glyph="&#xf04d;" Size="{DynamicResource IconSmallFontSize}" />
-                                                </Setter.Value>
-                                            </Setter>
                                         </DataTrigger>
                                     </Button.Triggers>
                                 </Button>

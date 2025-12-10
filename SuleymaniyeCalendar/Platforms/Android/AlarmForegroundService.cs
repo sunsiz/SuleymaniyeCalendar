@@ -572,7 +572,7 @@ namespace SuleymaniyeCalendar
 			}
 
 			SetNotification();
-			_notificationManager.Notify(NOTIFICATION_ID, _notification);
+			_notificationManager?.Notify(NOTIFICATION_ID, _notification);
 			_handler.PostDelayed(_runnable, NOTIFICATION_UPDATE_INTERVAL_MS);
 			_isStarted = true;
 		}

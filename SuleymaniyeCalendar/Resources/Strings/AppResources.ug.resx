@@ -590,4 +590,7 @@
   <data name="Paylas" xml:space="preserve">
     <value>ھەمبەھىرلەش</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>بۈگۈن</value>
+  </data>
 </root>

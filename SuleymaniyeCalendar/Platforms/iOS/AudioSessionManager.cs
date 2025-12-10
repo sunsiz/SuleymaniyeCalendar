@@ -21,10 +21,10 @@ public static class AudioSessionManager
             var audioSession = AVAudioSession.SharedInstance();
             
             // Set category to Playback (allows audio in background)
+            // Note: DefaultToSpeaker is only valid with PlayAndRecord category
             audioSession.SetCategory(
                 AVAudioSessionCategory.Playback,
-                AVAudioSessionCategoryOptions.DuckOthers | 
-                AVAudioSessionCategoryOptions.DefaultToSpeaker
+                AVAudioSessionCategoryOptions.DuckOthers
             );
             
             // Activate the session

@@ -189,7 +189,9 @@
                                         <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="6">
 
                                             <!-- Prayer Icon -->
-                                            <Border Grid.Column="0" WidthRequest="38" HeightRequest="38"
+                                            <Border Grid.Column="0" 
+                                                    WidthRequest="{DynamicResource PrayerIconContainerSize}" 
+                                                    HeightRequest="{DynamicResource PrayerIconContainerSize}"
                                                     Style="{StaticResource LuminousCircularIcon}"
                                                     BackgroundColor="Transparent"
                                                     Background="{StaticResource Secondary80}"
@@ -198,36 +200,37 @@
                                                 <Border.Triggers>
                                                     <!-- Past: compact -->
                                                     <DataTrigger Binding="{Binding IsPast}" TargetType="Border" Value="True">
-                                                        <Setter Property="WidthRequest" Value="28" />
-                                                        <Setter Property="HeightRequest" Value="28" />
+                                                        <Setter Property="WidthRequest" Value="{DynamicResource PrayerIconContainerSizePast}" />
+                                                        <Setter Property="HeightRequest" Value="{DynamicResource PrayerIconContainerSizePast}" />
                                                         <Setter Property="Opacity" Value="0.7" />
                                                     </DataTrigger>
                                                     <!-- Current: enhanced but compact -->
                                                     <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
                                                         <!-- <Setter Property="Background" Value="{StaticResource Primary30}" /> -->
-                                                        <Setter Property="WidthRequest" Value="46" />
-                                                        <Setter Property="HeightRequest" Value="46" />
+                                                        <Setter Property="WidthRequest" Value="{DynamicResource PrayerIconContainerSizeActive}" />
+                                                        <Setter Property="HeightRequest" Value="{DynamicResource PrayerIconContainerSizeActive}" />
                                                         <Setter Property="Shadow">
                                                             <Shadow Brush="{StaticResource Primary50}" Radius="12" Offset="0,3" Opacity="0.1" />
                                                         </Setter>
                                                     </DataTrigger>
                                                 </Border.Triggers>
                                                 <Image Source="{Binding IconPath}" Aspect="AspectFit"
-                                                       WidthRequest="32" HeightRequest="32"
+                                                       WidthRequest="{DynamicResource PrayerIconSize}" 
+                                                       HeightRequest="{DynamicResource PrayerIconSize}"
                                                        VerticalOptions="Center" HorizontalOptions="Center">
                                                     <Image.Triggers>
                                                         <!-- Past: smaller -->
                                                         <DataTrigger Binding="{Binding IsPast}" TargetType="Image" Value="True">
                                                             <Setter Property="WidthRequest" Value="20" />
-                                                            <Setter Property="HeightRequest" Value="20" />
+                                                            <Setter Property="WidthRequest" Value="{DynamicResource PrayerIconSizePast}" />
+                                                            <Setter Property="HeightRequest" Value="{DynamicResource PrayerIconSizePast}" />
                                                             <Setter Property="Opacity" Value="{AppThemeBinding Light=0.6, Dark=0.55}" />
                                                         </DataTrigger>
                                                         <!-- Current: larger but proportional -->
                                                         <DataTrigger Binding="{Binding IsActive}" TargetType="Image" Value="True">
                                                             <Setter Property="Opacity" Value="1.0" />
-                                                            <Setter Property="Scale" Value="1.2" />
-                                                            <Setter Property="WidthRequest" Value="36" />
-                                                            <Setter Property="HeightRequest" Value="36" />
+                                                            <Setter Property="WidthRequest" Value="{DynamicResource PrayerIconSizeActive}" />
+                                                            <Setter Property="HeightRequest" Value="{DynamicResource PrayerIconSizeActive}" />
                                                         </DataTrigger>
                                                         <!-- Upcoming prayers: High visibility in both modes -->
                                                         <MultiTrigger TargetType="Image">
@@ -299,8 +302,12 @@
                                             <Border Grid.Column="3" BackgroundColor="Transparent"
                                                     Background="{AppThemeBinding Light={StaticResource SurfaceGlassBrushLight}, Dark={StaticResource SurfaceGlassBrushDark}}"
                                                     Stroke="{StaticResource GlassStrokeBrush}" StrokeThickness="0.75"
-                                                    StrokeShape="RoundRectangle 16" WidthRequest="38" HeightRequest="38"
+                                                    WidthRequest="{DynamicResource BellIconContainerSize}" HeightRequest="{DynamicResource BellIconContainerSize}"
+                                                    Padding="6"
                                                     VerticalOptions="Center">
+                                                <Border.StrokeShape>
+                                                    <RoundRectangle CornerRadius="{DynamicResource BellIconCornerRadius}" />
+                                                </Border.StrokeShape>
                                                 <Label
                                                 AutomationProperties.IsInAccessibleTree="True"
                                                 FontFamily="{StaticResource IconFontFamily}"

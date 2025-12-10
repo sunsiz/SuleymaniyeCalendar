@@ -349,6 +349,16 @@ public partial class CompassViewModel : BaseViewModel, IDisposable
 		{
 			Debug.WriteLine($"Address initialization failed: {ex.Message}");
 		}
+		
+		// Fallback to cached address if still empty (iOS geocoding can fail silently)
+		if (string.IsNullOrWhiteSpace(Address))
+		{
+			var cached = Preferences.Get("LastAddress", string.Empty);
+			if (!string.IsNullOrWhiteSpace(cached))
+			{
+				await MainThread.InvokeOnMainThreadAsync(() => Address = cached);
+			}
+		}
 	}
 
 	/// <summary>

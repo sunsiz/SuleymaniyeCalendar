@@ -75,7 +75,9 @@
     <Color x:Key="TabBarBgColor">#8A4E1E</Color>
     <Color x:Key="TabBarBackgroundColorDark">#201F24</Color>
     <Color x:Key="TabBarSelectedColor">#FFFFFF</Color>
-    <Color x:Key="TabBarUnselectedColor">#F4CEB5</Color>
+    <!-- iOS 26 floating TabBar - match icon colors for label visibility -->
+    <Color x:Key="TabBarUnselectedColor">#8B4513</Color>
+    <Color x:Key="TabBarUnselectedColorDark">#EFEBE9</Color>
     <Color x:Key="AppBackgroundLight">#FFF5E3D9</Color>
     <Color x:Key="AppBackgroundDark">#1C1B20</Color>
     <Color x:Key="OnPrimaryContainerLight">#321607</Color>

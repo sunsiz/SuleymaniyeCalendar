@@ -590,4 +590,7 @@
   <data name="Paylas" xml:space="preserve">
     <value>分享</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>今天</value>
+  </data>
 </root>

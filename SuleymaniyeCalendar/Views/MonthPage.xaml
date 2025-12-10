@@ -20,13 +20,14 @@
 
             <!--  Loading Indicator Overlay  -->
             <Grid IsVisible="{Binding IsBusy}" 
-                  BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}"
-                  InputTransparent="False">
-        <Border Style="{StaticResource FrostGlassCardCrystal}" 
-            VerticalOptions="Center" 
-            HorizontalOptions="Center"
-            Padding="40,24">
-                    <VerticalStackLayout Spacing="16" HorizontalOptions="Center">
+                  BackgroundColor="{AppThemeBinding Light={StaticResource BusyOverlayColorDark}, Dark={StaticResource BusyOverlayColor}}">
+                <Border Style="{StaticResource FrostGlassCardCrystal}" 
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center"
+                    Padding="32,20"
+                    MinimumWidthRequest="200"
+                    MaximumHeightRequest="200">
+                    <VerticalStackLayout Spacing="12" HorizontalOptions="Center" VerticalOptions="Center">
                         <ActivityIndicator IsRunning="{Binding IsBusy}"
                                            Style="{StaticResource GoldenActivityIndicator}"
                                            HeightRequest="80"

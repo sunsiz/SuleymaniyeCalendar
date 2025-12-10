@@ -11,37 +11,33 @@ public class iOSAlarmService : IAlarmService
 {
     public void SetAlarm(DateTime alarmTime, int requestCode, NotificationSettings settings)
     {
-        // Calculate time until alarm
-        var now = DateTime.Now;
-        var notifyTime = alarmTime;
-        
-        // If alarm time is in the past for today, it might be for tomorrow, 
-        // but the logic in DataService usually handles dates.
-        // We'll trust the alarmTime passed in.
-        
-        // Schedule the notification
-        // We use the time string "HH:mm" as expected by SchedulePrayerNotificationAsync
-        // But wait, SchedulePrayerNotificationAsync takes a string time and calculates offset.
-        // Let's look at NotificationService.SchedulePrayerNotificationAsync signature again.
-        // public static async Task SchedulePrayerNotificationAsync(string prayerName, string prayerTime, int notificationMinutesBefore = 0, DateTime? date = null)
-        
-        // The IAlarmService.SetAlarm receives the exact alarm time (already adjusted for offsets if any).
-        // So we should pass 0 for notificationMinutesBefore.
-        // Use the actual prayer time from settings for display, not the alarm trigger time.
+        // alarmTime is already adjusted for the notification offset by NotificationSchedulerService
+        // (e.g., if prayer is at 12:57 and offset is 5 min, alarmTime is 12:52)
         
         var prayerName = settings.PrayerName;
-        var displayTime = string.IsNullOrEmpty(settings.PrayerTime) ? alarmTime.ToString("HH:mm") : settings.PrayerTime;
+        
+        // Use the exact alarm time that was already calculated with offset
+        var alarmTimeString = alarmTime.ToString("HH:mm");
+        
+        // Get the actual prayer time from settings for display in the notification
+        var actualPrayerTime = settings.PrayerTime;
+        
+        // Get the custom sound from settings
+        var soundName = settings.Sound;
         
         // Fire-and-forget with proper error handling
         _ = Task.Run(async () => 
         {
             try
             {
+                // Pass the offset-adjusted time as trigger time, actual prayer time for display, and custom sound
                 await NotificationService.SchedulePrayerNotificationAsync(
                     prayerName, 
-                    displayTime,  // Use actual prayer time for display
+                    alarmTimeString,  // Notification trigger time (offset-adjusted)
                     0, 
-                    alarmTime.Date
+                    alarmTime.Date,
+                    actualPrayerTime,  // Actual prayer time for notification body display
+                    soundName          // Custom alarm sound
                 ).ConfigureAwait(false);
             }
             catch (Exception ex)

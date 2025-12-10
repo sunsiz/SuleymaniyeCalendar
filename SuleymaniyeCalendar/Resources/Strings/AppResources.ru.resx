@@ -287,10 +287,10 @@
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>Фитрат ТВ на ютубе</value>
   </data>
-    <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
       <value>Не удалось загрузить времена молитв для планирования</value>
     </data>
-    <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
       <value>Напоминания о намазах запланированы на 30 дней</value>
     </data>
   <data name="GotoSettings" xml:space="preserve">
@@ -589,5 +589,8 @@
   </data>
   <data name="Paylas" xml:space="preserve">
     <value>Делиться</value>
+  </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Сегодня</value>
   </data>
 </root>
