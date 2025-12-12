@@ -53,8 +53,19 @@ public partial class RadioViewModel : BaseViewModel, IDisposable
 			_ = CheckInternetAsync();
 		}
 		
-		// Log perf summary after delay
-		Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("RadioView"));
+		// Log perf summary after delay (wrapped in try-catch for safety when running without debugger)
+		try
+		{
+			Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () =>
+			{
+				try { _perf.LogSummary("RadioView"); }
+				catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"RadioView perf log failed: {ex.Message}"); }
+			});
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"RadioView DispatchDelayed setup failed: {ex.Message}");
+		}
 	}
 
 	#endregion

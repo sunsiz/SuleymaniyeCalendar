@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Graphics;
 using Android.OS;
 using AndroidX.Core.App;
+using System.Globalization;
 using Uri = Android.Net.Uri;
 
 namespace SuleymaniyeCalendar;
@@ -15,6 +16,25 @@ public class AlarmNotificationReceiver : BroadcastReceiver
     public override void OnReceive(Context? context, Intent? intent)
     {
         if (context == null) return;
+        
+        // Set culture to user's selected language for localized notification text
+        string savedLanguage = "tr";
+        try
+        {
+            savedLanguage = Preferences.Get("SelectedLanguage", "tr");
+            System.Diagnostics.Debug.WriteLine($"🔔 AlarmNotificationReceiver: savedLanguage = {savedLanguage}");
+            
+            var culture = new CultureInfo(savedLanguage);
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+            Resources.Strings.AppResources.Culture = culture;
+            
+            System.Diagnostics.Debug.WriteLine($"🔔 Culture set to: {culture.Name}, AppResources test: {Resources.Strings.AppResources.Alarmi}");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ Failed to set notification culture: {ex.Message}");
+        }
         
         var name = intent?.GetStringExtra("name") ?? string.Empty;
         var timeStr = intent?.GetStringExtra("time") ?? string.Empty;

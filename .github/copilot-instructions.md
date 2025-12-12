@@ -4,11 +4,12 @@ This is a .NET MAUI prayer times app (Android, iOS, Windows) using CommunityTool
 
 ## Big picture architecture
 - **MVVM pattern**: ViewModels inherit from `BaseViewModel` (ObservableObject), Views in `Views/`, Shell navigation in `AppShell.xaml`
-- **Hybrid API system**: `DataService` + `JsonApiService` with fallback: Try new JSON API first, fallback to legacy XML API
+- **Service layer**: `DataService` is a facade delegating to specialized services: `LocationService`, `PrayerTimesRepository`, `NotificationSchedulerService`
+- **Hybrid API system**: `PrayerTimesRepository` → `JsonApiService` (primary) → `XmlApiService` (fallback), unified via `PrayerCacheService`
 - **DI container**: All types registered as singletons in `MauiProgram.CreateMauiApp()` with constructor injection
 - **Localization**: Uses `LocalizationResourceManager.Maui` with `AppResources.resx`, XAML binds via `{localization:Translate Key}`
-- **Prayer data flow**: JSON API → JSON cache → Calendar models → Prayer ViewModels → UI cards (with XML fallback)
-- **Performance layer**: `BackgroundDataPreloader` + `PerformanceService` for proactive caching and monitoring
+- **Prayer data flow**: JSON API → `PrayerCacheService` (unified cache) → `Calendar` models → `Prayer` ViewModels → UI cards
+- **Performance layer**: `BackgroundDataPreloader` + `PerformanceService` for proactive caching and metrics tracking
 
 ## Key patterns unique to this codebase
 
@@ -41,25 +42,25 @@ public async Task InitializeWithDelayAsync() {
 Always use `MainThread.InvokeOnMainThreadAsync()` for UI updates from background tasks.
 
 ### 4. Hybrid API pattern (critical for reliability)
-All data fetching uses JSON-first with XML fallback:
+All data fetching uses JSON-first with XML fallback via `PrayerTimesRepository`:
 ```csharp
 // Strategy 1: Try new JSON API
 var jsonResult = await _jsonApiService.GetMonthlyPrayerTimesAsync(lat, lng, month);
 if (jsonResult != null) return jsonResult;
 
 // Strategy 2: Fallback to legacy XML API  
-return GetMonthlyPrayerTimes(location, forceRefresh);
+return await GetMonthlyPrayerTimesXmlAsync(location, month, year, forceRefresh);
 ```
 Use `GetMonthlyPrayerTimesHybridAsync()` and `GetDailyPrayerTimesHybridAsync()` methods.
 
-### 4. Prayer state management
+### 5. Prayer state management
 Each prayer has temporal states (Past/Current/Future) calculated in `MainViewModel.CheckState()`:
 ```csharp
 asr.State = CheckState(DateTime.Parse(_calendar.Asr), DateTime.Parse(_calendar.Maghrib));
 asr.UpdateVisualState(); // Updates colors/icons based on state
 ```
 
-### 5. Comprehensive RTL support  
+### 6. Comprehensive RTL support  
 All pages support right-to-left languages via `IRtlService`:
 ```csharp
 // XAML: FlowDirection binding for all layouts
@@ -72,11 +73,18 @@ if (_rtlService.IsRightToLeft) {
 ```
 Widget layouts include RTL variants: `Widget.axml` and `WidgetRtl.axml`.
 
-### 6. Performance optimizations
+### 7. Performance optimizations
 - **Batched collection updates**: Use 10-item batches for large collections
 - **Conditional font/culture**: Only update when changed to avoid overhead  
 - **Background preloading**: `BackgroundDataPreloader` caches data after app launch
 - **Safe type conversion**: Always use `Convert.ToDouble(value)` instead of casting
+
+## Prayer IDs (critical for consistency)
+Standard prayer identifiers used throughout codebase for preferences, icons, and notifications:
+```
+falsefajr, fajr, sunrise, dhuhr, asr, maghrib, isha, endofisha
+```
+Preference keys follow pattern: `{prayerId}Enabled`, `{prayerId}NotificationTime`
 
 ## DataService responsibilities (the system hub)
 - **Prayer times**: Fetches from `http://servis.suleymaniyetakvimi.com/servis.asmx` (XML), caches to `%LOCALAPPDATA%/monthlycalendar.xml`
@@ -108,6 +116,7 @@ foreach (var day in daysToSchedule) {
 - Never break loop early with `if (dayCounter >= 30) break;` patterns
 - Each alarm gets defensive try-catch to prevent cascade failures
 - AlarmForegroundService auto-reschedules, so 30 days is optimal for performance vs coverage
+- Always look at the internet and Microsoft Learn MCP when available for reference when anything is unclear before make assumptions.
 
 ## JsonApiService integration
 - **Endpoint pattern**: `https://api.suleymaniyetakvimi.com/api/TimeCalculation/TimeCalculate[ByMonth]`
@@ -147,10 +156,38 @@ Cards use `SurfaceVariantColor` backgrounds, `OutlineColor` borders, automatic l
 ## Build & debug commands
 ```bash
 dotnet build                     # Build solution
+dotnet test                      # Run unit tests
 dotnet run --framework net9.0-android  # Run on Android
 ```
 - Delete `%LOCALAPPDATA%/monthlycalendar.xml` to force fresh prayer time fetch
 - Use VS Code or VS for debugging with hot reload
+- Tests in `SuleymaniyeCalendar.Tests/` use MSTest + Moq + FluentAssertions
+
+## Testing patterns
+- **Framework**: MSTest with `[TestClass]`, `[TestMethod]`, `[TestInitialize]`
+- **Mocking**: Moq for service dependencies, FluentAssertions for readable assertions
+- **Naming**: `MethodName_Scenario_ExpectedResult` (e.g., `GetMonthlyPrayerTimesHybridAsync_JsonApiSuccess_CachesAndReturnsData`)
+- **Setup**: Mock services in `[TestInitialize]`, create real `DataService` with mocked dependencies
+```csharp
+[TestInitialize]
+public void Setup() {
+    _jsonApiMock = new Mock<JsonApiService>(_loggerMock.Object);
+    _dataService = new DataService(locationService, repository, scheduler, perfService);
+}
+
+[TestMethod]
+public async Task GetTodayPrayerTimesAsync_ValidLocation_ReturnsCalendar() {
+    // Arrange
+    _jsonApiMock.Setup(j => j.GetDailyPrayerTimesAsync(...)).ReturnsAsync(_testCalendar);
+    
+    // Act
+    var result = await _dataService.GetTodayPrayerTimesAsync();
+    
+    // Assert
+    result.Should().NotBeNull();
+    result.Fajr.Should().Be("05:30");
+}
+```
 
 ## Android Java interop patterns (critical for alarm scheduling)
 **PendingIntent creation for AlarmManager:**
@@ -324,4 +361,4 @@ private void Compass_ReadingChanged(object sender, CompassChangedEventArgs e) {
 
 See: https://developer.apple.com/documentation/activitykit
 
-Quick file pointers: `MauiProgram.cs` (DI), `DataService.cs` (core logic), `BaseViewModel.cs` (MVVM foundation), `AppShell.xaml` (navigation), `Resources/Styles/` (Material Design 3 theming), `AlarmForegroundService.cs` (Android alarm lifecycle).
+Quick file pointers: `MauiProgram.cs` (DI), `DataService.cs` (facade), `PrayerTimesRepository.cs` (data fetching), `BaseViewModel.cs` (MVVM foundation), `AppShell.xaml` (navigation), `Resources/Styles/` (Material Design 3 theming), `AlarmForegroundService.cs` (Android alarm lifecycle).

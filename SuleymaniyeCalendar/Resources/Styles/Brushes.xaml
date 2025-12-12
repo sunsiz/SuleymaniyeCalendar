@@ -48,7 +48,7 @@
         <GradientStop Offset="1" Color="#E6FFFFFF" />
     </LinearGradientBrush>
     <LinearGradientBrush x:Key="GlassSecondaryTintDark" StartPoint="0,0" EndPoint="0,1">
-        <GradientStop Offset="0" Color="#18FFFFFF" />
+        <GradientStop Offset="0" Color="#188F8F8F" />
         <GradientStop Offset="0.5" Color="{StaticResource Secondary90}" />
         <GradientStop Offset="1" Color="#0A000000" />
     </LinearGradientBrush>

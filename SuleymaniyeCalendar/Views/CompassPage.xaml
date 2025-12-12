@@ -7,7 +7,6 @@
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     Title="{Binding Title}"
     x:DataType="viewModels:CompassViewModel"
-    FlowDirection="{DynamicResource FlowDirection}"
     Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>

@@ -15,7 +15,8 @@
 
     <Shell.TitleView>
         <Grid Margin="8,0,0,0" x:DataType="viewModels:MainViewModel" MinimumHeightRequest="48"
-              ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4">
+              ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4"
+              FlowDirection="{DynamicResource FlowDirection}">
             <Label Grid.Column="0"
                    AutomationProperties.IsInAccessibleTree="True"
                    SemanticProperties.Description="{localization:Translate Takvim}"
@@ -71,6 +72,7 @@
             <Grid ColumnDefinitions="*" RowDefinitions="*" HorizontalOptions="Fill" Margin="0" Padding="0" >
                 <CollectionView
                     x:Name="PrayersView"
+                    FlowDirection="{DynamicResource FlowDirection}"
                     HorizontalOptions="Center"
                     ItemsSource="{Binding Prayers}"
                     SelectedItem="{Binding SelectedPrayer, Mode=TwoWay}"
@@ -101,7 +103,8 @@
                                     </LinearGradientBrush>
                                 </Border.Background>
 
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="12,10">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Padding="12,10"
+                                      FlowDirection="{DynamicResource FlowDirection}">
                                     <!-- Clock icon -->
                                     <Border
                                         Grid.Column="0"
@@ -186,7 +189,8 @@
                                             </MultiTrigger>
                                         </Border.Triggers>
 
-                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="6">
+                                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="6"
+                                              FlowDirection="{DynamicResource FlowDirection}">
 
                                             <!-- Prayer Icon -->
                                             <Border Grid.Column="0" 

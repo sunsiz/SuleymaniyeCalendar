@@ -41,23 +41,25 @@ public partial class MonthPage : ContentPage
     /// </summary>
     private async Task CreateTableDeferredAsync()
     {
-        // Yield to allow page frame to render (use Dispatcher for better frame timing)
-        await Task.Yield();
-        
-        await MainThread.InvokeOnMainThreadAsync(() =>
+        try
         {
-            using (_perf.StartTimer("MonthPage.CreateTable"))
+            // Yield to allow page frame to render (use Dispatcher for better frame timing)
+            await Task.Yield();
+            
+            await MainThread.InvokeOnMainThreadAsync(() =>
             {
-                CreateTableImmediately();
+                using (_perf.StartTimer("MonthPage.CreateTable"))
+                {
+                    CreateTableImmediately();
+                }
+            });
+            
+            // Check if we have data already (subsequent visits)
+            if (_viewModel.HasData)
+            {
+                // Data is already available, no need to load
+                return;
             }
-        });
-        
-        // Check if we have data already (subsequent visits)
-        if (_viewModel.HasData)
-        {
-            // Data is already available, no need to load
-            return;
-        }
         else
         {
             // First time - start delayed loading for smooth UX
@@ -65,6 +67,11 @@ public partial class MonthPage : ContentPage
             {
                 await LoadDataWithDelay();
             }
+        }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"MonthPage CreateTableDeferredAsync failed: {ex.Message}");
         }
     }
 

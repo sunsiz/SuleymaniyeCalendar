@@ -43,8 +43,19 @@ public sealed partial class AboutViewModel : BaseViewModel
             VersionNumber = $" v{AppInfo.VersionString} ";
         }
         
-        // Log summary after page settles
-        Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("AboutView"));
+        // Log summary after page settles (wrapped in try-catch for safety when running without debugger)
+        try
+        {
+            Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () =>
+            {
+                try { _perf.LogSummary("AboutView"); }
+                catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"AboutView perf log failed: {ex.Message}"); }
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"AboutView DispatchDelayed setup failed: {ex.Message}");
+        }
     }
 
     [RelayCommand]

@@ -116,8 +116,19 @@ public partial class CompassViewModel : BaseViewModel, IDisposable
 			// This allows proper lifecycle management when page appears/disappears
 		}
 		
-		// Log perf summary after delay to capture async operations
-		Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("CompassView"));
+		// Log perf summary after delay to capture async operations (wrapped in try-catch for safety)
+		try
+		{
+			Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () =>
+			{
+				try { _perf.LogSummary("CompassView"); }
+				catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"CompassView perf log failed: {ex.Message}"); }
+			});
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"CompassView DispatchDelayed setup failed: {ex.Message}");
+		}
 	}
 
 	#endregion

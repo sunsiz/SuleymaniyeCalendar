@@ -1,6 +1,8 @@
 using UserNotifications;
 using Foundation;
 using System.Diagnostics;
+using System.Globalization;
+using SuleymaniyeCalendar.Resources.Strings;
 
 namespace SuleymaniyeCalendar.Platforms.iOS;
 
@@ -20,10 +22,24 @@ public class PersistentNotificationService
     {
         try
         {
+            // Set culture to user's selected language for localized notification text
+            try
+            {
+                var savedLanguage = Preferences.Get("SelectedLanguage", "tr");
+                var culture = new CultureInfo(savedLanguage);
+                CultureInfo.CurrentCulture = culture;
+                CultureInfo.CurrentUICulture = culture;
+                AppResources.Culture = culture;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Failed to set culture in PersistentNotificationService: {ex.Message}");
+            }
+
             var content = new UNMutableNotificationContent
             {
-                Title = "Prayer Time",
-                Body = $"{prayerName}: {remainingTime} remaining",
+                Title = AppResources.SuleymaniyeVakfiTakvimi,
+                Body = $"{prayerName}: {remainingTime}",
                 Sound = null, // No sound for persistent notification
                 Badge = NSNumber.FromInt32(1),
                 ThreadIdentifier = "PrayerTimes"

@@ -1,4 +1,7 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.Services;
@@ -17,6 +20,9 @@ public partial class App : Application
     public App(BackgroundDataPreloader preloader)
     {
         _preloader = preloader;
+
+        AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
+        TaskScheduler.UnobservedTaskException += HandleUnobservedTaskException;
 
         // Initialize localization before components load
         var language = Preferences.Get("SelectedLanguage", "tr");
@@ -37,12 +43,20 @@ public partial class App : Application
     {
         base.OnStart();
 
-        // Start background data preloading
-        _ = _preloader.StartBackgroundPreloadAsync();
+        // Start background data preloading (wrapped in Task.Run with exception handling)
+        _ = Task.Run(async () =>
+        {
+            try { await _preloader.StartBackgroundPreloadAsync().ConfigureAwait(false); }
+            catch (Exception ex) { Debug.WriteLine($"Background preload failed: {ex.Message}"); }
+        });
 
 #if __IOS__
-        // Initialize iOS notification permissions
-        _ = Platforms.iOS.NotificationService.InitializeNotificationsAsync();
+        // Initialize iOS notification permissions (wrapped with exception handling)
+        _ = Task.Run(async () =>
+        {
+            try { await Platforms.iOS.NotificationService.InitializeNotificationsAsync().ConfigureAwait(false); }
+            catch (Exception ex) { Debug.WriteLine($"iOS notification init failed: {ex.Message}"); }
+        });
 #endif
         Microsoft.Maui.ApplicationModel.VersionTracking.Track();
         ApplyTheme();
@@ -88,5 +102,34 @@ public partial class App : Application
         {
             System.Diagnostics.Debug.WriteLine($"OnResume refresh error: {ex.Message}");
         }
+    }
+
+    private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
+    {
+        LogUnhandledException("Unhandled", e.ExceptionObject as Exception);
+    }
+
+    private static void HandleUnobservedTaskException(object? sender, UnobservedTaskExceptionEventArgs e)
+    {
+        LogUnhandledException("UnobservedTask", e.Exception);
+    }
+
+    private static void LogUnhandledException(string source, Exception? ex)
+    {
+        if (ex is null) return;
+
+        var message = $"{DateTime.UtcNow:O} [{source}] {ex}";
+
+        try
+        {
+            var logPath = Path.Combine(FileSystem.AppDataDirectory, "crash.log");
+            File.AppendAllText(logPath, message + Environment.NewLine);
+        }
+        catch
+        {
+            // Swallow logging errors to avoid masking the original crash.
+        }
+
+        Debug.WriteLine($"[CRASH] {message}");
     }
 }

@@ -20,6 +20,16 @@
         <ToolbarItem Text="←" Priority="0" Order="Primary" Command="{Binding GoBackCommand}" />
     </ContentPage.ToolbarItems> -->
 
+    <Shell.TitleView>
+        <StackLayout Margin="8" HeightRequest="48" Orientation="Horizontal">
+            <Label
+                AutomationProperties.IsInAccessibleTree="True"
+                SemanticProperties.HeadingLevel="Level1"
+                Style="{StaticResource LabelSectionHeader}"
+                Text="{localization:Translate UygulamaAyarlari}" />
+        </StackLayout>
+    </Shell.TitleView>
+
     <ContentPage.Content>
         <ScrollView
             x:DataType="viewModels:SettingsViewModel"
@@ -261,7 +271,7 @@
                         <Switch
                             Grid.Column="2"
                             IsToggled="{Binding AlwaysRenewLocationEnabled}"
-                            Style="{StaticResource ModernSwitch}"
+                            Style="{StaticResource GoldenSwitch}"
                             VerticalOptions="Center" />
                     </Grid>
                 </Border>
@@ -285,7 +295,7 @@
                         <Switch
                             Grid.Column="2"
                             IsToggled="{Binding NotificationPrayerTimesEnabled}"
-                            Style="{StaticResource ModernSwitch}"
+                            Style="{StaticResource GoldenSwitch}"
                             VerticalOptions="Center"
                             IsVisible="{Binding ShowNotificationPrayerOption}" />
                     </Grid>
@@ -320,7 +330,7 @@
                             <Switch
                                 Grid.Column="2"
                                 IsToggled="{Binding ForegroundServiceEnabled}"
-                                Style="{StaticResource ModernSwitch}"
+                                Style="{StaticResource GoldenSwitch}"
                                 VerticalOptions="Center" />
                         </Grid>
 
@@ -329,7 +339,7 @@
                             Style="{StaticResource GlassButtonPrimaryIntense}"
                             Command="{Binding GotoSettingsCommand}"
                             Text="{localization:Translate GotoSettings}"
-                            TextColor="{AppThemeBinding Light={StaticResource OnSurfaceTextColor}, Dark={StaticResource OnSurfaceTextColorDark}}" />
+                            TextColor="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}" />
                     </VerticalStackLayout>
                 </Border>
             </VerticalStackLayout>

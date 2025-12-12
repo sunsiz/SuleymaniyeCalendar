@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SuleymaniyeCalendar.Helpers;
 using SuleymaniyeCalendar.ViewModels;
 
 namespace SuleymaniyeCalendar.Views;
@@ -16,6 +17,12 @@ public partial class CompassPage : ContentPage
 		InitializeComponent();
 		_viewModel = viewModel;
 		BindingContext = viewModel;
+		
+		// Set initial FlowDirection from saved language preference
+		var savedLanguage = Preferences.Get("SelectedLanguage", "tr");
+		this.FlowDirection = AppConstants.IsRtlLanguage(savedLanguage) 
+			? FlowDirection.RightToLeft 
+			: FlowDirection.LeftToRight;
 	}
 
 	protected override async void OnAppearing()
@@ -23,6 +30,16 @@ public partial class CompassPage : ContentPage
 		try
 		{
 			base.OnAppearing();
+			
+			// Update FlowDirection in case language changed while on another page
+			var selectedLanguage = Preferences.Get("SelectedLanguage", "tr");
+			var expectedDirection = AppConstants.IsRtlLanguage(selectedLanguage) 
+				? FlowDirection.RightToLeft 
+				: FlowDirection.LeftToRight;
+			if (this.FlowDirection != expectedDirection)
+			{
+				this.FlowDirection = expectedDirection;
+			}
 			
 			// Restart compass sensor if it was stopped
 			_viewModel.StartCompass();

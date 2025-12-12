@@ -1,4 +1,5 @@
-﻿using SuleymaniyeCalendar.Models;
+﻿using SuleymaniyeCalendar.Helpers;
+using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Views;
 
 namespace SuleymaniyeCalendar;
@@ -16,6 +17,12 @@ public partial class AppShell : Shell
         Routing.RegisterRoute(nameof(PrayerDetailPage), typeof(PrayerDetailPage));
         Routing.RegisterRoute(nameof(MonthPage), typeof(MonthPage));
         Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
+
+        // Set initial FlowDirection based on saved language
+        var savedLanguage = Preferences.Get("SelectedLanguage", "tr");
+        this.FlowDirection = AppConstants.IsRtlLanguage(savedLanguage) 
+            ? FlowDirection.RightToLeft 
+            : FlowDirection.LeftToRight;
 
         Navigated += OnNavigated;
     }

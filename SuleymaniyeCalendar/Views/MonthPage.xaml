@@ -10,6 +10,16 @@
              FlowDirection="{DynamicResource FlowDirection}"
              Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
+    <Shell.TitleView>
+        <StackLayout Margin="8" HeightRequest="48" Orientation="Horizontal">
+            <Label
+                AutomationProperties.IsInAccessibleTree="True"
+                SemanticProperties.HeadingLevel="Level1"
+                Style="{StaticResource LabelSectionHeader}"
+                Text="{localization:Translate AylikTakvim}" />
+        </StackLayout>
+    </Shell.TitleView>
+
 <ContentPage.Content>
     <Grid RowDefinitions="*,Auto" Padding="{StaticResource SpacingXS}" RowSpacing="{StaticResource SpacingXS}">
 

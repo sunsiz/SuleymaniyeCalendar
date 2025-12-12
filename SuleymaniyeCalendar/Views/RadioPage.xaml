@@ -9,7 +9,6 @@
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     Title="{Binding Title}"
     x:DataType="viewModels:RadioViewModel"
-    FlowDirection="{DynamicResource FlowDirection}"
     Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
@@ -68,6 +67,7 @@
                                     <Span 
                                         Text="{localization:Translate YayinAkisi}" 
                                         FontSize="{DynamicResource BodyFontSize}"
+                                        FontFamily="{DynamicResource AppFontFamily}"
                                         TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                                 </FormattedString>
                             </Label.FormattedText>
@@ -157,6 +157,7 @@
                                     <Span 
                                         Text="{localization:Translate WebSayfa}" 
                                         FontSize="{DynamicResource BodyFontSize}"
+                                        FontFamily="{DynamicResource AppFontFamily}"
                                         TextColor="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource CardValueDark}}" />
                                 </FormattedString>
                             </Label.FormattedText>

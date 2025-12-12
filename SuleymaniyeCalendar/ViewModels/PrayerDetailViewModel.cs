@@ -144,13 +144,24 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		
 		using (_perf.StartTimer("PrayerDetail.Constructor"))
 		{
-			LoadSounds();
+			ReloadSounds();
 		}
 		
 		IsPlaying = false;
 		
-		// Log perf summary after delay to capture LoadPrayer metrics
-		Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("PrayerDetailView"));
+		// Log perf summary after delay to capture LoadPrayer metrics (wrapped in try-catch for safety)
+		try
+		{
+			Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () =>
+			{
+				try { _perf.LogSummary("PrayerDetailView"); }
+				catch (Exception ex) { Debug.WriteLine($"PrayerDetailView perf log failed: {ex.Message}"); }
+			});
+		}
+		catch (Exception ex)
+		{
+			Debug.WriteLine($"PrayerDetailView DispatchDelayed setup failed: {ex.Message}");
+		}
 	}
 
 	#endregion
@@ -417,11 +428,15 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	}
 
 	/// <summary>
-	/// Initializes the available alarm sounds collection.
-	/// Includes bird chirping, rooster, alarm clocks, and adhan sounds.
+	/// Reloads the available alarm sounds collection with current localized names.
+	/// Call this when language changes or page reappears to update sound names.
+	/// Preserves current selection by matching on FileName.
 	/// </summary>
-	private void LoadSounds()
+	public void ReloadSounds()
 	{
+		// Remember current selection
+		var currentFileName = SelectedSound?.FileName;
+		
 		AvailableSounds =
 		[
 			new Sound(fileName: "kus", name: AppResources.KusCiviltisi),
@@ -433,6 +448,12 @@ public partial class PrayerDetailViewModel : BaseViewModel
 			new Sound(fileName: "beep2", name: AppResources.CalarSaat + " 3"),
 			new Sound(fileName: "beep3", name: AppResources.CalarSaat + " 4")
 		];
+		
+		// Restore selection if there was one
+		if (!string.IsNullOrEmpty(currentFileName))
+		{
+			SelectedSound = AvailableSounds.FirstOrDefault(s => s.FileName == currentFileName);
+		}
 	}
 
 	#endregion

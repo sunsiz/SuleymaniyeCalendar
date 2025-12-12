@@ -34,10 +34,10 @@ namespace SuleymaniyeCalendar
                         $"📲 User tapped notification: {prayerName}");
                     
                     // Navigate to prayer detail or show information
-                    MainThread.BeginInvokeOnMainThread(async () =>
-                    {
-                        await Shell.Current.GoToAsync("mainpage");
-                    });
+                    //MainThread.BeginInvokeOnMainThread(async () =>
+                    //{
+                    //    await Shell.Current.GoToAsync("//MainPage");
+                    //});
                 }
             }
             catch (Exception ex)

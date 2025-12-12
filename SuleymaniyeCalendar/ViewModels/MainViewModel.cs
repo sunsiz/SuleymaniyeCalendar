@@ -992,11 +992,19 @@ public partial class MainViewModel : BaseViewModel
                 _ticker.Start();
             }
 
-            // Emit an aggregated performance snapshot shortly after appearing
-            Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(2), () =>
+            // Emit an aggregated performance snapshot shortly after appearing (wrapped in try-catch for safety)
+            try
             {
-                _perf.LogSummary("MainView");
-            });
+                Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(2), () =>
+                {
+                    try { _perf.LogSummary("MainView"); }
+                    catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"MainView perf log failed: {ex.Message}"); }
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"MainView DispatchDelayed setup failed: {ex.Message}");
+            }
 
             // For returning users with auto-renew off, backfill today's cache entry if missing and update UI
             if (!Preferences.Get("AlwaysRenewLocationEnabled", false))

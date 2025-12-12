@@ -1,7 +1,9 @@
 ﻿using UserNotifications;
 using Foundation;
 using System.Diagnostics;
+using System.Globalization;
 using SuleymaniyeCalendar.Models;
+using SuleymaniyeCalendar.Resources.Strings;
 
 namespace SuleymaniyeCalendar.Platforms.iOS;
 
@@ -71,6 +73,21 @@ public class NotificationService
     {
         try
         {
+            // Set culture to user's selected language for localized notification text
+            try
+            {
+                var savedLanguage = Preferences.Get("SelectedLanguage", "tr");
+                var culture = new CultureInfo(savedLanguage);
+                CultureInfo.CurrentCulture = culture;
+                CultureInfo.CurrentUICulture = culture;
+                AppResources.Culture = culture;
+                Debug.WriteLine($"🔔 iOS NotificationService: Culture set to {culture.Name}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"❌ Failed to set culture in iOS NotificationService: {ex.Message}");
+            }
+
             var targetDate = date ?? DateTime.Today;
 
             // Parse notification trigger time using InvariantCulture for consistent HH:mm parsing
@@ -81,11 +98,14 @@ public class NotificationService
             }
 
             // The time passed is already the notification trigger time (offset-adjusted)
-            // No need to subtract notificationMinutesBefore again
             var triggerTime = time;
-            if (triggerTime.TotalSeconds <= 0)
+            
+            // Check if the scheduled time is in the past for today
+            // NotificationSchedulerService already filters past times, but double-check here
+            var scheduledDateTime = targetDate.Add(triggerTime);
+            if (scheduledDateTime <= DateTime.Now)
             {
-                Debug.WriteLine($"⚠️ Notification time in past: {prayerName} at {notificationTime}");
+                Debug.WriteLine($"⚠️ Notification time in past: {prayerName} at {scheduledDateTime:yyyy-MM-dd HH:mm} (now: {DateTime.Now:HH:mm})");
                 return;
             }
             
@@ -112,8 +132,8 @@ public class NotificationService
 
             var content = new UNMutableNotificationContent
             {
-                Title = "Prayer Time",
-                Body = $"{prayerName} - {displayTime}",
+                Title = AppResources.SuleymaniyeVakfiTakvimi,
+                Body = $"{prayerName} {AppResources.Vakti}{displayTime}",
                 Sound = notificationSound,
                 Badge = NSNumber.FromInt32(1),
                 CategoryIdentifier = PrayerNotificationCategoryId,
@@ -130,8 +150,12 @@ public class NotificationService
             content.UserInfo = userInfo;
 
             // Create trigger for specific time using the parsed triggerTime
+            // Use user's local calendar and timezone for correct scheduling
+            var calendar = NSCalendar.CurrentCalendar;
             var components = new NSDateComponents
             {
+                Calendar = calendar,
+                TimeZone = NSTimeZone.LocalTimeZone,
                 Year = targetDate.Year,
                 Month = targetDate.Month,
                 Day = targetDate.Day,
@@ -142,14 +166,14 @@ public class NotificationService
 
             var trigger = UNCalendarNotificationTrigger.CreateTrigger(components, false);
 
-            // Create notification request
-            var requestId = $"prayer_{prayerName}_{targetDate:yyyyMMdd}";
+            // Create notification request with unique ID per prayer and date
+            var requestId = $"prayer_{prayerName}_{targetDate:yyyyMMdd}_{triggerTime.Hours:D2}{triggerTime.Minutes:D2}";
             var request = UNNotificationRequest.FromIdentifier(requestId, content, trigger);
 
             // Schedule notification
             await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
             
-            Debug.WriteLine($"✅ Scheduled: {prayerName} at {triggerTime:hh\\:mm} ({targetDate:yyyy-MM-dd})");
+            Debug.WriteLine($"✅ Scheduled: {prayerName} at {triggerTime:hh\\:mm} ({targetDate:yyyy-MM-dd}) [ID: {requestId}]");
         }
         catch (Exception ex)
         {

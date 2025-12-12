@@ -43,11 +43,13 @@
                         <!-- Time Section -->
                         <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="4">
                             <Label
+                            FontFamily="{DynamicResource AppFontFamily}"
                             FontSize="{DynamicResource DefaultFontSize}"
                             FontAttributes="Bold"
                             Text="{localization:Translate Vakti}"
                             TextColor="{AppThemeBinding Light={StaticResource CardLabelLight}, Dark={StaticResource CardLabelDark}}" />
                             <Label
+                            FontFamily="{DynamicResource AppFontFamily}"
                             FontAttributes="Bold"
                             FontSize="{DynamicResource SubHeaderFontSize}"
                             Text="{Binding Time}"
@@ -77,6 +79,7 @@
                         <VerticalStackLayout x:DataType="viewModels:PrayerDetailViewModel" Spacing="8">
                             <VerticalStackLayout Spacing="8">
                                 <Label 
+                                FontFamily="{DynamicResource AppFontFamily}"
                                 FontSize="{DynamicResource DefaultFontSize}"
                                 FontAttributes="Bold"
                                 Text="{localization:Translate BildirmeZamani}" 
@@ -86,10 +89,11 @@
                                     <Label.FormattedText>
                                         <FormattedString>
                                             <Span
+                                            FontFamily="{DynamicResource AppFontFamily}"
                                             FontAttributes="Bold"
                                             Text="{Binding NotificationTime}" />
                                             <Span Text=" " />
-                                            <Span Text="{localization:Translate DakikaOnceden}" />
+                                            <Span FontFamily="{DynamicResource AppFontFamily}" Text="{localization:Translate DakikaOnceden}" />
                                         </FormattedString>
                                     </Label.FormattedText>
                                 </Label>
@@ -109,6 +113,7 @@
                         <!--  Sound Selection Section  -->
                         <VerticalStackLayout Spacing="8">
                             <Label 
+                            FontFamily="{DynamicResource AppFontFamily}"
                             FontSize="{DynamicResource DefaultFontSize}"
                             FontAttributes="Bold"
                             Text="{localization:Translate Birsessecin}" 
@@ -134,9 +139,10 @@
                                         WidthRequest="52" HeightRequest="48">
                                     <Button.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" TargetType="Button" Value="True">
-                                            <Setter Property="Style" Value="{StaticResource GlassButtonSuccess}" />
+                                            <!-- Don't use Style setter in DataTrigger - causes crash in Release/AOT builds -->
+                                            <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassSuccessTintLight}, Dark={StaticResource GlassSuccessTintDark}}" />
                                             <Setter Property="Text" Value="&#xf04d;" />
-                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceTextColor}, Dark={StaticResource OnSurfaceTextColorDark}}" />
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
                                         </DataTrigger>
                                     </Button.Triggers>
                                 </Button>

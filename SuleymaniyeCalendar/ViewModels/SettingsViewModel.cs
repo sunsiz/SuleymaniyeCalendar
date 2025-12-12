@@ -246,8 +246,19 @@ public partial class SettingsViewModel : BaseViewModel
 			IsBusy = false;
 		}
 
-		// Log perf summary after a short delay to capture any async operations
-		Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("SettingsView"));
+		// Log perf summary after a short delay to capture any async operations (wrapped in try-catch for safety)
+		try
+		{
+			Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () =>
+			{
+				try { _perf.LogSummary("SettingsView"); }
+				catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"SettingsView perf log failed: {ex.Message}"); }
+			});
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"SettingsView DispatchDelayed setup failed: {ex.Message}");
+		}
 	}
 
 	#endregion
@@ -298,8 +309,19 @@ public partial class SettingsViewModel : BaseViewModel
 	/// </summary>
 	private async Task ApplyThemeDeferredAsync(int themeValue)
 	{
-		await Task.Yield(); // Yield to next frame
-		MainThread.BeginInvokeOnMainThread(() => SetUserAppTheme(themeValue));
+		try
+		{
+			await Task.Yield(); // Yield to next frame
+			MainThread.BeginInvokeOnMainThread(() =>
+			{
+				try { SetUserAppTheme(themeValue); }
+				catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"SetUserAppTheme failed: {ex.Message}"); }
+			});
+		}
+		catch (Exception ex)
+		{
+			System.Diagnostics.Debug.WriteLine($"ApplyThemeDeferredAsync failed: {ex.Message}");
+		}
 	}
 
 	/// <summary>Opens system app settings.</summary>
@@ -319,12 +341,13 @@ public partial class SettingsViewModel : BaseViewModel
 	/// </summary>
 	private void InitializeSettings()
 	{
-		// Restore saved language and apply RTL
+		// Restore saved language, RTL, and font
 		using (_perf.StartTimer("Settings.Init.Language"))
 		{
 			var savedCi = Preferences.Get("SelectedLanguage", "tr");
 			_resourceManager.CurrentCulture = CultureInfo.GetCultureInfo(savedCi);
 			_rtlService.ApplyFlowDirection(savedCi);
+			ApplyLanguageFont(savedCi);
 		}
 
 		// Load language list
@@ -399,10 +422,25 @@ public partial class SettingsViewModel : BaseViewModel
 			AppResources.Culture = ci;
 			Preferences.Set("SelectedLanguage", language.CI);
 			_rtlService.ApplyFlowDirection(language.CI);
+			ApplyLanguageFont(language.CI);
 			Title = AppResources.UygulamaAyarlari;
 		}
 		// Update widget asynchronously to avoid blocking UI
 		_ = Task.Run(() => MainThread.BeginInvokeOnMainThread(_widgetService.UpdateWidget));
+	}
+
+	/// <summary>
+	/// Applies language-specific font family.
+	/// Uyghur uses UKIJTuT font; other languages use OpenSans.
+	/// </summary>
+	/// <param name="cultureCode">Two-letter ISO language code.</param>
+	private static void ApplyLanguageFont(string cultureCode)
+	{
+		var app = Application.Current;
+		if (app?.Resources == null) return;
+
+		var fontFamily = cultureCode == "ug" ? "UyghurFont" : "OpenSansRegular";
+		app.Resources["AppFontFamily"] = fontFamily;
 	}
 
 	#endregion

@@ -11,8 +11,8 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
             
-            <!-- Initialize FlowDirection - will be updated by RtlService -->
-            <x:Static x:Key="FlowDirection" Member="FlowDirection.LeftToRight" />
+            <!-- Initialize FlowDirection as a mutable FlowDirection value - will be updated by RtlService -->
+            <FlowDirection x:Key="FlowDirection">LeftToRight</FlowDirection>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

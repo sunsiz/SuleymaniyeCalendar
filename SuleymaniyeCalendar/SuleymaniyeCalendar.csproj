@@ -29,6 +29,11 @@
     <PublishTrimmed>False</PublishTrimmed>
     <RunAOTCompilation>False</RunAOTCompilation>
   </PropertyGroup>
+  <!-- iOS Release: Use interpreter to avoid AOT issues with dynamic XAML bindings -->
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-ios|AnyCPU'">
+    <UseInterpreter>true</UseInterpreter>
+    <MtouchInterpreter>all</MtouchInterpreter>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <AndroidUseAapt2>True</AndroidUseAapt2>
@@ -42,15 +47,18 @@
   <ItemGroup>
 	<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFF5E3D9" TintColor="#5C3021" />
 	<!-- Smaller BaseSize prevents logo being too large on iOS -->
-	<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FFF5E3D9" BaseSize="256,256" />
+	<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FFF5E3D9" BaseSize="512,512" />
 	<MauiImage Include="Resources\Images\*" />
 	<!-- Ensure FontAwesome is packaged and alias available in XAML -->
 	<MauiFont Include="Resources\Fonts\FontAwesome6FreeSolid.otf" Alias="FontAwesomeSolid" />
 	<MauiFont Include="Resources\Fonts\OpenSans-Regular.ttf" Alias="OpenSansRegular" />
+	<MauiFont Include="Resources\Fonts\OpenSans-Semibold.ttf" Alias="OpenSansSemibold" />
+	<MauiFont Include="Resources\Fonts\UKIJTuT.ttf" Alias="UyghurFont" />
 	<!-- Fonts are registered via ConfigureFonts in MauiProgram.cs -->
 	<!-- Windows-specific: Embed fonts in assembly to improve reliability -->
 	<EmbeddedResource Include="Resources\Fonts\FontAwesome6FreeSolid.otf" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
 	<EmbeddedResource Include="Resources\Fonts\OpenSans-Regular.ttf" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
+	<EmbeddedResource Include="Resources\Fonts\UKIJTuT.ttf" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
 	<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>

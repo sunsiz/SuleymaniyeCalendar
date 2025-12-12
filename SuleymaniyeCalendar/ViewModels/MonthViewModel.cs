@@ -266,11 +266,25 @@ public partial class MonthViewModel : BaseViewModel
     /// Performs a cache-first staged fill then background refresh.
     /// </summary>
     public async Task InitializeAsync()
-    {
-        if (MonthlyCalendar?.Count > 0) return;
+    {        // Update title to reflect current language (may have changed since constructor)
+        Title = AppResources.AylikTakvim;
+        UpdateWeekdayHeaders();
+                if (MonthlyCalendar?.Count > 0) return;
         await MainThread.InvokeOnMainThreadAsync(() => IsBusy = true);
         await LoadMonthlyDataAsync().ConfigureAwait(false);
-        Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () => _perf.LogSummary("MonthView"));
+        // Log perf summary (wrapped in try-catch for safety when running without debugger)
+        try
+        {
+            Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () =>
+            {
+                try { _perf.LogSummary("MonthView"); }
+                catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"MonthView perf log failed: {ex.Message}"); }
+            });
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"MonthView DispatchDelayed setup failed: {ex.Message}");
+        }
     }
 
     #endregion

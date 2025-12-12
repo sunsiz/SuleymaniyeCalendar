@@ -5,8 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SuleymaniyeCalendar"
     xmlns:views="clr-namespace:SuleymaniyeCalendar.Views"
-    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
-    FlowDirection="{DynamicResource FlowDirection}">
+    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui">
 
     <TabBar>
         <ShellContent Title="{localization:Translate Takvim}" ContentTemplate="{DataTemplate views:MainPage}" >

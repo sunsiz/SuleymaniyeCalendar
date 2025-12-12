@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using SuleymaniyeCalendar.Helpers;
 using SuleymaniyeCalendar.Models;
 using SuleymaniyeCalendar.Resources.Strings;
@@ -29,6 +30,21 @@ public class NotificationSchedulerService
     public async Task SetMonthlyAlarmsAsync(Location location, bool forceReschedule = false)
     {
         Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
+        
+        // Set culture to user's selected language for localized notification text
+        try
+        {
+            var savedLanguage = Preferences.Get("SelectedLanguage", "tr");
+            var culture = new CultureInfo(savedLanguage);
+            CultureInfo.CurrentCulture = culture;
+            CultureInfo.CurrentUICulture = culture;
+            AppResources.Culture = culture;
+            Debug.WriteLine($"🔔 NotificationSchedulerService: Culture set to {culture.Name}");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"❌ Failed to set culture in NotificationSchedulerService: {ex.Message}");
+        }
         
         // Check if we need to reschedule
         if (!forceReschedule)
@@ -109,14 +125,14 @@ public class NotificationSchedulerService
 
                     var isToday = baseDate.Date == DateTime.Today;
 
-                    SchedulePrayerAlarmIfEnabled(baseDate, falseFajrTime, now, isToday, "falsefajr", "Fecri Kazip");
-                    SchedulePrayerAlarmIfEnabled(baseDate, fajrTime, now, isToday, "fajr", "Fecri Sadık");
-                    SchedulePrayerAlarmIfEnabled(baseDate, sunriseTime, now, isToday, "sunrise", "Sabah Sonu");
-                    SchedulePrayerAlarmIfEnabled(baseDate, dhuhrTime, now, isToday, "dhuhr", "Öğle");
-                    SchedulePrayerAlarmIfEnabled(baseDate, asrTime, now, isToday, "asr", "İkindi");
-                    SchedulePrayerAlarmIfEnabled(baseDate, maghribTime, now, isToday, "maghrib", "Akşam");
-                    SchedulePrayerAlarmIfEnabled(baseDate, ishaTime, now, isToday, "isha", "Yatsı");
-                    SchedulePrayerAlarmIfEnabled(baseDate, endOfIshaTime, now, isToday, "endofisha", "Yatsı Sonu");
+                    SchedulePrayerAlarmIfEnabled(baseDate, falseFajrTime, now, isToday, "falsefajr", AppResources.FecriKazip);
+                    SchedulePrayerAlarmIfEnabled(baseDate, fajrTime, now, isToday, "fajr", AppResources.FecriSadik);
+                    SchedulePrayerAlarmIfEnabled(baseDate, sunriseTime, now, isToday, "sunrise", AppResources.SabahSonu);
+                    SchedulePrayerAlarmIfEnabled(baseDate, dhuhrTime, now, isToday, "dhuhr", AppResources.Ogle);
+                    SchedulePrayerAlarmIfEnabled(baseDate, asrTime, now, isToday, "asr", AppResources.Ikindi);
+                    SchedulePrayerAlarmIfEnabled(baseDate, maghribTime, now, isToday, "maghrib", AppResources.Aksam);
+                    SchedulePrayerAlarmIfEnabled(baseDate, ishaTime, now, isToday, "isha", AppResources.Yatsi);
+                    SchedulePrayerAlarmIfEnabled(baseDate, endOfIshaTime, now, isToday, "endofisha", AppResources.YatsiSonu);
 
                     dayCounter++;
                     coverageThrough = baseDate;
@@ -167,10 +183,15 @@ public class NotificationSchedulerService
             // Calculate actual prayer time (alarm time + offset minutes)
             var actualPrayerTime = alarmTime.AddMinutes(notifyTime);
             
+            // Use localized strings for notification content
+            var notifyMinutesText = notifyTime > 0 
+                ? $"{notifyTime}{AppResources.DakikaOnceden}" 
+                : string.Empty;
+            
             var settings = new NotificationSettings
             {
-                Title = "Süleymaniye Takvimi",
-                Body = $"{prayerName} vaktine {notifyTime} dakika kaldı.",
+                Title = AppResources.SuleymaniyeVakfiTakvimi,
+                Body = $"{prayerName} {AppResources.Vakti}{actualPrayerTime:HH:mm} {notifyMinutesText}".Trim(),
                 Sound = Preferences.Get(prayerId + "AlarmSound", "kus"),
                 PrayerId = prayerId,
                 PrayerName = prayerName,

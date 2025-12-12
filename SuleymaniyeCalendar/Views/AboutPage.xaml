@@ -7,7 +7,6 @@
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     x:DataType="viewModels:AboutViewModel"
     Title="{Binding Title}"
-    FlowDirection="{DynamicResource FlowDirection}"
     Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
@@ -41,17 +40,18 @@
                                HorizontalTextAlignment="Center">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="{localization:Translate AciklamaBas}" />
+                                    <Span Text="{localization:Translate AciklamaBas}" FontFamily="{DynamicResource AppFontFamily}" />
                                     <Span
                                         FontAttributes="Bold"
+                                        FontFamily="{DynamicResource AppFontFamily}"
                                         Text="{localization:Translate AciklamaLinkText}"
-                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource PrimaryDarkColor}}"
+                                        TextColor="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource Primary10}}"
                                         TextDecorations="Underline">
                                         <Span.GestureRecognizers>
                                             <TapGestureRecognizer Command="{Binding LinkButtonClickedCommand}" CommandParameter="{localization:Translate AciklamaLinkURL}" />
                                         </Span.GestureRecognizers>
                                     </Span>
-                                    <Span Text="{localization:Translate AciklamaSon}" />
+                                    <Span Text="{localization:Translate AciklamaSon}" FontFamily="{DynamicResource AppFontFamily}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
@@ -143,8 +143,8 @@
                                TextColor="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}">
                             <Label.FormattedText>
                                 <FormattedString>
-                                    <Span Text="{Binding VersionNumber}" />
-                                    <Span Text="{localization:Translate Version}" />
+                                    <Span Text="{Binding VersionNumber}" FontFamily="{DynamicResource AppFontFamily}" />
+                                    <Span Text="{localization:Translate Version}" FontFamily="{DynamicResource AppFontFamily}" />
                                 </FormattedString>
                             </Label.FormattedText>
                         </Label>
