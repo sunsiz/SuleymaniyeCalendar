@@ -95,8 +95,7 @@ public class AppDelegate : MauiUIApplicationDelegate
     /// </summary>
     private static void NSLog(string message)
     {
-        // NSLog goes to iOS unified logging system
-        Foundation.NSString.LocalizedFormat(message);
-        Console.WriteLine(message); // This also goes to device console
+        // Console.WriteLine goes to iOS unified logging system (visible in Xcode console)
+        Console.WriteLine(message);
     }
 }

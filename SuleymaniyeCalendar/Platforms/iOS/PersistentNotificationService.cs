@@ -64,11 +64,11 @@ public class PersistentNotificationService
             // Schedule the notification
             await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
             
-            Debug.WriteLine($"? Persistent notification: {prayerName} ({remainingTime})");
+            Debug.WriteLine($"✅ Persistent notification: {prayerName} ({remainingTime})");
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"? Persistent notification failed: {ex.Message}");
+            Debug.WriteLine($"❌ Persistent notification failed: {ex.Message}");
         }
     }
 
@@ -78,6 +78,6 @@ public class PersistentNotificationService
     public static void HidePersistentNotification()
     {
         UNUserNotificationCenter.Current.RemoveDeliveredNotifications(new[] { "PrayerNotification" });
-        Debug.WriteLine("? Persistent notification removed");
+        Debug.WriteLine("✅ Persistent notification removed");
     }
 }
