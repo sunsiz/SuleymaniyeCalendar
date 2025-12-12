@@ -520,20 +520,29 @@ public partial class MainViewModel : BaseViewModel
                     throw new InvalidOperationException("No coordinates");
                 }
                 
-                var placemark = await Geocoding.Default
+                var placemarks = await Geocoding.Default
                     .GetPlacemarksAsync(latitude, longitude)
                     .ConfigureAwait(false);
 
-                var city = placemark?.FirstOrDefault()?.Locality ??
-                           placemark?.FirstOrDefault()?.AdminArea ??
-                           placemark?.FirstOrDefault()?.SubAdminArea ??
-                           placemark?.FirstOrDefault()?.CountryName;
+                var place = placemarks?.FirstOrDefault();
+                var city = place?.Locality ??
+                           place?.AdminArea ??
+                           place?.SubAdminArea ??
+                           place?.CountryName;
 
                 if (!string.IsNullOrWhiteSpace(city))
                 {
                     await MainThread.InvokeOnMainThreadAsync(() => City = city);
                     Preferences.Set("sehir", city);
                     Debug.WriteLine($"GetCityAsync: Updated city to {city}");
+                    
+                    // Also save full address for CompassPage consistency
+                    var fullAddress = BuildAddressFromPlacemark(place);
+                    if (!string.IsNullOrWhiteSpace(fullAddress))
+                    {
+                        Preferences.Set("LastAddress", fullAddress);
+                        Debug.WriteLine($"GetCityAsync: Updated LastAddress to {fullAddress}");
+                    }
                 }
             }
             catch (OperationCanceledException)
@@ -552,6 +561,24 @@ public partial class MainViewModel : BaseViewModel
                 await MainThread.InvokeOnMainThreadAsync(() => City = cachedCity);
                 Debug.WriteLine($"GetCityAsync: Fallback to cached city: {cachedCity}");
             }
+        }
+        
+        /// <summary>
+        /// Builds human-readable address from Placemark.
+        /// </summary>
+        private static string BuildAddressFromPlacemark(Placemark? place)
+        {
+            if (place is null) return string.Empty;
+
+            var parts = new List<string>();
+            if (!string.IsNullOrWhiteSpace(place.Thoroughfare)) parts.Add(place.Thoroughfare);
+            if (!string.IsNullOrWhiteSpace(place.SubLocality)) parts.Add(place.SubLocality);
+            if (!string.IsNullOrWhiteSpace(place.Locality)) parts.Add(place.Locality);
+            if (!string.IsNullOrWhiteSpace(place.AdminArea)) parts.Add(place.AdminArea);
+            if (!string.IsNullOrWhiteSpace(place.PostalCode)) parts.Add(place.PostalCode);
+            if (!string.IsNullOrWhiteSpace(place.CountryName)) parts.Add(place.CountryName);
+
+            return string.Join(", ", parts);
         }
 
         /// <summary>

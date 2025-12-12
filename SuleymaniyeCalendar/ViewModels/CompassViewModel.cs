@@ -225,6 +225,7 @@ public partial class CompassViewModel : BaseViewModel, IDisposable
 
 	/// <summary>
 	/// Refreshes location from DataService calendar (after location change in other pages).
+	/// Always updates display and refreshes address to reflect latest location info.
 	/// </summary>
 	public async Task RefreshLocationFromAppAsync()
 	{
@@ -232,12 +233,16 @@ public partial class CompassViewModel : BaseViewModel, IDisposable
 		if (currentCalendar is null) return;
 
 		// Check if location changed significantly (>0.001° = ~110m)
-		// Check if location changed significantly (>0.001° = ~110m)
 		var hasLocationChanged = 
 			Math.Abs(_currentLatitude - currentCalendar.Latitude) > 0.001 ||
 			Math.Abs(_currentLongitude - currentCalendar.Longitude) > 0.001;
 
-		if (hasLocationChanged)
+		// Also check if address needs refresh by comparing with city preference (updated by MainPage)
+		var currentCityFromPrefs = Preferences.Get("sehir", string.Empty);
+		var needsAddressRefresh = string.IsNullOrWhiteSpace(Address) || 
+			(!string.IsNullOrWhiteSpace(currentCityFromPrefs) && !Address.Contains(currentCityFromPrefs));
+
+		if (hasLocationChanged || needsAddressRefresh)
 		{
 			_currentLatitude = currentCalendar.Latitude;
 			_currentLongitude = currentCalendar.Longitude;
@@ -255,7 +260,7 @@ public partial class CompassViewModel : BaseViewModel, IDisposable
 
 			// Clear old address and get new one
 			Address = string.Empty;
-			await InitializeAddressAsync();
+			await UpdateAddressFromLocationAsync();
 		}
 	}
 
@@ -342,15 +347,12 @@ public partial class CompassViewModel : BaseViewModel, IDisposable
 
 	/// <summary>
 	/// Initializes address from reverse geocoding (async startup).
+	/// Always attempts to get fresh address from current coordinates.
 	/// </summary>
 	private async Task InitializeAddressAsync()
 	{
 		try
 		{
-			// Skip if we already have an address
-			if (!string.IsNullOrWhiteSpace(Address))
-				return;
-
 			if (_currentLatitude != 0 && _currentLongitude != 0)
 			{
 				await UpdateAddressFromLocationAsync();
