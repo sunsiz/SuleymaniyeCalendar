@@ -11,8 +11,8 @@
 	<ApplicationTitle>SuleymaniyeCalendar</ApplicationTitle>
 	<ApplicationId>org.suleymaniyevakfi</ApplicationId>
 	<ApplicationIdGuid>84aea3eb-9551-460b-94e3-1c0a87aa8e61</ApplicationIdGuid>
-	<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-	<ApplicationVersion>1</ApplicationVersion>
+	<ApplicationDisplayVersion>3.3</ApplicationDisplayVersion>
+	<ApplicationVersion>12</ApplicationVersion>
 	<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 	<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
 	<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
@@ -45,7 +45,7 @@
     <CodesignProvision>VS: MRA.Suleymaniye-Takvimi Development</CodesignProvision>
   </PropertyGroup>  
   <ItemGroup>
-	<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFF5E3D9" TintColor="#5C3021" />
+	<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFF5E3D9" TintColor="#5C3021" ForegroundScale="0.65" />
 	<!-- Smaller BaseSize prevents logo being too large on iOS -->
 	<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FFF5E3D9" BaseSize="512,512" />
 	<MauiImage Include="Resources\Images\*" />
