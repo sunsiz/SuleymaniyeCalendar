@@ -1,30 +1,30 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-    
-    <!-- Language-specific font family - dynamically updated via SettingsViewModel -->
+
+    <!--  Language-specific font family - dynamically updated via SettingsViewModel  -->
     <x:String x:Key="AppFontFamily">OpenSansRegular</x:String>
-    
+
     <x:String x:Key="IconFontFamily">FontAwesomeSolid</x:String>
     <x:Double x:Key="IconSmallFontSize">16</x:Double>
     <x:Double x:Key="IconMediumFontSize">20</x:Double>
     <x:Double x:Key="IconLargeFontSize">24</x:Double>
     <x:Double x:Key="IconLargerFontSize">28</x:Double>
     <x:Double x:Key="IconXLFontSize">48</x:Double>
-    
-    <!-- Prayer icon sizes - dynamically scaled via BaseViewModel -->
+
+    <!--  Prayer icon sizes - dynamically scaled via BaseViewModel  -->
     <x:Double x:Key="PrayerIconSize">32</x:Double>
     <x:Double x:Key="PrayerIconSizePast">20</x:Double>
     <x:Double x:Key="PrayerIconSizeActive">36</x:Double>
     <x:Double x:Key="PrayerIconContainerSize">38</x:Double>
     <x:Double x:Key="PrayerIconContainerSizePast">28</x:Double>
     <x:Double x:Key="PrayerIconContainerSizeActive">46</x:Double>
-    <!-- Bell icon container size - dynamically scaled via BaseViewModel -->
+    <!--  Bell icon container size - dynamically scaled via BaseViewModel  -->
     <x:Double x:Key="BellIconContainerSize">38</x:Double>
-    <!-- Note: CornerRadius is not dynamically scalable, using fixed value -->
+    <!--  Note: CornerRadius is not dynamically scalable, using fixed value  -->
     <CornerRadius x:Key="BellIconCornerRadius">16</CornerRadius>
-    <!-- Play button sizes - dynamically scaled via BaseViewModel -->
+    <!--  Play button sizes - dynamically scaled via BaseViewModel  -->
     <x:Double x:Key="PlayButtonContainerSize">56</x:Double>
-    <!-- Note: CornerRadius is not dynamically scalable, using fixed value -->
+    <!--  Note: CornerRadius is not dynamically scalable, using fixed value  -->
     <CornerRadius x:Key="PlayButtonCornerRadius">28</CornerRadius>
 
     <!--  Material Design 3 Typography Scale - Refined & Professional  -->
@@ -42,31 +42,45 @@
     <x:Double x:Key="DisplaySmallFontSize">32</x:Double>
     <x:Double x:Key="DisplayFontSize">36</x:Double>
 
-    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
-    <!-- 8PX GRID SYSTEM - Mobile-first consistent spacing (all multiples of 8) -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  8PX GRID SYSTEM - Mobile-first consistent spacing (all multiples of 8)  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  Card Padding Constants - Internal spacing for cards  -->
-    <Thickness x:Key="CardPaddingTight">12,8</Thickness>        <!-- Compact elements, list items -->
-    <Thickness x:Key="CardPaddingDefault">16,12</Thickness>     <!-- Standard cards, settings -->
-    <Thickness x:Key="CardPaddingComfy">20,16</Thickness>       <!-- Hero cards, emphasis -->
-    <Thickness x:Key="CardPaddingSpacious">24,20</Thickness>    <!-- Large feature cards -->
+    <Thickness x:Key="CardPaddingTight">12,8</Thickness>
+    <!--  Compact elements, list items  -->
+    <Thickness x:Key="CardPaddingDefault">16,12</Thickness>
+    <!--  Standard cards, settings  -->
+    <Thickness x:Key="CardPaddingComfy">20,16</Thickness>
+    <!--  Hero cards, emphasis  -->
+    <Thickness x:Key="CardPaddingSpacious">24,20</Thickness>
+    <!--  Large feature cards  -->
 
     <!--  Card Margin Constants - Separation between cards  -->
-    <Thickness x:Key="CardMarginList">8,4</Thickness>           <!-- List items (tight vertical) -->
-    <Thickness x:Key="CardMarginCompact">8,6</Thickness>        <!-- Compact layouts -->
-    <Thickness x:Key="CardMarginDefault">12,8</Thickness>       <!-- Standard separation -->
-    <Thickness x:Key="CardMarginSpacer">16,12</Thickness>       <!-- Section separators -->
+    <Thickness x:Key="CardMarginList">8,4</Thickness>
+    <!--  List items (tight vertical)  -->
+    <Thickness x:Key="CardMarginCompact">8,6</Thickness>
+    <!--  Compact layouts  -->
+    <Thickness x:Key="CardMarginDefault">12,8</Thickness>
+    <!--  Standard separation  -->
+    <Thickness x:Key="CardMarginSpacer">16,12</Thickness>
+    <!--  Section separators  -->
 
     <!--  Page Padding Constants - Edge spacing for mobile screens  -->
-    <Thickness x:Key="PagePaddingMobile">16,8</Thickness>       <!-- Standard mobile padding -->
-    <Thickness x:Key="PagePaddingWide">24,12</Thickness>        <!-- Larger phones, tablets -->
+    <Thickness x:Key="PagePaddingMobile">16,8</Thickness>
+    <!--  Standard mobile padding  -->
+    <Thickness x:Key="PagePaddingWide">24,12</Thickness>
+    <!--  Larger phones, tablets  -->
 
     <!--  Element Spacing - For StackLayout/Grid spacing properties  -->
-    <x:Double x:Key="SpacingTight">8</x:Double>                 <!-- Tight grouping -->
-    <x:Double x:Key="SpacingDefault">12</x:Double>              <!-- Standard spacing -->
-    <x:Double x:Key="SpacingComfortable">16</x:Double>          <!-- Comfortable breathing room -->
-    <x:Double x:Key="SpacingLoose">24</x:Double>                <!-- Section separators -->
+    <x:Double x:Key="SpacingTight">8</x:Double>
+    <!--  Tight grouping  -->
+    <x:Double x:Key="SpacingDefault">12</x:Double>
+    <!--  Standard spacing  -->
+    <x:Double x:Key="SpacingComfortable">16</x:Double>
+    <!--  Comfortable breathing room  -->
+    <x:Double x:Key="SpacingLoose">24</x:Double>
+    <!--  Section separators  -->
     <x:Double x:Key="SpacingLG">16</x:Double>
     <x:Double x:Key="SpacingMD">10</x:Double>
     <x:Double x:Key="SpacingXS">4</x:Double>
@@ -104,8 +118,14 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-    <Style x:Key="LabelStyle" BasedOn="{StaticResource Label}" TargetType="Label" />
-    <Style x:Key="LabelSectionHeader" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="LabelStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label" />
+    <Style
+        x:Key="LabelSectionHeader"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="VerticalTextAlignment" Value="Center" />
@@ -114,76 +134,118 @@
         <Setter Property="Margin" Value="0,0,0,4" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light=Transparent, Dark=#80000000}" Opacity="{AppThemeBinding Light=0.1, Dark=0.6}" Radius="3" Offset="1,1" />
+                <Shadow
+                    Brush="{AppThemeBinding Light=Transparent,
+                                            Dark=#80000000}"
+                    Opacity="{AppThemeBinding Light=0.1,
+                                              Dark=0.6}"
+                    Radius="3"
+                    Offset="1,1" />
             </Setter.Value>
         </Setter>
     </Style>
 
-    <Style x:Key="LabelMediumStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="LabelMediumStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="16" />
         <Setter Property="FontAttributes" Value="None" />
         <Setter Property="LineHeight" Value="1.2" />
     </Style>
-    <Style x:Key="LabelLargeStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="LabelLargeStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="LineHeight" Value="1.3" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}" />
     </Style>
-    <Style x:Key="HeadlineMediumStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="HeadlineMediumStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource SubHeaderFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="LineHeight" Value="1.35" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}" />
     </Style>
-    <Style x:Key="HeadlineLargeStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="HeadlineLargeStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource TitleSmallFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="LineHeight" Value="1.3" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}" />
     </Style>
-    <Style x:Key="BodySmallStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="BodySmallStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource BodySmallFontSize}" />
         <Setter Property="LineHeight" Value="1.3" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}" />
     </Style>
-    <Style x:Key="BodyMediumStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="BodyMediumStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="15" />
         <Setter Property="FontAttributes" Value="None" />
         <Setter Property="LineHeight" Value="1.2" />
     </Style>
-    <Style x:Key="BodyLargeStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="BodyLargeStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource BodyLargeFontSize}" />
         <Setter Property="LineHeight" Value="1.4" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}" />
     </Style>
-    <Style x:Key="TitleSmallStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="TitleSmallStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="LineHeight" Value="1.1" />
     </Style>
-    <Style x:Key="TitleMediumStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="TitleMediumStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource TitleMediumFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="LineHeight" Value="1.25" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary60}}" />
         <Setter Property="Margin" Value="0,0,0,6" />
     </Style>
-    <Style x:Key="TitleLargeStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="TitleLargeStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="LineHeight" Value="1.2" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary60}}" />
         <Setter Property="Margin" Value="0,0,0,8" />
     </Style>
-    <Style x:Key="PrayerNameStyle" BasedOn="{StaticResource HeadlineMediumStyle}" TargetType="Label">
+    <Style
+        x:Key="PrayerNameStyle"
+        BasedOn="{StaticResource HeadlineMediumStyle}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource HighContrastOnSurface}, Dark={StaticResource HighContrastOnSurfaceDark}}" />
         <Setter Property="LineHeight" Value="1.2" />
         <Setter Property="Margin" Value="0,1" />
     </Style>
-    <Style x:Key="PrayerTimeStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="PrayerTimeStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}" />
@@ -191,7 +253,10 @@
         <Setter Property="LineHeight" Value="1.2" />
         <Setter Property="Margin" Value="0,1" />
     </Style>
-    <Style x:Key="LocationStyle" BasedOn="{StaticResource Label}" TargetType="Label">
+    <Style
+        x:Key="LocationStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
         <Setter Property="FontSize" Value="{DynamicResource DefaultFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary95}, Dark={StaticResource Primary10}}" />
@@ -200,7 +265,11 @@
         <Setter Property="LineHeight" Value="1.2" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="#80000000" Opacity="0.3" Radius="4" Offset="0,2" />
+                <Shadow
+                    Brush="#80000000"
+                    Opacity="0.3"
+                    Radius="4"
+                    Offset="0,2" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -218,7 +287,11 @@
         <Setter Property="StrokeThickness" Value="0.9" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{StaticResource StrongShadowOverlayBrush}" Opacity="0.55" Radius="9" Offset="0,5" />
+                <Shadow
+                    Brush="{StaticResource StrongShadowOverlayBrush}"
+                    Opacity="0.55"
+                    Radius="9"
+                    Offset="0,5" />
             </Setter.Value>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -228,7 +301,11 @@
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
                             <Setter Property="Shadow">
-                                <Shadow Brush="#16000000" Opacity="0.12" Radius="7" Offset="0,4" />
+                                <Shadow
+                                    Brush="#16000000"
+                                    Opacity="0.12"
+                                    Radius="7"
+                                    Offset="0,4" />
                             </Setter>
                             <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowLight}, Dark={StaticResource SurfaceContainerLowDark}}" />
                         </VisualState.Setters>
@@ -237,14 +314,17 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-    
+
     <Style x:Key="GoldenSlider" TargetType="Slider">
         <Setter Property="MinimumTrackColor" Value="{StaticResource Primary50}" />
         <Setter Property="MaximumTrackColor" Value="{AppThemeBinding Light=#E0E0E0, Dark=#424242}" />
         <Setter Property="ThumbColor" Value="{StaticResource Primary50}" />
         <Setter Property="MinimumHeightRequest" Value="44" />
     </Style>
-    <Style x:Key="PremiumGoldenSlider" BasedOn="{StaticResource GoldenSlider}" TargetType="Slider">
+    <Style
+        x:Key="PremiumGoldenSlider"
+        BasedOn="{StaticResource GoldenSlider}"
+        TargetType="Slider">
         <Setter Property="MinimumTrackColor" Value="{StaticResource Secondary50}" />
         <Setter Property="ThumbColor" Value="{StaticResource FocusIndicatorPrimary}" />
         <Setter Property="MinimumHeightRequest" Value="48" />
@@ -271,7 +351,7 @@
         </Setter>
     </Style>
 
-    <!-- Golden Picker - Dropdown selector -->
+    <!--  Golden Picker - Dropdown selector  -->
     <Style x:Key="GoldenPicker" TargetType="Picker">
         <Setter Property="FontSize" Value="{DynamicResource BodyFontSize}" />
         <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}" />
@@ -309,7 +389,7 @@
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary30}}" />
         <Setter Property="HeightRequest" Value="80" />
         <Setter Property="WidthRequest" Value="80" />
-        <Setter Property="VerticalOptions" Value="Center" />        
+        <Setter Property="VerticalOptions" Value="Center" />
         <Setter Property="HorizontalOptions" Value="Center" />
     </Style>
 
@@ -328,8 +408,13 @@
         <Setter Property="MinimumWidthRequest" Value="48" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <!-- Subtle golden glow -->
-                <Shadow Opacity="0.2" Radius="12" Offset="0,4" Brush="{AppThemeBinding Light=#40FFD700, Dark=#40FFD700}" />
+                <!--  Subtle golden glow  -->
+                <Shadow
+                    Brush="{AppThemeBinding Light=#40FFD700,
+                                            Dark=#40FFD700}"
+                    Opacity="0.2"
+                    Radius="12"
+                    Offset="0,4" />
             </Setter.Value>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -345,18 +430,28 @@
                         <VisualState.Setters>
                             <Setter Property="Scale" Value="0.92" />
                             <Setter Property="Opacity" Value="0.75" />
-                            <!-- Enhanced golden glow on press -->
+                            <!--  Enhanced golden glow on press  -->
                             <Setter Property="Shadow">
-                                <Shadow Opacity="0.4" Radius="10" Offset="0,6" Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" />
+                                <Shadow
+                                    Brush="{AppThemeBinding Light=#60FFD700,
+                                                            Dark=#60FFD700}"
+                                    Opacity="0.4"
+                                    Radius="10"
+                                    Offset="0,6" />
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
                             <Setter Property="Scale" Value="1.08" />
-                            <!-- Stronger golden glow on hover -->
+                            <!--  Stronger golden glow on hover  -->
                             <Setter Property="Shadow">
-                                <Shadow Opacity="0.5" Radius="14" Offset="0,8" Brush="{AppThemeBinding Light=#70FFD700, Dark=#70FFD700}" />
+                                <Shadow
+                                    Brush="{AppThemeBinding Light=#70FFD700,
+                                                            Dark=#70FFD700}"
+                                    Opacity="0.5"
+                                    Radius="14"
+                                    Offset="0,8" />
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>
@@ -380,7 +475,12 @@
         <Setter Property="Padding" Value="16,8" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary80}}" Opacity="0.18" Radius="12" Offset="0,3" />
+                <Shadow
+                    Brush="{AppThemeBinding Light={StaticResource Primary40},
+                                            Dark={StaticResource Primary80}}"
+                    Opacity="0.18"
+                    Radius="12"
+                    Offset="0,3" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -398,7 +498,10 @@
         <Setter Property="BorderWidth" Value="0" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.18" Radius="7" Offset="0,4" />
+                <Shadow
+                    Opacity="0.18"
+                    Radius="7"
+                    Offset="0,4" />
             </Setter.Value>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -415,7 +518,10 @@
                         <VisualState.Setters>
                             <Setter Property="Scale" Value="1.03" />
                             <Setter Property="Shadow">
-                                <Shadow Opacity="0.28" Radius="12" Offset="0,6" />
+                                <Shadow
+                                    Opacity="0.28"
+                                    Radius="12"
+                                    Offset="0,6" />
                             </Setter>
                         </VisualState.Setters>
                     </VisualState>
@@ -424,11 +530,14 @@
         </Setter>
     </Style>
 
-    <Style x:Key="GlassButtonSecondary" TargetType="Button" BasedOn="{StaticResource GlassButtonBase}">
+    <Style
+        x:Key="GlassButtonSecondary"
+        BasedOn="{StaticResource GlassButtonBase}"
+        TargetType="Button">
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <!-- Cream/golden backgrounds - VISIBLE! -->
+                    <!--  Cream/golden backgrounds - VISIBLE!  -->
                     <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFFBF0, Dark=#FF3A3530}" />
                     <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFF4D9, Dark=#FF2D2A25}" />
                     <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFF8E8, Dark=#FF35322D}" />
@@ -439,11 +548,14 @@
     </Style>
 
     <!--  🦸 PHASE 13: Outline Glass Button - Light cream/golden background with prominent border  -->
-    <Style x:Key="GlassButtonOutline" TargetType="Button" BasedOn="{StaticResource GlassButtonBase}">
+    <Style
+        x:Key="GlassButtonOutline"
+        BasedOn="{StaticResource GlassButtonBase}"
+        TargetType="Button">
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <!-- Light cream/golden backgrounds - VISIBLE! -->
+                    <!--  Light cream/golden backgrounds - VISIBLE!  -->
                     <GradientStop Offset="0" Color="{AppThemeBinding Light=#FFFFFAF0, Dark=#FF3C3833}" />
                     <GradientStop Offset="0.5" Color="{AppThemeBinding Light=#FFFFF2D9, Dark=#FF2E2B26}" />
                     <GradientStop Offset="1" Color="{AppThemeBinding Light=#FFFFF6E0, Dark=#FF36332E}" />
@@ -453,7 +565,12 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.3" Radius="8" Offset="0,6" Brush="{AppThemeBinding Light=#60FFD700, Dark=#50FFD700}" />
+                <Shadow
+                    Brush="{AppThemeBinding Light=#60FFD700,
+                                            Dark=#50FFD700}"
+                    Opacity="0.3"
+                    Radius="8"
+                    Offset="0,6" />
             </Setter.Value>
         </Setter>
     </Style>
@@ -468,11 +585,19 @@
         <Setter Property="Padding" Value="16,12" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary30}}" Opacity="0.18" Radius="12" Offset="0,3" />
+                <Shadow
+                    Brush="{AppThemeBinding Light={StaticResource Primary40},
+                                            Dark={StaticResource Primary30}}"
+                    Opacity="0.18"
+                    Radius="12"
+                    Offset="0,3" />
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="GlassButtonWarning" TargetType="Button" BasedOn="{StaticResource GlassButtonBase}">
+    <Style
+        x:Key="GlassButtonWarning"
+        BasedOn="{StaticResource GlassButtonBase}"
+        TargetType="Button">
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassWarningTintLight}, Dark={StaticResource GlassWarningTintDark}}" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource CardValueLight}, Dark={StaticResource Primary30}}" />
         <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}" />
@@ -481,17 +606,25 @@
         <Setter Property="Padding" Value="16,8" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light=#FFD700, Dark={StaticResource Primary30}}" Opacity="0.18" Radius="12" Offset="0,3" />
+                <Shadow
+                    Brush="{AppThemeBinding Light=#FFD700,
+                                            Dark={StaticResource Primary30}}"
+                    Opacity="0.18"
+                    Radius="12"
+                    Offset="0,3" />
             </Setter.Value>
         </Setter>
     </Style>
 
     <!--  🦸 PHASE 13: Intense Glass Buttons - stronger golden gradients for emphasis  -->
-    <Style x:Key="GlassButtonPrimaryIntense" TargetType="Button" BasedOn="{StaticResource GlassButtonBase}">
+    <Style
+        x:Key="GlassButtonPrimaryIntense"
+        BasedOn="{StaticResource GlassButtonBase}"
+        TargetType="Button">
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                    <!-- Deeper golden - more saturated for "intense" -->
+                    <!--  Deeper golden - more saturated for "intense"  -->
                     <GradientStop Offset="0" Color="{AppThemeBinding Light={StaticResource Primary40}, Dark=#AF5A4A30}" />
                     <GradientStop Offset="0.5" Color="{AppThemeBinding Light={StaticResource Primary50}, Dark=#AF4A3A22}" />
                     <GradientStop Offset="1" Color="{AppThemeBinding Light={StaticResource Primary40}, Dark=#AF5A4A30}" />
@@ -501,12 +634,20 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light=White, Dark={StaticResource Primary30}}" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Opacity="0.45" Radius="10" Offset="0,0" Brush="{AppThemeBinding Light={StaticResource Primary30}, Dark={StaticResource Primary90}}" />
+                <Shadow
+                    Brush="{AppThemeBinding Light={StaticResource Primary30},
+                                            Dark={StaticResource Primary90}}"
+                    Opacity="0.45"
+                    Radius="10"
+                    Offset="0,0" />
             </Setter.Value>
         </Setter>
     </Style>
-    
-    <Style x:Key="iOSLiquidGlassButton" BasedOn="{StaticResource GlassButtonBase}" TargetType="Button">
+
+    <Style
+        x:Key="iOSLiquidGlassButton"
+        BasedOn="{StaticResource GlassButtonBase}"
+        TargetType="Button">
         <Setter Property="Background">
             <Setter.Value>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -521,7 +662,12 @@
         <Setter Property="Padding" Value="20,12" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light=#50FFD700, Dark=#40FFD700}" Opacity="0.18" Radius="4" Offset="0,6" />
+                <Shadow
+                    Brush="{AppThemeBinding Light=#50FFD700,
+                                            Dark=#40FFD700}"
+                    Opacity="0.18"
+                    Radius="4"
+                    Offset="0,6" />
             </Setter.Value>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -568,11 +714,19 @@
         <Setter Property="Padding" Value="18,10" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary90}}" Opacity="0.85" Radius="9" Offset="0,2" />
+                <Shadow
+                    Brush="{AppThemeBinding Light={StaticResource Primary50},
+                                            Dark={StaticResource Primary90}}"
+                    Opacity="0.85"
+                    Radius="9"
+                    Offset="0,2" />
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="GlassButtonPillSecondary" BasedOn="{StaticResource GlassButtonSecondary}" TargetType="Button">
+    <Style
+        x:Key="GlassButtonPillSecondary"
+        BasedOn="{StaticResource GlassButtonSecondary}"
+        TargetType="Button">
         <Setter Property="CornerRadius" Value="22" />
         <Setter Property="Padding" Value="16,8" />
         <Setter Property="Background">
@@ -598,7 +752,11 @@
         <Setter Property="HorizontalOptions" Value="Fill" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="#12000000" Opacity="0.18" Radius="6" Offset="0,2" />
+                <Shadow
+                    Brush="#12000000"
+                    Opacity="0.18"
+                    Radius="6"
+                    Offset="0,2" />
             </Setter.Value>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -608,7 +766,11 @@
                     <VisualState x:Name="PointerOver">
                         <VisualState.Setters>
                             <Setter Property="Shadow">
-                                <Shadow Brush="#16000000" Opacity="0.22" Radius="10" Offset="0,4" />
+                                <Shadow
+                                    Brush="#16000000"
+                                    Opacity="0.22"
+                                    Radius="10"
+                                    Offset="0,4" />
                             </Setter>
                             <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowLight}, Dark={StaticResource SurfaceContainerLowDark}}" />
                         </VisualState.Setters>
@@ -617,103 +779,151 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-    <Style x:Key="iOSLiquidGlassCard" BasedOn="{StaticResource Card}" TargetType="Border">
+    <Style
+        x:Key="iOSLiquidGlassCard"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassStrongLight}, Dark={StaticResource GlassStrongDark}}" />
         <Setter Property="Padding" Value="16,18" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" Opacity="0.20" Radius="7" Offset="0,2" />
+                <Shadow
+                    Brush="{AppThemeBinding Light=#60FFD700,
+                                            Dark=#60FFD700}"
+                    Opacity="0.20"
+                    Radius="7"
+                    Offset="0,2" />
             </Setter.Value>
         </Setter>
     </Style>
-    <Style x:Key="FrostGlassCardCrystal" BasedOn="{StaticResource Card}" TargetType="Border">
+    <Style
+        x:Key="FrostGlassCardCrystal"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
         <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="Background"
-                Value="{AppThemeBinding Light={StaticResource GlassStrongLight}, Dark={StaticResource GlassStrongDark}}" />
+        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassStrongLight}, Dark={StaticResource GlassStrongDark}}" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light=#90FFD700, Dark=#90FFD700}" />
         <Setter Property="StrokeThickness" Value="0.15" />
         <Setter Property="Shadow">
             <Setter.Value>
                 <!--  Enhanced golden glow  -->
-                <Shadow Brush="{AppThemeBinding Light=#60FFD700, Dark=#60FFD700}" Opacity="0.20" Radius="7" Offset="0,2" />
+                <Shadow
+                    Brush="{AppThemeBinding Light=#60FFD700,
+                                            Dark=#60FFD700}"
+                    Opacity="0.20"
+                    Radius="7"
+                    Offset="0,2" />
             </Setter.Value>
         </Setter>
     </Style>
-    
-    <Style x:Key="FrostGlassCardFrozen" BasedOn="{StaticResource Card}" TargetType="Border">
+
+    <Style
+        x:Key="FrostGlassCardFrozen"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassSoftLight}, Dark={StaticResource GlassSoftDark}}" />
         <Setter Property="Stroke" Value="{AppThemeBinding Light=#70D4AF37, Dark=#70FFD700}" />
         <Setter Property="StrokeThickness" Value="0.5" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{AppThemeBinding Light=#50FFD700, Dark=#50FFD700}" Opacity="0.25" Radius="10" Offset="0,16" />
+                <Shadow
+                    Brush="{AppThemeBinding Light=#50FFD700,
+                                            Dark=#50FFD700}"
+                    Opacity="0.25"
+                    Radius="10"
+                    Offset="0,16" />
             </Setter.Value>
         </Setter>
     </Style>
-    
-    <Style x:Key="GlassCardSecondaryTint" BasedOn="{StaticResource Card}" TargetType="Border">
+
+    <Style
+        x:Key="GlassCardSecondaryTint"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassSecondaryTintLight}, Dark={StaticResource GlassSecondaryTintDark}}" />
         <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
         <Setter Property="StrokeThickness" Value="0.75" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="{StaticResource StrongShadowOverlayBrush}" Opacity="0.35" Radius="8" Offset="0,8" />
+                <Shadow
+                    Brush="{StaticResource StrongShadowOverlayBrush}"
+                    Opacity="0.35"
+                    Radius="8"
+                    Offset="0,8" />
             </Setter.Value>
         </Setter>
     </Style>
 
 
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
-    <!--  🚀 PERFORMANCE-OPTIMIZED CARDS (Phase 5)                                   -->
-    <!--  Solid colors instead of gradients for high-frequency rendering contexts    -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════ -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════  -->
+    <!--  🚀 PERFORMANCE-OPTIMIZED CARDS (Phase 5)  -->
+    <!--  Solid colors instead of gradients for high-frequency rendering contexts  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════  -->
 
     <!--  GlassCardOptimized - Solid color version for list performance  -->
-    <Style x:Key="GlassCardOptimized" TargetType="Border" BasedOn="{StaticResource Card}">
-        <!-- Use solid SurfaceVariantColor instead of gradient brush -->
+    <Style
+        x:Key="GlassCardOptimized"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
+        <!--  Use solid SurfaceVariantColor instead of gradient brush  -->
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SurfaceVariantColor}, Dark={StaticResource SurfaceVariantColorDark}}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
         <Setter Property="StrokeThickness" Value="0.75" />
-        <!-- Reduced shadow complexity -->
+        <!--  Reduced shadow complexity  -->
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="#1A000000" Radius="8" Offset="0,2" />
+                <Shadow
+                    Brush="#1A000000"
+                    Radius="8"
+                    Offset="0,2" />
             </Setter.Value>
         </Setter>
     </Style>
 
     <!--  SettingsCardOptimized - Solid color version for list performance  -->
-    <Style x:Key="SettingsCardOptimized" TargetType="Border" BasedOn="{StaticResource Card}">
-        <!-- Use solid SolidColor instead of gradient brush -->
+    <Style
+        x:Key="SettingsCardOptimized"
+        BasedOn="{StaticResource Card}"
+        TargetType="Border">
+        <!--  Use solid SolidColor instead of gradient brush  -->
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Neutral10}, Dark={StaticResource Neutral99}}" />
         <Setter Property="Stroke" Value="{StaticResource GlassStrokeBrush}" />
         <Setter Property="StrokeThickness" Value="0.75" />
-        <!-- Reduced shadow complexity -->
+        <!--  Reduced shadow complexity  -->
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="#1A000000" Radius="4" Offset="0,0" />
+                <Shadow
+                    Brush="#1A000000"
+                    Radius="4"
+                    Offset="0,0" />
             </Setter.Value>
         </Setter>
     </Style>
 
-        <!--  PrayerCardOptimized - High-performance version for MainPage list  -->
+    <!--  PrayerCardOptimized - High-performance version for MainPage list  -->
     <!--  Prayer state colors (Past/Current/Future) are defined via DataTriggers in MainPage.xaml  -->
     <!--  This avoids duplication and uses automatic data binding instead of manual VisualStateManager calls  -->
-    <Style x:Key="PrayerCardOptimized" TargetType="Border" BasedOn="{StaticResource GlassCardOptimized}">
-        <!-- 8px grid system -->
+    <Style
+        x:Key="PrayerCardOptimized"
+        BasedOn="{StaticResource GlassCardOptimized}"
+        TargetType="Border">
+        <!--  8px grid system  -->
         <Setter Property="Padding" Value="{StaticResource CardPaddingTight}" />
         <Setter Property="Margin" Value="{StaticResource CardMarginList}" />
         <Setter Property="StrokeShape" Value="RoundRectangle 14" />
         <Setter Property="MinimumHeightRequest" Value="60" />
         <Setter Property="StrokeThickness" Value="1.2" />
-        <!-- Simpler shadow -->
+        <!--  Simpler shadow  -->
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="#1A000000" Radius="2" Offset="0,2" />
+                <Shadow
+                    Brush="#1A000000"
+                    Radius="2"
+                    Offset="0,2" />
             </Setter.Value>
         </Setter>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -724,27 +934,30 @@
                     <VisualState x:Name="Normal" />
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <!-- 🎯 Phase 6: Enhanced mobile press feedback -->
-                            <Setter Property="Opacity" Value="0.82" />               <!-- Stronger feedback -->
-                            <Setter Property="Scale" Value="0.96" />                 <!-- More pronounced scale -->
-                            <Setter Property="TranslationY" Value="2" />             <!-- Push-down effect -->
+                            <!--  🎯 Phase 6: Enhanced mobile press feedback  -->
+                            <Setter Property="Opacity" Value="0.82" />
+                            <!--  Stronger feedback  -->
+                            <Setter Property="Scale" Value="0.96" />
+                            <!--  More pronounced scale  -->
+                            <Setter Property="TranslationY" Value="2" />
+                            <!--  Push-down effect  -->
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Focused">
                         <VisualState.Setters>
                             <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource Primary50}, Dark={StaticResource Primary40}}" />
                             <Setter Property="StrokeThickness" Value="3" />
-                            <!-- No glow shadow for performance -->
+                            <!--  No glow shadow for performance  -->
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateGroupList>
         </Setter>
     </Style>
-    
-    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
-    <!-- IMPLICIT CONTROL STYLES - Base styles for all controls -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  IMPLICIT CONTROL STYLES - Base styles for all controls  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  Button - Base button styling with language-specific font  -->
     <Style TargetType="Button">
@@ -759,21 +972,21 @@
     </Style>
 
 
-    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
-    <!-- PAGE AND SHELL STYLES - Layout and navigation -->
-    <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
+    <!--  PAGE AND SHELL STYLES - Layout and navigation  -->
+    <!--  ═══════════════════════════════════════════════════════════════════════════════════  -->
 
     <!--  Page - Base page styling  -->
-    <Style TargetType="Page" ApplyToDerivedTypes="True">
+    <Style ApplyToDerivedTypes="True" TargetType="Page">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}" />
         <Setter Property="Padding" Value="0" />
     </Style>
 
     <!--  Shell - Navigation container  -->
-    <Style TargetType="Shell" ApplyToDerivedTypes="True">
-        <!-- Align nav bar background with bottom TabBar for brand consistency -->
+    <Style ApplyToDerivedTypes="True" TargetType="Shell">
+        <!--  Align nav bar background with bottom TabBar for brand consistency  -->
         <Setter Property="Shell.BackgroundColor" Value="{AppThemeBinding Light={StaticResource TabBarBgColor}, Dark={StaticResource TabBarBackgroundColorDark}}" />
-        <!-- Keep icons/content readable while aligning titles with theme -->
+        <!--  Keep icons/content readable while aligning titles with theme  -->
         <Setter Property="Shell.ForegroundColor" Value="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnSurfaceColorDark}}" />
         <Setter Property="Shell.TitleColor" Value="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnSurfaceColorDark}}" />
         <Setter Property="Shell.DisabledColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}" />
@@ -787,7 +1000,7 @@
 
     <!--  TabBar - Tab navigation  -->
     <Style TargetType="TabBar">
-        <!-- Brand in light; neutral/surface in dark for better theme coherence -->
+        <!--  Brand in light; neutral/surface in dark for better theme coherence  -->
         <!--<Setter Property="Shell.TabBarBackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryColor}, Dark={StaticResource TabBarBackgroundColorDark}}" />-->
         <!--<Setter Property="Shell.TabBarForegroundColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource OnSurfaceColorDark}}" />-->
         <!--<Setter Property="Shell.TabBarTitleColor" Value="{AppThemeBinding Light={StaticResource TabBarSelectedColor}, Dark={StaticResource OnSurfaceColorDark}}" />-->

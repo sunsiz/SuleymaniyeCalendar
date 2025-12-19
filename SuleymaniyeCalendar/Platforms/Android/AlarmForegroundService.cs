@@ -40,6 +40,7 @@ namespace SuleymaniyeCalendar
 		private int _updateCounter;
 		private DateTime _lastRescheduleAttemptUtc = DateTime.MinValue;
 		private DateTime _lastKnownDate = DateTime.Today; // Track date for midnight crossing detection
+		private string? _lastNotificationTitle; // Cache last successful notification title to avoid "Refreshing" stuck state
 		
 		/// <summary>
 		/// Critical system events that should bypass anti-spam protection for alarm scheduling.
@@ -343,7 +344,13 @@ namespace SuleymaniyeCalendar
 		{
 			var dataService = GetDataService();
 			var calendar = dataService?.calendar;
-            if (calendar == null) return AppResources.Yenileniyor;
+			
+			// If calendar data is unavailable, return cached title or fallback to "Refreshing" only on first load
+			if (calendar is null)
+			{
+				System.Diagnostics.Debug.WriteLine("[AlarmForegroundService] Calendar is null, using cached notification title");
+				return _lastNotificationTitle ?? AppResources.Yenileniyor;
+			}
 
 			var currentTime = DateTime.Now.TimeOfDay;
 			
@@ -378,13 +385,17 @@ namespace SuleymaniyeCalendar
 					message = AppResources.Yatsininciktigindangecenvakit +
 							  (currentTime - TimeSpan.Parse(calendar.EndOfIsha, CultureInfo.InvariantCulture)).Add(TimeSpan.FromMinutes(1)).ToString(@"hh\:mm");
 				
+				// Cache successful result to avoid "Refreshing" stuck state on subsequent failures
+				_lastNotificationTitle = message;
 				return message;
 			}
 			catch (Exception exception)
 			{
 				System.Diagnostics.Debug.WriteLine($"GetFormattedRemainingTime exception: {exception.Message}. Location: {calendar.Latitude}, {calendar.Longitude}");
 				Log.Error("GetFormattedRemainingTime", $"GetFormattedRemainingTime exception: {exception.Message}. Location: {calendar.Latitude}, {calendar.Longitude}");
-				return AppResources.KonumIzniIcerik;
+				
+				// Return cached title if available, otherwise show a generic message
+				return _lastNotificationTitle ?? AppResources.KonumIzniIcerik;
 			}
 		}
 

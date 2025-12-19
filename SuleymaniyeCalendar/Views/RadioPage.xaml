@@ -9,10 +9,11 @@
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     Title="{Binding Title}"
     x:DataType="viewModels:RadioViewModel"
+    FlowDirection="{DynamicResource FlowDirection}"
     Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <Grid Margin="8,0,8,0" MinimumHeightRequest="48" ColumnDefinitions="*">
+        <Grid Margin="8,0,8,0" MinimumHeightRequest="48" ColumnDefinitions="*" FlowDirection="{DynamicResource FlowDirection}">
             <Label Grid.Column="0"
                 AutomationProperties.IsInAccessibleTree="True"
                 SemanticProperties.HeadingLevel="Level1"

@@ -7,10 +7,11 @@
     xmlns:viewModels="clr-namespace:SuleymaniyeCalendar.ViewModels"
     x:DataType="viewModels:AboutViewModel"
     Title="{Binding Title}"
+    FlowDirection="{DynamicResource FlowDirection}"
     Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <StackLayout Margin="8" HeightRequest="48" Orientation="Horizontal">
+        <StackLayout Margin="8" HeightRequest="48" Orientation="Horizontal" FlowDirection="{DynamicResource FlowDirection}">
             <Label
                 AutomationProperties.IsInAccessibleTree="True"
                 SemanticProperties.HeadingLevel="Level1"

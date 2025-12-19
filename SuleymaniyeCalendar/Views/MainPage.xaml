@@ -14,7 +14,7 @@
     Background="{AppThemeBinding Light={StaticResource AppBackgroundLight}, Dark={StaticResource AppBackgroundDark}}">
 
     <Shell.TitleView>
-        <Grid Margin="8,0,0,0" x:DataType="viewModels:MainViewModel" MinimumHeightRequest="48"
+        <Grid Margin="8,0,8,0" x:DataType="viewModels:MainViewModel" MinimumHeightRequest="48"
               ColumnDefinitions="*,Auto,Auto" ColumnSpacing="4"
               FlowDirection="{DynamicResource FlowDirection}">
             <Label Grid.Column="0"
@@ -47,7 +47,7 @@
             </Image>
             <Image Grid.Column="2"
                    x:DataType="viewModels:MainViewModel"
-                   Margin="4,0,8,0"
+                   Margin="4,0,0,0"
                    AutomationProperties.IsInAccessibleTree="True"
                    VerticalOptions="Center"
                    WidthRequest="40"
@@ -402,7 +402,8 @@
                                 HorizontalOptions="Fill"
                                 IsEnabled="{Binding IsNotBusy}"
                                 Style="{StaticResource GlassCardSecondaryTint}"
-                                StrokeShape="RoundRectangle 22">
+                                StrokeShape="RoundRectangle 22"
+                                FlowDirection="{DynamicResource FlowDirection}">
                                 <Label
                                     Margin="3,0"
                                     Padding="0"

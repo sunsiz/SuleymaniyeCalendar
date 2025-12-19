@@ -30,8 +30,24 @@ public partial class App : Application
 
         InitializeComponent();
 
+        // Apply language-specific font (e.g., UyghurFont for Uyghur language)
+        ApplyLanguageFont(language);
+
         // Initialize font scaling system at startup
         BaseViewModel.InitializeFontSize();
+    }
+
+    /// <summary>
+    /// Applies language-specific font family at startup.
+    /// Uyghur uses UKIJTuT font; other languages use OpenSans.
+    /// </summary>
+    /// <param name="cultureCode">Two-letter ISO language code.</param>
+    private void ApplyLanguageFont(string cultureCode)
+    {
+        if (Resources is null) return;
+
+        var fontFamily = cultureCode == "ug" ? "UyghurFont" : "OpenSansRegular";
+        Resources["AppFontFamily"] = fontFamily;
     }
 
     protected override Window CreateWindow(IActivationState? activationState)

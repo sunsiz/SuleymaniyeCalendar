@@ -21,7 +21,7 @@
     </ContentPage.ToolbarItems> -->
 
     <Shell.TitleView>
-        <StackLayout Margin="8" HeightRequest="48" Orientation="Horizontal">
+        <StackLayout Margin="8" HeightRequest="48" Orientation="Horizontal" FlowDirection="{DynamicResource FlowDirection}">
             <Label
                 AutomationProperties.IsInAccessibleTree="True"
                 SemanticProperties.HeadingLevel="Level1"
