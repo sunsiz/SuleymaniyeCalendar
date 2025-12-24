@@ -310,6 +310,13 @@ public partial class PrayerDetailViewModel : BaseViewModel
 					_awaitingPermissionReturn = permissionResult.RedirectedToSettings;
 					return false;
 				}
+				#elif __IOS__
+				var permissionResult = await CheckiOSPermissionsAsync();
+				if (!permissionResult.Success)
+				{
+					_awaitingPermissionReturn = permissionResult.RedirectedToSettings;
+					return false;
+				}
 				#endif
 
 				// Schedule alarms
@@ -357,15 +364,30 @@ public partial class PrayerDetailViewModel : BaseViewModel
 				}
 			}
 
-			// Notification permission (Android 13+): Request directly
+			// Notification permission (Android 13+): Check first, then request or guide to settings
 			if (OperatingSystem.IsAndroidVersionAtLeast(33))
 			{
 				var status = await Permissions.CheckStatusAsync<Permissions.PostNotifications>();
 				if (status != PermissionStatus.Granted)
 				{
+					// Try requesting permission directly first
 					var newStatus = await Permissions.RequestAsync<Permissions.PostNotifications>();
 					if (newStatus != PermissionStatus.Granted)
 					{
+						// Permission denied - guide user to settings
+						var shouldOpenSettings = await Application.Current.MainPage.DisplayAlert(
+							AppResources.BildirimIzniReddedildi,
+							AppResources.BildirimIzniAciklama,
+							AppResources.AyarlariAc,
+							AppResources.Iptal);
+						
+						if (shouldOpenSettings)
+						{
+							OpenAndroidNotificationSettings();
+							_scheduling = false;
+							return new PermissionCheckResult(Success: false, RedirectedToSettings: true);
+						}
+						
 						ShowToast(AppResources.BildirimIzniGerekli);
 						_scheduling = false;
 						return new PermissionCheckResult(Success: false, RedirectedToSettings: false);
@@ -381,6 +403,110 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		}
 		
 		return new PermissionCheckResult(Success: true, RedirectedToSettings: false);
+	}
+
+	/// <summary>
+	/// Opens Android notification settings for the app.
+	/// </summary>
+	private void OpenAndroidNotificationSettings()
+	{
+		try
+		{
+			var intent = new Android.Content.Intent();
+			
+			if (OperatingSystem.IsAndroidVersionAtLeast(26))
+			{
+				// Android 8.0+ - Open app notification settings
+				intent.SetAction(Android.Provider.Settings.ActionAppNotificationSettings);
+				intent.PutExtra(Android.Provider.Settings.ExtraAppPackage, Android.App.Application.Context.PackageName);
+			}
+			else
+			{
+				// Fallback to general app settings
+				intent.SetAction(Android.Provider.Settings.ActionApplicationDetailsSettings);
+				intent.SetData(Android.Net.Uri.Parse($"package:{Android.App.Application.Context.PackageName}"));
+			}
+			
+			intent.AddFlags(Android.Content.ActivityFlags.NewTask);
+			Android.App.Application.Context.StartActivity(intent);
+		}
+		catch (Exception ex)
+		{
+			Debug.WriteLine($"Failed to open notification settings: {ex.Message}");
+		}
+	}
+	#endif
+
+	#if __IOS__
+	/// <summary>
+	/// Result of iOS permission check.
+	/// </summary>
+	private readonly record struct PermissionCheckResult(bool Success, bool RedirectedToSettings);
+
+	/// <summary>
+	/// Checks and requests iOS notification permissions.
+	/// </summary>
+	/// <returns>Result indicating if permissions granted and whether user was redirected to settings.</returns>
+	private async Task<PermissionCheckResult> CheckiOSPermissionsAsync()
+	{
+		try
+		{
+			// Check current permission status
+			var hasPermission = await Platforms.iOS.NotificationService.CheckNotificationPermissionAsync();
+			
+			if (!hasPermission)
+			{
+				// Try requesting permission
+				var granted = await Platforms.iOS.NotificationService.RequestNotificationPermissionAsync();
+				
+				if (!granted)
+				{
+					// Permission denied - guide user to settings
+					var shouldOpenSettings = await Application.Current.MainPage.DisplayAlert(
+						AppResources.BildirimIzniReddedildi,
+						AppResources.BildirimIzniAciklama,
+						AppResources.AyarlariAc,
+						AppResources.Iptal);
+					
+					if (shouldOpenSettings)
+					{
+						OpeniOSAppSettings();
+						_scheduling = false;
+						return new PermissionCheckResult(Success: false, RedirectedToSettings: true);
+					}
+					
+					ShowToast(AppResources.BildirimIzniGerekli);
+					_scheduling = false;
+					return new PermissionCheckResult(Success: false, RedirectedToSettings: false);
+				}
+			}
+		}
+		catch (Exception ex)
+		{
+			Debug.WriteLine($"iOS permission checks failed: {ex.Message}");
+			_scheduling = false;
+			return new PermissionCheckResult(Success: false, RedirectedToSettings: false);
+		}
+		
+		return new PermissionCheckResult(Success: true, RedirectedToSettings: false);
+	}
+
+	/// <summary>
+	/// Opens iOS app settings page.
+	/// </summary>
+	private void OpeniOSAppSettings()
+	{
+		try
+		{
+			UIKit.UIApplication.SharedApplication.OpenUrl(
+				new Foundation.NSUrl(UIKit.UIApplication.OpenSettingsUrlString),
+				new UIKit.UIApplicationOpenUrlOptions(),
+				null);
+		}
+		catch (Exception ex)
+		{
+			Debug.WriteLine($"Failed to open iOS settings: {ex.Message}");
+		}
 	}
 	#endif
 

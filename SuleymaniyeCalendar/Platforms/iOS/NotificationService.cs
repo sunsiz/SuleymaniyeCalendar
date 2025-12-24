@@ -202,6 +202,71 @@ public class NotificationService
     }
 
     /// <summary>
+    /// Checks if notification permission has been granted.
+    /// </summary>
+    /// <returns>True if notification permission is granted, false otherwise.</returns>
+    public static async Task<bool> CheckNotificationPermissionAsync()
+    {
+        try
+        {
+            var center = UNUserNotificationCenter.Current;
+            var settings = await center.GetNotificationSettingsAsync();
+            
+            var isAuthorized = settings.AuthorizationStatus == UNAuthorizationStatus.Authorized;
+            Debug.WriteLine($"📋 Notification permission status: {settings.AuthorizationStatus} (Authorized: {isAuthorized})");
+            
+            return isAuthorized;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"❌ Failed to check notification permission: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Requests notification permission from the user.
+    /// This can be called even if permission was previously denied.
+    /// </summary>
+    /// <returns>True if permission is granted, false otherwise.</returns>
+    public static async Task<bool> RequestNotificationPermissionAsync()
+    {
+        try
+        {
+            var center = UNUserNotificationCenter.Current;
+            
+            // Request permission
+            var (granted, error) = await center.RequestAuthorizationAsync(
+                UNAuthorizationOptions.Alert | 
+                UNAuthorizationOptions.Sound | 
+                UNAuthorizationOptions.Badge
+            );
+
+            if (granted)
+            {
+                Debug.WriteLine("✅ Notification permission granted");
+                SetupNotificationCategories();
+                return true;
+            }
+            else if (error != null)
+            {
+                Debug.WriteLine($"⚠️ Notification permission denied: {error.LocalizedDescription}");
+            }
+            else
+            {
+                Debug.WriteLine("⚠️ Notification permission denied by user");
+            }
+            
+            return false;
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"❌ Notification permission request failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Sets up notification categories for interactive actions.
     /// </summary>
     private static void SetupNotificationCategories()
