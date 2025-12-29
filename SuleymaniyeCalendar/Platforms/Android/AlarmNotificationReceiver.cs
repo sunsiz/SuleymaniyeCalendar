@@ -39,7 +39,6 @@ public class AlarmNotificationReceiver : BroadcastReceiver
         var name = intent?.GetStringExtra("name") ?? string.Empty;
         var timeStr = intent?.GetStringExtra("time") ?? string.Empty;
         var prayerId = intent?.GetStringExtra("prayerId") ?? string.Empty;
-        var soundPref = intent?.GetStringExtra("sound") ?? string.Empty;
         
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(timeStr))
             return;
@@ -69,11 +68,8 @@ public class AlarmNotificationReceiver : BroadcastReceiver
             };
         }
         
-        // If sound not provided in intent, get from preferences (backward compatibility)
-        if (string.IsNullOrEmpty(soundPref))
-        {
-            soundPref = Preferences.Get(prayerId + "AlarmSound", "kus");
-        }
+        // Get sound preference using prayerId
+        var soundPref = Preferences.Get(prayerId + "AlarmSound", "kus");
         
         var channelId = soundPref switch
         {
