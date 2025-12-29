@@ -77,6 +77,7 @@ namespace SuleymaniyeCalendar
         {
             var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
             intent.PutExtra("name", settings.PrayerName);
+            intent.PutExtra("prayerId", settings.PrayerId);
             // Use actual prayer time for display, not the alarm trigger time
             intent.PutExtra("time", string.IsNullOrEmpty(settings.PrayerTime) ? alarmTime.ToString("HH:mm") : settings.PrayerTime);
             

@@ -38,6 +38,8 @@ public class AlarmNotificationReceiver : BroadcastReceiver
         
         var name = intent?.GetStringExtra("name") ?? string.Empty;
         var timeStr = intent?.GetStringExtra("time") ?? string.Empty;
+        var prayerId = intent?.GetStringExtra("prayerId") ?? string.Empty;
+        
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(timeStr))
             return;
 
@@ -49,20 +51,26 @@ public class AlarmNotificationReceiver : BroadcastReceiver
 
         var pkg = context.PackageName;
 
-        // Pick channel by user selection (unified key with PrayerDetailViewModel)
-        string prayerId = name switch
+        // If prayerId not provided in intent, try to match by localized name (backward compatibility)
+        if (string.IsNullOrEmpty(prayerId))
         {
-            "Fecri Kazip" => "falsefajr",
-            "Fecri Sadık" => "fajr",
-            "Sabah Sonu"  => "sunrise",
-            "Öğle"        => "dhuhr",
-            "İkindi"      => "asr",
-            "Akşam"       => "maghrib",
-            "Yatsı"       => "isha",
-            "Yatsı Sonu"  => "endofisha",
-            _              => "asr" // fallback
-        };
+            prayerId = name switch
+            {
+                "Fecri Kazip" => "falsefajr",
+                "Fecri Sadık" => "fajr",
+                "Sabah Sonu"  => "sunrise",
+                "Öğle"        => "dhuhr",
+                "İkindi"      => "asr",
+                "Akşam"       => "maghrib",
+                "Yatsı"       => "isha",
+                "Yatsı Sonu"  => "endofisha",
+                _              => "asr" // fallback
+            };
+        }
+        
+        // Get sound preference using prayerId
         var soundPref = Preferences.Get(prayerId + "AlarmSound", "kus");
+        
         var channelId = soundPref switch
         {
             "kus"   => "SuleymaniyeTakvimialarmbirdchannelId",
