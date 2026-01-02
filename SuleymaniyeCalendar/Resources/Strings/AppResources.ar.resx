@@ -592,4 +592,7 @@
   <data name="Bugun" xml:space="preserve">
     <value>اليوم</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>يحتاج هذا التطبيق إلى إذن الإشعارات لإرسال تذكيرات بأوقات الصلاة. يُرجى تفعيل الإشعارات من خلال الإعدادات &gt; التطبيقات &gt; تقويم السليمانية &gt; الإشعارات.</value>
+  </data>
 </root>

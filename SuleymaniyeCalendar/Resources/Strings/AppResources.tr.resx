@@ -593,4 +593,7 @@ Bu program, namaz ve oruç vakitlerine güvenli ve hızlı ulaşabilmeleri için
   <data name="Paylas" xml:space="preserve">
     <value>Paylaş</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Bu uygulama, size namaz vakti hatırlatıcıları gönderebilmek için bildirim iznine ihtiyaç duymaktadır. Lütfen Ayarlar - Uygulamalar - Süleymaniye Takvimi - Bildirimler bölümünden bildirimleri etkinleştirin.</value>
+  </data>
 </root>

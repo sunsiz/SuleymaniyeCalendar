@@ -592,4 +592,7 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="Bugun" xml:space="preserve">
     <value>Aujourd'hui</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Cette application nécessite l'autorisation d'activer les notifications pour vous envoyer des rappels d'heures de prière. Veuillez activer les notifications dans Paramètres &gt; Applications &gt; Calendrier Suleymaniye &gt; Notifications.</value>
+  </data>
 </root>

@@ -593,4 +593,7 @@
   <data name="Bugun" xml:space="preserve">
     <value>بۈگۈن</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>بۇ ئەپ سىزگە ناماز ۋاقتى ئەسكەرتىشلىرىنى ئەۋەتىش ئۈچۈن ئۇقتۇرۇش ئىجازىتىگە ئېھتىياجلىق. تەڭشەكلەر - ئەپلەر - سۇلايمانىيە كالېندارى - ئۇقتۇرۇشلار دىن ئۇقتۇرۇشلارنى قوزغىتىڭ.</value>
+  </data>
 </root>

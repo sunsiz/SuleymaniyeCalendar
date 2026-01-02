@@ -593,4 +593,7 @@
   <data name="Bugun" xml:space="preserve">
     <value>Сегодня</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Это приложение запрашивает разрешение на отправку напоминаний о времени молитвы. Пожалуйста, включите уведомления в Настройках - Приложения - Календарь Сулеймание - Уведомления.</value>
+  </data>
 </root>

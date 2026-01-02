@@ -593,4 +593,7 @@
   <data name="Bugun" xml:space="preserve">
     <value>امروز</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>این برنامه برای ارسال یادآوری زمان نماز به مجوز اعلان نیاز دارد. لطفاً اعلان‌ها را در تنظیمات - برنامه‌ها - تقویم سلیمانیه - اعلان‌ها فعال کنید.</value>
+  </data>
 </root>

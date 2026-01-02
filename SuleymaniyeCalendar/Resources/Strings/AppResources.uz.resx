@@ -593,4 +593,7 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="Bugun" xml:space="preserve">
     <value>Bugun</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Ushbu ilova sizga namoz vaqtlari haqida eslatmalarni yuborish uchun bildirishnoma ruxsatiga muhtoj. Iltimos, Sozlamalar - Ilovalar - Sulaymoniya taqvimi - Bildirishnomalar bo'limida bildirishnomalarni yoqing.</value>
+  </data>
 </root>

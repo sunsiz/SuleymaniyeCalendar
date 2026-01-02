@@ -593,4 +593,7 @@
   <data name="Bugun" xml:space="preserve">
     <value>今天</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>此应用需要通知权限才能向您发送祈祷时间提醒。请在“设置”-“应用”-“苏莱马尼亚日历”-“通知”中启用通知。</value>
+  </data>
 </root>

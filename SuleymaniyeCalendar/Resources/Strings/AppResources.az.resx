@@ -591,4 +591,7 @@
   <data name="Bugun" xml:space="preserve">
     <value>Bu gün</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Bu tətbiqin sizə namaz vaxtı xatırlatmaları göndərməsi üçün bildiriş icazəsi lazımdır. Zəhmət olmasa, Parametrlər - Tətbiqlər - Süleymaniyyə Təqvimi - Bildirişlər bölməsində bildirişləri aktivləşdirin.</value>
+  </data>
 </root>

@@ -341,6 +341,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This app needs notification permission to send you prayer time reminders. Please enable notifications in Settings..
+        /// </summary>
+        internal static string BildirimIzniAciklama {
+            get {
+                return ResourceManager.GetString("BildirimIzniAciklama", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notification permission required to schedule alarms..
         /// </summary>
         internal static string BildirimIzniGerekli {
@@ -355,33 +364,6 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         internal static string BildirimIzniReddedildi {
             get {
                 return ResourceManager.GetString("BildirimIzniReddedildi", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This app needs notification permission to send you prayer time reminders. Please enable notifications in Settings..
-        /// </summary>
-        internal static string BildirimIzniAciklama {
-            get {
-                return ResourceManager.GetString("BildirimIzniAciklama", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open Settings.
-        /// </summary>
-        internal static string AyarlariAc {
-            get {
-                return ResourceManager.GetString("AyarlariAc", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cancel.
-        /// </summary>
-        internal static string Iptal {
-            get {
-                return ResourceManager.GetString("Iptal", resourceCulture);
             }
         }
         
@@ -796,6 +778,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         internal static string Ikindinincikmasinakalanvakit {
             get {
                 return ResourceManager.GetString("Ikindinincikmasinakalanvakit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string Iptal {
+            get {
+                return ResourceManager.GetString("Iptal", resourceCulture);
             }
         }
         

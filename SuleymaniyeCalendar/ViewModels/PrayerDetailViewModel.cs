@@ -376,10 +376,10 @@ public partial class PrayerDetailViewModel : BaseViewModel
 					{
 						// Permission denied - guide user to settings
 						var shouldOpenSettings = await Application.Current.MainPage.DisplayAlert(
-							AppResources.BildirimIzniReddedildi,
+							AppResources.BildirimIzniGerekli,
 							AppResources.BildirimIzniAciklama,
-							AppResources.AyarlariAc,
-							AppResources.Iptal);
+							AppResources.GotoSettings,
+							AppResources.Kapat);
 						
 						if (shouldOpenSettings)
 						{
@@ -463,10 +463,10 @@ public partial class PrayerDetailViewModel : BaseViewModel
 				{
 					// Permission denied - guide user to settings
 					var shouldOpenSettings = await Application.Current.MainPage.DisplayAlert(
-						AppResources.BildirimIzniReddedildi,
+						AppResources.BildirimIzniGerekli,
 						AppResources.BildirimIzniAciklama,
-						AppResources.AyarlariAc,
-						AppResources.Iptal);
+						AppResources.GotoSettings,
+						AppResources.Kapat);
 					
 					if (shouldOpenSettings)
 					{

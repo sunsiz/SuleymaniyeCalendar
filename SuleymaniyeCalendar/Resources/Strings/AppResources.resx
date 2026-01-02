@@ -157,17 +157,8 @@
   <data name="BildirimIzniGerekli" xml:space="preserve">
     <value>Notification permission required to schedule alarms.</value>
   </data>
-  <data name="BildirimIzniReddedildi" xml:space="preserve">
-    <value>Notification Permission Denied</value>
-  </data>
   <data name="BildirimIzniAciklama" xml:space="preserve">
     <value>This app needs notification permission to send you prayer time reminders. Please enable notifications in Settings.</value>
-  </data>
-  <data name="AyarlariAc" xml:space="preserve">
-    <value>Open Settings</value>
-  </data>
-  <data name="Iptal" xml:space="preserve">
-    <value>Cancel</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>Reminder Time: </value>

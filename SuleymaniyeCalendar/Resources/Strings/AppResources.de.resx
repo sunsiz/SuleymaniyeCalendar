@@ -592,4 +592,7 @@ Diese Anwendung wurde entwickelt, um einen sicheren und schnellen Zugriff auf Ge
   <data name="Bugun" xml:space="preserve">
     <value>Heute</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Diese App benötigt die Berechtigung für Benachrichtigungen, um Ihnen Gebetszeiterinnerungen zu senden. Bitte aktivieren Sie Benachrichtigungen unter Einstellungen – Apps – Suleymaniye Kalender – Benachrichtigungen.</value>
+  </data>
 </root>
