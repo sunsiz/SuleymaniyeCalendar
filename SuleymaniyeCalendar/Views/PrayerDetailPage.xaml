@@ -131,12 +131,14 @@
                                     Margin="6"
                                         Style="{StaticResource iOSLiquidGlassButton}"
                                         FontFamily="{StaticResource IconFontFamily}"
-                                        FontSize="{DynamicResource IconSmallFontSize}"
+                                        FontSize="{DynamicResource IconMediumFontSize}"
                                         Text="&#xf04b;"
                                         TextColor="{AppThemeBinding Light={StaticResource CardValueLight},
                                                                 Dark={StaticResource CardValueDark}}"
                                         Command="{Binding TestButtonClickedCommand}"
-                                        WidthRequest="52" HeightRequest="48">
+                                        MinimumWidthRequest="56" 
+                                        MinimumHeightRequest="52"
+                                        VerticalOptions="Center">
                                     <Button.Triggers>
                                         <DataTrigger Binding="{Binding IsPlaying}" TargetType="Button" Value="True">
                                             <!-- Don't use Style setter in DataTrigger - causes crash in Release/AOT builds -->
@@ -152,6 +154,33 @@
                 </Border>
 
                 <Button Style="{StaticResource GlassButtonPrimaryIntense}" Command="{Binding SaveCommand}" Text="{localization:Translate Kaydet}" />
+
+                <!--  Alarm Tips Card  -->
+                <Border Style="{StaticResource iOSLiquidGlassCard}" Padding="12,8">
+                    <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
+                        <Label
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource TitleMediumStyle}"
+                        TextColor="{AppThemeBinding Light={StaticResource Neutral99},
+                                                    Dark={StaticResource Neutral10}}"
+                        Text="{localization:Translate BildirimIzniGerekli}" />
+                        <Label
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource BodySmallStyle}"
+                        TextColor="{AppThemeBinding Light={StaticResource Neutral99},
+                                                    Dark={StaticResource Neutral10}}"
+                        Text="{localization:Translate BildirimIzniAciklama}" />
+                        <Label
+                        FontAttributes="Bold"
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource BodySmallStyle}"
+                        TextColor="{AppThemeBinding Light={StaticResource Neutral99},
+                                                    Dark={StaticResource Neutral10}}"
+                        Text="{localization:Translate BildirimSorunu}" />
+                    </VerticalStackLayout>
+                </Border>
             </VerticalStackLayout>
         </ScrollView>
 

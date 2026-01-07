@@ -247,6 +247,14 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		if (!IsPlaying)
 		{
 			var fileKey = SelectedSound?.FileName;
+
+#if __IOS__
+			// Use shorter Athan sound on iOS while keeping preference unchanged
+			if (string.Equals(fileKey, "ezan", StringComparison.OrdinalIgnoreCase))
+			{
+				fileKey = "ezanios";
+			}
+#endif
 			if (!string.IsNullOrWhiteSpace(fileKey))
 			{
 				await _audioPreview.PlayAsync(fileKey, loop: true).ConfigureAwait(false);

@@ -160,6 +160,9 @@
   <data name="BildirimIzniAciklama" xml:space="preserve">
     <value>This app needs notification permission to send you prayer time reminders. Please enable notifications in Settings.</value>
   </data>
+  <data name="BildirimSorunu" xml:space="preserve">
+    <value>If notifications still don't work after granting permission, you may need to reset iOS notification settings: Settings → General → Transfer or Reset iPhone → Reset → Reset Location &amp; Privacy. This clears iOS's internal notification blocks.</value>
+  </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>Reminder Time: </value>
   </data>

@@ -21,13 +21,13 @@
     </ContentPage.ToolbarItems> -->
 
     <Shell.TitleView>
-        <StackLayout Margin="8" HeightRequest="48" Orientation="Horizontal" FlowDirection="{DynamicResource FlowDirection}">
-            <Label
+        <Grid Margin="8,0,8,0" MinimumHeightRequest="48" ColumnDefinitions="*" FlowDirection="{DynamicResource FlowDirection}">
+            <Label Grid.Column="0"
                 AutomationProperties.IsInAccessibleTree="True"
                 SemanticProperties.HeadingLevel="Level1"
                 Style="{StaticResource LabelSectionHeader}"
                 Text="{localization:Translate UygulamaAyarlari}" />
-        </StackLayout>
+        </Grid>
     </Shell.TitleView>
 
     <ContentPage.Content>

@@ -177,6 +177,12 @@
   <data name="BildirimIzniGerekli" xml:space="preserve">
     <value>Alarm planlamak için bildirim izni gerekiyor.</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Namaz vakti hatırlatmaları için bildirim izni gereklidir. Lütfen Ayarlar → Uygulamalar → Süleymaniye Takvimi → Bildirimler'den bildirimleri açın.</value>
+  </data>
+  <data name="BildirimSorunu" xml:space="preserve">
+    <value>Bildirimler izin verdikten sonra hala çalışmıyorsa, iOS bildirim ayarlarını sıfırlamanız gerekebilir: Ayarlar → Genel → Transfer veya iPhone'u Sıfırla → Sıfırla → Konum ve Gizlilik'i Sıfırla. Bu işlem iOS'un bildirim engellemelerini temizler.</value>
+  </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>Hatırlatma Zamanı: </value>
   </data>

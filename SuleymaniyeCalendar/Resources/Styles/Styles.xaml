@@ -181,6 +181,14 @@
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceColor}, Dark={StaticResource OnSurfaceColorDark}}" />
     </Style>
     <Style
+        x:Key="BodyTinyStyle"
+        BasedOn="{StaticResource Label}"
+        TargetType="Label">
+        <Setter Property="FontSize" Value="{DynamicResource TinyFontSize}" />
+        <Setter Property="LineHeight" Value="1.1" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource OnSurfaceVariantLight}, Dark={StaticResource OnSurfaceVariantDark}}" />
+    </Style>
+    <Style
         x:Key="BodySmallStyle"
         BasedOn="{StaticResource Label}"
         TargetType="Label">
@@ -401,11 +409,12 @@
         <Setter Property="BorderColor" Value="Transparent" />
         <Setter Property="BorderWidth" Value="0" />
         <Setter Property="CornerRadius" Value="12" />
-        <Setter Property="HeightRequest" Value="56" />
-        <Setter Property="WidthRequest" Value="56" />
+        <Setter Property="Aspect" Value="AspectFit" />
         <Setter Property="Padding" Value="8" />
         <Setter Property="MinimumHeightRequest" Value="48" />
         <Setter Property="MinimumWidthRequest" Value="48" />
+        <Setter Property="HeightRequest" Value="{DynamicResource PlayButtonContainerSize}" />
+        <Setter Property="WidthRequest" Value="{DynamicResource PlayButtonContainerSize}" />
         <Setter Property="Shadow">
             <Setter.Value>
                 <!--  Subtle golden glow  -->

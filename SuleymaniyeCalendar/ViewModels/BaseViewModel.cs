@@ -121,6 +121,8 @@ public partial class BaseViewModel : ObservableObject
                 // Update widget with new font size
                 UpdateAndroidWidget();
 #endif
+                // Update Shell tab bar height to accommodate new font size
+                UpdateShellTabBarHeight();
             }
         }
     }
@@ -238,6 +240,28 @@ public partial class BaseViewModel : ObservableObject
             return Platforms.iOS.AccessibilityHelper.IsAnyAccessibilityFeatureRunning();
 #endif
         return false;
+    }
+
+    /// <summary>
+    /// Updates Shell tab bar height when font size changes to prevent title cutoff.
+    /// </summary>
+    private static void UpdateShellTabBarHeight()
+    {
+        try
+        {
+            var appShell = Shell.Current as AppShell;
+            if (appShell != null)
+            {
+                MainThread.BeginInvokeOnMainThread(() =>
+                {
+                    appShell.UpdateTabBarForFontSize();
+                });
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Failed to update tab bar height: {ex.Message}");
+        }
     }
 
     #endregion

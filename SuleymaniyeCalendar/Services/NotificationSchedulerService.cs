@@ -92,6 +92,8 @@ public class NotificationSchedulerService
         try
         {
             // Ensure we have 30 days of data
+            // Note: UNUserNotificationCenter (iOS 10+) has no documented notification limit
+            // The 64 limit was for deprecated UILocalNotification API
             var startDate = DateTime.Today;
             var daysToSchedule = await _repository.EnsureDaysRangeAsync(location, startDate, 30);
             
@@ -102,6 +104,7 @@ public class NotificationSchedulerService
             }
 
             int dayCounter = 0;
+            int notificationCount = 0;
             DateTime? coverageThrough = null;
 
             foreach (var day in daysToSchedule)
@@ -125,17 +128,26 @@ public class NotificationSchedulerService
 
                     var isToday = baseDate.Date == DateTime.Today;
 
-                    SchedulePrayerAlarmIfEnabled(baseDate, falseFajrTime, now, isToday, "falsefajr", AppResources.FecriKazip);
-                    SchedulePrayerAlarmIfEnabled(baseDate, fajrTime, now, isToday, "fajr", AppResources.FecriSadik);
-                    SchedulePrayerAlarmIfEnabled(baseDate, sunriseTime, now, isToday, "sunrise", AppResources.SabahSonu);
-                    SchedulePrayerAlarmIfEnabled(baseDate, dhuhrTime, now, isToday, "dhuhr", AppResources.Ogle);
-                    SchedulePrayerAlarmIfEnabled(baseDate, asrTime, now, isToday, "asr", AppResources.Ikindi);
-                    SchedulePrayerAlarmIfEnabled(baseDate, maghribTime, now, isToday, "maghrib", AppResources.Aksam);
-                    SchedulePrayerAlarmIfEnabled(baseDate, ishaTime, now, isToday, "isha", AppResources.Yatsi);
-                    SchedulePrayerAlarmIfEnabled(baseDate, endOfIshaTime, now, isToday, "endofisha", AppResources.YatsiSonu);
+                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, falseFajrTime, now, isToday, "falsefajr", AppResources.FecriKazip);
+                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, fajrTime, now, isToday, "fajr", AppResources.FecriSadik);
+                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, sunriseTime, now, isToday, "sunrise", AppResources.SabahSonu);
+                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, dhuhrTime, now, isToday, "dhuhr", AppResources.Ogle);
+                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, asrTime, now, isToday, "asr", AppResources.Ikindi);
+                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, maghribTime, now, isToday, "maghrib", AppResources.Aksam);
+                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, ishaTime, now, isToday, "isha", AppResources.Yatsi);
+                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, endOfIshaTime, now, isToday, "endofisha", AppResources.YatsiSonu);
 
                     dayCounter++;
                     coverageThrough = baseDate;
+                    
+#if IOS
+                    // Add small delay every 10 days to avoid iOS rate limiting during bulk scheduling
+                    // This helps prevent iOS from flagging the app as "misbehaving"
+                    if (dayCounter % 10 == 0)
+                    {
+                        await Task.Delay(50).ConfigureAwait(false);
+                    }
+#endif
                     
                     if (dayCounter >= 30) break;
                 }
@@ -148,7 +160,7 @@ public class NotificationSchedulerService
             if (dayCounter > 0 && coverageThrough.HasValue)
             {
                 PersistAlarmCoverage(coverageThrough.Value);
-                Debug.WriteLine($"✅ Alarm scheduling complete through {coverageThrough.Value:dd/MM/yyyy}");
+                Debug.WriteLine($"✅ Alarm scheduling complete: {notificationCount} notifications scheduled through {coverageThrough.Value:dd/MM/yyyy}");
             }
         }
         catch (Exception exception)
@@ -159,7 +171,7 @@ public class NotificationSchedulerService
         Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
     }
 
-    private void SchedulePrayerAlarmIfEnabled(DateTime baseDate, TimeSpan prayerTime, DateTime now, bool isToday, string prayerId, string prayerName)
+    private int SchedulePrayerAlarmIfEnabled(DateTime baseDate, TimeSpan prayerTime, DateTime now, bool isToday, string prayerId, string prayerName)
     {
         if (Preferences.Get(prayerId + "Enabled", false))
         {
@@ -167,7 +179,7 @@ public class NotificationSchedulerService
             var alarmTime = baseDate.Add(prayerTime).AddMinutes(-notifyTime);
 
             // If it's today and the time has passed, don't schedule
-            if (isToday && alarmTime <= now) return;
+            if (isToday && alarmTime <= now) return 0;
 
             // Unique ID generation:
             // Include year to prevent collision across year boundaries (Dec 25 - Jan 24 spanning New Year)
@@ -188,18 +200,30 @@ public class NotificationSchedulerService
                 ? $"{notifyTime}{AppResources.DakikaOnceden}" 
                 : string.Empty;
             
+            var sound = Preferences.Get(prayerId + "AlarmSound", "kus");
+
+#if IOS
+            // iOS requires Athan sound under 30 seconds; swap to iOS-specific file while keeping preference unchanged
+            if (string.Equals(sound, "ezan", StringComparison.OrdinalIgnoreCase))
+            {
+                sound = "ezanios";
+            }
+#endif
+
             var settings = new NotificationSettings
             {
                 Title = AppResources.SuleymaniyeVakfiTakvimi,
                 Body = $"{prayerName} {AppResources.Vakti}{actualPrayerTime:HH:mm} {notifyMinutesText}".Trim(),
-                Sound = Preferences.Get(prayerId + "AlarmSound", "kus"),
+                Sound = sound,
                 PrayerId = prayerId,
                 PrayerName = prayerName,
                 PrayerTime = actualPrayerTime.ToString("HH:mm")
             };
 
             _alarmService.SetAlarm(alarmTime, requestCode, settings);
+            return 1;
         }
+        return 0;
     }
 
     public bool CheckRemindersEnabledAny()

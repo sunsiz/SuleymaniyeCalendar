@@ -170,14 +170,33 @@ public class NotificationService
             var requestId = $"prayer_{prayerName}_{targetDate:yyyyMMdd}_{triggerTime.Hours:D2}{triggerTime.Minutes:D2}";
             var request = UNNotificationRequest.FromIdentifier(requestId, content, trigger);
 
-            // Schedule notification
-            await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
-            
-            Debug.WriteLine($"✅ Scheduled: {prayerName} at {triggerTime:hh\\:mm} ({targetDate:yyyy-MM-dd}) [ID: {requestId}]");
+            // Schedule notification with comprehensive error handling
+            try
+            {
+                await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
+                Debug.WriteLine($"✅ Scheduled: {prayerName} at {triggerTime:hh\\:mm} ({targetDate:yyyy-MM-dd}) [ID: {requestId}]");
+            }
+            catch (Exception addEx)
+            {
+                // Log detailed error to help diagnose iOS notification issues
+                Debug.WriteLine($"❌ AddNotificationRequest failed for {prayerName}: {addEx.GetType().Name}: {addEx.Message}");
+                
+                // Check if this is a permission issue
+                var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync();
+                Debug.WriteLine($"   Permission status: {settings.AuthorizationStatus}");
+                
+                if (settings.AuthorizationStatus != UNAuthorizationStatus.Authorized)
+                {
+                    Debug.WriteLine($"   ⚠️ CRITICAL: Notification permission not authorized. User must grant permission in Settings.");
+                }
+                
+                throw; // Re-throw to trigger outer catch
+            }
         }
         catch (Exception ex)
         {
             Debug.WriteLine($"❌ Notification scheduling failed: {ex.Message}");
+            Debug.WriteLine($"   Stack trace: {ex.StackTrace}");
         }
     }
 
