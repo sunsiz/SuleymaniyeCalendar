@@ -359,15 +359,6 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Notification Permission Denied.
-        /// </summary>
-        internal static string BildirimIzniReddedildi {
-            get {
-                return ResourceManager.GetString("BildirimIzniReddedildi", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Enable sticky notifications.
         /// </summary>
         internal static string BildirimKapatma {
@@ -391,6 +382,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         internal static string BildirimNamazVakitleriUyari {
             get {
                 return ResourceManager.GetString("BildirimNamazVakitleriUyari", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If notifications still don&apos;t work after granting permission, you may need to reset iOS notification settings: Settings → General → Transfer or Reset iPhone → Reset → Reset Location &amp; Privacy. This clears iOS&apos;s internal notification blocks..
+        /// </summary>
+        internal static string BildirimSorunu {
+            get {
+                return ResourceManager.GetString("BildirimSorunu", resourceCulture);
             }
         }
         
@@ -778,15 +778,6 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         internal static string Ikindinincikmasinakalanvakit {
             get {
                 return ResourceManager.GetString("Ikindinincikmasinakalanvakit", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cancel.
-        /// </summary>
-        internal static string Iptal {
-            get {
-                return ResourceManager.GetString("Iptal", resourceCulture);
             }
         }
         

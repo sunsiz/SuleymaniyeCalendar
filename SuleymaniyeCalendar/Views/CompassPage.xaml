@@ -24,16 +24,16 @@
                 Margin="8,0,0,0"
                 AutomationProperties.IsInAccessibleTree="True"
                 VerticalOptions="Center"
-                WidthRequest="40"
-                HeightRequest="40"
+                WidthRequest="{DynamicResource PrayerIconContainerSizePast}"
+                HeightRequest="{DynamicResource PrayerIconContainerSizePast}"
                 Command="{Binding RefreshLocationCommand}"
                 SemanticProperties.Description="{localization:Translate Yenile}">
                 <ImageButton.Source>
                     <FontImageSource                        
-                        FontAutoScalingEnabled="True"
+                        FontAutoScalingEnabled="False"
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="{DynamicResource IconLargerFontSize}"
+                        Size="{DynamicResource IconSmallFontSize}"
                         Color="{AppThemeBinding Light={StaticResource OnPrimaryColor}, Dark={StaticResource OnPrimaryColorDark}}" />
                 </ImageButton.Source>
             </ImageButton>

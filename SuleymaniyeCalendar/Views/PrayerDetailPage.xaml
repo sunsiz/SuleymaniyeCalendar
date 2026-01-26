@@ -155,7 +155,7 @@
 
                 <Button Style="{StaticResource GlassButtonPrimaryIntense}" Command="{Binding SaveCommand}" Text="{localization:Translate Kaydet}" />
 
-                <!--  Alarm Tips Card  -->
+                <!--  Alarm Tips Card 
                 <Border Style="{StaticResource iOSLiquidGlassCard}" Padding="12,8">
                     <VerticalStackLayout Spacing="8" HorizontalOptions="Center">
                         <Label
@@ -180,7 +180,7 @@
                                                     Dark={StaticResource Neutral10}}"
                         Text="{localization:Translate BildirimSorunu}" />
                     </VerticalStackLayout>
-                </Border>
+                </Border> -->
             </VerticalStackLayout>
         </ScrollView>
 

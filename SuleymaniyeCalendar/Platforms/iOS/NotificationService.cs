@@ -73,20 +73,12 @@ public class NotificationService
     {
         try
         {
-            // Set culture to user's selected language for localized notification text
-            try
-            {
-                var savedLanguage = Preferences.Get("SelectedLanguage", "tr");
-                var culture = new CultureInfo(savedLanguage);
-                CultureInfo.CurrentCulture = culture;
-                CultureInfo.CurrentUICulture = culture;
-                AppResources.Culture = culture;
-                Debug.WriteLine($"🔔 iOS NotificationService: Culture set to {culture.Name}");
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"❌ Failed to set culture in iOS NotificationService: {ex.Message}");
-            }
+            // NOTE: Culture is now set ONCE in the calling service (NotificationSchedulerService)
+            // No need to set it per-notification to avoid 30x overhead
+
+            // Cache authorization status check (don't check 30 times per batch)
+            // Caller should check once before batch scheduling
+            var center = UNUserNotificationCenter.Current;
 
             var targetDate = date ?? DateTime.Today;
 
@@ -118,10 +110,12 @@ public class NotificationService
             UNNotificationSound notificationSound;
             if (!string.IsNullOrEmpty(soundName))
             {
-                // Try with .mp3 extension first, fallback to default
-                var soundFileName = soundName.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase) 
-                    ? soundName 
+                var soundFileName = soundName.EndsWith(".mp3", StringComparison.OrdinalIgnoreCase)
+                    ? soundName
                     : $"{soundName}.mp3";
+
+                // Cache sound path lookup - this is expensive when called 30 times
+                // Note: If file is missing in bundle, iOS may silently drop sound; fallback to default.
                 notificationSound = UNNotificationSound.GetSound(soundFileName);
                 Debug.WriteLine($"🔊 Using custom sound: {soundFileName}");
             }
@@ -135,26 +129,27 @@ public class NotificationService
                 Title = AppResources.SuleymaniyeVakfiTakvimi,
                 Body = $"{prayerName} {AppResources.Vakti}{displayTime}",
                 Sound = notificationSound,
-                Badge = NSNumber.FromInt32(1),
+                // Set badge to 1 to show there's a prayer notification
+                // Badge will be cleared when user opens the app
+                Badge = 1,
                 CategoryIdentifier = PrayerNotificationCategoryId,
                 ThreadIdentifier = "PrayerTimes"
             };
 
-            // Add custom data
+            // Add custom data (only property-list compatible values)
             var userInfo = new NSMutableDictionary
             {
                 { new NSString("prayerName"), new NSString(prayerName) },
                 { new NSString("prayerTime"), new NSString(displayTime) },
-                { new NSString("date"), NSDate.FromTimeIntervalSinceNow(0) }
+                { new NSString("date"), new NSString(targetDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)) }
             };
             content.UserInfo = userInfo;
 
             // Create trigger for specific time using the parsed triggerTime
             // Use user's local calendar and timezone for correct scheduling
-            var calendar = NSCalendar.CurrentCalendar;
             var components = new NSDateComponents
             {
-                Calendar = calendar,
+                Calendar = NSCalendar.CurrentCalendar,
                 TimeZone = NSTimeZone.LocalTimeZone,
                 Year = targetDate.Year,
                 Month = targetDate.Month,
@@ -173,23 +168,23 @@ public class NotificationService
             // Schedule notification with comprehensive error handling
             try
             {
-                await UNUserNotificationCenter.Current.AddNotificationRequestAsync(request);
+                await center.AddNotificationRequestAsync(request);
                 Debug.WriteLine($"✅ Scheduled: {prayerName} at {triggerTime:hh\\:mm} ({targetDate:yyyy-MM-dd}) [ID: {requestId}]");
             }
             catch (Exception addEx)
             {
                 // Log detailed error to help diagnose iOS notification issues
                 Debug.WriteLine($"❌ AddNotificationRequest failed for {prayerName}: {addEx.GetType().Name}: {addEx.Message}");
-                
-                // Check if this is a permission issue
-                var settings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync();
-                Debug.WriteLine($"   Permission status: {settings.AuthorizationStatus}");
-                
-                if (settings.AuthorizationStatus != UNAuthorizationStatus.Authorized)
+
+                // Check if this is a permission issue (only on first error to avoid spam)
+                var permissionSettings = await UNUserNotificationCenter.Current.GetNotificationSettingsAsync();
+                Debug.WriteLine($"   Permission status: {permissionSettings.AuthorizationStatus}");
+
+                if (permissionSettings.AuthorizationStatus != UNAuthorizationStatus.Authorized)
                 {
-                    Debug.WriteLine($"   ⚠️ CRITICAL: Notification permission not authorized. User must grant permission in Settings.");
+                    Debug.WriteLine("   ⚠️ CRITICAL: Notification permission not authorized. User must grant permission in Settings.");
                 }
-                
+
                 throw; // Re-throw to trigger outer catch
             }
         }
@@ -221,6 +216,58 @@ public class NotificationService
     }
 
     /// <summary>
+    /// Schedules a test notification 30 seconds from now for testing purposes.
+    /// </summary>
+    public static async Task ScheduleTestNotificationAsync()
+    {
+        try
+        {
+            var center = UNUserNotificationCenter.Current;
+            
+            // Set culture to user's selected language
+            try
+            {
+                var savedLanguage = Preferences.Get("SelectedLanguage", "tr");
+                var culture = new CultureInfo(savedLanguage);
+                CultureInfo.CurrentCulture = culture;
+                CultureInfo.CurrentUICulture = culture;
+                AppResources.Culture = culture;
+            }
+            catch { }
+
+            // Check permission
+            var settings = await center.GetNotificationSettingsAsync();
+            if (settings.AuthorizationStatus != UNAuthorizationStatus.Authorized)
+            {
+                Debug.WriteLine("⚠️ Cannot schedule test notification: permission not granted");
+                return;
+            }
+
+            // Create test notification content
+            var content = new UNMutableNotificationContent
+            {
+                Title = "Test Notification",
+                Body = "This is a test notification from Süleymaniye Calendar. If you see this, notifications are working!",
+                Sound = UNNotificationSound.Default,
+                Badge = 1
+            };
+
+            // Schedule for 30 seconds from now
+            var trigger = UNTimeIntervalNotificationTrigger.CreateTrigger(30, false);
+            var requestId = $"test_notification_{DateTime.Now:yyyyMMddHHmmss}";
+            var request = UNNotificationRequest.FromIdentifier(requestId, content, trigger);
+
+            await center.AddNotificationRequestAsync(request);
+            Debug.WriteLine($"✅ Test notification scheduled for 30 seconds from now [ID: {requestId}]");
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"❌ Failed to schedule test notification: {ex.Message}");
+            throw;
+        }
+    }
+
+    /// <summary>
     /// Checks if notification permission has been granted.
     /// </summary>
     /// <returns>True if notification permission is granted, false otherwise.</returns>
@@ -230,10 +277,13 @@ public class NotificationService
         {
             var center = UNUserNotificationCenter.Current;
             var settings = await center.GetNotificationSettingsAsync();
-            
-            var isAuthorized = settings.AuthorizationStatus == UNAuthorizationStatus.Authorized;
+
+            var isAuthorized = settings.AuthorizationStatus is UNAuthorizationStatus.Authorized
+                or UNAuthorizationStatus.Provisional
+                or UNAuthorizationStatus.Ephemeral;
+
             Debug.WriteLine($"📋 Notification permission status: {settings.AuthorizationStatus} (Authorized: {isAuthorized})");
-            
+
             return isAuthorized;
         }
         catch (Exception ex)

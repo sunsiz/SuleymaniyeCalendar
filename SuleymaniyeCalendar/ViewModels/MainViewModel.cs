@@ -1133,10 +1133,16 @@ public partial class MainViewModel : BaseViewModel
         /// Calculates and formats the remaining time until the next prayer.
         /// Also updates <see cref="TimeProgress"/> for gradient animation.
         /// Uses cached parsed times for performance (avoids TimeSpan.Parse every second).
+        /// Uses Unicode BiDi control characters to prevent iOS from reversing Latin text in RTL contexts.
         /// </summary>
         /// <returns>Formatted remaining time string with localized prayer name.</returns>
         private string GetRemainingTime()
         {
+            // Unicode Left-to-Right Embedding (LRE) forces text to render left-to-right
+            // This prevents iOS BiDi algorithm from reversing Latin text like "05:30" to "03:50"
+            const string LRE = "\u202A"; // Left-to-Right Embedding
+            const string PDF = "\u202C"; // Pop Directional Formatting
+
             var currentTime = DateTime.Now.TimeOfDay;
             var cal = _calendar;
             if (cal is null)
@@ -1155,56 +1161,56 @@ public partial class MainViewModel : BaseViewModel
                 {
                     CalculateTimeProgress(TimeSpan.Zero, t.FalseFajr, currentTime);
                     return AppResources.FecriKazibingirmesinekalanvakit +
-                              (t.FalseFajr - currentTime).ToString(@"hh\:mm\:ss");
+                              LRE + (t.FalseFajr - currentTime).ToString(@"hh\:mm\:ss") + PDF;
                 }
                 if (currentTime >= t.FalseFajr && currentTime <= t.Fajr)
                 {
                     CalculateTimeProgress(t.FalseFajr, t.Fajr, currentTime);
                     return AppResources.FecriSadikakalanvakit +
-                           (t.Fajr - currentTime).ToString(@"hh\:mm\:ss");
+                           LRE + (t.Fajr - currentTime).ToString(@"hh\:mm\:ss") + PDF;
                 }
                 if (currentTime >= t.Fajr && currentTime <= t.Sunrise)
                 {
                     CalculateTimeProgress(t.Fajr, t.Sunrise, currentTime);
                     return AppResources.SabahSonunakalanvakit +
-                           (t.Sunrise - currentTime).ToString(@"hh\:mm\:ss");
+                           LRE + (t.Sunrise - currentTime).ToString(@"hh\:mm\:ss") + PDF;
                 }
                 if (currentTime >= t.Sunrise && currentTime <= t.Dhuhr)
                 {
                     CalculateTimeProgress(t.Sunrise, t.Dhuhr, currentTime);
                     return AppResources.Ogleningirmesinekalanvakit +
-                           (t.Dhuhr - currentTime).ToString(@"hh\:mm\:ss");
+                           LRE + (t.Dhuhr - currentTime).ToString(@"hh\:mm\:ss") + PDF;
                 }
                 if (currentTime >= t.Dhuhr && currentTime <= t.Asr)
                 {
                     CalculateTimeProgress(t.Dhuhr, t.Asr, currentTime);
                     return AppResources.Oglenincikmasinakalanvakit +
-                           (t.Asr - currentTime).ToString(@"hh\:mm\:ss");
+                           LRE + (t.Asr - currentTime).ToString(@"hh\:mm\:ss") + PDF;
                 }
                 if (currentTime >= t.Asr && currentTime <= t.Maghrib)
                 {
                     CalculateTimeProgress(t.Asr, t.Maghrib, currentTime);
                     return AppResources.Ikindinincikmasinakalanvakit +
-                           (t.Maghrib - currentTime).ToString(@"hh\:mm\:ss");
+                           LRE + (t.Maghrib - currentTime).ToString(@"hh\:mm\:ss") + PDF;
                 }
                 if (currentTime >= t.Maghrib && currentTime <= t.Isha)
                 {
                     CalculateTimeProgress(t.Maghrib, t.Isha, currentTime);
                     return AppResources.Aksamincikmasnakalanvakit +
-                           (t.Isha - currentTime).ToString(@"hh\:mm\:ss");
+                           LRE + (t.Isha - currentTime).ToString(@"hh\:mm\:ss") + PDF;
                 }
                 if (currentTime >= t.Isha && currentTime <= t.EndOfIsha)
                 {
                     CalculateTimeProgress(t.Isha, t.EndOfIsha, currentTime);
                     return AppResources.Yatsinincikmasinakalanvakit +
-                           (t.EndOfIsha - currentTime).ToString(@"hh\:mm\:ss");
+                           LRE + (t.EndOfIsha - currentTime).ToString(@"hh\:mm\:ss") + PDF;
                 }
                 if (currentTime >= t.EndOfIsha)
                 {
                     // After EndOfIsha, show full progress (100%)
                     TimeProgress = 1.0;
                     return AppResources.Yatsininciktigindangecenvakit +
-                           (currentTime - t.EndOfIsha).ToString(@"hh\:mm\:ss");
+                           LRE + (currentTime - t.EndOfIsha).ToString(@"hh\:mm\:ss") + PDF;
                 }
             }
             catch (Exception exception)

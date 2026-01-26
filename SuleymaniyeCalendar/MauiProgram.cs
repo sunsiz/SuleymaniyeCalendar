@@ -16,9 +16,6 @@ using AndroidX.Core.Widget;
 
 namespace SuleymaniyeCalendar;
 
-/// <summary>
-/// Application configuration and dependency injection setup.
-/// </summary>
 public static class MauiProgram
 {
     public static MauiApp CreateMauiApp()
@@ -110,7 +107,14 @@ public static class MauiProgram
 #endif
 
         // Core services
-        services.AddSingleton<PerformanceService>();
+        services.AddSingleton(sp =>
+        {
+            var perf = new PerformanceService();
+#if DEBUG
+            perf.VerboseLoggingEnabled = true;
+#endif
+            return perf;
+        });
         services.AddSingleton<LocationService>();
         services.AddSingleton<PrayerTimesRepository>();
         services.AddSingleton<NotificationSchedulerService>();
@@ -120,6 +124,7 @@ public static class MauiProgram
         services.AddSingleton<DataService>();
         services.AddSingleton<AccessibilityService>();
         services.AddSingleton<BackgroundDataPreloader>();
+
 
         // Set up global exception handlers
         Initialize();

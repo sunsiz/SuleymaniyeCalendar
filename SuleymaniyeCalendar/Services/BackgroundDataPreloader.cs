@@ -36,16 +36,30 @@ namespace SuleymaniyeCalendar.Services
                 {
                     try
                     {
+                        System.Diagnostics.Debug.WriteLine("?? BackgroundDataPreloader: Starting data fetch...");
                         var location = await _dataService.GetCurrentLocationAsync(false);
                         if (location != null && location.Latitude != 0 && location.Longitude != 0)
                         {
+                            System.Diagnostics.Debug.WriteLine($"?? BackgroundDataPreloader: Location acquired: {location.Latitude}, {location.Longitude}");
+                            
                             // This will cache the data for when user navigates to MonthPage
                             await _dataService.GetMonthlyPrayerTimesHybridAsync(location, false);
+                            System.Diagnostics.Debug.WriteLine("?? BackgroundDataPreloader: Monthly data cached");
+
+                            // Ensure notifications/alarms are (re)scheduled with fresh data
+                            System.Diagnostics.Debug.WriteLine("?? BackgroundDataPreloader: Scheduling notifications/alarms...");
+                            await _dataService.SetMonthlyAlarmsAsync(location, forceReschedule: false);
+                            System.Diagnostics.Debug.WriteLine("? BackgroundDataPreloader: Notification scheduling completed");
+                        }
+                        else
+                        {
+                            System.Diagnostics.Debug.WriteLine("?? BackgroundDataPreloader: No valid location, skipping notification scheduling");
                         }
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Background preload failed: {ex.Message}");
+                        System.Diagnostics.Debug.WriteLine($"? Background preload failed: {ex.Message}");
+                        System.Diagnostics.Debug.WriteLine($"   Stack trace: {ex.StackTrace}");
                     }
                 });
 

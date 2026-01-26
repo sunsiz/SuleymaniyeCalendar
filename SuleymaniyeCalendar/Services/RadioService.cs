@@ -61,27 +61,74 @@ namespace SuleymaniyeCalendar.Services
 
             try
             {
-                // Initialize audio session (iOS only, no-op elsewhere)
-                _audioSessionService.InitializeAudioSession();
+                System.Diagnostics.Debug.WriteLine("📻 PlayAsync: Starting...");
 
-                // Create media source with metadata for better media control display
-                var mediaSource = MediaSource.FromUri(RadioStreamUrl);
-                
-                // Set metadata directly on MediaElement for proper media controls
-                _mediaElement.MetadataTitle = AppResources.RadyoFitrat; // "Radio Fitrat"
-                _mediaElement.MetadataArtist = AppResources.FitratinSesi; // "Radio Fitrat - The Voice of Fitrah"
-                _mediaElement.MetadataArtworkUrl = "https://www.fitratradyo.com/img/fitrat_radyo.png";
-                
-                // Set the source
-                _mediaElement.Source = mediaSource;
+                // Pre-fetch metadata strings BEFORE going to main thread to avoid blocking
+                // AppResources lookups can trigger expensive operations when accessed on main thread
+                var title = AppResources.RadyoFitrat;
+                var artist = AppResources.FitratinSesi;
+                const string artworkUrl = "https://www.fitratradyo.com/img/fitrat_radyo.png";
 
-                _mediaElement.Play();
-                System.Diagnostics.Debug.WriteLine("📻 Radio Play() called");
-                await Task.CompletedTask;
+                // Initialize audio session on background thread
+                await Task.Run(() => 
+                {
+                    _audioSessionService.InitializeAudioSession();
+                }).ConfigureAwait(false);
+
+                System.Diagnostics.Debug.WriteLine("📻 PlayAsync: Audio session initialized");
+
+                // Set source on main thread, but DON'T call Play() yet
+                // MediaElement will begin loading asynchronously
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    try
+                    {
+                        // Set pre-fetched metadata (no expensive lookups on main thread)
+                        _mediaElement.MetadataTitle = title;
+                        _mediaElement.MetadataArtist = artist;
+                        _mediaElement.MetadataArtworkUrl = artworkUrl;
+                        
+                        // Set source - MediaElement begins async loading immediately
+                        _mediaElement.Source = MediaSource.FromUri(RadioStreamUrl);
+                        
+                        System.Diagnostics.Debug.WriteLine("📻 PlayAsync: Source set (async loading started)");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"❌ MediaElement setup failed: {ex.Message}");
+                        SetPlaybackState(false);
+                        throw;
+                    }
+                });
+
+                // Schedule Play() call on background thread to avoid blocking main thread
+                // The MediaElement will call Play() after it has buffered enough data
+                _ = Task.Run(async () =>
+                {
+                    // Wait briefly for MediaElement to start loading
+                    await Task.Delay(100).ConfigureAwait(false);
+                    
+                    // Now trigger playback on main thread
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        try
+                        {
+                            _mediaElement.Play();
+                            System.Diagnostics.Debug.WriteLine("📻 PlayAsync: Play() called (buffering in background)");
+                        }
+                        catch (Exception ex)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"❌ Play() failed: {ex.Message}");
+                            SetPlaybackState(false);
+                        }
+                    });
+                }).ConfigureAwait(false);
+
+                System.Diagnostics.Debug.WriteLine("📻 PlayAsync: Completed (buffering continues in background)");
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Radio play error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"❌ Radio play error: {ex.Message}\nStack: {ex.StackTrace}");
                 SetPlaybackState(false);
             }
         }
@@ -108,19 +155,24 @@ namespace SuleymaniyeCalendar.Services
 
             try
             {
-                _mediaElement.Stop();
-                SetPlaybackState(false);
+                await MainThread.InvokeOnMainThreadAsync(() =>
+                {
+                    _mediaElement.Stop();
+                    SetPlaybackState(false);
+                });
         
-                // iOS: Deactivate audio session
+                // iOS: Deactivate audio session on background thread (prevent main thread blocking)
                 if (DeviceInfo.Platform == DevicePlatform.iOS)
                 {
 #if __IOS__
-                    Platforms.iOS.AudioSessionManager.DeactivateAudioSession();
+                    await Task.Run(() => 
+                    {
+                        Platforms.iOS.AudioSessionManager.DeactivateAudioSession();
+                    }).ConfigureAwait(false);
 #endif
                 }
 
                 System.Diagnostics.Debug.WriteLine("✅ Radio stopped");
-                await Task.CompletedTask;
             }
             catch (Exception ex)
             {

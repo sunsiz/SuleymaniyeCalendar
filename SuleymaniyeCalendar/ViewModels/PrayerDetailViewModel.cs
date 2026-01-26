@@ -383,11 +383,20 @@ public partial class PrayerDetailViewModel : BaseViewModel
 					if (newStatus != PermissionStatus.Granted)
 					{
 						// Permission denied - guide user to settings
-						var shouldOpenSettings = await Application.Current.MainPage.DisplayAlert(
-							AppResources.BildirimIzniGerekli,
-							AppResources.BildirimIzniAciklama,
-							AppResources.GotoSettings,
-							AppResources.Kapat);
+						var mainPage = GetMainPage();
+						bool shouldOpenSettings = false;
+						if (mainPage != null)
+						{
+							shouldOpenSettings = await mainPage.DisplayAlert(
+								AppResources.BildirimIzniGerekli,
+								AppResources.BildirimIzniAciklama,
+								AppResources.GotoSettings,
+								AppResources.Kapat);
+						}
+						else
+						{
+							Debug.WriteLine("Main page is not available for DisplayAlert.");
+						}
 						
 						if (shouldOpenSettings)
 						{
@@ -470,11 +479,20 @@ public partial class PrayerDetailViewModel : BaseViewModel
 				if (!granted)
 				{
 					// Permission denied - guide user to settings
-					var shouldOpenSettings = await Application.Current.MainPage.DisplayAlert(
-						AppResources.BildirimIzniGerekli,
-						AppResources.BildirimIzniAciklama,
-						AppResources.GotoSettings,
-						AppResources.Kapat);
+					var mainPage = GetMainPage();
+					bool shouldOpenSettings = false;
+					if (mainPage != null)
+					{
+						shouldOpenSettings = await mainPage.DisplayAlert(
+							AppResources.BildirimIzniGerekli,
+							AppResources.BildirimIzniAciklama,
+							AppResources.GotoSettings,
+							AppResources.Kapat);
+					}
+					else
+					{
+						Debug.WriteLine("Main page is not available for DisplayAlert.");
+					}
 					
 					if (shouldOpenSettings)
 					{
@@ -591,4 +609,14 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	}
 
 	#endregion
+
+	private static Page? GetMainPage()
+	{
+		var app = Application.Current;
+		if (app?.Windows?.Count > 0)
+		{
+			return app.Windows[0].Page;
+		}
+		return null;
+	}
 }

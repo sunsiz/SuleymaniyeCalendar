@@ -6,32 +6,24 @@ using Microsoft.Extensions.Logging;
 
 namespace SuleymaniyeCalendar.Services;
 
-/// <summary>
-/// Lightweight performance monitoring service for tracking operation timings.
-/// </summary>
-/// <remarks>
-/// Usage: Wrap operations in a using block with StartTimer:
-/// <code>
-/// using (_perf.StartTimer("Operation.Name"))
-/// {
-///     await DoWorkAsync();
-/// }
-/// </code>
-/// Call <see cref="LogSummary"/> to output aggregated metrics to debug console.
-/// </remarks>
 public sealed class PerformanceService
 {
     private readonly ILogger<PerformanceService>? _logger;
     private readonly ConcurrentDictionary<string, Metric> _metrics = new();
 
-    /// <summary>
-    /// Creates a new PerformanceService instance.
-    /// </summary>
-    /// <param name="logger">Optional logger for structured logging output.</param>
+    private static readonly IDisposable NoopTimer = new NoopDisposable();
+
     public PerformanceService(ILogger<PerformanceService>? logger = null)
     {
         _logger = logger;
     }
+
+    /// <summary>
+    /// Enables performance timing and metric collection.
+    /// Keep false in production to avoid overhead.
+    /// Default: false
+    /// </summary>
+    public bool VerboseLoggingEnabled { get; set; }
 
     /// <summary>
     /// Starts a timer for the named operation. Dispose to stop timing.
@@ -40,7 +32,10 @@ public sealed class PerformanceService
     /// <returns>Disposable timer that records elapsed time on disposal.</returns>
     public IDisposable StartTimer(string operationName)
     {
-        return new PerformanceTimer(operationName, _logger, UpdateMetric);
+        if (!VerboseLoggingEnabled)
+            return NoopTimer;
+
+        return new PerformanceTimer(operationName, _logger, UpdateMetric, verbose: true);
     }
 
     /// <summary>
@@ -61,6 +56,9 @@ public sealed class PerformanceService
     /// <param name="tag">Optional tag to identify the summary context.</param>
     public void LogSummary(string? tag = null)
     {
+        if (!VerboseLoggingEnabled)
+            return;
+
         var (report, items) = GetSummary();
         var header = $"📊 Perf Summary{(string.IsNullOrWhiteSpace(tag) ? string.Empty : $" [{tag}]")}: {items} metrics";
         Debug.WriteLine(header);
@@ -89,9 +87,6 @@ public sealed class PerformanceService
             });
     }
 
-    #region Nested Types
-
-    /// <summary>Aggregated metric data for a single operation.</summary>
     private sealed class Metric
     {
         public int Count { get; set; }
@@ -101,32 +96,38 @@ public sealed class PerformanceService
         public double MaxMs { get; set; }
     }
 
-    /// <summary>Disposable timer that records elapsed time on disposal.</summary>
     private sealed class PerformanceTimer : IDisposable
     {
         private readonly string _operationName;
         private readonly ILogger? _logger;
         private readonly Stopwatch _sw;
         private readonly Action<string, double> _onStop;
+        private readonly bool _verbose;
 
-        public PerformanceTimer(string operationName, ILogger? logger, Action<string, double> onStop)
+        public PerformanceTimer(string operationName, ILogger? logger, Action<string, double> onStop, bool verbose)
         {
             _operationName = operationName;
             _logger = logger;
             _onStop = onStop;
+            _verbose = verbose;
             _sw = Stopwatch.StartNew();
-            Debug.WriteLine($"⏱️ Started: {_operationName}");
+            if (_verbose)
+                Debug.WriteLine($"⏱️ Started: {_operationName}");
         }
 
         public void Dispose()
         {
             _sw.Stop();
             var ms = _sw.Elapsed.TotalMilliseconds;
-            Debug.WriteLine($"⏱️ Completed: {_operationName} in {ms:F1}ms");
+            if (_verbose)
+                Debug.WriteLine($"⏱️ Completed: {_operationName} in {ms:F1}ms");
             _logger?.LogInformation("⏱️ Completed: {OperationName} in {ElapsedMs:F1}ms", _operationName, ms);
             _onStop?.Invoke(_operationName, ms);
         }
     }
 
-    #endregion
+    private sealed class NoopDisposable : IDisposable
+    {
+        public void Dispose() { }
+    }
 }

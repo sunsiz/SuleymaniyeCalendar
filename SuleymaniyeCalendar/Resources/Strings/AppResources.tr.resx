@@ -602,4 +602,16 @@ Bu program, namaz ve oruç vakitlerine güvenli ve hızlı ulaşabilmeleri için
   <data name="BildirimIzniAciklama" xml:space="preserve">
     <value>Bu uygulama, size namaz vakti hatırlatıcıları gönderebilmek için bildirim iznine ihtiyaç duymaktadır. Lütfen Ayarlar - Uygulamalar - Süleymaniye Takvimi - Bildirimler bölümünden bildirimleri etkinleştirin.</value>
   </data>
+  <data name="TestNotification" xml:space="preserve">
+    <value>Test Bildirimi</value>
+  </data>
+  <data name="TestNotificationMessage" xml:space="preserve">
+    <value>Bu Süleymaniye Takvimi'nden bir test bildirimidir. Bunu görüyorsanız, bildirimler çalışıyor!</value>
+  </data>
+  <data name="TestNotificationButton" xml:space="preserve">
+    <value>Test Bildirimi (30 sn)</value>
+  </data>
+  <data name="TestNotificationScheduled" xml:space="preserve">
+    <value>Test bildirimi planlandı! 30 saniye içinde alacaksınız.</value>
+  </data>
 </root>

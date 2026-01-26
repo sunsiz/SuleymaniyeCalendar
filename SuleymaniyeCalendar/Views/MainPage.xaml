@@ -24,21 +24,23 @@
                    Style="{StaticResource LabelSectionHeader}"
                    Text="{localization:Translate PageTitle}"
                    LineBreakMode="TailTruncation"
+                   MaxLines="1"
+                   VerticalTextAlignment="Center"
                    HorizontalTextAlignment="Start" />
             <Image Grid.Column="1"
                    x:DataType="viewModels:MainViewModel"
                    Margin="0,0,4,0"
                    AutomationProperties.IsInAccessibleTree="True"
                    VerticalOptions="Center"
-                   WidthRequest="40"
-                   HeightRequest="40"
+                   WidthRequest="{DynamicResource PrayerIconContainerSizePast}"
+                   HeightRequest="{DynamicResource PrayerIconContainerSizePast}"
                    SemanticProperties.Description="{localization:Translate UygulamaAyarlari}">
                 <Image.Source>
                     <FontImageSource
-                        FontAutoScalingEnabled="True"
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf013;"
-                        Size="22"
+                        Size="{DynamicResource IconSmallFontSize}"
+                        FontAutoScalingEnabled="False"
                         Color="{AppThemeBinding Light=White, Dark={StaticResource OnSurfaceColorDark}}" />
                 </Image.Source>
                 <Image.GestureRecognizers>
@@ -50,14 +52,15 @@
                    Margin="4,0,0,0"
                    AutomationProperties.IsInAccessibleTree="True"
                    VerticalOptions="Center"
-                   WidthRequest="40"
-                   HeightRequest="40"
+                   WidthRequest="{DynamicResource PrayerIconContainerSizePast}"
+                   HeightRequest="{DynamicResource PrayerIconContainerSizePast}"
                    SemanticProperties.Description="{localization:Translate Yenile}">
                 <Image.Source>
                     <FontImageSource
                         FontFamily="{StaticResource IconFontFamily}"
                         Glyph="&#xf2f1;"
-                        Size="22"
+                        Size="{DynamicResource IconSmallFontSize}"
+                        FontAutoScalingEnabled="False"
                         Color="{AppThemeBinding Light=White, Dark={StaticResource OnSurfaceColorDark}}" />
                 </Image.Source>
                 <Image.GestureRecognizers>

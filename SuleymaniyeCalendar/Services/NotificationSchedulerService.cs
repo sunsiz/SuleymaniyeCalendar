@@ -91,13 +91,21 @@ public class NotificationSchedulerService
 
         try
         {
-            // Ensure we have 30 days of data
-            // Note: UNUserNotificationCenter (iOS 10+) has no documented notification limit
-            // The 64 limit was for deprecated UILocalNotification API
+            // Calculate how many days to schedule based on platform and prayer count
+            // iOS has a hard limit of 64 pending local notifications
             var startDate = DateTime.Today;
-            var daysToSchedule = await _repository.EnsureDaysRangeAsync(location, startDate, 30);
+            int daysToSchedule = 30; // Default for Android
             
-            if (daysToSchedule.Count == 0)
+#if __IOS__
+            // iOS: Calculate optimal days to stay under 64 notification limit
+            int enabledPrayerCount = GetEnabledPrayerCount();
+            daysToSchedule = CalculateOptimalDaysForIOS(enabledPrayerCount);
+            Debug.WriteLine($"📱 iOS: Scheduling {daysToSchedule} days for {enabledPrayerCount} enabled prayer(s) (max {daysToSchedule * enabledPrayerCount}/64 notifications)");
+#endif
+            
+            var days = await _repository.EnsureDaysRangeAsync(location, startDate, daysToSchedule);
+            
+            if (days.Count == 0)
             {
                 Debug.WriteLine("❌ No days available for scheduling alarms");
                 return;
@@ -107,7 +115,7 @@ public class NotificationSchedulerService
             int notificationCount = 0;
             DateTime? coverageThrough = null;
 
-            foreach (var day in daysToSchedule)
+            foreach (var day in days)
             {
                 try
                 {
@@ -140,6 +148,7 @@ public class NotificationSchedulerService
                     dayCounter++;
                     coverageThrough = baseDate;
                     
+                    
 #if IOS
                     // Add small delay every 10 days to avoid iOS rate limiting during bulk scheduling
                     // This helps prevent iOS from flagging the app as "misbehaving"
@@ -148,8 +157,6 @@ public class NotificationSchedulerService
                         await Task.Delay(50).ConfigureAwait(false);
                     }
 #endif
-                    
-                    if (dayCounter >= 30) break;
                 }
                 catch (Exception ex)
                 {
@@ -233,6 +240,45 @@ public class NotificationSchedulerService
                Preferences.Get("asrEnabled", false) || Preferences.Get("maghribEnabled", false) ||
                Preferences.Get("ishaEnabled", false) || Preferences.Get("endofishaEnabled", false);
     }
+
+    /// <summary>
+    /// Counts how many prayers are currently enabled for notifications.
+    /// Used by iOS to calculate optimal day range under the 64-notification limit.
+    /// </summary>
+    private int GetEnabledPrayerCount()
+    {
+        int count = 0;
+        if (Preferences.Get("falsefajrEnabled", false)) count++;
+        if (Preferences.Get("fajrEnabled", false)) count++;
+        if (Preferences.Get("sunriseEnabled", false)) count++;
+        if (Preferences.Get("dhuhrEnabled", false)) count++;
+        if (Preferences.Get("asrEnabled", false)) count++;
+        if (Preferences.Get("maghribEnabled", false)) count++;
+        if (Preferences.Get("ishaEnabled", false)) count++;
+        if (Preferences.Get("endofishaEnabled", false)) count++;
+        return count;
+    }
+
+#if __IOS__
+    /// <summary>
+    /// Calculates optimal number of days to schedule on iOS to stay under 64 notification limit.
+    /// iOS silently fails to schedule ANY notifications when limit is exceeded.
+    /// </summary>
+    /// <param name="enabledPrayerCount">Number of prayers with notifications enabled.</param>
+    /// <returns>Number of days to schedule (1-30).</returns>
+    private static int CalculateOptimalDaysForIOS(int enabledPrayerCount)
+    {
+        const int iOSNotificationLimit = 64;
+        
+        if (enabledPrayerCount <= 0) return 30;
+        
+        // Calculate max days while staying under limit
+        int maxDays = iOSNotificationLimit / enabledPrayerCount;
+        
+        // Clamp to reasonable range (at least 7 days, max 30 days)
+        return Math.Clamp(maxDays, 7, 30);
+    }
+#endif
 
     private void PersistAlarmCoverage(DateTime date)
     {

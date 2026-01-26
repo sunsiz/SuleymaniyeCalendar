@@ -578,4 +578,16 @@ This application is designed to provide safe and fast access to prayer and fasti
   <data name="Paylas" xml:space="preserve">
     <value>Share</value>
   </data>
+  <data name="TestNotification" xml:space="preserve">
+    <value>Test Notification</value>
+  </data>
+  <data name="TestNotificationMessage" xml:space="preserve">
+    <value>This is a test notification from Süleymaniye Calendar. If you see this, notifications are working!</value>
+  </data>
+  <data name="TestNotificationButton" xml:space="preserve">
+    <value>Test Notification (30 sec)</value>
+  </data>
+  <data name="TestNotificationScheduled" xml:space="preserve">
+    <value>Test notification scheduled! You should receive it in 30 seconds.</value>
+  </data>
 </root>

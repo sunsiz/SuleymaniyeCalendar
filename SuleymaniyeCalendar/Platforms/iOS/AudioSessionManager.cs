@@ -20,11 +20,12 @@ public static class AudioSessionManager
         {
             var audioSession = AVAudioSession.SharedInstance();
             
-            // Set category to Playback (allows audio in background)
-            // Note: DefaultToSpeaker is only valid with PlayAndRecord category
+            // Set category to Playback with MixWithOthers to allow notification sounds
+            // MixWithOthers: Allows notifications/alarms to play while radio is active
+            // DuckOthers: Lowers radio volume when notifications sound
             audioSession.SetCategory(
                 AVAudioSessionCategory.Playback,
-                AVAudioSessionCategoryOptions.DuckOthers
+                AVAudioSessionCategoryOptions.MixWithOthers | AVAudioSessionCategoryOptions.DuckOthers
             );
             
             // Activate the session

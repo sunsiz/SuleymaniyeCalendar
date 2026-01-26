@@ -35,7 +35,7 @@ namespace SuleymaniyeCalendar.Services
         /// <summary>
         /// Get prayer times for a specific date using new JSON API
         /// </summary>
-        public async Task<Calendar?> GetDailyPrayerTimesAsync(double latitude, double longitude, DateTime date, double altitude = 0)
+        public virtual async Task<Calendar?> GetDailyPrayerTimesAsync(double latitude, double longitude, DateTime date, double altitude = 0)
         {
             try
             {
@@ -76,7 +76,7 @@ namespace SuleymaniyeCalendar.Services
         /// <summary>
         /// Get prayer times for a full month using new JSON API
         /// </summary>
-        public async Task<ObservableCollection<Calendar>?> GetMonthlyPrayerTimesAsync(double latitude, double longitude, int monthId, double altitude = 0, int? year = null)
+        public virtual async Task<ObservableCollection<Calendar>?> GetMonthlyPrayerTimesAsync(double latitude, double longitude, int monthId, double altitude = 0, int? year = null)
         {
             try
             {
@@ -175,7 +175,7 @@ namespace SuleymaniyeCalendar.Services
         /// <summary>
         /// Test connectivity to new JSON API
         /// </summary>
-        public async Task<bool> TestConnectionAsync()
+        public virtual async Task<bool> TestConnectionAsync()
         {
             try
             {

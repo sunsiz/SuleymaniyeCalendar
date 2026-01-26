@@ -28,7 +28,7 @@ public partial class BaseViewModel : ObservableObject
         ["DisplayFontSize"] = 2.0,
         ["DisplaySmallFontSize"] = 1.7,
         ["TitleFontSize"] = 1.57,
-        ["TitleMediumFontSize"] = 1.43,
+        ["TitleMediumFontSize"] = 1.26,
         ["TitleSmallFontSize"] = 1.29,
         ["HeaderFontSize"] = 1.35,
         ["SubHeaderFontSize"] = 1.2,
@@ -36,13 +36,14 @@ public partial class BaseViewModel : ObservableObject
         ["BodyFontSize"] = 1.05,
         ["BodySmallFontSize"] = 1.0,
         ["CaptionFontSize"] = 0.86,
-        ["IconSmallFontSize"] = 1.1,
-        ["IconMediumFontSize"] = 1.25,
-        ["IconLargeFontSize"] = 1.6,
-        ["IconLargerFontSize"] = 2.6,
-        ["IconXLFontSize"] = 3.6,
+        // Icon sizes should scale more conservatively than text to avoid overflow in TitleView/TabBar
+        ["IconSmallFontSize"] = 1.0,
+        ["IconMediumFontSize"] = 1.2,
+        ["IconLargeFontSize"] = 1.45,
+        ["IconLargerFontSize"] = 1.8,
+        ["IconXLFontSize"] = 2.5,
         // PlayButtonContainerSize scales with font (CornerRadius is fixed, not scalable)
-        ["PlayButtonContainerSize"] = 4.0,
+        ["PlayButtonContainerSize"] = 3.0,
         // Prayer icon sizes that scale with font
         ["PrayerIconSize"] = 2.3,
         ["PrayerIconSizePast"] = 1.5,
@@ -121,8 +122,6 @@ public partial class BaseViewModel : ObservableObject
                 // Update widget with new font size
                 UpdateAndroidWidget();
 #endif
-                // Update Shell tab bar height to accommodate new font size
-                UpdateShellTabBarHeight();
             }
         }
     }
@@ -240,28 +239,6 @@ public partial class BaseViewModel : ObservableObject
             return Platforms.iOS.AccessibilityHelper.IsAnyAccessibilityFeatureRunning();
 #endif
         return false;
-    }
-
-    /// <summary>
-    /// Updates Shell tab bar height when font size changes to prevent title cutoff.
-    /// </summary>
-    private static void UpdateShellTabBarHeight()
-    {
-        try
-        {
-            var appShell = Shell.Current as AppShell;
-            if (appShell != null)
-            {
-                MainThread.BeginInvokeOnMainThread(() =>
-                {
-                    appShell.UpdateTabBarForFontSize();
-                });
-            }
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Failed to update tab bar height: {ex.Message}");
-        }
     }
 
     #endregion

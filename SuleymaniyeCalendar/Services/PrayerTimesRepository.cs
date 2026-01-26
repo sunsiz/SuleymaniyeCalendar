@@ -219,114 +219,163 @@ public class PrayerTimesRepository
     public async Task<List<Calendar>> EnsureDaysRangeAsync(Location location, DateTime startDate, int daysNeeded)
     {
         Debug.WriteLine($"EnsureDaysRangeAsync: Ensuring {daysNeeded} days from {startDate:dd/MM/yyyy} for location {location.Latitude},{location.Longitude}");
-        
-        // Invalidate yearly caches if location changed meaningfully
-        // Note: This logic was in DataService, but PrayerCacheService handles cache keys based on location anyway.
-        // We might need to expose ClearYearCachesIfLocationChanged in PrayerCacheService if it's not there.
-        // For now, we assume PrayerCacheService handles it or we just load what we have.
-        
-        var result = new List<Calendar>();
-        var endDate = startDate.AddDays(daysNeeded - 1);
 
-        // Load caches for years involved
-        var years = Enumerable.Range(startDate.Year, endDate.Year - startDate.Year + 1).ToArray();
+        var result = new List<Calendar>(daysNeeded);
+        var seen = new HashSet<DateTime>();
+
+        // Load caches for years involved (and any additionally touched years as we iterate)
         var yearCaches = new Dictionary<int, List<Calendar>>();
-        foreach (var y in years)
+
+        async Task<List<Calendar>> LoadYearAsync(int year)
         {
+            if (yearCaches.TryGetValue(year, out var existing))
+                return existing;
+
             List<Calendar>? cached;
-            using (_perf.StartTimer($"Cache.LoadYear.{y}"))
+            using (_perf.StartTimer($"Cache.LoadYear.{year}"))
             {
-                cached = await _cacheService.LoadYearCacheAsync(location, y).ConfigureAwait(false);
+                cached = await _cacheService.LoadYearCacheAsync(location, year).ConfigureAwait(false);
             }
-            yearCaches[y] = cached ?? new List<Calendar>();
+
+            var list = cached ?? new List<Calendar>();
+            yearCaches[year] = list;
+            return list;
         }
 
-        // Helper to try get a whole month; fetch if missing.
+        static bool TryGetParsedDate(Calendar cal, out DateTime parsed)
+        {
+            parsed = AppConstants.ParseCalendarDate(cal.Date);
+            return parsed != DateTime.MinValue;
+        }
+
+        static List<Calendar> DistinctByParsedDate(IEnumerable<Calendar> cals)
+        {
+            var map = new Dictionary<DateTime, Calendar>();
+            foreach (var c in cals)
+            {
+                if (!TryGetParsedDate(c, out var d))
+                    continue;
+
+                // keep first occurrence
+                if (!map.ContainsKey(d.Date))
+                    map[d.Date] = c;
+            }
+            return map.OrderBy(k => k.Key).Select(k => k.Value).ToList();
+        }
+
         async Task<List<Calendar>> GetMonthAsync(int year, int month)
         {
-            // Try from cache
-            if (yearCaches.TryGetValue(year, out var cachedYear) && cachedYear.Count > 0)
-            {
-                var monthDays = cachedYear.Where(d => {
-                    var dd = ParseCalendarDateOrMin(d.Date);
-                    return dd != DateTime.MinValue && dd.Year == year && dd.Month == month;
-                }).ToList();
-                
-                if (monthDays.Count > 27) return monthDays; // assume month is sufficiently complete
-            }
+            var cachedYear = await LoadYearAsync(year).ConfigureAwait(false);
 
-            // Fetch via JSON monthly endpoint (now supports year parameter)
-            ObservableCollection<Calendar>? fetched = await _jsonApiService.GetMonthlyPrayerTimesAsync(
-                location.Latitude, location.Longitude, month, location.Altitude ?? 0, year).ConfigureAwait(false);
+            // Try month from cache
+            var monthFromCache = cachedYear
+                .Where(d => TryGetParsedDate(d, out var dd) && dd.Year == year && dd.Month == month)
+                .ToList();
+
+            // If sufficiently complete, return
+            if (monthFromCache.Count > 27)
+                return DistinctByParsedDate(monthFromCache);
+
+            // Fetch via JSON monthly endpoint
+            ObservableCollection<Calendar>? fetched;
+            using (_perf.StartTimer($"JSON.Monthly.{year}-{month}"))
+            {
+                fetched = await _jsonApiService.GetMonthlyPrayerTimesAsync(
+                    location.Latitude, location.Longitude, month, location.Altitude ?? 0, year).ConfigureAwait(false);
+            }
 
             // If monthly not available or failed, fetch missing days via daily endpoint for each date
             if (fetched == null || fetched.Count == 0)
             {
                 var daysInMonth = DateTime.DaysInMonth(year, month);
                 var list = new List<Calendar>(daysInMonth);
-                for (int d = 1; d <= daysInMonth; d++)
+                for (var day = 1; day <= daysInMonth; day++)
                 {
-                    var date = new DateTime(year, month, d);
-                    var day = await _jsonApiService.GetDailyPrayerTimesAsync(location.Latitude, location.Longitude, date, location.Altitude ?? 0).ConfigureAwait(false);
-                    if (day != null) list.Add(day);
+                    var date = new DateTime(year, month, day);
+                    var daily = await _jsonApiService.GetDailyPrayerTimesAsync(
+                        location.Latitude, location.Longitude, date, location.Altitude ?? 0).ConfigureAwait(false);
+                    if (daily != null)
+                        list.Add(daily);
                 }
+
                 fetched = new ObservableCollection<Calendar>(list);
             }
 
-            // Merge into cache and persist
+            // Merge into year cache + persist
             if (fetched != null && fetched.Count > 0)
             {
-                var toAdd = fetched.ToList();
-                if (!yearCaches.ContainsKey(year)) yearCaches[year] = new List<Calendar>();
-                
-                // We need a MergeCalendars helper. 
-                // Since we don't have access to DataService's private methods, we'll implement a simple one here.
-                var existing = yearCaches[year];
-                var merged = new List<Calendar>(existing);
-                foreach (var item in toAdd)
+                var merged = new List<Calendar>(cachedYear);
+                var existingDates = new HashSet<DateTime>(
+                    cachedYear.Select(c => AppConstants.ParseCalendarDate(c.Date)).Where(d => d != DateTime.MinValue).Select(d => d.Date));
+
+                foreach (var item in fetched)
                 {
-                    if (!merged.Any(x => x.Date == item.Date))
-                    {
+                    var d = AppConstants.ParseCalendarDate(item.Date);
+                    if (d == DateTime.MinValue)
+                        continue;
+
+                    if (existingDates.Add(d.Date))
                         merged.Add(item);
-                    }
                 }
+
                 yearCaches[year] = merged;
 
                 using (_perf.StartTimer($"Cache.SaveYear.{year}"))
                 {
-                    await _cacheService.SaveYearCacheAsync(location, year, yearCaches[year]).ConfigureAwait(false);
+                    await _cacheService.SaveYearCacheAsync(location, year, merged).ConfigureAwait(false);
                 }
-                return toAdd;
+
+                var monthMerged = merged
+                    .Where(d => TryGetParsedDate(d, out var dd) && dd.Year == year && dd.Month == month)
+                    .ToList();
+
+                return DistinctByParsedDate(monthMerged);
             }
 
-            return new List<Calendar>();
+            // Return whatever we have (even if incomplete)
+            return DistinctByParsedDate(monthFromCache);
         }
 
-        // Collect days covering the requested span
+        // Count-driven collection: keep fetching months until we have daysNeeded distinct days from startDate
         var cursor = new DateTime(startDate.Year, startDate.Month, 1);
-        while (cursor <= endDate)
+        while (result.Count < daysNeeded)
         {
-            List<Calendar> monthDays;
-            using (_perf.StartTimer($"EnsureDays.GetMonth.{cursor.Year}-{cursor.Month}"))
+            var monthDays = await GetMonthAsync(cursor.Year, cursor.Month).ConfigureAwait(false);
+
+            foreach (var cal in monthDays)
             {
-                monthDays = await GetMonthAsync(cursor.Year, cursor.Month).ConfigureAwait(false);
+                if (!TryGetParsedDate(cal, out var d))
+                    continue;
+
+                if (d.Date < startDate.Date)
+                    continue;
+
+                if (seen.Add(d.Date))
+                {
+                    result.Add(cal);
+                    if (result.Count >= daysNeeded)
+                        break;
+                }
             }
-            result.AddRange(monthDays);
+
+            // Move to next month (handles year boundaries)
             cursor = cursor.AddMonths(1);
+
+            // Safety: avoid infinite loop if API/caches are broken
+            if (cursor > startDate.AddYears(2))
+                break;
         }
 
-        // Filter to range and ensure order/distinct
-        // Parse date once for better performance
-        var inRange = result
-            .Select(d => new { Cal = d, ParsedDate = ParseCalendarDateOrMin(d.Date) })
-            .Where(x => x.ParsedDate != DateTime.MinValue && x.ParsedDate >= startDate && x.ParsedDate <= endDate)
-            .GroupBy(x => x.Cal.Date) // Distinct by date string
-            .Select(g => g.First())
-            .OrderBy(x => x.ParsedDate)
+        // Ensure stable ordering by parsed date
+        result = result
+            .Select(c => new { Cal = c, Date = AppConstants.ParseCalendarDate(c.Date) })
+            .Where(x => x.Date != DateTime.MinValue)
+            .OrderBy(x => x.Date)
             .Select(x => x.Cal)
+            .Take(daysNeeded)
             .ToList();
 
-        return inRange;
+        return result;
     }
 
     public async Task<bool> EnsureTodayInCacheAsync(Location location)

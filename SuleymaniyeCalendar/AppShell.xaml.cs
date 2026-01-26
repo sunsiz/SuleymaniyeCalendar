@@ -48,52 +48,5 @@ public partial class AppShell : Shell
             ThemeMode.Light => AppTheme.Light,
             _ => AppTheme.Unspecified
         };
-    }
-    
-    /// <summary>
-    /// Call this method when font size changes to update tab bar height dynamically.
-    /// Should be called from SettingsViewModel after font size is changed.
-    /// </summary>
-    public void UpdateTabBarForFontSize()
-    {
-#if IOS
-        if (Handler?.PlatformView is UIKit.UITabBarController tabBarController)
-        {
-            var fontSize = Preferences.Get("FontSize", 14.0);
-            var extraHeight = Math.Max(0, (fontSize - 14) * 2);
-            var minHeight = 49 + extraHeight;
-            
-            var tabBar = tabBarController.TabBar;
-            if (tabBar != null)
-            {
-                tabBar.Frame = new CoreGraphics.CGRect(
-                    tabBar.Frame.X,
-                    tabBar.Frame.Y,
-                    tabBar.Frame.Width,
-                    Math.Max(minHeight, 49)
-                );
-                tabBar.SetNeedsLayout();
-            }
-        }
-#elif ANDROID
-        if (Handler?.PlatformView is AndroidX.Fragment.App.FragmentActivity fragmentActivity)
-        {
-            var fontSize = Preferences.Get("FontSize", 14.0);
-            var extraHeight = Math.Max(0, (fontSize - 14) * 2);
-            var minHeight = (int)(56 + extraHeight);
-            
-            var bottomNav = fragmentActivity.FindViewById<Google.Android.Material.BottomNavigation.BottomNavigationView>(
-                Android.Resource.Id.Action0);
-            if (bottomNav != null)
-            {
-                bottomNav.LayoutParameters.Height = (int)Android.Util.TypedValue.ApplyDimension(
-                    Android.Util.ComplexUnitType.Dip,
-                    minHeight,
-                    bottomNav.Context.Resources.DisplayMetrics
-                );
-                bottomNav.RequestLayout();
-            }
-        }
-#endif
-    }
+    }    
 }

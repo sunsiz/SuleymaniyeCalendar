@@ -126,10 +126,10 @@
         x:Key="LabelSectionHeader"
         BasedOn="{StaticResource Label}"
         TargetType="Label">
-        <Setter Property="FontSize" Value="{DynamicResource TitleFontSize}" />
+        <Setter Property="FontSize" Value="{DynamicResource TitleMediumFontSize}" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="VerticalTextAlignment" Value="Center" />
-        <Setter Property="LineHeight" Value="1.3" />
+        <Setter Property="LineHeight" Value="0.9" />
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource UltraHighContrastOnPrimary}, Dark={StaticResource UltraHighContrastOnPrimaryDark}}" />
         <Setter Property="Margin" Value="0,0,0,4" />
         <Setter Property="Shadow">
@@ -351,7 +351,7 @@
                     </VisualState>
                     <VisualState x:Name="Off">
                         <VisualState.Setters>
-                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light=#80E0E0E0, Dark=#424242}" />
+                            <Setter Property="ThumbColor" Value="{AppThemeBinding Light={StaticResource Primary30}, Dark=#424242}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
