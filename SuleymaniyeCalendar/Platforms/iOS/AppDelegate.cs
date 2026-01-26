@@ -14,7 +14,14 @@ public class AppDelegate : MauiUIApplicationDelegate
     public override bool FinishedLaunching(UIApplication app, NSDictionary options)
     {
         // Clear badge count when app opens
-        UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+        if (UIDevice.CurrentDevice.CheckSystemVersion(17, 0))
+        {
+            UNUserNotificationCenter.Current.SetBadgeCountAsync(0);
+        }
+        else
+        {
+            UIApplication.SharedApplication.ApplicationIconBadgeNumber = 0;
+        }
         UNUserNotificationCenter.Current.RemoveAllDeliveredNotifications();
         
         // Set up native iOS exception handler for crash logging
