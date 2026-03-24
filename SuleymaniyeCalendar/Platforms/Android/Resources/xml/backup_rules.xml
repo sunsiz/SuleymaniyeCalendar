@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 6-11 (API 23-30) backup rules.
+     Exclude SharedPreferences to prevent stale alarm/sound settings
+     from being restored after uninstall/reinstall. -->
+<full-backup-content>
+    <exclude domain="sharedpref" path="."/>
+</full-backup-content>

@@ -73,13 +73,15 @@ namespace SuleymaniyeCalendar
 			return null;
 		}
 
-        public void SetAlarm(DateTime alarmTime, int requestCode, NotificationSettings settings)
-        {
-            var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
-            intent.PutExtra("name", settings.PrayerName);
-            intent.PutExtra("prayerId", settings.PrayerId);
-            // Use actual prayer time for display, not the alarm trigger time
-            intent.PutExtra("time", string.IsNullOrEmpty(settings.PrayerTime) ? alarmTime.ToString("HH:mm") : settings.PrayerTime);
+		public void SetAlarm(DateTime alarmTime, int requestCode, NotificationSettings settings)
+		{
+			var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
+			intent.PutExtra("name", settings.PrayerName);
+			intent.PutExtra("prayerId", settings.PrayerId);
+			// Use actual prayer time for display, not the alarm trigger time
+			intent.PutExtra("time", string.IsNullOrEmpty(settings.PrayerTime) ? alarmTime.ToString("HH:mm") : settings.PrayerTime);
+			// Pass sound so the receiver can use it directly instead of re-reading Preferences
+			intent.PutExtra("sound", settings.Sound);
             
             var pendingIntent = PendingIntent.GetBroadcast(
                 Application.Context, 
@@ -103,35 +105,46 @@ namespace SuleymaniyeCalendar
             }
         }
 
-        public void CancelAllAlarms()
-        {
-            var alarmManager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager;
-            if (alarmManager == null) return;
-            
-            var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
-            
-            // Loop through next 33 days * 8 prayers to cover all potential alarms
-            var startDate = DateTime.Today.AddDays(-1);
-            for (int i = 0; i < 33; i++)
-            {
-                var date = startDate.AddDays(i);
-                for (int p = 0; p < 8; p++)
-                {
-                    int requestCode = (date.DayOfYear * 100) + p;
-                    var pendingIntent = PendingIntent.GetBroadcast(
-                        Application.Context, 
-                        requestCode, 
-                        intent, 
-                        PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
-                    
-                    if (pendingIntent != null)
-                    {
-                        alarmManager.Cancel(pendingIntent);
-                        pendingIntent.Cancel();
-                    }
-                }
-            }
-        }
+		public void CancelAllAlarms()
+		{
+			var alarmManager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager;
+			if (alarmManager == null) return;
+
+			var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
+
+			// Loop through next 33 days * 8 prayers to cover all potential alarms
+			var startDate = DateTime.Today.AddDays(-1);
+			for (int i = 0; i < 33; i++)
+			{
+				var date = startDate.AddDays(i);
+				for (int p = 0; p < 8; p++)
+				{
+					// Current formula: must match SchedulePrayerAlarmIfEnabled
+					int requestCode = ((date.Year % 10) * 100000) + (date.DayOfYear * 100) + p;
+					CancelPendingAlarm(alarmManager, intent, requestCode);
+
+					// Legacy formula: cancel alarms scheduled by older app versions
+					int legacyRequestCode = (date.DayOfYear * 100) + p;
+					CancelPendingAlarm(alarmManager, intent, legacyRequestCode);
+				}
+			}
+		}
+
+		private static void CancelPendingAlarm(AlarmManager alarmManager, Intent intent, int requestCode)
+		{
+			// Use NoCreate to check if PendingIntent exists without creating a new one
+			var pendingIntent = PendingIntent.GetBroadcast(
+				Application.Context,
+				requestCode,
+				intent,
+				PendingIntentFlags.NoCreate | PendingIntentFlags.Immutable);
+
+			if (pendingIntent != null)
+			{
+				alarmManager.Cancel(pendingIntent);
+				pendingIntent.Cancel();
+			}
+		}
 
 		private void TryRescheduleAlarms()
 		{

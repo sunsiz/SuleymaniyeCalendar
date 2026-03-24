@@ -60,7 +60,7 @@
 	<EmbeddedResource Include="Resources\Fonts\OpenSans-Regular.ttf" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
 	<EmbeddedResource Include="Resources\Fonts\UKIJTuT.ttf" Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'" />
 	<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
-  </ItemGroup>
+  </ItemGroup>  
   <ItemGroup>
 	<PackageReference Include="CommunityToolkit.Maui" Version="12.2.0" />
 	<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.1.2" />

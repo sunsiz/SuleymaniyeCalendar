@@ -11,35 +11,33 @@ namespace SuleymaniyeCalendar;
 [BroadcastReceiver(Enabled = true, Exported = false)]
 public class AlarmNotificationReceiver : BroadcastReceiver
 {
-    private const int NotificationId = 2025;
-
     public override void OnReceive(Context? context, Intent? intent)
     {
         if (context == null) return;
-        
+
         // Set culture to user's selected language for localized notification text
         string savedLanguage = "tr";
         try
         {
             savedLanguage = Preferences.Get("SelectedLanguage", "tr");
             System.Diagnostics.Debug.WriteLine($"🔔 AlarmNotificationReceiver: savedLanguage = {savedLanguage}");
-            
+
             var culture = new CultureInfo(savedLanguage);
             CultureInfo.CurrentCulture = culture;
             CultureInfo.CurrentUICulture = culture;
             Resources.Strings.AppResources.Culture = culture;
-            
+
             System.Diagnostics.Debug.WriteLine($"🔔 Culture set to: {culture.Name}, AppResources test: {Resources.Strings.AppResources.Alarmi}");
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"❌ Failed to set notification culture: {ex.Message}");
         }
-        
+
         var name = intent?.GetStringExtra("name") ?? string.Empty;
         var timeStr = intent?.GetStringExtra("time") ?? string.Empty;
         var prayerId = intent?.GetStringExtra("prayerId") ?? string.Empty;
-        
+
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(timeStr))
             return;
 
@@ -67,10 +65,15 @@ public class AlarmNotificationReceiver : BroadcastReceiver
                 _              => "asr" // fallback
             };
         }
-        
-        // Get sound preference using prayerId
-        var soundPref = Preferences.Get(prayerId + "AlarmSound", "kus");
-        
+
+        // Prefer sound from Intent (set at schedule time), fall back to Preferences
+        var soundPref = intent?.GetStringExtra("sound");
+        if (string.IsNullOrEmpty(soundPref))
+        {
+            soundPref = Preferences.Get(prayerId + "AlarmSound", "kus");
+        }
+        System.Diagnostics.Debug.WriteLine($"🔔 AlarmNotificationReceiver: prayerId={prayerId}, sound={soundPref}");
+
         var channelId = soundPref switch
         {
             "kus"   => "SuleymaniyeTakvimialarmbirdchannelId",
@@ -110,6 +113,9 @@ public class AlarmNotificationReceiver : BroadcastReceiver
 
         var content = $"{name} {Resources.Strings.AppResources.Vakti} {timeStr}";
 
+        // Use unique notification ID per prayer so simultaneous alarms don't overwrite each other
+        int notificationId = GenerateNotificationId(prayerId);
+
         // Create large icon bitmap safely - decode fresh copy to avoid recycled bitmap issues
         Bitmap? largeIcon = null;
         try
@@ -140,7 +146,27 @@ public class AlarmNotificationReceiver : BroadcastReceiver
         var notification = builder.Build();
         if (notification != null && nm != null)
         {
-            nm.Notify(NotificationId, notification);
+            nm.Notify(notificationId, notification);
         }
+    }
+
+    /// <summary>
+    /// Generates a stable notification ID per prayer to prevent notification overwrites
+    /// while allowing updates for the same prayer.
+    /// </summary>
+    private static int GenerateNotificationId(string prayerId)
+    {
+        return prayerId switch
+        {
+            "falsefajr" => 2026_00,
+            "fajr"      => 2026_01,
+            "sunrise"   => 2026_02,
+            "dhuhr"     => 2026_03,
+            "asr"       => 2026_04,
+            "maghrib"   => 2026_05,
+            "isha"      => 2026_06,
+            "endofisha" => 2026_07,
+            _           => 2026_08
+        };
     }
 }

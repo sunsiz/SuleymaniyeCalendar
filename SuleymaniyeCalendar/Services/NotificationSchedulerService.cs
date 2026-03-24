@@ -87,7 +87,7 @@ public class NotificationSchedulerService
         // Cancel existing alarms to ensure a clean slate (handles disabled prayers or changed times)
         // On Android this might be expensive, but ensures consistency.
         // On iOS it's fast.
-        // _alarmService.CancelAllAlarms(); // Optional: Enable if overwriting isn't sufficient
+        _alarmService.CancelAllAlarms(); // Optional: Enable if overwriting isn't sufficient
 
         try
         {
