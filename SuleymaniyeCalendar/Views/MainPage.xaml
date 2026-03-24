@@ -172,9 +172,6 @@
                                             <!-- Current prayer style -->
                                             <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
                                                 <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource SurfaceContainerLowestLight}, Dark={StaticResource SurfaceContainerLowestDark}}"/>
-                                                <Setter Property="Shadow">
-                                                    <Shadow Brush="{AppThemeBinding Light={StaticResource Secondary20}, Dark=#50FFA500}" Radius="32" Offset="0,12" Opacity="0.05" />
-                                                </Setter>
                                                 <Setter Property="MinimumHeightRequest" Value="100" />
                                                 <Setter Property="Padding" Value="10,6" />
                                             </DataTrigger>
@@ -186,9 +183,6 @@
                                                 </MultiTrigger.Conditions>
                                                 <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource GlassStrongLight}, Dark={StaticResource GlassStrongDark}}"/>
                                                 <Setter Property="Opacity" Value="0.98" />
-                                                <Setter Property="Shadow">
-                                                    <Shadow Brush="{AppThemeBinding Light={StaticResource Secondary30}, Dark=#30FFA500}" Radius="3" Offset="0,0" Opacity="0.95" />
-                                                </Setter>
                                             </MultiTrigger>
                                         </Border.Triggers>
 
@@ -213,12 +207,8 @@
                                                     </DataTrigger>
                                                     <!-- Current: enhanced but compact -->
                                                     <DataTrigger Binding="{Binding IsActive}" TargetType="Border" Value="True">
-                                                        <!-- <Setter Property="Background" Value="{StaticResource Primary30}" /> -->
                                                         <Setter Property="WidthRequest" Value="{DynamicResource PrayerIconContainerSizeActive}" />
                                                         <Setter Property="HeightRequest" Value="{DynamicResource PrayerIconContainerSizeActive}" />
-                                                        <Setter Property="Shadow">
-                                                            <Shadow Brush="{StaticResource Primary50}" Radius="12" Offset="0,3" Opacity="0.1" />
-                                                        </Setter>
                                                     </DataTrigger>
                                                 </Border.Triggers>
                                                 <Image Source="{Binding IconPath}" Aspect="AspectFit"

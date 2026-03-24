@@ -148,15 +148,20 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		}
 		
 		IsPlaying = false;
-		
-		// Log perf summary after delay to capture LoadPrayer metrics (wrapped in try-catch for safety)
+
+		// Log perf summary after delay to capture LoadPrayer metrics
+		// Use defensive guards: Application.Current and Dispatcher may be null after background kill
 		try
 		{
-			Application.Current?.Dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () =>
+			var dispatcher = Application.Current?.Dispatcher;
+			if (dispatcher != null)
 			{
-				try { _perf.LogSummary("PrayerDetailView"); }
-				catch (Exception ex) { Debug.WriteLine($"PrayerDetailView perf log failed: {ex.Message}"); }
-			});
+				dispatcher.DispatchDelayed(TimeSpan.FromSeconds(1), () =>
+				{
+					try { _perf.LogSummary("PrayerDetailView"); }
+					catch (Exception ex) { Debug.WriteLine($"PrayerDetailView perf log failed: {ex.Message}"); }
+				});
+			}
 		}
 		catch (Exception ex)
 		{

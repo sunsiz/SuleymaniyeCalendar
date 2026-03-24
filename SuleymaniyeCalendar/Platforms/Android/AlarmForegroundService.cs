@@ -216,14 +216,14 @@ namespace SuleymaniyeCalendar
 				}
 
 				_handler.PostDelayed(_runnable, NOTIFICATION_UPDATE_INTERVAL_MS);
-				
+
 				// Check for date change (midnight crossing)
 				var today = DateTime.Today;
 				if (today != _lastKnownDate)
 				{
 					System.Diagnostics.Debug.WriteLine($"[AlarmForegroundService] Date changed from {_lastKnownDate:yyyy-MM-dd} to {today:yyyy-MM-dd} - refreshing data");
 					_lastKnownDate = today;
-					
+
 					// Refresh calendar data for the new day
 					_ = Task.Run(async () =>
 					{
@@ -245,12 +245,30 @@ namespace SuleymaniyeCalendar
 						}
 					});
 				}
-				
-				SetNotification();
-				if (_notification != null)
+
+				// Move notification building to background thread to prevent ANR
+				// Only the final Notify() call needs the main thread
+				_ = Task.Run(() =>
 				{
-					_notificationManager?.Notify(NOTIFICATION_ID, _notification);
-				}
+					try
+					{
+						SetNotification();
+						var notification = _notification;
+						if (notification != null)
+						{
+							_handler?.Post(() =>
+							{
+								try { _notificationManager?.Notify(NOTIFICATION_ID, notification); }
+								catch (Exception ex) { System.Diagnostics.Debug.WriteLine($"Notification update failed: {ex.Message}"); }
+							});
+						}
+					}
+					catch (Exception ex)
+					{
+						System.Diagnostics.Debug.WriteLine($"SetNotification background failed: {ex.Message}");
+					}
+				});
+
 				_updateCounter++;
 				if (_updateCounter < WIDGET_REFRESH_CYCLES)
 				{

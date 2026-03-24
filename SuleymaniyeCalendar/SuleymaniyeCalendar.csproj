@@ -62,7 +62,7 @@
 	<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>  
   <ItemGroup>
-	<PackageReference Include="CommunityToolkit.Maui" Version="12.2.0" />
+	<PackageReference Include="CommunityToolkit.Maui" Version="12.3.0" />
 	<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.1.2" />
 	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 	<PackageReference Include="LocalizationResourceManager.Maui" Version="1.2.2" />
