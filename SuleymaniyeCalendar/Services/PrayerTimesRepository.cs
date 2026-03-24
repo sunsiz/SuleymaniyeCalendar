@@ -9,18 +9,15 @@ namespace SuleymaniyeCalendar.Services;
 public class PrayerTimesRepository
 {
     private readonly JsonApiService _jsonApiService;
-    private readonly XmlApiService _xmlApiService;
     private readonly PrayerCacheService _cacheService;
     private readonly PerformanceService _perf;
 
     public PrayerTimesRepository(
         JsonApiService jsonApiService,
-        XmlApiService xmlApiService,
         PrayerCacheService cacheService,
         PerformanceService perf)
     {
         _jsonApiService = jsonApiService;
-        _xmlApiService = xmlApiService;
         _cacheService = cacheService;
         _perf = perf;
     }
@@ -84,27 +81,7 @@ public class PrayerTimesRepository
             Debug.WriteLine($"Hybrid: JSON API failed - {ex.Message}");
         }
 
-        // Strategy 2: Fallback to old XML API (async)
-        Debug.WriteLine("Hybrid: Falling back to XML API");
-        try
-        {
-            ObservableCollection<Calendar>? xmlResult;
-            using (_perf.StartTimer("XML.Monthly.Fallback"))
-            {
-                xmlResult = await GetMonthlyPrayerTimesXmlAsync(location, targetMonth, targetYear, forceRefresh).ConfigureAwait(false);
-            }
-            if (xmlResult != null && xmlResult.Count > 0)
-            {
-                Debug.WriteLine($"Hybrid: XML API success - {xmlResult.Count} days");
-                return xmlResult;
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Hybrid: XML API failed - {ex.Message}");
-        }
-
-        Debug.WriteLine("Hybrid: Both APIs failed");
+        Debug.WriteLine("Hybrid: JSON API failed, no fallback available");
         return null;
     }
 
@@ -153,67 +130,7 @@ public class PrayerTimesRepository
             Debug.WriteLine($"Hybrid Daily: JSON API failed - {ex.Message}");
         }
 
-        // Strategy 2: Fallback to old XML API
-        // Note: XML API only supports monthly fetch, so we fetch month and extract day
-        Debug.WriteLine("Hybrid Daily: Falling back to XML API");
-        try
-        {
-            var monthly = await GetMonthlyPrayerTimesXmlAsync(location, targetDate.Month, targetDate.Year, false).ConfigureAwait(false);
-            if (monthly != null)
-            {
-                var day = monthly.FirstOrDefault(d => 
-                {
-                    // Use proper date parsing for reliable comparison
-                    if (string.IsNullOrEmpty(d.Date)) return false;
-                    var parsedDate = AppConstants.ParseCalendarDate(d.Date);
-                    return parsedDate.Date == targetDate.Date;
-                });
-                
-                if (day != null)
-                {
-                    Debug.WriteLine("Hybrid Daily: XML API success (extracted from monthly)");
-                    return day;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Hybrid Daily: XML API failed - {ex.Message}");
-        }
-
         return null;
-    }
-
-    private async Task<ObservableCollection<Calendar>?> GetMonthlyPrayerTimesXmlAsync(Location location, int month, int year, bool forceRefresh = false)
-    {
-        if (!forceRefresh)
-        {
-            var cached = await _cacheService.TryGetMonthlyFromCacheAsync(location, year, month).ConfigureAwait(false);
-            if (cached != null) return cached;
-        }
-
-        if (!HaveInternet()) return null;
-
-        try
-        {
-            var result = await _xmlApiService.GetMonthlyPrayerTimesAsync(
-                location.Latitude,
-                location.Longitude,
-                location.Altitude ?? 0,
-                month,
-                year).ConfigureAwait(false);
-
-            if (result != null && result.Count > 0)
-            {
-                await _cacheService.SaveToUnifiedCacheAsync(location, result.ToList()).ConfigureAwait(false);
-            }
-            return result;
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine($"Async XML monthly failed: {ex.Message}");
-            return null;
-        }
     }
 
     public async Task<List<Calendar>> EnsureDaysRangeAsync(Location location, DateTime startDate, int daysNeeded)

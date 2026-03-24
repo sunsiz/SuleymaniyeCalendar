@@ -52,10 +52,9 @@ namespace SuleymaniyeCalendar.Tests
             
             var perfService = new PerformanceService();
             var locationService = new LocationService(perfService);
-            var xmlApiService = new XmlApiService();
             var cacheService = new PrayerCacheService();
-            
-            var repository = new PrayerTimesRepository(_jsonApiMock.Object, xmlApiService, cacheService, perfService);
+
+            var repository = new PrayerTimesRepository(_jsonApiMock.Object, cacheService, perfService);
             var scheduler = new NotificationSchedulerService(_alarmServiceMock.Object, repository, perfService);
             
             _dataService = new DataService(locationService, repository, scheduler, perfService);

@@ -8,15 +8,12 @@ public class MainApplication : MauiApplication
 {
 	/// <summary>
 	/// Known non-critical Java exception patterns that should be caught instead of crashing.
-	/// These are MAUI framework rendering bugs fixed in newer versions.
+	/// Reviewed for .NET 10 MAUI — only patterns still observed on OEM devices are kept.
 	/// </summary>
 	private static readonly string[] NonCriticalExceptionPatterns =
 	[
-		"PlatformContentViewGroup.dispatchDraw",
-		"ShellFlyoutRenderer",
-		"RequestManagerRetriever",
-		"dispatchDraw",
-		"n_drawChild"
+		"RequestManagerRetriever",  // Glide image loading race on Activity destroy
+		"dispatchDraw"             // Rare OEM-specific rendering race
 	];
 
 	public MainApplication(IntPtr handle, JniHandleOwnership ownership)
@@ -50,11 +47,20 @@ public class MainApplication : MauiApplication
 			System.Diagnostics.Debug.WriteLine($"[CrashGuard] Suppressed non-critical exception: {exceptionMessage}");
 
 			try
-			{
-				var logPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, "suppressed_crashes.log");
-				System.IO.File.AppendAllText(logPath,
-					$"{DateTime.UtcNow:O} [Suppressed] {exceptionMessage}{Environment.NewLine}");
-			}
+				{
+					var logPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, "suppressed_crashes.log");
+
+					// Rotate log if it exceeds 100 KB to prevent unbounded growth
+					if (System.IO.File.Exists(logPath))
+					{
+						var info = new System.IO.FileInfo(logPath);
+						if (info.Length > 100 * 1024)
+							System.IO.File.WriteAllText(logPath, $"[Log rotated at {DateTime.UtcNow:O}]{Environment.NewLine}");
+					}
+
+					System.IO.File.AppendAllText(logPath,
+						$"{DateTime.UtcNow:O} [Suppressed] {exceptionMessage}{Environment.NewLine}");
+				}
 			catch
 			{
 				// Swallow logging errors

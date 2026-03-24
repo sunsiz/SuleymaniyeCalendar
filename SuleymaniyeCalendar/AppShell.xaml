@@ -5,7 +5,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SuleymaniyeCalendar"
     xmlns:views="clr-namespace:SuleymaniyeCalendar.Views"
-    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui">
+    xmlns:localization="clr-namespace:LocalizationResourceManager.Maui;assembly=LocalizationResourceManager.Maui"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+
+    <Shell.Behaviors>
+        <toolkit:StatusBarBehavior
+            StatusBarColor="{AppThemeBinding Light={StaticResource TabBarBgColor}, Dark={StaticResource TabBarBackgroundColorDark}}"
+            StatusBarStyle="LightContent" />
+    </Shell.Behaviors>
 
     <TabBar>
         <ShellContent Title="{localization:Translate Takvim}" ContentTemplate="{DataTemplate views:MainPage}">

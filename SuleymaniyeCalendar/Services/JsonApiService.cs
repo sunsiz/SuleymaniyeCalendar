@@ -9,14 +9,24 @@ using Calendar = SuleymaniyeCalendar.Models.Calendar;
 namespace SuleymaniyeCalendar.Services
 {
     /// <summary>
-    /// Service for interacting with the new JSON-based API at api.suleymaniyetakvimi.com
+    /// Service for interacting with the JSON-based API at api.suleymaniyetakvimi.com.
+    /// Registered as singleton — HttpClient is long-lived by design.
     /// </summary>
-    public class JsonApiService : IDisposable
+    public class JsonApiService
     {
         private readonly HttpClient _httpClient;
         private readonly PerformanceService _perf;
-        private bool _disposed;
         private const string BaseUrl = "https://api.suleymaniyetakvimi.com/api/";
+
+        /// <summary>
+        /// Shared HttpClient for all instances. HttpClient is designed to be long-lived
+        /// and reused — creating new instances per request causes socket exhaustion.
+        /// </summary>
+        private static readonly HttpClient SharedHttpClient = new()
+        {
+            Timeout = TimeSpan.FromSeconds(30)
+        };
+
         private static readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
@@ -25,10 +35,7 @@ namespace SuleymaniyeCalendar.Services
 
         public JsonApiService(PerformanceService? perf = null)
         {
-            _httpClient = new HttpClient
-            {
-                Timeout = TimeSpan.FromSeconds(30)
-            };
+            _httpClient = SharedHttpClient;
             _perf = perf ?? new PerformanceService();
         }
 
@@ -200,24 +207,6 @@ namespace SuleymaniyeCalendar.Services
                 Debug.WriteLine($"JSON API connectivity test failed: {ex.Message}");
                 return false;
             }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed) return;
-            
-            if (disposing)
-            {
-                _httpClient?.Dispose();
-            }
-            
-            _disposed = true;
         }
 
         private static string NormalizeJson(string json)

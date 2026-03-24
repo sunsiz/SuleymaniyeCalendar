@@ -5,7 +5,7 @@ This is a .NET MAUI prayer times app (Android, iOS, Windows) using CommunityTool
 ## Big picture architecture
 - **MVVM pattern**: ViewModels inherit from `BaseViewModel` (ObservableObject), Views in `Views/`, Shell navigation in `AppShell.xaml`
 - **Service layer**: `DataService` is a facade delegating to specialized services: `LocationService`, `PrayerTimesRepository`, `NotificationSchedulerService`
-- **Hybrid API system**: `PrayerTimesRepository` → `JsonApiService` (primary) → `XmlApiService` (fallback), unified via `PrayerCacheService`
+- **API system**: `PrayerTimesRepository` → `JsonApiService` → `PrayerCacheService` (local cache)
 - **DI container**: All types registered as singletons in `MauiProgram.CreateMauiApp()` with constructor injection
 - **Localization**: Uses `LocalizationResourceManager.Maui` with `AppResources.resx`, XAML binds via `{localization:Translate Key}`
 - **Prayer data flow**: JSON API → `PrayerCacheService` (unified cache) → `Calendar` models → `Prayer` ViewModels → UI cards
@@ -41,15 +41,14 @@ public async Task InitializeWithDelayAsync() {
 ```
 Always use `MainThread.InvokeOnMainThreadAsync()` for UI updates from background tasks.
 
-### 4. Hybrid API pattern (critical for reliability)
-All data fetching uses JSON-first with XML fallback via `PrayerTimesRepository`:
+### 4. JSON API data fetching
+All data fetching uses `JsonApiService` via `PrayerTimesRepository` with local caching:
 ```csharp
-// Strategy 1: Try new JSON API
 var jsonResult = await _jsonApiService.GetMonthlyPrayerTimesAsync(lat, lng, month);
-if (jsonResult != null) return jsonResult;
-
-// Strategy 2: Fallback to legacy XML API  
-return await GetMonthlyPrayerTimesXmlAsync(location, month, year, forceRefresh);
+if (jsonResult != null) {
+    await _cacheService.SaveToUnifiedCacheAsync(location, jsonResult);
+    return jsonResult;
+}
 ```
 Use `GetMonthlyPrayerTimesHybridAsync()` and `GetDailyPrayerTimesHybridAsync()` methods.
 
@@ -87,8 +86,7 @@ falsefajr, fajr, sunrise, dhuhr, asr, maghrib, isha, endofisha
 Preference keys follow pattern: `{prayerId}Enabled`, `{prayerId}NotificationTime`
 
 ## DataService responsibilities (the system hub)
-- **Prayer times**: Fetches from `http://servis.suleymaniyetakvimi.com/servis.asmx` (XML), caches to `%LOCALAPPDATA%/monthlycalendar.xml`
-- **JSON API**: Primary data source via `JsonApiService` at `api.suleymaniyetakvimi.com` with local JSON caching
+- **Prayer times**: Fetches from `https://api.suleymaniyetakvimi.com` (JSON API) via `JsonApiService`, cached locally via `PrayerCacheService`
 - **Location**: Handles permissions, GPS, geocoding with robust fallbacks
 - **Alarms**: Schedules 30 days via `SetMonthlyAlarmsAsync()` using `EnsureDaysRangeAsync()` for month boundary handling
 - **Network resilience**: Uses cached data when offline, shows appropriate toasts
@@ -121,8 +119,7 @@ foreach (var day in daysToSchedule) {
 ## JsonApiService integration
 - **Endpoint pattern**: `https://api.suleymaniyetakvimi.com/api/TimeCalculation/TimeCalculate[ByMonth]`
 - **Response models**: `TimeCalcDto` (internal DTO) → `Calendar` (app model) via `ConvertJsonDataToCalendar()`
-- **Error handling**: Returns `null` on failure; no `IsSuccess` wrapper in current API version
-- **Fallback strategy**: XML API used when JSON returns `null` or throws exception
+- **Error handling**: Returns `null` on failure; callers should handle gracefully
 - **DTO flexibility**: Uses `[JsonPropertyName]` for multiple field variants (e.g., `fajrBeginTime` vs `fajr`)
 
 ## Navigation patterns
@@ -157,9 +154,8 @@ Cards use `SurfaceVariantColor` backgrounds, `OutlineColor` borders, automatic l
 ```bash
 dotnet build                     # Build solution
 dotnet test                      # Run unit tests
-dotnet run --framework net9.0-android  # Run on Android
+dotnet run --framework net10.0-android  # Run on Android
 ```
-- Delete `%LOCALAPPDATA%/monthlycalendar.xml` to force fresh prayer time fetch
 - Use VS Code or VS for debugging with hot reload
 - Tests in `SuleymaniyeCalendar.Tests/` use MSTest + Moq + FluentAssertions
 

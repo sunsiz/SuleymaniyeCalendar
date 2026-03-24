@@ -152,11 +152,10 @@ namespace SuleymaniyeCalendar
             if (dataService == null)
             {
                 // Fallback for widget update when app is not running
-                var perf = new PerformanceService();
-                var cache = new PrayerCacheService(perf);
-                var json = new JsonApiService(perf);
-                var xml = new XmlApiService(perf);
-                var repo = new PrayerTimesRepository(json, xml, cache, perf);
+				var perf = new PerformanceService();
+				var cache = new PrayerCacheService(perf);
+				var json = new JsonApiService(perf);
+				var repo = new PrayerTimesRepository(json, cache, perf);
                 var loc = new LocationService(perf);
                 var alarm = new NullAlarmService();
                 var scheduler = new NotificationSchedulerService(alarm, repo, perf);

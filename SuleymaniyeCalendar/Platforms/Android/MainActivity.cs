@@ -2,6 +2,7 @@ using Android.App;
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
+using Android.Views;
 
 namespace SuleymaniyeCalendar;
 
@@ -14,6 +15,7 @@ public class MainActivity : MauiAppCompatActivity
         {
             base.OnCreate(savedInstanceState);
             System.Diagnostics.Debug.WriteLine("MainActivity.OnCreate: Starting initialization...");
+
             // Yield once to keep async signature purposeful (avoids analyzer warning after deferring tasks)
             await Task.Yield();
 
@@ -65,9 +67,7 @@ public class MainActivity : MauiAppCompatActivity
             var status = await Permissions.CheckStatusAsync<Permissions.PostNotifications>();
             if (status != PermissionStatus.Granted)
             {
-                var alreadyAsked = Preferences.Get("NotificationPermissionAsked", false);
                 status = await Permissions.RequestAsync<Permissions.PostNotifications>();
-                Preferences.Set("NotificationPermissionAsked", true);
                 if (status == PermissionStatus.Granted)
                 {
                     if (Preferences.Get("NotificationPrayerTimesEnabled", false) && Preferences.Get("ForegroundServiceEnabled", true))
@@ -89,18 +89,6 @@ public class MainActivity : MauiAppCompatActivity
             StartService(refreshIntent);
     }
 
-    void OpenServiceChannelSettings()
-    {
-        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-        {
-            var intent = new Intent(Android.Provider.Settings.ActionChannelNotificationSettings);
-            intent.PutExtra(Android.Provider.Settings.ExtraAppPackage, PackageName);
-            intent.PutExtra(Android.Provider.Settings.ExtraChannelId, "SuleymaniyeTakvimichannelId");
-            intent.AddFlags(ActivityFlags.NewTask);
-            StartActivity(intent);
-        }
-    }
-
     void EnsureExactAlarmCapability()
     {
         if (OperatingSystem.IsAndroidVersionAtLeast(31))
@@ -112,6 +100,56 @@ public class MainActivity : MauiAppCompatActivity
                 intent.SetData(Android.Net.Uri.Parse($"package:{PackageName}"));
                 StartActivity(intent);
             }
+        }
+    }
+
+    /// <summary>
+    /// Called after MAUI has fully initialized. Sets the Android system status bar color
+    /// to match the app's Shell header. On Android 15+ (API 35) where SetStatusBarColor
+    /// is deprecated, disables the contrast scrim so the transparent status bar doesn't
+    /// show a gray overlay.
+    /// </summary>
+    protected override void OnPostCreate(Bundle? savedInstanceState)
+    {
+        base.OnPostCreate(savedInstanceState);
+        ApplyStatusBarColor();
+    }
+
+    /// <summary>
+    /// Re-applies status bar color when activity resumes (handles theme changes).
+    /// </summary>
+    protected override void OnResume()
+    {
+        base.OnResume();
+        ApplyStatusBarColor();
+    }
+
+    void ApplyStatusBarColor()
+    {
+        if (Window is null) return;
+
+        var isDark = (Resources?.Configuration?.UiMode & Android.Content.Res.UiMode.NightMask)
+                     == Android.Content.Res.UiMode.NightYes;
+
+        var color = isDark
+            ? Android.Graphics.Color.ParseColor("#201F24")   // TabBarBackgroundColorDark
+            : Android.Graphics.Color.ParseColor("#8A4E1E");  // TabBarBgColor
+
+        // Set status bar color (works on API < 35)
+        Window.SetStatusBarColor(color);
+
+        // Disable the contrast enforcement scrim that Android 15+ adds over the
+        // transparent status bar — our backgrounds are dark enough for white icons
+        if (OperatingSystem.IsAndroidVersionAtLeast(29))
+        {
+            Window.StatusBarContrastEnforced = false;
+        }
+
+        // Ensure light (white) status bar icons on dark brown/dark backgrounds
+        if (OperatingSystem.IsAndroidVersionAtLeast(30))
+        {
+            Window.InsetsController?.SetSystemBarsAppearance(0,
+                (int)WindowInsetsControllerAppearance.LightStatusBars);
         }
     }
 }

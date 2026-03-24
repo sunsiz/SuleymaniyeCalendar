@@ -98,6 +98,8 @@ public partial class App : Application
             _ => AppTheme.Unspecified // System default
         };
 
+        // Re-apply font scale — DynamicResource values may need refresh after
+        // theme changes or returning from background
         BaseViewModel.InitializeFontSize();
     }
 
@@ -139,6 +141,11 @@ public partial class App : Application
         try
         {
             var logPath = Path.Combine(FileSystem.AppDataDirectory, "crash.log");
+
+            // Rotate log if it exceeds 100 KB
+            if (File.Exists(logPath) && new FileInfo(logPath).Length > 100 * 1024)
+                File.WriteAllText(logPath, $"[Log rotated at {DateTime.UtcNow:O}]{Environment.NewLine}");
+
             File.AppendAllText(logPath, message + Environment.NewLine);
         }
         catch
