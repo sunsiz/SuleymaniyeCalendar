@@ -92,6 +92,11 @@ public class AppDelegate : MauiUIApplicationDelegate
         try
         {
             var logPath = System.IO.Path.Combine(FileSystem.AppDataDirectory, "crash.log");
+
+            // Rotate log if it exceeds 100 KB
+            if (System.IO.File.Exists(logPath) && new System.IO.FileInfo(logPath).Length > 100 * 1024)
+                System.IO.File.WriteAllText(logPath, $"[Log rotated at {DateTime.UtcNow:O}]\n");
+
             var entry = $"{DateTime.UtcNow:O} [{source}] {message}\n";
             System.IO.File.AppendAllText(logPath, entry);
         }

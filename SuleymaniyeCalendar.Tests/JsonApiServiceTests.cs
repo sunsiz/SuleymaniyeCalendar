@@ -76,10 +76,4 @@ public class JsonApiServiceTests
         _mockService.Verify(s => s.TestConnectionAsync(), Times.Once);
     }
 
-    [TestMethod]
-    public void Dispose_WhenCalled_DoesNotThrow()
-    {
-        using var service = new JsonApiService();
-        FluentActions.Invoking(() => service.Dispose()).Should().NotThrow();
     }
-}

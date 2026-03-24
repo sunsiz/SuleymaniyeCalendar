@@ -26,7 +26,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
-            .UseMauiCommunityToolkitMediaElement()
+            .UseMauiCommunityToolkitMediaElement(true)
             .UseLocalizationResourceManager(settings =>
             {
                 settings.AddResource(AppResources.ResourceManager);
@@ -135,15 +135,10 @@ public static class MauiProgram
         services.AddSingleton<PrayerTimesRepository>();
         services.AddSingleton<NotificationSchedulerService>();
         services.AddSingleton<JsonApiService>();
-        services.AddSingleton<XmlApiService>();
         services.AddSingleton<PrayerCacheService>();
         services.AddSingleton<DataService>();
         services.AddSingleton<AccessibilityService>();
         services.AddSingleton<BackgroundDataPreloader>();
-
-
-        // Set up global exception handlers
-        Initialize();
 
         // Singleton pages (main tabs)
         services.AddSingleton<MainViewModel>();
@@ -154,25 +149,13 @@ public static class MauiProgram
         services.AddSingleton<RadioPage>();
         services.AddSingleton<CompassViewModel>();
         services.AddSingleton<CompassPage>();
-        services.AddSingleton<PrayerDetailViewModel>();
-        services.AddSingleton<PrayerDetailPage>();
         services.AddSingleton<SettingsViewModel>();
         services.AddSingleton<SettingsPage>();
 
         // Transient pages (fresh instance each navigation)
+        services.AddTransient<PrayerDetailViewModel>();
+        services.AddTransient<PrayerDetailPage>();
         services.AddTransient<MonthViewModel>();
         services.AddTransient<MonthPage>();
-    }
-
-    /// <summary>
-    /// Set up global exception handlers for debugging.
-    /// </summary>
-    public static void Initialize()
-    {
-        AppDomain.CurrentDomain.UnhandledException += (_, e) =>
-            System.Diagnostics.Debug.WriteLine($"Unhandled exception: {e.ExceptionObject}");
-
-        TaskScheduler.UnobservedTaskException += (_, e) =>
-            System.Diagnostics.Debug.WriteLine($"Unobserved task exception: {e.Exception}");
     }
 }

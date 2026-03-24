@@ -13,6 +13,7 @@ A .NET MAUI prayer times application for Android, iOS, and Windows.
 - **RTL Support**: Full right-to-left layout support for Arabic, Farsi, and Uyghur
 - **Themes**: Light, Dark, and System theme options
 - **Accessibility**: Screen reader support and dynamic font scaling
+- **Android Widget**: Home screen prayer times widget with theme and RTL support
 
 ## Architecture
 
@@ -20,7 +21,7 @@ A .NET MAUI prayer times application for Android, iOS, and Windows.
 - **Navigation**: Shell-based navigation
 - **DI**: Microsoft.Extensions.DependencyInjection
 - **Localization**: LocalizationResourceManager.Maui
-- **API**: Hybrid JSON/XML API with offline caching
+- **API**: JSON API (`api.suleymaniyetakvimi.com`) with local caching via `PrayerCacheService`
 
 ## Project Structure
 
@@ -41,16 +42,16 @@ SuleymaniyeCalendar/
 dotnet build
 
 # Build for Android
-dotnet build -f net9.0-android
+dotnet build -f net10.0-android
 
 # Run on Android device
-dotnet run -f net9.0-android
+dotnet run -f net10.0-android
 ```
 
 ## Requirements
 
-- .NET 9.0 SDK
-- Visual Studio 2022 or VS Code with MAUI extension
+- .NET 10.0 SDK
+- Visual Studio 2022 (17.14+) or VS Code with MAUI extension
 - Android SDK (for Android development)
 - Xcode (for iOS development, macOS only)
 

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-	<TargetFrameworks>net9.0-android;net9.0-ios</TargetFrameworks>
+	<TargetFrameworks>net10.0-android;net10.0-ios</TargetFrameworks>
 	<OutputType>Exe</OutputType>
 	<RootNamespace>SuleymaniyeCalendar</RootNamespace>
 	<UseMaui>true</UseMaui>
@@ -12,40 +12,40 @@
 	<ApplicationId>org.suleymaniyevakfi</ApplicationId>
 	<ApplicationIdGuid>84aea3eb-9551-460b-94e3-1c0a87aa8e61</ApplicationIdGuid>
 	<ApplicationDisplayVersion>3.4</ApplicationDisplayVersion>
-	<ApplicationVersion>12</ApplicationVersion>
+	<ApplicationVersion>13</ApplicationVersion>
 	<ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
 	<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
-	<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
 	<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">26.0</SupportedOSPlatformVersion>
-	<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
+	<!--<<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
+	SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
 	<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
-	<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
+	<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>-->
   </PropertyGroup>
   <PropertyGroup>
-	<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.26100.0</TargetFrameworks>
+	<TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.26100.0</TargetFrameworks>
 	<DefaultLanguage>tr-tr</DefaultLanguage>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
-    <PublishTrimmed>False</PublishTrimmed>
-    <RunAOTCompilation>False</RunAOTCompilation>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-android|AnyCPU'">
+	<PublishTrimmed>False</PublishTrimmed>
+	<RunAOTCompilation>False</RunAOTCompilation>
   </PropertyGroup>
   <!-- iOS Release: Use interpreter to avoid AOT issues with dynamic XAML bindings -->
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-ios|AnyCPU'">
-    <UseInterpreter>true</UseInterpreter>
-    <MtouchInterpreter>all</MtouchInterpreter>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net10.0-ios|AnyCPU'">
+	<UseInterpreter>true</UseInterpreter>
+	<MtouchInterpreter>all</MtouchInterpreter>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
-    <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
-    <AndroidUseAapt2>True</AndroidUseAapt2>
-    <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-    <AndroidPackageFormat>aab</AndroidPackageFormat>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net10.0-android|AnyCPU'">
+	<EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
+	<AndroidUseAapt2>True</AndroidUseAapt2>
+	<AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
+	<AndroidPackageFormat>aab</AndroidPackageFormat>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework)'=='net9.0-ios'">
-    <CodesignKey>Apple Development: Created via API (93LZ6P68P8)</CodesignKey>
-    <CodesignProvision>VS: MRA.Suleymaniye-Takvimi Development</CodesignProvision>
-  </PropertyGroup>  
+  <PropertyGroup Condition="'$(TargetFramework)'=='net10.0-ios'">
+	<CodesignKey>Apple Development: Created via API (93LZ6P68P8)</CodesignKey>
+	<CodesignProvision>VS: MRA.Suleymaniye-Takvimi Development</CodesignProvision>
+  </PropertyGroup>
   <ItemGroup>
-	<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFF5E3D9" TintColor="#5C3021" ForegroundScale="0.95" />
+	<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFF5E3D9" TintColor="#5C3021" ForegroundScale="0.64" />
 	<!-- Smaller BaseSize prevents logo being too large on iOS -->
 	<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FFF5E3D9" BaseSize="512,512" />
 	<MauiImage Include="Resources\Images\*" />
@@ -62,12 +62,12 @@
 	<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>  
   <ItemGroup>
-	<PackageReference Include="CommunityToolkit.Maui" Version="12.3.0" />
-	<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.1.2" />
-	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+	<PackageReference Include="CommunityToolkit.Maui" Version="14.0.1" />
+	<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="8.0.1" />
+	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
 	<PackageReference Include="LocalizationResourceManager.Maui" Version="1.2.2" />
-	<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.10" />
-	<PackageReference Include="Microsoft.Maui.Controls" Version="9.0.120" />
+	<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.5" />
+	<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.50" />
   </ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="Resources\Strings\AppResources.resx">
@@ -83,12 +83,6 @@
 	  <MauiXaml Update="Views\MonthPage.xaml" Generator="MSBuild:Compile" />
 	  <MauiXaml Update="Views\RadioPage.xaml" Generator="MSBuild:Compile" />
 	  <MauiXaml Update="Views\SettingsPage.xaml" Generator="MSBuild:Compile" />
-  </ItemGroup>
-  <ItemGroup>
-	<EmbeddedResource Update="Resources\Strings\AppResources.resx">
-	  <Generator>ResXFileCodeGenerator</Generator>
-	  <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
-	</EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
 	<Folder Include="Platforms\Android\Resources\raw\" />
