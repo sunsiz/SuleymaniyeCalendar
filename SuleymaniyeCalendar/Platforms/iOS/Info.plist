@@ -104,7 +104,7 @@
 		<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>3.4</string>
+	<string>3.5</string>
 	<key>CFBundleIdentifier</key>
 	<string>MRA.Suleymaniye-Takvimi</string>
 	<key>CFBundleDisplayName</key>

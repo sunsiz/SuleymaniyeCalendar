@@ -43,9 +43,11 @@
   <PropertyGroup Condition="'$(TargetFramework)'=='net10.0-ios'">
 	<CodesignKey>Apple Development: Created via API (93LZ6P68P8)</CodesignKey>
 	<CodesignProvision>VS: MRA.Suleymaniye-Takvimi Development</CodesignProvision>
+	<!-- Xcode 26.3 has identical SDKs to 26.2 — skip the strict version check -->
+	<ValidateXcodeVersion>false</ValidateXcodeVersion>
   </PropertyGroup>
   <ItemGroup>
-	<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFF5E3D9" TintColor="#5C3021" ForegroundScale="0.64" />
+	<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFF5E3D9" TintColor="#5C3021" ForegroundScale="0.95" />
 	<!-- Smaller BaseSize prevents logo being too large on iOS -->
 	<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FFF5E3D9" BaseSize="512,512" />
 	<MauiImage Include="Resources\Images\*" />

@@ -603,8 +603,9 @@ public partial class PrayerDetailViewModel : BaseViewModel
 			new Sound(fileName: "alarm2", name: AppResources.CalarSaat + " 1"),
 			new Sound(fileName: "beep1", name: AppResources.CalarSaat + " 2"),
 			new Sound(fileName: "beep2", name: AppResources.CalarSaat + " 3"),
-			new Sound(fileName: "beep3", name: AppResources.CalarSaat + " 4")
-		];
+			new Sound(fileName: "beep3", name: AppResources.CalarSaat + " 4"),
+            new Sound(fileName: "beep4", name: AppResources.CalarSaat + " 5")
+        ];
 		
 		// Restore selection if there was one
 		if (!string.IsNullOrEmpty(currentFileName))

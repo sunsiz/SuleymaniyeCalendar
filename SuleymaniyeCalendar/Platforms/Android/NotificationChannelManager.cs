@@ -23,7 +23,8 @@ namespace SuleymaniyeCalendar
 		private static string _alarm2AlarmChannelId = "SuleymaniyeTakvimialarmalarm2channelId";
 		private static string _alarm3AlarmChannelId = "SuleymaniyeTakvimialarmalarm3channelId";
 		private static string _alarm4AlarmChannelId = "SuleymaniyeTakvimialarmalarm4channelId";
-		private static string _birdsChannelName = "Suleymaniye Takvimi Alarm Birds";
+        private static string _alarm5AlarmChannelId = "SuleymaniyeTakvimialarmalarm5channelId";
+        private static string _birdsChannelName = "Suleymaniye Takvimi Alarm Birds";
 		private static string _roosterChannelName = "Suleymaniye Takvimi Alarm Rooster";
 		private static string _adhanChannelName = "Suleymaniye Takvimi Alarm Adhan";
 		private static string _alarmChannelName = "Suleymaniye Takvimi Alarm Alarm";
@@ -31,7 +32,8 @@ namespace SuleymaniyeCalendar
 		private static string _alarm2ChannelName = "Suleymaniye Takvimi Alarm Alarm 2";
 		private static string _alarm3ChannelName = "Suleymaniye Takvimi Alarm Alarm 3";
 		private static string _alarm4ChannelName = "Suleymaniye Takvimi Alarm Alarm 4";
-		private static string _birdsChannelDescription = "The Suleymaniye Takvimi birds alarm channel.";
+        private static string _alarm5ChannelName = "Suleymaniye Takvimi Alarm Alarm 5";
+        private static string _birdsChannelDescription = "The Suleymaniye Takvimi birds alarm channel.";
 		private static string _roosterChannelDescription = "The Suleymaniye Takvimi rooster alarm channel.";
 		private static string _adhanChannelDescription = "The Suleymaniye Takvimi adhan alarm channel.";
 		private static string _alarmChannelDescription = "The Suleymaniye Takvimi alarm alarm channel.";
@@ -39,7 +41,8 @@ namespace SuleymaniyeCalendar
 		private static string _alarm2ChannelDescription = "The Suleymaniye Takvimi alarm alarm 2 channel.";
 		private static string _alarm3ChannelDescription = "The Suleymaniye Takvimi alarm alarm 3 channel.";
 		private static string _alarm4ChannelDescription = "The Suleymaniye Takvimi alarm alarm 4 channel.";
-		public NotificationChannelManager()
+        private static string _alarm5ChannelDescription = "The Suleymaniye Takvimi alarm alarm 5 channel.";
+        public NotificationChannelManager()
 		{
 		}
 
@@ -63,6 +66,7 @@ namespace SuleymaniyeCalendar
             var alarm2Sound = UriOf(ResourceConstant.Raw.beep1);
             var alarm3Sound = UriOf(ResourceConstant.Raw.beep2);
             var alarm4Sound = UriOf(ResourceConstant.Raw.beep3);
+            var alarm5Sound = UriOf(ResourceConstant.Raw.beep4);
             var alarmAttributes = new AudioAttributes.Builder()
                 .SetContentType(AudioContentType.Sonification)
                 .SetUsage(AudioUsageKind.Alarm).Build();
@@ -76,6 +80,7 @@ namespace SuleymaniyeCalendar
                 var alarm2AlarmChannelNameJava = new String(_alarm2ChannelName);
                 var alarm3AlarmChannelNameJava = new String(_alarm3ChannelName);
                 var alarm4AlarmChannelNameJava = new String(_alarm4ChannelName);
+                var alarm5AlarmChannelNameJava = new String(_alarm5ChannelName);
                 var birdsAlarmChannel = new NotificationChannel(_alarmBirdChannelId, birdsAlarmChannelNameJava,
                     NotificationImportance.Max)
                 {
@@ -116,6 +121,11 @@ namespace SuleymaniyeCalendar
                 {
                     Description = _alarm4ChannelDescription
                 };
+                var alarm5AlarmChannel = new NotificationChannel(_alarm5AlarmChannelId, alarm5AlarmChannelNameJava,
+                    NotificationImportance.Max)
+                {
+                    Description = _alarm5ChannelDescription
+                };
                 birdsAlarmChannel.SetSound(birdsSound, alarmAttributes);
                 roosterAlarmChannel.SetSound(roosterSound, alarmAttributes);
                 adhanAlarmChannel.SetSound(adhanSound, alarmAttributes);
@@ -124,6 +134,7 @@ namespace SuleymaniyeCalendar
                 alarm2AlarmChannel.SetSound(alarm2Sound, alarmAttributes);
                 alarm3AlarmChannel.SetSound(alarm3Sound, alarmAttributes);
                 alarm4AlarmChannel.SetSound(alarm4Sound, alarmAttributes);
+                alarm5AlarmChannel.SetSound(alarm5Sound, alarmAttributes);
                 _notificationManager?.CreateNotificationChannel(birdsAlarmChannel);
                 _notificationManager?.CreateNotificationChannel(roosterAlarmChannel);
                 _notificationManager?.CreateNotificationChannel(adhanAlarmChannel);
@@ -132,6 +143,7 @@ namespace SuleymaniyeCalendar
                 _notificationManager?.CreateNotificationChannel(alarm2AlarmChannel);
                 _notificationManager?.CreateNotificationChannel(alarm3AlarmChannel);
                 _notificationManager?.CreateNotificationChannel(alarm4AlarmChannel);
+                _notificationManager?.CreateNotificationChannel(alarm5AlarmChannel);
             }
         }
 

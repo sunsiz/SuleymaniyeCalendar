@@ -65,6 +65,7 @@ namespace SuleymaniyeCalendar.Tests
             soundFileNames.Should().Contain("beep1");
             soundFileNames.Should().Contain("beep2");
             soundFileNames.Should().Contain("beep3");
+            soundFileNames.Should().Contain("beep4");
         }
 
         [TestMethod]

@@ -84,6 +84,7 @@ public class AlarmNotificationReceiver : BroadcastReceiver
             "beep1" => "SuleymaniyeTakvimialarmalarm2channelId",
             "beep2" => "SuleymaniyeTakvimialarmalarm3channelId",
             "beep3" => "SuleymaniyeTakvimialarmalarm4channelId",
+            "beep4" => "SuleymaniyeTakvimialarmalarm5channelId",
             _       => "SuleymaniyeTakvimialarmalarmchannelId"
         };
 

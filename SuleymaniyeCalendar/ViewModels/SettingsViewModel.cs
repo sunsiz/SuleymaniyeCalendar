@@ -34,6 +34,9 @@ public partial class SettingsViewModel : BaseViewModel
 	/// <summary>Prevents re-entrant theme updates when toggling via gestures and radios.</summary>
 	private bool _suppressThemeUpdates;
 
+	/// <summary>Guard flag to skip service side-effects during constructor initialization.</summary>
+	private bool _initializing;
+
 	#endregion
 
 	#region Properties - Language
@@ -159,7 +162,7 @@ public partial class SettingsViewModel : BaseViewModel
 		get => _alwaysRenewLocationEnabled;
 		set
 		{
-			if (SetProperty(ref _alwaysRenewLocationEnabled, value))
+			if (SetProperty(ref _alwaysRenewLocationEnabled, value) && !_initializing)
 				Preferences.Set("AlwaysRenewLocationEnabled", value);
 		}
 	}
@@ -172,8 +175,9 @@ public partial class SettingsViewModel : BaseViewModel
 		set
 		{
 			if (!SetProperty(ref _notificationPrayerTimesEnabled, value)) return;
+			if (_initializing) return;
 			Preferences.Set("NotificationPrayerTimesEnabled", value);
-            _alarmService.RefreshNotification();
+			_alarmService.RefreshNotification();
 		}
 	}
 
@@ -195,6 +199,7 @@ public partial class SettingsViewModel : BaseViewModel
 		set
 		{
 			if (!SetProperty(ref _foregroundServiceEnabled, value)) return;
+			if (_initializing) return;
 			Preferences.Set("ForegroundServiceEnabled", value);
 			// When turning off, also disable prayer times in notification
 			if (!value)
@@ -242,7 +247,9 @@ public partial class SettingsViewModel : BaseViewModel
 		using (_perf.StartTimer("Settings.Constructor.Total"))
 		{
 			IsBusy = true;
+			_initializing = true;
 			InitializeSettings();
+			_initializing = false;
 			IsBusy = false;
 		}
 
