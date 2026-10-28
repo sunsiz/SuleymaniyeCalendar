@@ -83,10 +83,18 @@ public class MainActivity : MauiAppCompatActivity
         var refreshIntent = new Intent(this, typeof(AlarmForegroundService));
         refreshIntent.SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
 
-        if (OperatingSystem.IsAndroidVersionAtLeast(26))
-            StartForegroundService(refreshIntent);
-        else
-            StartService(refreshIntent);
+        try
+        {
+            if (OperatingSystem.IsAndroidVersionAtLeast(26))
+                StartForegroundService(refreshIntent);
+            else
+                StartService(refreshIntent);
+        }
+        catch (Exception ex)
+        {
+            // Background-start restrictions must not crash the app
+            System.Diagnostics.Debug.WriteLine($"RefreshForegroundServiceNotification failed: {ex.Message}");
+        }
     }
 
     void EnsureExactAlarmCapability()
@@ -98,7 +106,15 @@ public class MainActivity : MauiAppCompatActivity
             {
                 var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm);
                 intent.SetData(Android.Net.Uri.Parse($"package:{PackageName}"));
-                StartActivity(intent);
+                try
+                {
+                    StartActivity(intent);
+                }
+                catch (Exception ex)
+                {
+                    // Some OEM ROMs lack the exact-alarm settings screen (ActivityNotFoundException)
+                    System.Diagnostics.Debug.WriteLine($"EnsureExactAlarmCapability failed: {ex.Message}");
+                }
             }
         }
     }

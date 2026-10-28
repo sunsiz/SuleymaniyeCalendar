@@ -107,13 +107,22 @@ public class BootReceiver : BroadcastReceiver
             .SetAction(AlarmForegroundService.StartAction)
             .PutExtra(AlarmForegroundService.ExtraStartReason, actionSource ?? string.Empty);
 
-        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+        try
         {
-            ContextCompat.StartForegroundService(context, startIntent);
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                ContextCompat.StartForegroundService(context, startIntent);
+            }
+            else
+            {
+                context.StartService(startIntent);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            context.StartService(startIntent);
+            // Android 12+ may refuse background starts (ForegroundServiceStartNotAllowedException); retry on unlock
+            Android.Util.Log.Warn(nameof(BootReceiver), $"Foreground service start rejected: {ex.Message}");
+            Preferences.Set(AlarmForegroundService.PendingForegroundRestartPreferenceKey, true);
         }
     }
 }

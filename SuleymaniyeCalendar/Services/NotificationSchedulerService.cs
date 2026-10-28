@@ -27,7 +27,31 @@ public class NotificationSchedulerService
         _perf = perf;
     }
 
+    // Serializes scheduling runs. The service start, app start, preloader and location refresh can all trigger
+    // scheduling at once; interleaved cancel-all/schedule passes used to wipe alarms scheduled by another run.
+    private static readonly SemaphoreSlim _scheduleGate = new(1, 1);
+
     public async Task SetMonthlyAlarmsAsync(Location location, bool forceReschedule = false)
+    {
+        // A (0,0) location means "unknown" (permission denied / GPS off) - never schedule for the Gulf of Guinea
+        if (location is null || (location.Latitude == 0 && location.Longitude == 0))
+        {
+            Debug.WriteLine("Skipping alarm scheduling: invalid location");
+            return;
+        }
+
+        await _scheduleGate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            await SetMonthlyAlarmsCoreAsync(location, forceReschedule).ConfigureAwait(false);
+        }
+        finally
+        {
+            _scheduleGate.Release();
+        }
+    }
+
+    private async Task SetMonthlyAlarmsCoreAsync(Location location, bool forceReschedule)
     {
         Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
         
@@ -72,8 +96,6 @@ public class NotificationSchedulerService
             }
         }
 
-        Preferences.Set(LastAutoReschedulePreferenceKey, DateTime.UtcNow.ToString("O"));
-
         // Check if any reminders are enabled
         bool remindersEnabled = CheckRemindersEnabledAny();
 
@@ -83,11 +105,6 @@ public class NotificationSchedulerService
             ClearAlarmCoverage();
             return;
         }
-
-        // Cancel existing alarms to ensure a clean slate (handles disabled prayers or changed times)
-        // On Android this might be expensive, but ensures consistency.
-        // On iOS it's fast.
-        _alarmService.CancelAllAlarms(); // Optional: Enable if overwriting isn't sufficient
 
         try
         {
@@ -103,13 +120,19 @@ public class NotificationSchedulerService
             Debug.WriteLine($"📱 iOS: Scheduling {daysToSchedule} days for {enabledPrayerCount} enabled prayer(s) (max {daysToSchedule * enabledPrayerCount}/64 notifications)");
 #endif
             
-            var days = await _repository.EnsureDaysRangeAsync(location, startDate, daysToSchedule);
+            var days = await _repository.EnsureDaysRangeAsync(location, startDate, daysToSchedule).ConfigureAwait(false);
             
             if (days.Count == 0)
             {
+                // Keep the existing alarms and do not start the cooldown so the next trigger can retry
                 Debug.WriteLine("❌ No days available for scheduling alarms");
                 return;
             }
+
+            // Only cancel once new data is in hand: cancelling first left the user with no alarms at all
+            // whenever the network/API failed mid-run (e.g. while travelling).
+            _alarmService.CancelAllAlarms();
+            Preferences.Set(LastAutoReschedulePreferenceKey, DateTime.UtcNow.ToString("O"));
 
             int dayCounter = 0;
             int notificationCount = 0;

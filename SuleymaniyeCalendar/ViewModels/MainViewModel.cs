@@ -285,11 +285,22 @@ public partial class MainViewModel : BaseViewModel
             if (System.Threading.Interlocked.Exchange(ref _locationRefreshing, 1) == 1)
                 return;
 
-            // Ensure permission up-front so the system prompt is shown predictably on user action
-            var permission = await _data.CheckAndRequestLocationPermission().ConfigureAwait(false);
-            if (permission != PermissionStatus.Granted)
+            // Ensure permission up-front so the system prompt is shown predictably on user action.
+            // Any failure here must release the re-entrancy flag, otherwise refresh is disabled until restart
+            // and the exception would surface unobserved from the startup-refresh task.
+            try
             {
-                await MainThread.InvokeOnMainThreadAsync(() => ShowToast(AppResources.KonumIzniIcerik));
+                var permission = await _data.CheckAndRequestLocationPermission().ConfigureAwait(false);
+                if (permission != PermissionStatus.Granted)
+                {
+                    await MainThread.InvokeOnMainThreadAsync(() => ShowToast(AppResources.KonumIzniIcerik));
+                    System.Threading.Volatile.Write(ref _locationRefreshing, 0);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"RefreshLocation permission check failed: {ex.Message}");
                 System.Threading.Volatile.Write(ref _locationRefreshing, 0);
                 return;
             }
@@ -331,7 +342,8 @@ public partial class MainViewModel : BaseViewModel
                         }
                     });
                     // Get fresh prayer times with the updated location
-                    _calendar = await _data.GetTodayPrayerTimesAsync(refreshLocation: true).ConfigureAwait(false);
+                    // Reuse the location just acquired instead of requesting a second (slow, battery heavy) GPS fix
+                    _calendar = await _data.GetDailyPrayerTimesHybridAsync(location, DateTime.Today).ConfigureAwait(false);
                     if (_calendar != null)
                     {
                         _cachedTimes = null; // Invalidate cached times
