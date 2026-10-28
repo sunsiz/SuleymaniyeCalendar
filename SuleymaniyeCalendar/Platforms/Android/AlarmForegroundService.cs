@@ -32,7 +32,9 @@ namespace SuleymaniyeCalendar
 		
 		private NotificationManager? _notificationManager;
 		private readonly string _channelName = AppResources.SuleymaniyeVakfiTakvimi;
-		private Notification? _notification;
+		private volatile Notification? _notification;
+		private readonly object _notificationLock = new();
+		private NotificationChannel? _channel;
 		private bool _isStarted;
 		private bool _isInForeground;
 		private Handler? _handler;
@@ -95,13 +97,26 @@ namespace SuleymaniyeCalendar
             // Convert to UTC milliseconds
             long triggerMillis = (long)(alarmTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
 
-            if (Build.VERSION.SdkInt >= BuildVersionCodes.M)
+            try
             {
-                alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
+                // Android 12+ can revoke SCHEDULE_EXACT_ALARM (denied by default on 14+). Calling the exact
+                // API without it throws SecurityException, so fall back to an inexact (but doze-safe) alarm.
+                var canScheduleExact = !OperatingSystem.IsAndroidVersionAtLeast(31) || alarmManager.CanScheduleExactAlarms();
+                if (!canScheduleExact)
+                {
+                    Log.Warn(nameof(AlarmForegroundService), "Exact alarm permission missing, using inexact alarm");
+                    alarmManager.SetAndAllowWhileIdle(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
+                }
+                else
+                {
+                    alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
+                }
             }
-            else
+            catch (Java.Lang.SecurityException ex)
             {
-                alarmManager.SetExact(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
+                // Permission revoked between the check and the call; degrade gracefully instead of failing the whole run
+                Log.Warn(nameof(AlarmForegroundService), $"Exact alarm denied: {ex.Message}");
+                alarmManager.SetAndAllowWhileIdle(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
             }
         }
 
@@ -173,7 +188,7 @@ namespace SuleymaniyeCalendar
 						var dataService = GetDataService();
                         if (dataService != null)
                         {
-                            var location = await dataService.GetCurrentLocationAsync(false);
+                            var location = await dataService.GetCurrentLocationAsync(false).ConfigureAwait(false);
                             if (location != null)
                             {
 						        await dataService.SetMonthlyAlarmsAsync(location).ConfigureAwait(false);
@@ -306,6 +321,15 @@ namespace SuleymaniyeCalendar
 
         internal void SetNotification()
 		{
+			// Called from the handler thread pool, OnStartCommand and the main thread; serialize builds
+			lock (_notificationLock)
+			{
+				BuildNotification();
+			}
+		}
+
+		private void BuildNotification()
+		{
 			Notification.BigTextStyle textStyle = new Notification.BigTextStyle();
 			var notificationTitle = GetFormattedRemainingTime();
 			
@@ -318,14 +342,17 @@ namespace SuleymaniyeCalendar
 			
 			if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
 			{
-				var channelNameJava = new Java.Lang.String(_channelName);
-				var channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelNameJava, NotificationImportance.Default)
+				if (_channel is null)
 				{
-					Description = CHANNEL_DESCRIPTION,
-					LightColor = 1,
-					LockscreenVisibility = NotificationVisibility.Public
-				};
-				_notificationManager?.CreateNotificationChannel(channel);
+					var channelNameJava = new Java.Lang.String(_channelName);
+					_channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelNameJava, NotificationImportance.Default)
+					{
+						Description = CHANNEL_DESCRIPTION,
+						LightColor = 1,
+						LockscreenVisibility = NotificationVisibility.Public
+					};
+					_notificationManager?.CreateNotificationChannel(_channel);
+				}
 				
 				var builder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
 					.SetContentTitle(notificationTitle)
@@ -447,34 +474,70 @@ namespace SuleymaniyeCalendar
 				   $"{AppResources.YatsiSonu}: {calendar.EndOfIsha}";
 		}
 
+		/// <summary>
+		/// Rebuilds and posts the ongoing notification. Never throws: an unhandled exception here
+		/// (e.g. null NotificationManager after the service was torn down) would crash the process.
+		/// </summary>
+		private void RefreshNotificationSafe()
+		{
+			try
+			{
+				SetNotification();
+				var notification = _notification;
+				if (notification != null)
+				{
+					_notificationManager?.Notify(NOTIFICATION_ID, notification);
+				}
+			}
+			catch (System.Exception ex)
+			{
+				System.Diagnostics.Debug.WriteLine($"RefreshNotificationSafe failed: {ex.Message}");
+			}
+		}
+
 		public override StartCommandResult OnStartCommand(Intent? intent, StartCommandFlags flags, int startId)
 		{
+			// Every service started through startForegroundService() MUST call StartForeground() within ~5s,
+			// regardless of the action (Stop/Refresh included) or the user's preference, otherwise Android throws
+			// ForegroundServiceDidNotStartInTimeException and kills the app. Do it first, before anything else.
+			if (!_isInForeground)
+			{
+				_isInForeground = TryStartForeground(intent?.GetStringExtra(ExtraStartReason) ?? "on_start_command", force: true);
+			}
+
 			var action = intent?.Action;
 			if (string.IsNullOrWhiteSpace(action))
 			{
 				var source = intent == null ? "intent" : "action";
 				System.Diagnostics.Debug.WriteLine($"OnStartCommand null {source}, flags={flags}");
-				// CRITICAL: Must call StartForeground even for null intent to avoid Android crash
-				if (!_isInForeground)
-				{
-					_isInForeground = TryStartForeground("null_intent_recovery");
-				}
-				return StartCommandResult.RedeliverIntent;
+				// Sticky restart after the process was killed: resume the notification loop, which died with the process
+				BeginNotificationLoop();
+				return StartCommandResult.Sticky;
 			}
 
 			switch (action)
 			{
 				case StartAction:
-					BeginNotificationLoop();
 					var startReason = intent?.GetStringExtra(ExtraStartReason) ?? string.Empty;
-					if (!_isInForeground)
+					if (!Preferences.Get("ForegroundServiceEnabled", true))
 					{
-						_isInForeground = TryStartForeground(startReason);
+						// Foreground mode disabled by user: we only entered foreground to satisfy the OS contract
+						StopNotificationLoop();
+						StopForegroundService();
+						_isInForeground = false;
+					}
+					else
+					{
+						BeginNotificationLoop();
 					}
 
 					if (!CheckRemindersEnabledAny())
 					{
 						System.Diagnostics.Debug.WriteLine("OnStartCommand: No reminders enabled, skipping alarm setup.");
+						if (!Preferences.Get("ForegroundServiceEnabled", true))
+						{
+							StopSelfResult(startId);
+						}
 						break;
 					}
 
@@ -494,11 +557,7 @@ namespace SuleymaniyeCalendar
                                 {
                                     dataService.calendar = cal;
                                     // Refresh notification immediately with loaded data
-                                    MainThread.BeginInvokeOnMainThread(() => 
-                                    {
-                                        SetNotification();
-                                        _notificationManager.Notify(NOTIFICATION_ID, _notification);
-                                    });
+                                    RefreshNotificationSafe();
                                 }
                             }
 
@@ -507,7 +566,7 @@ namespace SuleymaniyeCalendar
 
                             if (dataService != null)
                             {
-                                var loc = await dataService.GetCurrentLocationAsync(false);
+                                var loc = await dataService.GetCurrentLocationAsync(false).ConfigureAwait(false);
                                 if (loc != null)
                                 {
 							        await dataService.SetMonthlyAlarmsAsync(loc, forceReschedule).ConfigureAwait(false);
@@ -517,6 +576,13 @@ namespace SuleymaniyeCalendar
 						catch (System.Exception ex)
 						{
 							System.Diagnostics.Debug.WriteLine($"Alarm startup error: {ex.Message}");
+						}
+						finally
+						{
+							if (!Preferences.Get("ForegroundServiceEnabled", true))
+							{
+								StopSelfResult(startId);
+							}
 						}
 					});
 					break;
@@ -529,11 +595,17 @@ namespace SuleymaniyeCalendar
 						_isInForeground = false;
 					}
 					StopSelfResult(startId);
-					break;
+					return StartCommandResult.NotSticky;
 
 				case RefreshAction:
-					SetNotification();
-					_notificationManager.Notify(NOTIFICATION_ID, _notification);
+					if (!Preferences.Get("ForegroundServiceEnabled", true))
+					{
+						StopForegroundService();
+						_isInForeground = false;
+						StopSelfResult(startId);
+						return StartCommandResult.NotSticky;
+					}
+					RefreshNotificationSafe();
 					break;
 
 				default:
@@ -550,17 +622,7 @@ namespace SuleymaniyeCalendar
 			var startServiceIntent = new Intent(Application.Context, typeof(AlarmForegroundService));
 			startServiceIntent.SetAction(StartAction);
 			startServiceIntent.PutExtra(ExtraStartReason, "manual_start");
-			MainThread.BeginInvokeOnMainThread(() =>
-			{
-				if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
-				{
-					AndroidX.Core.Content.ContextCompat.StartForegroundService(Application.Context, startServiceIntent);
-				}
-				else
-				{
-					Application.Context?.StartService(startServiceIntent);
-				}
-			});
+			MainThread.BeginInvokeOnMainThread(() => TryStartService(startServiceIntent));
 			System.Diagnostics.Debug.WriteLine("Main Activity" + $"Main Activity SetAlarmForegroundService Finished: {DateTime.Now:HH:m:s.fff}");
 		}
 
@@ -569,18 +631,31 @@ namespace SuleymaniyeCalendar
 			Log.Info("Main Activity", $"Main Activity StopAlarmForegroundService Started: {DateTime.Now:HH:m:s.fff}");
 			var stopServiceIntent = new Intent(Application.Context, typeof(AlarmForegroundService));
 			stopServiceIntent.SetAction(StopAction);
-			MainThread.BeginInvokeOnMainThread(() =>
+			MainThread.BeginInvokeOnMainThread(() => TryStartService(stopServiceIntent));
+			System.Diagnostics.Debug.WriteLine("Main Activity" + $"Main Activity StopAlarmForegroundService Finished: {DateTime.Now:HH:m:s.fff}");
+		}
+
+		/// <summary>
+		/// Starts the service, swallowing OS rejections (background start restrictions on Android 12+, etc.)
+		/// which would otherwise crash the app.
+		/// </summary>
+		private static void TryStartService(Intent intent)
+		{
+			try
 			{
 				if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
 				{
-					AndroidX.Core.Content.ContextCompat.StartForegroundService(Application.Context, stopServiceIntent);
+					AndroidX.Core.Content.ContextCompat.StartForegroundService(Application.Context, intent);
 				}
 				else
 				{
-					Application.Context?.StartService(stopServiceIntent);
+					Application.Context?.StartService(intent);
 				}
-			});
-			System.Diagnostics.Debug.WriteLine("Main Activity" + $"Main Activity StopAlarmForegroundService Finished: {DateTime.Now:HH:m:s.fff}");
+			}
+			catch (System.Exception ex)
+			{
+				Log.Warn(nameof(AlarmForegroundService), $"Service start rejected: {ex.Message}");
+			}
 		}
 
         public void RefreshNotification()
@@ -614,8 +689,7 @@ namespace SuleymaniyeCalendar
 				return;
 			}
 
-			SetNotification();
-			_notificationManager?.Notify(NOTIFICATION_ID, _notification);
+			RefreshNotificationSafe();
 			_handler.PostDelayed(_runnable, NOTIFICATION_UPDATE_INTERVAL_MS);
 			_isStarted = true;
 		}
@@ -655,20 +729,31 @@ namespace SuleymaniyeCalendar
 		}
 
 		// Attempts to promote the service to foreground priority, tracking failures for retries.
-		private bool TryStartForeground(string reason)
+		private bool TryStartForeground(string reason, bool force = false)
 		{
-			if (!Preferences.Get("ForegroundServiceEnabled", true))
+			if (!force && !Preferences.Get("ForegroundServiceEnabled", true))
 			{
 				return false;
 			}
 
-			SetNotification();
+			try
+			{
+				SetNotification();
+			}
+			catch (System.Exception ex)
+			{
+				Log.Error(nameof(AlarmForegroundService), $"SetNotification failed before StartForeground: {ex.Message}");
+			}
 			
 			// Ensure notification is created before starting foreground
 			if (_notification == null)
 			{
 				Log.Warn(nameof(AlarmForegroundService), "Failed to create notification for foreground service");
-				return false;
+				_notification = BuildFallbackNotification();
+				if (_notification == null)
+				{
+					return false;
+				}
 			}
 			
 			try
@@ -706,6 +791,26 @@ namespace SuleymaniyeCalendar
 				Preferences.Set(PendingForegroundRestartPreferenceKey, true);
 				StopNotificationLoop();
 				return false;
+			}
+		}
+
+		/// <summary>
+		/// Minimal notification used only to satisfy StartForeground when the regular build fails.
+		/// </summary>
+		private Notification? BuildFallbackNotification()
+		{
+			try
+			{
+				return new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+					.SetContentTitle(AppResources.SuleymaniyeVakfiTakvimi)!
+					.SetSmallIcon(Resource.Drawable.app_logo)!
+					.SetOngoing(true)!
+					.Build();
+			}
+			catch (System.Exception ex)
+			{
+				Log.Error(nameof(AlarmForegroundService), $"Fallback notification failed: {ex.Message}");
+				return null;
 			}
 		}
 
