@@ -12,11 +12,16 @@ namespace SuleymaniyeCalendar;
     Intent.ActionTimeChanged,
     Intent.ActionTimezoneChanged,
     Intent.ActionMyPackageReplaced,
-    Intent.ActionUserUnlocked })]
+    Intent.ActionUserUnlocked,
+    BootReceiver.ExactAlarmPermissionChangedAction })]
 public class BootReceiver : BroadcastReceiver
 {
+    // AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED: sent when the user grants/revokes exact alarms
+    internal const string ExactAlarmPermissionChangedAction = "android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED";
+
     private static readonly string[] RescheduleActions =
     {
+        ExactAlarmPermissionChangedAction,
         Intent.ActionBootCompleted,
         Intent.ActionTimeChanged,
         Intent.ActionTimezoneChanged,
@@ -107,13 +112,22 @@ public class BootReceiver : BroadcastReceiver
             .SetAction(AlarmForegroundService.StartAction)
             .PutExtra(AlarmForegroundService.ExtraStartReason, actionSource ?? string.Empty);
 
-        if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+        try
         {
-            ContextCompat.StartForegroundService(context, startIntent);
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.O)
+            {
+                ContextCompat.StartForegroundService(context, startIntent);
+            }
+            else
+            {
+                context.StartService(startIntent);
+            }
         }
-        else
+        catch (Exception ex)
         {
-            context.StartService(startIntent);
+            // Android 12+ may refuse background starts (ForegroundServiceStartNotAllowedException); retry on unlock
+            Android.Util.Log.Warn(nameof(BootReceiver), $"Foreground service start rejected: {ex.Message}");
+            Preferences.Set(AlarmForegroundService.PendingForegroundRestartPreferenceKey, true);
         }
     }
 }

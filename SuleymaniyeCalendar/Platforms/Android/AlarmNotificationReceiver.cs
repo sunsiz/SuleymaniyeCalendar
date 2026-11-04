@@ -13,6 +13,19 @@ public class AlarmNotificationReceiver : BroadcastReceiver
 {
     public override void OnReceive(Context? context, Intent? intent)
     {
+        // An exception escaping a manifest receiver kills the whole process; the alarm is best-effort so log and exit
+        try
+        {
+            HandleReceive(context, intent);
+        }
+        catch (Exception ex)
+        {
+            Android.Util.Log.Error(nameof(AlarmNotificationReceiver), $"OnReceive failed: {ex}");
+        }
+    }
+
+    private static void HandleReceive(Context? context, Intent? intent)
+    {
         if (context == null) return;
 
         // Set culture to user's selected language for localized notification text

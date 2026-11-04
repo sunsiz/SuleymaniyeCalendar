@@ -83,10 +83,44 @@ public class MainActivity : MauiAppCompatActivity
         var refreshIntent = new Intent(this, typeof(AlarmForegroundService));
         refreshIntent.SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
 
-        if (OperatingSystem.IsAndroidVersionAtLeast(26))
-            StartForegroundService(refreshIntent);
-        else
-            StartService(refreshIntent);
+        try
+        {
+            if (OperatingSystem.IsAndroidVersionAtLeast(26))
+                StartForegroundService(refreshIntent);
+            else
+                StartService(refreshIntent);
+        }
+        catch (Exception ex)
+        {
+            // Background-start restrictions must not crash the app
+            System.Diagnostics.Debug.WriteLine($"RefreshForegroundServiceNotification failed: {ex.Message}");
+        }
+    }
+
+    bool _exactAlarmPromptShown;
+
+    /// <summary>
+    /// After returning from the system exact-alarm screen, reschedule immediately if the user granted it.
+    /// </summary>
+    void HandleExactAlarmStateOnResume()
+    {
+        try
+        {
+            // Scheduler clears LastAlarmDate when it had to skip for lack of the exact-alarm permission
+            if (!AnyRemindersEnabled() || !string.IsNullOrEmpty(Preferences.Get("LastAlarmDate", string.Empty))
+                || !OperatingSystem.IsAndroidVersionAtLeast(31)) return;
+            var am = GetSystemService(AlarmService) as AlarmManager;
+            if (am is null || !am.CanScheduleExactAlarms()) return;
+
+            var intent = new Intent(this, typeof(AlarmForegroundService))
+                .SetAction(AlarmForegroundService.StartAction)
+                .PutExtra(AlarmForegroundService.ExtraStartReason, BootReceiver.ExactAlarmPermissionChangedAction);
+            StartForegroundService(intent);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"HandleExactAlarmStateOnResume failed: {ex.Message}");
+        }
     }
 
     void EnsureExactAlarmCapability()
@@ -96,9 +130,19 @@ public class MainActivity : MauiAppCompatActivity
             var am = GetSystemService(AlarmService) as AlarmManager;
             if (am != null && !am.CanScheduleExactAlarms())
             {
+                if (_exactAlarmPromptShown) return;
+                _exactAlarmPromptShown = true;
                 var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm);
                 intent.SetData(Android.Net.Uri.Parse($"package:{PackageName}"));
-                StartActivity(intent);
+                try
+                {
+                    StartActivity(intent);
+                }
+                catch (Exception ex)
+                {
+                    // Some OEM ROMs lack the exact-alarm settings screen (ActivityNotFoundException)
+                    System.Diagnostics.Debug.WriteLine($"EnsureExactAlarmCapability failed: {ex.Message}");
+                }
             }
         }
     }
@@ -122,6 +166,7 @@ public class MainActivity : MauiAppCompatActivity
     {
         base.OnResume();
         ApplyStatusBarColor();
+        HandleExactAlarmStateOnResume();
     }
 
     void ApplyStatusBarColor()
