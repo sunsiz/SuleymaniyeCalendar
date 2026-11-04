@@ -13,6 +13,7 @@ using AndroidX.RecyclerView.Widget;
 using AndroidX.Core.View;
 using AndroidX.Core.Widget;
 using AImageView = Android.Widget.ImageView;
+using ABitmapDrawable = Android.Graphics.Drawables.BitmapDrawable;
 #endif
 
 namespace SuleymaniyeCalendar;
@@ -88,6 +89,19 @@ public static class MauiProgram
                     System.Diagnostics.Debug.WriteLine("[GlideCrashGuard] Skipping image load - Activity is destroyed/finishing");
                     return;
                 }
+            }
+        });
+
+        // Guard against "Cannot draw recycled bitmaps" RuntimeException (81.9% of crashes).
+        // When RecyclerView recycles CollectionView cells, Glide may recycle the underlying
+        // bitmap before the draw pass completes. This pre-draw listener checks for recycled
+        // bitmaps and clears the ImageView to prevent BaseCanvas.throwIfCannotDraw.
+        ImageHandler.Mapper.AppendToMapping("RecycledBitmapGuard", (handler, _) =>
+        {
+            if (handler.PlatformView is AImageView imageView)
+            {
+                imageView.ViewTreeObserver?.AddOnPreDrawListener(
+                    new RecycledBitmapPreDrawListener(imageView));
             }
         });
 #endif

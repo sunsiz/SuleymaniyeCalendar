@@ -39,6 +39,8 @@
 	<AndroidUseAapt2>True</AndroidUseAapt2>
 	<AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
 	<AndroidPackageFormat>aab</AndroidPackageFormat>
+	<!-- Enable .NET diagnostics for profiling via dotnet-dsrouter -->
+	<AndroidEnableProfiler>true</AndroidEnableProfiler>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)'=='net10.0-ios'">
 	<CodesignKey>Apple Development: Created via API (93LZ6P68P8)</CodesignKey>
@@ -47,7 +49,7 @@
 	<ValidateXcodeVersion>false</ValidateXcodeVersion>
   </PropertyGroup>
   <ItemGroup>
-	<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFF5E3D9" TintColor="#5C3021" ForegroundScale="0.95" />
+	<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#FFF5E3D9" TintColor="#5C3021" ForegroundScale="0.75" />
 	<!-- Smaller BaseSize prevents logo being too large on iOS -->
 	<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#FFF5E3D9" BaseSize="512,512" />
 	<MauiImage Include="Resources\Images\*" />
@@ -64,12 +66,12 @@
 	<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>  
   <ItemGroup>
-	<PackageReference Include="CommunityToolkit.Maui" Version="14.0.1" />
-	<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="8.0.1" />
-	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.1" />
-	<PackageReference Include="LocalizationResourceManager.Maui" Version="1.2.2" />
-	<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.5" />
-	<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.50" />
+	<PackageReference Include="CommunityToolkit.Maui" Version="15.0.1" />
+	<PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="10.0.0" />
+	<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+	<PackageReference Include="LocalizationResourceManager.Maui" Version="1.2.6" />
+	<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.14" />
+	<PackageReference Include="Microsoft.Maui.Controls" Version="10.0.120" />
   </ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Update="Resources\Strings\AppResources.resx">
@@ -90,6 +92,10 @@
 	<Folder Include="Platforms\Android\Resources\raw\" />
 	<Folder Include="Platforms\Android\Resources\values-land\" />
 	<Folder Include="Resources\Layout\" />
+  </ItemGroup>
+  <!-- Android profiling: diagnostic port environment for dotnet-dsrouter -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
+	<AndroidEnvironment Include="Platforms\Android\environment.txt" />
   </ItemGroup>
   <ItemGroup>
 	<Compile Update="Resources\Strings\AppResources.Designer.cs">

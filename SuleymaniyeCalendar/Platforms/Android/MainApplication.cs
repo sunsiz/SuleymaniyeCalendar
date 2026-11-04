@@ -13,7 +13,9 @@ public class MainApplication : MauiApplication
 	private static readonly string[] NonCriticalExceptionPatterns =
 	[
 		"RequestManagerRetriever",  // Glide image loading race on Activity destroy
-		"dispatchDraw"             // Rare OEM-specific rendering race
+		"dispatchDraw",             // Rare OEM-specific rendering race
+		"throwIfCannotDraw",        // Recycled bitmap drawn during RecyclerView render pass
+		"Cannot draw recycled"      // Same crash, alternate message format on older devices
 	];
 
 	public MainApplication(IntPtr handle, JniHandleOwnership ownership)

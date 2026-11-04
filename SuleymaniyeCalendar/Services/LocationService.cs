@@ -22,6 +22,7 @@ public class LocationService
     public async Task<Location?> GetCurrentLocationAsync(bool refreshLocation)
     {
         var location = new Location(0.0, 0.0);
+        var usedDefaultFallback = false;
         
         // WINDOWS SAFEGUARD: Bypass runtime geolocation on WinUI to prevent crashes
         if (DeviceInfo.Platform == DevicePlatform.WinUI)
@@ -108,11 +109,19 @@ public class LocationService
                         }
                     }
 
-                    location ??= new Location(42.142, 29.218, 10);
+                    // location ??= new Location(42.142, 29.218, 10);
+                    if (location is null)
+                    {
+                        location = new Location(42.142, 29.218, 10);
+                        usedDefaultFallback = true;
+                    }
                 }
             }
 
-            if (location != null && location.Latitude != 0 && location.Longitude != 0)
+            //if (location != null && location.Latitude != 0 && location.Longitude != 0)
+            // Never persist the hard-coded default as the user's position: it would make every later
+            // cached lookup (alarms, widget, notification) use wrong prayer times.
+            if (!usedDefaultFallback && location != null && location.Latitude != 0 && location.Longitude != 0)
             {
                 Debug.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
                 Preferences.Set("LastLatitude", location.Latitude);
@@ -218,7 +227,7 @@ public class LocationService
         }
         catch (FeatureNotEnabledException fneEx)
         {
-            await ShowAlertAsync(AppResources.CihazGPSDesteklemiyor, fneEx.Message);
+            await ShowAlertAsync(AppResources.KonumKapali, fneEx.Message);
         }
         catch (PermissionException pEx)
         {

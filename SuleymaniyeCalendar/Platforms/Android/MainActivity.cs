@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Views;
+using AndroidX.Activity;
 
 namespace SuleymaniyeCalendar;
 
@@ -83,10 +84,22 @@ public class MainActivity : MauiAppCompatActivity
         var refreshIntent = new Intent(this, typeof(AlarmForegroundService));
         refreshIntent.SetAction("SuleymaniyeTakvimi.action.REFRESH_NOTIFICATION");
 
-        if (OperatingSystem.IsAndroidVersionAtLeast(26))
-            StartForegroundService(refreshIntent);
-        else
-            StartService(refreshIntent);
+        // if (OperatingSystem.IsAndroidVersionAtLeast(26))
+        //     StartForegroundService(refreshIntent);
+        // else
+        //     StartService(refreshIntent);
+        try
+        {
+            if (OperatingSystem.IsAndroidVersionAtLeast(26))
+                StartForegroundService(refreshIntent);
+            else
+                StartService(refreshIntent);
+        }
+        catch (Exception ex)
+        {
+            // Background-start restrictions must not crash the app
+            System.Diagnostics.Debug.WriteLine($"RefreshForegroundServiceNotification failed: {ex.Message}");
+        }
     }
 
     void EnsureExactAlarmCapability()
@@ -98,16 +111,24 @@ public class MainActivity : MauiAppCompatActivity
             {
                 var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm);
                 intent.SetData(Android.Net.Uri.Parse($"package:{PackageName}"));
-                StartActivity(intent);
+                //StartActivity(intent);
+                try
+                {
+                    StartActivity(intent);
+                }
+                catch (Exception ex)
+                {
+                    // Some OEM ROMs lack the exact-alarm settings screen (ActivityNotFoundException)
+                    System.Diagnostics.Debug.WriteLine($"EnsureExactAlarmCapability failed: {ex.Message}");
+                }
             }
         }
     }
 
     /// <summary>
     /// Called after MAUI has fully initialized. Sets the Android system status bar color
-    /// to match the app's Shell header. On Android 15+ (API 35) where SetStatusBarColor
-    /// is deprecated, disables the contrast scrim so the transparent status bar doesn't
-    /// show a gray overlay.
+    /// to match the app's Shell header. On Android 15+ (API 35), uses edge-to-edge APIs
+    /// via enableEdgeToEdge() instead of the deprecated SetStatusBarColor.
     /// </summary>
     protected override void OnPostCreate(Bundle? savedInstanceState)
     {
@@ -135,21 +156,36 @@ public class MainActivity : MauiAppCompatActivity
             ? Android.Graphics.Color.ParseColor("#201F24")   // TabBarBackgroundColorDark
             : Android.Graphics.Color.ParseColor("#8A4E1E");  // TabBarBgColor
 
-        // Set status bar color (works on API < 35)
-        Window.SetStatusBarColor(color);
-
-        // Disable the contrast enforcement scrim that Android 15+ adds over the
-        // transparent status bar — our backgrounds are dark enough for white icons
-        if (OperatingSystem.IsAndroidVersionAtLeast(29))
+        // On Android 15+ (API 35), SetStatusBarColor is deprecated and edge-to-edge is enforced.
+        // Use enableEdgeToEdge() for forward compatibility; on older APIs fall back to SetStatusBarColor.
+        if (OperatingSystem.IsAndroidVersionAtLeast(35))
         {
-            Window.StatusBarContrastEnforced = false;
+            // Android 15+ enforces edge-to-edge; explicitly enable it to signal compliance
+            EdgeToEdge.Enable(this);
+
+            // Use WindowInsetsController for light/dark status bar icon appearance
+            if (Window.InsetsController is { } insetsController)
+            {
+                insetsController.SetSystemBarsAppearance(0,
+                    (int)WindowInsetsControllerAppearance.LightStatusBars);
+            }
         }
-
-        // Ensure light (white) status bar icons on dark brown/dark backgrounds
-        if (OperatingSystem.IsAndroidVersionAtLeast(30))
+        else
         {
-            Window.InsetsController?.SetSystemBarsAppearance(0,
-                (int)WindowInsetsControllerAppearance.LightStatusBars);
+#pragma warning disable CA1422 // Validate platform compatibility (deprecated on API 35+, guarded above)
+            Window.SetStatusBarColor(color);
+#pragma warning restore CA1422
+
+            if (OperatingSystem.IsAndroidVersionAtLeast(29))
+            {
+                Window.StatusBarContrastEnforced = false;
+            }
+
+            if (OperatingSystem.IsAndroidVersionAtLeast(30))
+            {
+                Window.InsetsController?.SetSystemBarsAppearance(0,
+                    (int)WindowInsetsControllerAppearance.LightStatusBars);
+            }
         }
     }
 }

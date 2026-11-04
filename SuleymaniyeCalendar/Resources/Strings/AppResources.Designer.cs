@@ -19,7 +19,7 @@ namespace SuleymaniyeCalendar.Resources.Strings {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "18.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class AppResources {
@@ -1282,6 +1282,42 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         internal static string TestiDurdur {
             get {
                 return ResourceManager.GetString("TestiDurdur", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test Notification.
+        /// </summary>
+        internal static string TestNotification {
+            get {
+                return ResourceManager.GetString("TestNotification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test Notification (30 sec).
+        /// </summary>
+        internal static string TestNotificationButton {
+            get {
+                return ResourceManager.GetString("TestNotificationButton", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This is a test notification from Süleymaniye Calendar. If you see this, notifications are working!.
+        /// </summary>
+        internal static string TestNotificationMessage {
+            get {
+                return ResourceManager.GetString("TestNotificationMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Test notification scheduled! You should receive it in 30 seconds..
+        /// </summary>
+        internal static string TestNotificationScheduled {
+            get {
+                return ResourceManager.GetString("TestNotificationScheduled", resourceCulture);
             }
         }
         
