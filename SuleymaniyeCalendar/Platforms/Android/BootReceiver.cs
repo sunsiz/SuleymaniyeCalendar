@@ -12,11 +12,16 @@ namespace SuleymaniyeCalendar;
     Intent.ActionTimeChanged,
     Intent.ActionTimezoneChanged,
     Intent.ActionMyPackageReplaced,
-    Intent.ActionUserUnlocked })]
+    Intent.ActionUserUnlocked,
+    BootReceiver.ExactAlarmPermissionChangedAction })]
 public class BootReceiver : BroadcastReceiver
 {
+    // AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED: sent when the user grants/revokes exact alarms
+    internal const string ExactAlarmPermissionChangedAction = "android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED";
+
     private static readonly string[] RescheduleActions =
     {
+        ExactAlarmPermissionChangedAction,
         Intent.ActionBootCompleted,
         Intent.ActionTimeChanged,
         Intent.ActionTimezoneChanged,

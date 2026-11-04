@@ -26,6 +26,12 @@ public interface IAlarmService
     void SetAlarm(DateTime alarmTime, int requestCode, NotificationSettings settings);
 
     /// <summary>
+    /// Whether the platform currently permits exact alarms. Prayer alarms must be exact, so when this is
+    /// false scheduling is skipped (never downgraded to inexact) until the permission is granted.
+    /// </summary>
+    bool CanScheduleExactAlarms => true;
+
+    /// <summary>
     /// Cancels all scheduled prayer alarms.
     /// </summary>
     void CancelAllAlarms();

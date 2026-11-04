@@ -53,7 +53,8 @@ namespace SuleymaniyeCalendar
 			Intent.ActionBootCompleted,
 			Intent.ActionTimeChanged,
 			Intent.ActionTimezoneChanged,
-			Intent.ActionMyPackageReplaced
+			Intent.ActionMyPackageReplaced,
+			BootReceiver.ExactAlarmPermissionChangedAction
 		};
 		
 		/// <summary>
@@ -99,24 +100,37 @@ namespace SuleymaniyeCalendar
 
             try
             {
-                // Android 12+ can revoke SCHEDULE_EXACT_ALARM (denied by default on 14+). Calling the exact
-                // API without it throws SecurityException, so fall back to an inexact (but doze-safe) alarm.
-                var canScheduleExact = !OperatingSystem.IsAndroidVersionAtLeast(31) || alarmManager.CanScheduleExactAlarms();
-                if (!canScheduleExact)
+                // Prayer alarms must be exact; inexact alarms are not acceptable. Without the permission
+                // (Android 12+) the exact API throws SecurityException, so skip and let the caller retry
+                // once the permission is granted (see CanScheduleExactAlarms / permission-changed broadcast).
+                if (!CanScheduleExactAlarms)
                 {
-                    Log.Warn(nameof(AlarmForegroundService), "Exact alarm permission missing, using inexact alarm");
-                    alarmManager.SetAndAllowWhileIdle(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
+                    Log.Warn(nameof(AlarmForegroundService), "Exact alarm permission missing, alarm not scheduled");
+                    return;
                 }
-                else
-                {
-                    alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
-                }
+                alarmManager.SetExactAndAllowWhileIdle(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
             }
             catch (Java.Lang.SecurityException ex)
             {
-                // Permission revoked between the check and the call; degrade gracefully instead of failing the whole run
+                // Permission revoked between the check and the call
                 Log.Warn(nameof(AlarmForegroundService), $"Exact alarm denied: {ex.Message}");
-                alarmManager.SetAndAllowWhileIdle(AlarmType.RtcWakeup, triggerMillis, pendingIntent);
+            }
+        }
+
+        public bool CanScheduleExactAlarms
+        {
+            get
+            {
+                if (!OperatingSystem.IsAndroidVersionAtLeast(31)) return true;
+                try
+                {
+                    return (Application.Context.GetSystemService(Context.AlarmService) as AlarmManager)?.CanScheduleExactAlarms() ?? false;
+                }
+                catch (System.Exception ex)
+                {
+                    Log.Warn(nameof(AlarmForegroundService), $"CanScheduleExactAlarms check failed: {ex.Message}");
+                    return false;
+                }
             }
         }
 

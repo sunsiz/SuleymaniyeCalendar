@@ -97,6 +97,32 @@ public class MainActivity : MauiAppCompatActivity
         }
     }
 
+    bool _exactAlarmPromptShown;
+
+    /// <summary>
+    /// After returning from the system exact-alarm screen, reschedule immediately if the user granted it.
+    /// </summary>
+    void HandleExactAlarmStateOnResume()
+    {
+        try
+        {
+            // Scheduler clears LastAlarmDate when it had to skip for lack of the exact-alarm permission
+            if (!AnyRemindersEnabled() || !string.IsNullOrEmpty(Preferences.Get("LastAlarmDate", string.Empty))
+                || !OperatingSystem.IsAndroidVersionAtLeast(31)) return;
+            var am = GetSystemService(AlarmService) as AlarmManager;
+            if (am is null || !am.CanScheduleExactAlarms()) return;
+
+            var intent = new Intent(this, typeof(AlarmForegroundService))
+                .SetAction(AlarmForegroundService.StartAction)
+                .PutExtra(AlarmForegroundService.ExtraStartReason, BootReceiver.ExactAlarmPermissionChangedAction);
+            StartForegroundService(intent);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"HandleExactAlarmStateOnResume failed: {ex.Message}");
+        }
+    }
+
     void EnsureExactAlarmCapability()
     {
         if (OperatingSystem.IsAndroidVersionAtLeast(31))
@@ -104,6 +130,8 @@ public class MainActivity : MauiAppCompatActivity
             var am = GetSystemService(AlarmService) as AlarmManager;
             if (am != null && !am.CanScheduleExactAlarms())
             {
+                if (_exactAlarmPromptShown) return;
+                _exactAlarmPromptShown = true;
                 var intent = new Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm);
                 intent.SetData(Android.Net.Uri.Parse($"package:{PackageName}"));
                 try
@@ -138,6 +166,7 @@ public class MainActivity : MauiAppCompatActivity
     {
         base.OnResume();
         ApplyStatusBarColor();
+        HandleExactAlarmStateOnResume();
     }
 
     void ApplyStatusBarColor()

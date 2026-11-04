@@ -70,6 +70,15 @@ public class NotificationSchedulerService
             Debug.WriteLine($"❌ Failed to set culture in NotificationSchedulerService: {ex.Message}");
         }
         
+        // Exact alarms are mandatory. Without permission, scheduling would silently drop alarms; skip without
+        // recording coverage so the next trigger (permission granted broadcast / app resume) retries.
+        if (CheckRemindersEnabledAny() && !_alarmService.CanScheduleExactAlarms)
+        {
+            Debug.WriteLine("Skipping alarm scheduling: exact alarm permission not granted");
+            Preferences.Remove(LastAlarmDatePreferenceKey);
+            return;
+        }
+
         // Check if we need to reschedule
         if (!forceReschedule)
         {
