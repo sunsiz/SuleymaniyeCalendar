@@ -40,7 +40,7 @@ namespace SuleymaniyeCalendar.Services
                         var location = await _dataService.GetCurrentLocationAsync(false);
                         if (location != null && location.Latitude != 0 && location.Longitude != 0)
                         {
-                            System.Diagnostics.Debug.WriteLine($"?? BackgroundDataPreloader: Location acquired: {location.Latitude}, {location.Longitude}");
+                            //System.Diagnostics.Debug.WriteLine($"?? BackgroundDataPreloader: Location acquired: {location.Latitude}, {location.Longitude}");
                             
                             // This will cache the data for when user navigates to MonthPage
                             await _dataService.GetMonthlyPrayerTimesHybridAsync(location, false);

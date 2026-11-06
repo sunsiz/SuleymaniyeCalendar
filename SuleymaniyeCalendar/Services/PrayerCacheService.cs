@@ -40,6 +40,8 @@ public class PrayerCacheService
 
     #region Private Fields
 
+    // Widget fallback and DI can create different instances that share the same files.
+    private static readonly SemaphoreSlim CacheGate = new(1, 1);
     private readonly PerformanceService _perf;
 
     #endregion
@@ -66,6 +68,19 @@ public class PrayerCacheService
     /// <param name="year">PrayerCalendar year to load.</param>
     /// <returns>List of cached PrayerCalendar days, or null if not cached.</returns>
     public async Task<List<PrayerCalendar>?> LoadYearCacheAsync(Location location, int year)
+    {
+        await CacheGate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            return await LoadYearCacheCoreAsync(location, year).ConfigureAwait(false);
+        }
+        finally
+        {
+            CacheGate.Release();
+        }
+    }
+
+    private async Task<List<PrayerCalendar>?> LoadYearCacheCoreAsync(Location location, int year)
     {
         try
         {
@@ -232,6 +247,20 @@ public class PrayerCacheService
     /// <param name="days">List of PrayerCalendar days to save.</param>
     public async Task SaveYearCacheAsync(Location location, int year, List<PrayerCalendar> days)
     {
+        await CacheGate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            await SaveYearCacheCoreAsync(location, year, days).ConfigureAwait(false);
+        }
+        finally
+        {
+            CacheGate.Release();
+        }
+    }
+
+    private async Task SaveYearCacheCoreAsync(Location location, int year, List<PrayerCalendar> days)
+    {
+        string? temporaryPath = null;
         try
         {
             var wrapper = new YearCacheWrapper
@@ -246,10 +275,12 @@ public class PrayerCacheService
 
             var json = JsonSerializer.Serialize(wrapper, new JsonSerializerOptions { WriteIndented = false });
             var path = GetYearCachePath(location, year);
+            temporaryPath = $"{path}.{Guid.NewGuid():N}.tmp";
 
             using (_perf.StartTimer($"Cache.Write.{year}"))
             {
-                await File.WriteAllTextAsync(path, json).ConfigureAwait(false);
+                await File.WriteAllTextAsync(temporaryPath, json).ConfigureAwait(false);
+                File.Move(temporaryPath, path, overwrite: true);
             }
 
             Debug.WriteLine($"Saved {days.Count} days to cache for year {year}");
@@ -257,6 +288,20 @@ public class PrayerCacheService
         catch (Exception ex)
         {
             Debug.WriteLine($"SaveYearCacheAsync failed: {ex.Message}");
+        }
+        finally
+        {
+            if (temporaryPath is not null && File.Exists(temporaryPath))
+            {
+                try
+                {
+                    File.Delete(temporaryPath);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to remove temporary cache file: {ex.Message}");
+                }
+            }
         }
     }
 
@@ -279,9 +324,17 @@ public class PrayerCacheService
             foreach (var g in groups)
             {
                 var year = g.Key;
-                var existing = await LoadYearCacheAsync(location, year).ConfigureAwait(false) ?? new List<PrayerCalendar>();
-                var merged = MergeCalendars(existing, g.ToList());
-                await SaveYearCacheAsync(location, year, merged).ConfigureAwait(false);
+                await CacheGate.WaitAsync().ConfigureAwait(false);
+                try
+                {
+                    var existing = await LoadYearCacheCoreAsync(location, year).ConfigureAwait(false) ?? new List<PrayerCalendar>();
+                    var merged = MergeCalendars(existing, g.ToList());
+                    await SaveYearCacheCoreAsync(location, year, merged).ConfigureAwait(false);
+                }
+                finally
+                {
+                    CacheGate.Release();
+                }
             }
         }
         catch (Exception ex)
@@ -301,6 +354,7 @@ public class PrayerCacheService
     /// <param name="location">Current user location.</param>
     public void ClearCachesIfLocationChanged(Location location)
     {
+        CacheGate.Wait();
         try
         {
             var lastLat = Preferences.Get("CacheLastLat", double.NaN);
@@ -331,6 +385,10 @@ public class PrayerCacheService
         catch (Exception ex)
         {
             Debug.WriteLine($"ClearCachesIfLocationChanged failed: {ex.Message}");
+        }
+        finally
+        {
+            CacheGate.Release();
         }
     }
 

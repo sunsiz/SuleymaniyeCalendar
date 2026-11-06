@@ -130,7 +130,7 @@
                                     Binding="{Binding Source={x:Reference RadioPlayer}, Path=CurrentState}"
                                     Value="{x:Static toolkit:MediaElementState.Opening}">
                                     <Setter Property="Text" Value="&#xf110;" />
-                                    <Setter Property="SemanticProperties.Description" Value="Loading" />
+                                    <Setter Property="SemanticProperties.Description" Value="{localization:Translate IcerikYukleniyor}" />
                                     <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary40}, Dark={StaticResource Primary50}}" />
                                 </DataTrigger>
                             </Label.Triggers>

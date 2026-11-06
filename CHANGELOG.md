@@ -14,6 +14,8 @@
 ### Other changes
 
 - Reuse the Android foreground notification channel and retry loading the current day's data after a failed date refresh, while retaining the 30-second refresh interval and separate sound channels.
+- Serialize cache reads and updates across service instances, and replace cache files only after the new data is fully written.
+- Refresh the Android widget with today's data rather than reusing a previous day's calendar, and process widget requests on the service worker thread.
 - Add localized guidance for alarm permission and save failures.
 - Align test dependencies with the app and add prayer-time validation and alarm synchronization tests.
 - Remove the Android `BATTERY_STATS` permission and stop logging location coordinates.

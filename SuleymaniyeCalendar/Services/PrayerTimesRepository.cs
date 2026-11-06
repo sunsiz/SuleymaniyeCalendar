@@ -135,7 +135,7 @@ public class PrayerTimesRepository
 
     public async Task<List<Calendar>> EnsureDaysRangeAsync(Location location, DateTime startDate, int daysNeeded)
     {
-        Debug.WriteLine($"EnsureDaysRangeAsync: Ensuring {daysNeeded} days from {startDate:dd/MM/yyyy} for location {location.Latitude},{location.Longitude}");
+        //Debug.WriteLine($"EnsureDaysRangeAsync: Ensuring {daysNeeded} days from {startDate:dd/MM/yyyy} for location {location.Latitude},{location.Longitude}");
 
         var result = new List<Calendar>(daysNeeded);
         var seen = new HashSet<DateTime>();
@@ -222,6 +222,7 @@ public class PrayerTimesRepository
             if (fetched != null && fetched.Count > 0)
             {
                 var merged = new List<Calendar>(cachedYear);
+                var additions = new List<Calendar>();
                 var existingDates = new HashSet<DateTime>(
                     cachedYear.Select(c => AppConstants.ParseCalendarDate(c.Date)).Where(d => d != DateTime.MinValue).Select(d => d.Date));
 
@@ -232,14 +233,17 @@ public class PrayerTimesRepository
                         continue;
 
                     if (existingDates.Add(d.Date))
+                    {
                         merged.Add(item);
+                        additions.Add(item);
+                    }
                 }
 
                 yearCaches[year] = merged;
 
                 using (_perf.StartTimer($"Cache.SaveYear.{year}"))
                 {
-                    await _cacheService.SaveYearCacheAsync(location, year, merged).ConfigureAwait(false);
+                    await _cacheService.SaveToUnifiedCacheAsync(location, additions).ConfigureAwait(false);
                 }
 
                 var monthMerged = merged
