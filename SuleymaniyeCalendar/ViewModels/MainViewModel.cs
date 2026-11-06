@@ -489,7 +489,7 @@ public partial class MainViewModel : BaseViewModel
                     // Fallback to cached coordinates from preferences
                     latitude = Preferences.Get("LastLatitude", 0.0);
                     longitude = Preferences.Get("LastLongitude", 0.0);
-                    Debug.WriteLine($"GetCityAsync: Using cached coordinates ({latitude}, {longitude})");
+                    //Debug.WriteLine($"GetCityAsync: Using cached coordinates ({latitude}, {longitude})");
                 }
                 
                 if (latitude == 0 && longitude == 0)
@@ -520,7 +520,7 @@ public partial class MainViewModel : BaseViewModel
                     if (!string.IsNullOrWhiteSpace(fullAddress))
                     {
                         Preferences.Set("LastAddress", fullAddress);
-                        Debug.WriteLine($"GetCityAsync: Updated LastAddress to {fullAddress}");
+                        //Debug.WriteLine($"GetCityAsync: Updated LastAddress to {fullAddress}");
                     }
                 }
             }

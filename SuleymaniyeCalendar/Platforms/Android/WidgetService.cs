@@ -6,6 +6,7 @@ using Android.Widget;
 using SuleymaniyeCalendar.Resources.Strings;
 using System.Globalization;
 using SuleymaniyeCalendar.Services;
+using SuleymaniyeCalendar.Helpers;
 using Java.Util;
 using Locale = Java.Util.Locale;
 using Android.Content.Res;
@@ -16,12 +17,6 @@ namespace SuleymaniyeCalendar
 	public class WidgetService : IntentService
 	{
 		private const string TAG = "WidgetService";
-		
-		[Obsolete]
-		public override void OnStart (Intent? intent, int startId)
-		{
-			UpdateWidgetSafely(intent);
-		}
 		
 		public override IBinder? OnBind(Intent? intent) => null;
 
@@ -162,16 +157,21 @@ namespace SuleymaniyeCalendar
                 dataService = new DataService(loc, repo, scheduler, perf);
             }
 			var calendar = dataService.calendar;
-			if (calendar is null)
+			if (calendar is null || AppConstants.ParseCalendarDate(calendar.Date).Date != DateTime.Today)
 			{
+				calendar = null;
 				// Try to load calendar data from cache synchronously
 				try
 				{
-					// Use Task.Run to avoid blocking but wait for result
+					// IntentService processes this request on its worker thread.
 					calendar = Task.Run(async () => await dataService.GetTodayPrayerTimesAsync().ConfigureAwait(false)).GetAwaiter().GetResult();
-					if (calendar != null)
+					if (calendar != null && AppConstants.ParseCalendarDate(calendar.Date).Date == DateTime.Today)
 					{
 						dataService.calendar = calendar;
+					}
+					else
+					{
+						calendar = null;
 					}
 				}
 				catch (Exception ex)
@@ -184,6 +184,7 @@ namespace SuleymaniyeCalendar
 				{
 					var emptyViews = new RemoteViews(context.PackageName, Resource.Layout.Widget);
 					emptyViews.SetTextViewText(Resource.Id.widgetAppName, AppResources.Yenileniyor);
+					emptyViews.SetOnClickPendingIntent(Resource.Id.widgetRefreshIcon, GetPendingSelfIntent(context, "android.appwidget.action.APPWIDGET_UPDATE"));
 					return emptyViews;
 				}
 			}
