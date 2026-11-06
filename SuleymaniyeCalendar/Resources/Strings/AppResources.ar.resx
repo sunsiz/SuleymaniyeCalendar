@@ -120,22 +120,6 @@
   <data name="Aci" xml:space="preserve">
     <value>زاوية</value>
   </data>
-  <data name="AciklamaBas" xml:space="preserve">
-    <value>يُدعى الأشخاص الذين يخضعون لله ويقفون في وجه كل الصعوبات من أجل قضيته "مسلمون". ومن خصائص "المسلمين" أنهم يطبقون أحكام الدين في حياتهم دون أي إضافة إليها من رغباتهم. "وَمَنْ أَحْسَنُ قَوْلًا مِّمَّن دَعَآ إِلَى ٱللَّهِ وَعَمِلَ صَٰلِحًا وَقَالَ إِنَّنِى مِنَ ٱلْمُسْلِمِينَ"؟ (فصلت 41:33)
-تم تصميم هذا التطبيق لتوفير وصول آمن وسريع لأوقات الصلاة والصيام. لمزيد من المعلومات التفصيلية حول حسابات الوقت وأوقات الصيام ، اقرأ المقال </value>
-  </data>
-  <data name="AciklamaLinkText" xml:space="preserve">
-    <value>أوقات الصلوات في القرآن الكريم</value>
-  </data>
-  <data name="AciklamaLinkURL" xml:space="preserve">
-    <value>https://www.hablullah.com/?p=1591</value>
-  </data>
-  <data name="AciklamaSon" xml:space="preserve">
-    <value>.</value>
-  </data>
-  <data name="AcikTema" xml:space="preserve">
-    <value>مظهر فاتح اللون</value>
-  </data>
   <data name="Aksam" xml:space="preserve">
     <value>المغرب</value>
   </data>
@@ -151,23 +135,26 @@
   <data name="Alarmkurarkenhataolustu" xml:space="preserve">
     <value>حدث خطأ أثناء ضبط المنبه</value>
   </data>
+  <data name="AlarmRestoreFailed" xml:space="preserve">
+    <value>لم يتم حفظ إعدادات التنبيهات، وتعذّر استعادة التنبيهات السابقة. يرجى التحقق من تنبيهاتك والمحاولة مجدداً.</value>
+  </data>
+  <data name="AlarmSaveFailed" xml:space="preserve">
+    <value>لم يتم حفظ إعدادات التنبيه الخاصة بك. يرجى التحقق من اتصالك ومن الأذونات، ثم المحاولة مجددًا.</value>
+  </data>
+  <data name="AlarmPermissionTitle" xml:space="preserve">
+    <value>يلزم منح صلاحية الوصول إلى التنبيهات الدقيقة</value>
+  </data>
+  <data name="AlarmExactPermissionRequired" xml:space="preserve">
+    <value>اسمح باستخدام "التنبيهات الدقيقة" (exact alarms) في إعدادات جهازك لتلقي التذكيرات في الوقت المحدد. لن يتم حفظ تغييراتك ما لم يتم منح هذا الإذن.</value>
+  </data>
   <data name="AlarmSound" xml:space="preserve">
     <value>صوت المنبه</value>
-  </data>
-  <data name="AlarmSuresi" xml:space="preserve">
-    <value>مدة التنبيه: </value>
   </data>
   <data name="AlarmSwitch" xml:space="preserve">
     <value>تشغيل صوت التنبيه</value>
   </data>
-  <data name="Arabic" xml:space="preserve">
-    <value>العربية</value>
-  </data>
   <data name="AylikTakvim" xml:space="preserve">
     <value>الوقت الشهري</value>
-  </data>
-  <data name="AylikTakvimeErisemedi" xml:space="preserve">
-    <value>لا يمكن الوصول إلى التقويم الشهري ، يرجى التحقق من إمكانية الوصول إلى الإنترنت وأن خدمة تحديد الموقع نشطة!</value>
   </data>
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>تم تحديث مواقيت الصلاة الشهرية بنجاح</value>
@@ -180,9 +167,6 @@
   </data>
   <data name="AylikVeriYenilemeIste" xml:space="preserve">
     <value>يرجى التحديث لتحميل بيانات الشهر</value>
-  </data>
-  <data name="Azerbaijani" xml:space="preserve">
-    <value>الأذربيجانية</value>
   </data>
   <data name="BesDakikaOnceden" xml:space="preserve">
     <value>5 دقائق مقدما</value>
@@ -205,11 +189,11 @@
   <data name="BildirimIzniGerekli" xml:space="preserve">
     <value>يلزم إذن الإشعارات لجدولة التنبيهات.</value>
   </data>
-  <data name="BildirimKapatma" xml:space="preserve">
-    <value>تفعيل الإشعارات اللاصقة</value>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>يحتاج هذا التطبيق إلى إذن الإشعارات لإرسال تذكيرات بأوقات الصلاة. يُرجى تفعيل الإشعارات من خلال الإعدادات &gt; التطبيقات &gt; تقويم السليمانية &gt; الإشعارات.</value>
   </data>
-  <data name="BildirimUyari" xml:space="preserve">
-    <value>نوصي بعدم إيقاف تشغيل هذا الإعداد. إذا قمت بتعطيله ، فقد لا ترن الإنذارات في الوقت المحدد. إذا لم تكن إنذاراتك ترن ، فيرجى التحقق من إعدادات التطبيق. في هذه الإعدادات ، في قسم "أذونات أخرى" ، تحقق من تحديد إذن "البدء في الخلفية". تأكد من تحديد الإعداد "بلا قيود" في قسم "توفير شحن البطارية". الآن إذا كنت تريد التحقق من هذه الأذونات ، فانقر فوق الزر أدناه.</value>
+  <data name="BildirimSorunu" xml:space="preserve">
+    <value>إذا استمرت الإشعارات في عدم العمل بعد منح الإذن، فقد تحتاج إلى إعادة ضبط إعدادات إشعارات نظام iOS: الإعدادات ← عام ← نقل أو إعادة ضبط iPhone ← إعادة الضبط ← إعادة ضبط الموقع والخصوصية. يؤدي هذا إلى مسح حظر الإشعارات الداخلي لنظام iOS.</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>وقت التذكير: </value>
@@ -220,32 +204,20 @@
   <data name="BoylamFormatsiz" xml:space="preserve">
     <value>خط الطول</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>اليوم</value>
+  </data>
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>مواقيت الصلاة اليوم</value>
   </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>منبه الساعة</value>
   </data>
-  <data name="Chinese" xml:space="preserve">
-    <value>الصينية</value>
-  </data>
   <data name="CihazGPSDesteklemiyor" xml:space="preserve">
     <value>جهازك لا يدعم GPS</value>
   </data>
-  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
-    <value>جهازك لا يدعم البوصلة</value>
-  </data>
   <data name="CihazTitretmeyiDesteklemiyor" xml:space="preserve">
     <value>جهازك لا يدعم الاهتزاز</value>
-  </data>
-  <data name="Dakika" xml:space="preserve">
-    <value> دقائق</value>
-  </data>
-  <data name="Deutsch" xml:space="preserve">
-    <value>الألمانية</value>
-  </data>
-  <data name="English" xml:space="preserve">
-    <value>الإنجليزية</value>
   </data>
   <data name="EnlemFormatsiz" xml:space="preserve">
     <value>خط العرض</value>
@@ -258,9 +230,6 @@
   </data>
   <data name="EzanSesi" xml:space="preserve">
     <value>الأذان (مكة)</value>
-  </data>
-  <data name="Farsi" xml:space="preserve">
-    <value>الفارسية</value>
   </data>
   <data name="FecriKazibingirmesinekalanvakit" xml:space="preserve">
     <value>الوقت المتبقي لبداية السحور: </value>
@@ -289,17 +258,11 @@
   <data name="FitratTVYoutube" xml:space="preserve">
     <value>الفطرة (تلفزيون) قناة يوتيوب</value>
   </data>
-  <data name="French" xml:space="preserve">
-    <value>الفرنسية</value>
-  </data>
   <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
-      <value>تعذر تحميل أوقات الصلاة لجدولتها</value>
-    </data>
+    <value>تعذر تحميل أوقات الصلاة لجدولتها</value>
+  </data>
   <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
-      <value>تم جدولة تذكيرات الصلاة لمدة ٣٠ يومًا</value>
-    </data>
-  <data name="GotoSettings" xml:space="preserve">
-    <value>اذهب للاعدادات</value>
+    <value>تم جدولة تذكيرات الصلاة لمدة ٣٠ يومًا</value>
   </data>
   <data name="Hakkinda" xml:space="preserve">
     <value>معلومات عنا</value>
@@ -325,20 +288,11 @@
   <data name="Ikindinincikmasinakalanvakit" xml:space="preserve">
     <value>الوقت المتبقي لانتهاء العصر: </value>
   </data>
-  <data name="KalanSure" xml:space="preserve">
-    <value>الوقت المتبقي: </value>
-  </data>
   <data name="Kapat" xml:space="preserve">
     <value>أغلق</value>
   </data>
   <data name="Kaydet" xml:space="preserve">
     <value>احفظ</value>
-  </data>
-  <data name="KaydetVeKapat" xml:space="preserve">
-    <value>احفظ و أغلق</value>
-  </data>
-  <data name="KaydetVeUygula" xml:space="preserve">
-    <value>حفظ و تطبيق</value>
   </data>
   <data name="Kible" xml:space="preserve">
     <value>القبلة</value>
@@ -367,14 +321,8 @@
   <data name="KonumYenilendi" xml:space="preserve">
     <value>تم تحديث الموقع والأوقات بنجاح</value>
   </data>
-  <data name="KoyuTema" xml:space="preserve">
-    <value>مظهر مظلم</value>
-  </data>
   <data name="KusCiviltisi" xml:space="preserve">
     <value>زقزقة العصافير</value>
-  </data>
-  <data name="Kyrgyz" xml:space="preserve">
-    <value>القرغيزية</value>
   </data>
   <data name="NamazVaktiAlmaHatasi" xml:space="preserve">
     <value>حدث خطأ أثناء استرجاع مواقيت الصلاة من الإنترنت.</value>
@@ -394,6 +342,9 @@
   <data name="PageTitle" xml:space="preserve">
     <value>تقويم السليمانية</value>
   </data>
+  <data name="Radyo" xml:space="preserve">
+    <value>الراديو</value>
+  </data>
   <data name="RadyoFitrat" xml:space="preserve">
     <value>راديو الفطرة</value>
   </data>
@@ -408,9 +359,6 @@
   </data>
   <data name="RadyoIcinInternet" xml:space="preserve">
     <value>الإنترنت مطلوب لتشغيل الراديو ، يرجى التحقق من اتصال الإنترنت ، أو يمكنك الاستماع من موقع الويب بالنقر فوق ارتباط "موقع الويب".</value>
-  </data>
-  <data name="Russian" xml:space="preserve">
-    <value>الروسية</value>
   </data>
   <data name="SabahSonu" xml:space="preserve">
     <value>نهاية الفجر</value>
@@ -472,32 +420,14 @@
   <data name="TitresimSwitch" xml:space="preserve">
     <value>اهتزاز</value>
   </data>
-  <data name="Turkish" xml:space="preserve">
-    <value>التركية</value>
-  </data>
-  <data name="Uyghur" xml:space="preserve">
-    <value>الأويغورية</value>
-  </data>
-  <data name="UygulamaDili" xml:space="preserve">
-    <value>لغة التطبيق</value>
-  </data>
-  <data name="UygulamaDiliniSecin" xml:space="preserve">
-    <value>اختر لغة التطبيق</value>
-  </data>
-  <data name="UygulamaTema" xml:space="preserve">
-    <value>مظهر التطبيق</value>
-  </data>
-  <data name="UygulamaTemasiniSecin" xml:space="preserve">
-    <value>اختر مظهر التطبيق</value>
-  </data>
-  <data name="Uzbek" xml:space="preserve">
-    <value>الأوزبكية</value>
-  </data>
   <data name="Vakti" xml:space="preserve">
     <value>الوقت: </value>
   </data>
   <data name="VaktiHatirlatmasi" xml:space="preserve">
     <value>تذكير الوقت</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>إصدار</value>
   </data>
   <data name="WebSayfa" xml:space="preserve">
     <value> الموقع الكتروني</value>
@@ -517,9 +447,6 @@
   <data name="YayinAkisi" xml:space="preserve">
     <value> جدول البث</value>
   </data>
-  <data name="YaziBoyutu" xml:space="preserve">
-    <value>حجم الخط: </value>
-  </data>
   <data name="Yenileniyor" xml:space="preserve">
     <value>يتم تحديثه</value>
   </data>
@@ -529,11 +456,105 @@
   <data name="Zamaninda" xml:space="preserve">
     <value>في الوقت المناسب</value>
   </data>
-  <data name="Radyo" xml:space="preserve">
-    <value>الراديو</value>
+  <data name="AciklamaBas" xml:space="preserve">
+    <value>يُدعى الأشخاص الذين يخضعون لله ويقفون في وجه كل الصعوبات من أجل قضيته "مسلمون". ومن خصائص "المسلمين" أنهم يطبقون أحكام الدين في حياتهم دون أي إضافة إليها من رغباتهم. "وَمَنْ أَحْسَنُ قَوْلًا مِّمَّن دَعَآ إِلَى ٱللَّهِ وَعَمِلَ صَٰلِحًا وَقَالَ إِنَّنِى مِنَ ٱلْمُسْلِمِينَ"؟ (فصلت 41:33)
+تم تصميم هذا التطبيق لتوفير وصول آمن وسريع لأوقات الصلاة والصيام. لمزيد من المعلومات التفصيلية حول حسابات الوقت وأوقات الصيام ، اقرأ المقال </value>
   </data>
-  <data name="Version" xml:space="preserve">
-    <value>إصدار</value>
+  <data name="AciklamaLinkText" xml:space="preserve">
+    <value>أوقات الصلوات في القرآن الكريم</value>
+  </data>
+  <data name="AciklamaLinkURL" xml:space="preserve">
+    <value>https://www.hablullah.com/?p=1591</value>
+  </data>
+  <data name="AciklamaSon" xml:space="preserve">
+    <value>.</value>
+  </data>
+  <data name="GotoSettings" xml:space="preserve">
+    <value>اذهب للاعدادات</value>
+  </data>
+  <data name="UygulamaDiliniSecin" xml:space="preserve">
+    <value>اختر لغة التطبيق</value>
+  </data>
+  <data name="UygulamaDili" xml:space="preserve">
+    <value>لغة التطبيق</value>
+  </data>
+  <data name="UygulamaTemasiniSecin" xml:space="preserve">
+    <value>اختر مظهر التطبيق</value>
+  </data>
+  <data name="UygulamaTema" xml:space="preserve">
+    <value>مظهر التطبيق</value>
+  </data>
+  <data name="AcikTema" xml:space="preserve">
+    <value>مظهر فاتح اللون</value>
+  </data>
+  <data name="KoyuTema" xml:space="preserve">
+    <value>مظهر مظلم</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>الإنجليزية</value>
+  </data>
+  <data name="Turkish" xml:space="preserve">
+    <value>التركية</value>
+  </data>
+  <data name="Chinese" xml:space="preserve">
+    <value>الصينية</value>
+  </data>
+  <data name="Uyghur" xml:space="preserve">
+    <value>الأويغورية</value>
+  </data>
+  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
+    <value>جهازك لا يدعم البوصلة</value>
+  </data>
+  <data name="AylikTakvimeErisemedi" xml:space="preserve">
+    <value>لا يمكن الوصول إلى التقويم الشهري ، يرجى التحقق من إمكانية الوصول إلى الإنترنت وأن خدمة تحديد الموقع نشطة!</value>
+  </data>
+  <data name="KaydetVeUygula" xml:space="preserve">
+    <value>حفظ و تطبيق</value>
+  </data>
+  <data name="KalanSure" xml:space="preserve">
+    <value>الوقت المتبقي: </value>
+  </data>
+  <data name="AlarmSuresi" xml:space="preserve">
+    <value>مدة التنبيه: </value>
+  </data>
+  <data name="Dakika" xml:space="preserve">
+    <value> دقائق</value>
+  </data>
+  <data name="YaziBoyutu" xml:space="preserve">
+    <value>حجم الخط: </value>
+  </data>
+  <data name="BildirimKapatma" xml:space="preserve">
+    <value>تفعيل الإشعارات اللاصقة</value>
+  </data>
+  <data name="BildirimUyari" xml:space="preserve">
+    <value>نوصي بعدم إيقاف تشغيل هذا الإعداد. إذا قمت بتعطيله ، فقد لا ترن الإنذارات في الوقت المحدد. إذا لم تكن إنذاراتك ترن ، فيرجى التحقق من إعدادات التطبيق. في هذه الإعدادات ، في قسم "أذونات أخرى" ، تحقق من تحديد إذن "البدء في الخلفية". تأكد من تحديد الإعداد "بلا قيود" في قسم "توفير شحن البطارية". الآن إذا كنت تريد التحقق من هذه الأذونات ، فانقر فوق الزر أدناه.</value>
+  </data>
+  <data name="KaydetVeKapat" xml:space="preserve">
+    <value>احفظ و أغلق</value>
+  </data>
+  <data name="Arabic" xml:space="preserve">
+    <value>العربية</value>
+  </data>
+  <data name="Russian" xml:space="preserve">
+    <value>الروسية</value>
+  </data>
+  <data name="Deutsch" xml:space="preserve">
+    <value>الألمانية</value>
+  </data>
+  <data name="French" xml:space="preserve">
+    <value>الفرنسية</value>
+  </data>
+  <data name="Farsi" xml:space="preserve">
+    <value>الفارسية</value>
+  </data>
+  <data name="Azerbaijani" xml:space="preserve">
+    <value>الأذربيجانية</value>
+  </data>
+  <data name="Kyrgyz" xml:space="preserve">
+    <value>القرغيزية</value>
+  </data>
+  <data name="Uzbek" xml:space="preserve">
+    <value>الأوزبكية</value>
   </data>
   <data name="DakikaOnceden" xml:space="preserve">
     <value> دقائق مقدما</value>
@@ -554,19 +575,19 @@
     <value>قم بتحديث الموقع ومواعيد الصلاة في كل مرة يتم فيها فتح التطبيق</value>
   </data>
   <data name="UygulamaAyarlari" xml:space="preserve">
-	  <value>إعدادات التطبيق</value>
+    <value>إعدادات التطبيق</value>
   </data>
   <data name="Yenile" xml:space="preserve">
-	  <value>تحديث</value>
+    <value>تحديث</value>
   </data>
   <data name="RadyoCal" xml:space="preserve">
-	  <value>قم بتشغيل الراديو أو إيقافه مؤقتًا</value>
+    <value>قم بتشغيل الراديو أو إيقافه مؤقتًا</value>
   </data>
   <data name="Etkin" xml:space="preserve">
-	  <value>مفعل</value>
+    <value>مفعل</value>
   </data>
   <data name="DevreDisi" xml:space="preserve">
-	  <value>مغلق</value>
+    <value>مغلق</value>
   </data>
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>جدولة الإنذارات ، من فضلك انتظر</value>
@@ -589,10 +610,16 @@
   <data name="Paylas" xml:space="preserve">
     <value>يشارك</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>اليوم</value>
+  <data name="TestNotification" xml:space="preserve">
+    <value>إشعار تجريبي</value>
   </data>
-  <data name="BildirimIzniAciklama" xml:space="preserve">
-    <value>يحتاج هذا التطبيق إلى إذن الإشعارات لإرسال تذكيرات بأوقات الصلاة. يُرجى تفعيل الإشعارات من خلال الإعدادات &gt; التطبيقات &gt; تقويم السليمانية &gt; الإشعارات.</value>
+  <data name="TestNotificationMessage" xml:space="preserve">
+    <value>هذا إشعار تجريبي من تقويم السليمانية (Süleymaniye Calendar). إذا كنت ترى هذا الإشعار، فهذا يعني أن الإشعارات تعمل!</value>
+  </data>
+  <data name="TestNotificationButton" xml:space="preserve">
+    <value>إشعار تجريبي (30 ثانية)</value>
+  </data>
+  <data name="TestNotificationScheduled" xml:space="preserve">
+    <value>تمت جدولة إشعار تجريبي! من المفترض أن تتلقاه خلال 30 ثانية.</value>
   </data>
 </root>

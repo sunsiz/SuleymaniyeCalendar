@@ -449,39 +449,6 @@ public partial class MainViewModel : BaseViewModel
             IsBusy = false;
         }
 
-        /// <summary>
-        /// Toggles the enabled state of a prayer's notification.
-        /// Reschedules alarms in the background after the toggle.
-        /// </summary>
-        /// <param name="prayer">The prayer to toggle.</param>
-        [RelayCommand]
-        private void TogglePrayerEnabled(Prayer? prayer)
-        {
-            if (prayer == null) return;
-
-            try
-            {
-                prayer.Enabled = !prayer.Enabled;
-                Preferences.Set(prayer.Id + "Enabled", prayer.Enabled);
-
-                Task.Run(async () =>
-                {
-                    try
-                    {
-                        await _data.SetMonthlyAlarmsAsync(forceReschedule: true).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        Debug.WriteLine($"Error updating alarms: {ex.Message}");
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error toggling prayer: {ex.Message}");
-            }
-        }
-
     #endregion
 
     #region Private Methods - Location

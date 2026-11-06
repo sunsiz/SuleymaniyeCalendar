@@ -120,21 +120,6 @@
   <data name="Aci" xml:space="preserve">
     <value>Bucaq</value>
   </data>
-  <data name="AciklamaBas" xml:space="preserve">
-    <value>Müsəlman, Allaha təslim olan və Onun yolunda hər çətinliyə qatlanan insanlara verilən addır. Onlar dinə olduğu kimi tabe olanlardır. "Allaha çağıran, xeyirxahlıq edən və mən yalnız Allaha təslim olanlardanam deyəndən daha gözəl sözlü kim ola bilər!" (Füssilət 41/33). Bu program, namaz və oruc vaxtlarına doğru və rahat çata bilmələri üçün nəzərdə tutulmuşdur. Vaxt hesablamaları və oruc saatları barəsində daha geniş məlumat üçün buradakı </value>
-  </data>
-  <data name="AciklamaLinkText" xml:space="preserve">
-    <value>Quranda və sünnədə namaz vaxtları</value>
-  </data>
-  <data name="AciklamaLinkURL" xml:space="preserve">
-    <value>https://www.muselmanlar.com/tedqiqatlar/5930.html</value>
-  </data>
-  <data name="AciklamaSon" xml:space="preserve">
-    <value> məqaləsini oxuyun.</value>
-  </data>
-  <data name="AcikTema" xml:space="preserve">
-    <value>Açıq tema</value>
-  </data>
   <data name="Aksam" xml:space="preserve">
     <value>Axşam</value>
   </data>
@@ -150,20 +135,26 @@
   <data name="Alarmkurarkenhataolustu" xml:space="preserve">
     <value>Zəngi quranda bir xəta oldu</value>
   </data>
+  <data name="AlarmRestoreFailed" xml:space="preserve">
+    <value>Zəng siqnalı parametrləri yadda saxlanılmadı və əvvəlki siqnallar bərpa edilə bilmədi. Zəhmət olmasa, Zəng siqnallarınızı yoxlayın və yenidən cəhd edin.</value>
+  </data>
+  <data name="AlarmSaveFailed" xml:space="preserve">
+    <value>Siqnal tənzimləmələriniz yadda saxlanılmadı. Zəhmət olmasa, əlaqənizi və icazələrinizi yoxlayın, sonra yenidən cəhd edin.</value>
+  </data>
+  <data name="AlarmPermissionTitle" xml:space="preserve">
+    <value>Dəqiq siqnalizasiya girişi tələb olunur</value>
+  </data>
+  <data name="AlarmExactPermissionRequired" xml:space="preserve">
+    <value>Seçilmiş vaxtda xatırlatmalar almaq üçün cihaz parametrlərində dəqiq siqnallara icazə verin. Giriş icazəsi verilməyənə qədər dəyişiklikləriniz yadda saxlanılmayacaq.</value>
+  </data>
   <data name="AlarmSound" xml:space="preserve">
     <value>Zəng siqnalı</value>
-  </data>
-  <data name="AlarmSuresi" xml:space="preserve">
-    <value>Zəng müddəti: </value>
   </data>
   <data name="AlarmSwitch" xml:space="preserve">
     <value>Zəng çal</value>
   </data>
   <data name="AylikTakvim" xml:space="preserve">
     <value>Aylıq təqvim</value>
-  </data>
-  <data name="AylikTakvimeErisemedi" xml:space="preserve">
-    <value>Aylıq təqvimə bağlanılmadı, Xahiş olunur internetinizin bağlı olub olmadığını və konumunuzun aktiv olduğunu yoxlayın!</value>
   </data>
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>Aylıq təqvim başarıyla yeniləndi</value>
@@ -198,17 +189,11 @@
   <data name="BildirimIzniGerekli" xml:space="preserve">
     <value>Siqnalları planlaşdırmaq üçün bildiriş icazəsi tələb olunur.</value>
   </data>
-  <data name="BildirimKapatma" xml:space="preserve">
-    <value>Bildirini aktivləşdir</value>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Bu tətbiqin sizə namaz vaxtı xatırlatmaları göndərməsi üçün bildiriş icazəsi lazımdır. Zəhmət olmasa, Parametrlər - Tətbiqlər - Süleymaniyyə Təqvimi - Bildirişlər bölməsində bildirişləri aktivləşdirin.</value>
   </data>
-  <data name="Azerbaijani" xml:space="preserve">
-    <value>Azəri Türkcəsi</value>
-  </data>
-  <data name="Arabic" xml:space="preserve">
-    <value>ərəbcə</value>
-  </data>
-  <data name="BildirimUyari" xml:space="preserve">
-    <value>Bu parametri söndürməməyi tövsiyə edirik. Əgər qeyri-aktiv buraxarsanız zəng vaxtında çalmaya bilər. Əgər zənginiz çalmırsa xahiş olunur program parametrlərinə baxın: Bu parametrlərdə “Digər iznlər” bölümündə “Arxa planda başlat” izninin seçilmiş olduğunu yoxlayın. “Batareya qoruyucusu” bölümündə olan “Məhdudiyyət yox” parametrinin seçilmiş olduğundan əmin olun. İndi bu iznləri yoxlamaq istərsəniz aşağıdakı düyməyə basın.</value>
+  <data name="BildirimSorunu" xml:space="preserve">
+    <value>İcazə verildikdən sonra bildirişlər hələ də işləmirsə, iOS bildiriş parametrlərini sıfırlamağınız lazım ola bilər: Parametrlər → Ümumi → iPhone-u Köçür və ya Sıfırla → Sıfırla → Məkan və Məxfilik Parametrlərini Sıfırla. Bu, iOS-un daxili bildiriş bloklamalarını təmizləyir.</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>Xatırlatma Zamanı: </value>
@@ -219,29 +204,20 @@
   <data name="BoylamFormatsiz" xml:space="preserve">
     <value>Uzunluq</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Bu gün</value>
+  </data>
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Bu günkü namaz vaxtları</value>
   </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>Zəng saat</value>
   </data>
-  <data name="Chinese" xml:space="preserve">
-    <value>Çincə</value>
-  </data>
   <data name="CihazGPSDesteklemiyor" xml:space="preserve">
     <value>Cihaz GPS dəstəkləmir</value>
   </data>
-  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
-    <value>Cihazınız kompası dəstəkləmir</value>
-  </data>
   <data name="CihazTitretmeyiDesteklemiyor" xml:space="preserve">
     <value>Cihazınız titrətməyi dəstəkləmir</value>
-  </data>
-  <data name="Dakika" xml:space="preserve">
-    <value> dəqiqə</value>
-  </data>
-  <data name="Deutsch" xml:space="preserve">
-    <value>Almanca</value>
   </data>
   <data name="EnlemFormatsiz" xml:space="preserve">
     <value>En</value>
@@ -249,17 +225,11 @@
   <data name="EtkinlestirSwitch" xml:space="preserve">
     <value>Aktivləşdir</value>
   </data>
-  <data name="English" xml:space="preserve">
-    <value>İngilizcə</value>
-  </data>
   <data name="EtkinlestirSwitchAciklama" xml:space="preserve">
     <value>Bu namaz vaxtı üçün, zəng, titrəşim, bildiri özəlliyini aktivləşdirir</value>
   </data>
   <data name="EzanSesi" xml:space="preserve">
     <value>Əzan səsi</value>
-  </data>
-  <data name="Farsi" xml:space="preserve">
-    <value>Farsca</value>
   </data>
   <data name="FecriKazibingirmesinekalanvakit" xml:space="preserve">
     <value>Fəcri Kazibin (Sahura) başlamasına qalan müddət: </value>
@@ -285,6 +255,15 @@
   <data name="FitratTVTwitter" xml:space="preserve">
     <value>Fitrət TV Twitter Səhfəsi</value>
   </data>
+  <data name="FitratTVYoutube" xml:space="preserve">
+    <value>Fitrət Tv Youtube kanalı</value>
+  </data>
+  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
+    <value>Cədvəl üçün namaz vaxtları yüklənmədi</value>
+  </data>
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+    <value>Namaz xatırlatmaları 30 gün üçün planlaşdırıldı</value>
+  </data>
   <data name="Hakkinda" xml:space="preserve">
     <value>Haqqında</value>
   </data>
@@ -309,26 +288,11 @@
   <data name="Ikindinincikmasinakalanvakit" xml:space="preserve">
     <value>İkindi vaxtının bitməsinə qalan müddət: </value>
   </data>
-  <data name="French" xml:space="preserve">
-    <value>Fransızca</value>
-  </data>
-  <data name="GotoSettings" xml:space="preserve">
-    <value>Ayarlara get</value>
-  </data>
-  <data name="KalanSure" xml:space="preserve">
-    <value>Qalan müddət: </value>
-  </data>
   <data name="Kapat" xml:space="preserve">
     <value>Söndür</value>
   </data>
   <data name="Kaydet" xml:space="preserve">
     <value>Qeyd et</value>
-  </data>
-  <data name="KaydetVeKapat" xml:space="preserve">
-    <value>Qeyd  et və söndür</value>
-  </data>
-  <data name="KaydetVeUygula" xml:space="preserve">
-    <value>Qeyd et və tətbiq et</value>
   </data>
   <data name="Kible" xml:space="preserve">
     <value>Qiblə</value>
@@ -357,9 +321,6 @@
   <data name="KonumYenilendi" xml:space="preserve">
     <value>Konum və vaxtlar başarıyla təzələndi</value>
   </data>
-  <data name="KoyuTema" xml:space="preserve">
-    <value>Qara tema</value>
-  </data>
   <data name="KusCiviltisi" xml:space="preserve">
     <value>Quş civiltisi</value>
   </data>
@@ -368,9 +329,6 @@
   </data>
   <data name="Ogle" xml:space="preserve">
     <value>Günorta</value>
-  </data>
-  <data name="Kyrgyz" xml:space="preserve">
-    <value>Kırgızca</value>
   </data>
   <data name="Oglenincikmasinakalanvakit" xml:space="preserve">
     <value>Günorta vaxtının çıxmasına qalan müddət: </value>
@@ -401,9 +359,6 @@
   </data>
   <data name="RadyoIcinInternet" xml:space="preserve">
     <value>Radioya bağlanmaq üçün internet lazım, xahiş olunur internetə bağlı olduğunuzu yoxlayın, ya da "web səhfə" linkinə tuşlayaraq ordan qulaq asa bilərsiz.</value>
-  </data>
-  <data name="Russian" xml:space="preserve">
-    <value>Rusca</value>
   </data>
   <data name="SabahSonu" xml:space="preserve">
     <value>Sübh Sonu</value>
@@ -465,24 +420,6 @@
   <data name="TitresimSwitch" xml:space="preserve">
     <value>Titrət</value>
   </data>
-  <data name="Turkish" xml:space="preserve">
-    <value>Türkcə</value>
-  </data>
-  <data name="UygulamaDili" xml:space="preserve">
-    <value>Tətbiq edilən dil</value>
-  </data>
-  <data name="UygulamaDiliniSecin" xml:space="preserve">
-    <value>Tətbiqat dili seçin</value>
-  </data>
-  <data name="UygulamaTema" xml:space="preserve">
-    <value>Tətbiqat təması</value>
-  </data>
-  <data name="UygulamaTemasiniSecin" xml:space="preserve">
-    <value>Tətbiqat təmasını seçin</value>
-  </data>
-  <data name="Uzbek" xml:space="preserve">
-    <value>Özbəkcə</value>
-  </data>
   <data name="Vakti" xml:space="preserve">
     <value>Vaxtı: </value>
   </data>
@@ -510,9 +447,6 @@
   <data name="YayinAkisi" xml:space="preserve">
     <value> Yayım axışı</value>
   </data>
-  <data name="YaziBoyutu" xml:space="preserve">
-    <value>Yazı ölçüsü: </value>
-  </data>
   <data name="Yenileniyor" xml:space="preserve">
     <value>Təzələnir</value>
   </data>
@@ -522,17 +456,104 @@
   <data name="Zamaninda" xml:space="preserve">
     <value>Vaxtında</value>
   </data>
-  <data name="FitratTVYoutube" xml:space="preserve">
-    <value>Fitrət Tv Youtube kanalı</value>
+  <data name="AciklamaBas" xml:space="preserve">
+    <value>Müsəlman, Allaha təslim olan və Onun yolunda hər çətinliyə qatlanan insanlara verilən addır. Onlar dinə olduğu kimi tabe olanlardır. "Allaha çağıran, xeyirxahlıq edən və mən yalnız Allaha təslim olanlardanam deyəndən daha gözəl sözlü kim ola bilər!" (Füssilət 41/33). Bu program, namaz və oruc vaxtlarına doğru və rahat çata bilmələri üçün nəzərdə tutulmuşdur. Vaxt hesablamaları və oruc saatları barəsində daha geniş məlumat üçün buradakı </value>
   </data>
-  <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
-    <value>Cədvəl üçün namaz vaxtları yüklənmədi</value>
+  <data name="AciklamaLinkText" xml:space="preserve">
+    <value>Quranda və sünnədə namaz vaxtları</value>
   </data>
-  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
-    <value>Namaz xatırlatmaları 30 gün üçün planlaşdırıldı</value>
+  <data name="AciklamaLinkURL" xml:space="preserve">
+    <value>https://www.muselmanlar.com/tedqiqatlar/5930.html</value>
+  </data>
+  <data name="AciklamaSon" xml:space="preserve">
+    <value> məqaləsini oxuyun.</value>
+  </data>
+  <data name="GotoSettings" xml:space="preserve">
+    <value>Ayarlara get</value>
+  </data>
+  <data name="UygulamaDiliniSecin" xml:space="preserve">
+    <value>Tətbiqat dili seçin</value>
+  </data>
+  <data name="UygulamaDili" xml:space="preserve">
+    <value>Tətbiq edilən dil</value>
+  </data>
+  <data name="UygulamaTemasiniSecin" xml:space="preserve">
+    <value>Tətbiqat təmasını seçin</value>
+  </data>
+  <data name="UygulamaTema" xml:space="preserve">
+    <value>Tətbiqat təması</value>
+  </data>
+  <data name="AcikTema" xml:space="preserve">
+    <value>Açıq tema</value>
+  </data>
+  <data name="KoyuTema" xml:space="preserve">
+    <value>Qara tema</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>İngilizcə</value>
+  </data>
+  <data name="Turkish" xml:space="preserve">
+    <value>Türkcə</value>
+  </data>
+  <data name="Chinese" xml:space="preserve">
+    <value>Çincə</value>
   </data>
   <data name="Uyghur" xml:space="preserve">
     <value>Uygurca</value>
+  </data>
+  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
+    <value>Cihazınız kompası dəstəkləmir</value>
+  </data>
+  <data name="AylikTakvimeErisemedi" xml:space="preserve">
+    <value>Aylıq təqvimə bağlanılmadı, Xahiş olunur internetinizin bağlı olub olmadığını və konumunuzun aktiv olduğunu yoxlayın!</value>
+  </data>
+  <data name="KaydetVeUygula" xml:space="preserve">
+    <value>Qeyd et və tətbiq et</value>
+  </data>
+  <data name="KalanSure" xml:space="preserve">
+    <value>Qalan müddət: </value>
+  </data>
+  <data name="AlarmSuresi" xml:space="preserve">
+    <value>Zəng müddəti: </value>
+  </data>
+  <data name="Dakika" xml:space="preserve">
+    <value> dəqiqə</value>
+  </data>
+  <data name="YaziBoyutu" xml:space="preserve">
+    <value>Yazı ölçüsü: </value>
+  </data>
+  <data name="BildirimKapatma" xml:space="preserve">
+    <value>Bildirini aktivləşdir</value>
+  </data>
+  <data name="BildirimUyari" xml:space="preserve">
+    <value>Bu parametri söndürməməyi tövsiyə edirik. Əgər qeyri-aktiv buraxarsanız zəng vaxtında çalmaya bilər. Əgər zənginiz çalmırsa xahiş olunur program parametrlərinə baxın: Bu parametrlərdə “Digər iznlər” bölümündə “Arxa planda başlat” izninin seçilmiş olduğunu yoxlayın. “Batareya qoruyucusu” bölümündə olan “Məhdudiyyət yox” parametrinin seçilmiş olduğundan əmin olun. İndi bu iznləri yoxlamaq istərsəniz aşağıdakı düyməyə basın.</value>
+  </data>
+  <data name="KaydetVeKapat" xml:space="preserve">
+    <value>Qeyd  et və söndür</value>
+  </data>
+  <data name="Arabic" xml:space="preserve">
+    <value>ərəbcə</value>
+  </data>
+  <data name="Russian" xml:space="preserve">
+    <value>Rusca</value>
+  </data>
+  <data name="Deutsch" xml:space="preserve">
+    <value>Almanca</value>
+  </data>
+  <data name="French" xml:space="preserve">
+    <value>Fransızca</value>
+  </data>
+  <data name="Farsi" xml:space="preserve">
+    <value>Farsca</value>
+  </data>
+  <data name="Azerbaijani" xml:space="preserve">
+    <value>Azəri Türkcəsi</value>
+  </data>
+  <data name="Kyrgyz" xml:space="preserve">
+    <value>Kırgızca</value>
+  </data>
+  <data name="Uzbek" xml:space="preserve">
+    <value>Özbəkcə</value>
   </data>
   <data name="DakikaOnceden" xml:space="preserve">
     <value> dəqiqə əvvəlcədən</value>
@@ -553,19 +574,19 @@
     <value>Proqram hər dəfə açılanda məkanı və namaz vaxtlarını yeniləyin</value>
   </data>
   <data name="UygulamaAyarlari" xml:space="preserve">
-	  <value>Proqram parametrləri</value>
+    <value>Proqram parametrləri</value>
   </data>
   <data name="Yenile" xml:space="preserve">
-	  <value>Təzələmək</value>
+    <value>Təzələmək</value>
   </data>
   <data name="RadyoCal" xml:space="preserve">
-	  <value>Radionu çal və ya dayandır</value>
+    <value>Radionu çal və ya dayandır</value>
   </data>
   <data name="Etkin" xml:space="preserve">
-	  <value>İşləkdir</value>
+    <value>İşləkdir</value>
   </data>
   <data name="DevreDisi" xml:space="preserve">
-	  <value>işlək deyil</value>
+    <value>işlək deyil</value>
   </data>
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>Siqnallar planlaşdırılır, gözləyin</value>
@@ -588,10 +609,16 @@
   <data name="Paylas" xml:space="preserve">
     <value>Paylaş</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>Bu gün</value>
+  <data name="TestNotification" xml:space="preserve">
+    <value>Sınaq bildirişi</value>
   </data>
-  <data name="BildirimIzniAciklama" xml:space="preserve">
-    <value>Bu tətbiqin sizə namaz vaxtı xatırlatmaları göndərməsi üçün bildiriş icazəsi lazımdır. Zəhmət olmasa, Parametrlər - Tətbiqlər - Süleymaniyyə Təqvimi - Bildirişlər bölməsində bildirişləri aktivləşdirin.</value>
+  <data name="TestNotificationMessage" xml:space="preserve">
+    <value>Bu, Süleymaniyyə Təqvimindən gələn sınaq bildirişidir. Əgər bunu görürsünüzsə, bildirişlər işləyir!</value>
+  </data>
+  <data name="TestNotificationButton" xml:space="preserve">
+    <value>Sınaq bildirişi (30 san.)</value>
+  </data>
+  <data name="TestNotificationScheduled" xml:space="preserve">
+    <value>Sınaq bildirişi planlaşdırıldı! Onu 30 saniyə ərzində almalısınız.</value>
   </data>
 </root>

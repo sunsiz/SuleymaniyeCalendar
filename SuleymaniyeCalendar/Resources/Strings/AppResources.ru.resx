@@ -120,20 +120,6 @@
   <data name="Aci" xml:space="preserve">
     <value>Направление</value>
   </data>
-  <data name="AciklamaBas" xml:space="preserve">
-    <value>Мусульманин – это имя, которое Аллах дал тем, кто покорился Ему и терпеливо переносит все трудности на Его пути. Это те, которые практикуют истинную религию, ничего не привнося в нее от себя.
-«Чья речь прекраснее, чем речь того, кто призывает к Аллаху, поступает праведно и говорит: «Поистине, я – мусульманин?!» (Фуссилят 41/33). 
-Эта программа предназначена для обеспечения безопасного и быстрого доступа к временам намаза и поста. Для получения более подробной информации о расчете времени и времени поста  читайте статью </value>
-  </data>
-  <data name="AciklamaLinkText" xml:space="preserve">
-    <value>Времена намаза и поста: от экватора до полюсов</value>
-  </data>
-  <data name="AciklamaSon" xml:space="preserve">
-    <value> .</value>
-  </data>
-  <data name="AcikTema" xml:space="preserve">
-    <value>Дневной режим</value>
-  </data>
   <data name="Aksam" xml:space="preserve">
     <value>Магриб</value>
   </data>
@@ -149,23 +135,26 @@
   <data name="Alarmkurarkenhataolustu" xml:space="preserve">
     <value>Во время установки будильника возникла ошибка</value>
   </data>
+  <data name="AlarmRestoreFailed" xml:space="preserve">
+    <value>Настройки будильников не были сохранены, а восстановить прежние будильники не удалось. Пожалуйста, проверьте свои будильники и попробуйте снова.</value>
+  </data>
+  <data name="AlarmSaveFailed" xml:space="preserve">
+    <value>Настройки будильника не были сохранены. Проверьте подключение и разрешения, затем попробуйте снова.</value>
+  </data>
+  <data name="AlarmPermissionTitle" xml:space="preserve">
+    <value>Требуется доступ к точным сигналам будильника</value>
+  </data>
+  <data name="AlarmExactPermissionRequired" xml:space="preserve">
+    <value>Разрешите использование точных сигналов в настройках устройства, чтобы получать напоминания в выбранное время. Ваши изменения не будут сохранены, пока вы не предоставите этот доступ.</value>
+  </data>
   <data name="AlarmSound" xml:space="preserve">
     <value>Голос будильника</value>
-  </data>
-  <data name="AlarmSuresi" xml:space="preserve">
-    <value>Время будильника: </value>
   </data>
   <data name="AlarmSwitch" xml:space="preserve">
     <value>Звонок будильника</value>
   </data>
   <data name="AylikTakvim" xml:space="preserve">
     <value>Ежемесячный календарь</value>
-  </data>
-  <data name="Arabic" xml:space="preserve">
-    <value>На арабском</value>
-  </data>
-  <data name="AylikTakvimeErisemedi" xml:space="preserve">
-    <value>Не удается получить доступ к ежемесячному календарю. Пожалуйста, проверьте, доступен ли ваш Интернет и активна ли служба определения местоположения!</value>
   </data>
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>Ежемесячный календарь успешно обновлен</value>
@@ -200,14 +189,11 @@
   <data name="BildirimIzniGerekli" xml:space="preserve">
     <value>Для планирования будильников требуется разрешение на уведомления.</value>
   </data>
-  <data name="BildirimKapatma" xml:space="preserve">
-    <value>Включить закрепленные уведомления</value>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Это приложение запрашивает разрешение на отправку напоминаний о времени молитвы. Пожалуйста, включите уведомления в Настройках - Приложения - Календарь Сулеймание - Уведомления.</value>
   </data>
-  <data name="Azerbaijani" xml:space="preserve">
-    <value>На азербайджанском</value>
-  </data>
-  <data name="BildirimUyari" xml:space="preserve">
-    <value>Мы рекомендуем не отключать этот параметр. Если его отключить, то будильник не сможет сработать вовремя. Если ваши будильники не звонят, проверьте настройки приложения. В этих настройках в разделе «Другие разрешения» проверьте, что выбрано разрешение «Запуск в фоновом режиме». Убедитесь, что в разделе «Экономия заряда батареи» выбран параметр «Без ограничений». Теперь, если вы хотите проверить эти разрешения, нажмите кнопку ниже.</value>
+  <data name="BildirimSorunu" xml:space="preserve">
+    <value>Если после предоставления разрешения уведомления по-прежнему не работают, возможно, потребуется сбросить настройки уведомлений iOS: «Настройки» → «Основные» → «Перенос или сброс iPhone» → «Сброс» → «Сбросить геолокацию и конфиденциальность». Это действие снимает внутренние блокировки уведомлений в iOS.</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>Время напоминания: </value>
@@ -218,32 +204,20 @@
   <data name="BoylamFormatsiz" xml:space="preserve">
     <value>Долгота</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Сегодня</value>
+  </data>
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Времена намаза на сегодня</value>
   </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>Будильник</value>
   </data>
-  <data name="Chinese" xml:space="preserve">
-    <value>На китайском</value>
-  </data>
   <data name="CihazGPSDesteklemiyor" xml:space="preserve">
     <value>Устройство не поддерживает GPS</value>
   </data>
-  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
-    <value>Устройство не поддерживает компас</value>
-  </data>
   <data name="CihazTitretmeyiDesteklemiyor" xml:space="preserve">
     <value>Устройство не поддерживает вибрацию</value>
-  </data>
-  <data name="Dakika" xml:space="preserve">
-    <value> минут</value>
-  </data>
-  <data name="English" xml:space="preserve">
-    <value>На английском</value>
-  </data>
-  <data name="Deutsch" xml:space="preserve">
-    <value>На немецком</value>
   </data>
   <data name="EnlemFormatsiz" xml:space="preserve">
     <value>Широта</value>
@@ -266,9 +240,6 @@
   <data name="FecriSadik" xml:space="preserve">
     <value>Фаджри-садик</value>
   </data>
-  <data name="Farsi" xml:space="preserve">
-    <value>На фарси</value>
-  </data>
   <data name="FecriSadikakalanvakit" xml:space="preserve">
     <value>Время до Фаджри-садика (истинный рассвет, окончания сухура) Имсак: </value>
   </data>
@@ -288,19 +259,13 @@
     <value>Фитрат ТВ на ютубе</value>
   </data>
   <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
-      <value>Не удалось загрузить времена молитв для планирования</value>
-    </data>
+    <value>Не удалось загрузить времена молитв для планирования</value>
+  </data>
   <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
-      <value>Напоминания о намазах запланированы на 30 дней</value>
-    </data>
-  <data name="GotoSettings" xml:space="preserve">
-    <value>Пройдите в настройки</value>
+    <value>Напоминания о намазах запланированы на 30 дней</value>
   </data>
   <data name="Hakkinda" xml:space="preserve">
     <value>О приложении</value>
-  </data>
-  <data name="French" xml:space="preserve">
-    <value>На французском</value>
   </data>
   <data name="HaritadaGoster" xml:space="preserve">
     <value>Показать местоположение на карте</value>
@@ -323,20 +288,11 @@
   <data name="Ikindinincikmasinakalanvakit" xml:space="preserve">
     <value>Время, до окончания Аср (после обеденного намаза): </value>
   </data>
-  <data name="KalanSure" xml:space="preserve">
-    <value>Оставшееся время: </value>
-  </data>
   <data name="Kapat" xml:space="preserve">
     <value>Закрыть</value>
   </data>
   <data name="Kaydet" xml:space="preserve">
     <value>Сохранить</value>
-  </data>
-  <data name="KaydetVeKapat" xml:space="preserve">
-    <value>Сохранить и закрыть</value>
-  </data>
-  <data name="KaydetVeUygula" xml:space="preserve">
-    <value>Сохранить и применить</value>
   </data>
   <data name="Kible" xml:space="preserve">
     <value>Кибла</value>
@@ -365,9 +321,6 @@
   <data name="KonumYenilendi" xml:space="preserve">
     <value>Местоположение и времена намазов успешно обновлены</value>
   </data>
-  <data name="KoyuTema" xml:space="preserve">
-    <value>Ночной режим</value>
-  </data>
   <data name="KusCiviltisi" xml:space="preserve">
     <value>Щебетание птиц</value>
   </data>
@@ -392,9 +345,6 @@
   <data name="Radyo" xml:space="preserve">
     <value>Радио</value>
   </data>
-  <data name="Kyrgyz" xml:space="preserve">
-    <value>На кыргызском</value>
-  </data>
   <data name="RadyoFitrat" xml:space="preserve">
     <value>Радио Фитрат</value>
   </data>
@@ -418,9 +368,6 @@
   </data>
   <data name="Sehir" xml:space="preserve">
     <value>Город</value>
-  </data>
-  <data name="Russian" xml:space="preserve">
-    <value>На русском</value>
   </data>
   <data name="SesSecAciklama" xml:space="preserve">
     <value>Выбирите звук будильника для этого времени намаза</value>
@@ -473,24 +420,6 @@
   <data name="TitresimSwitch" xml:space="preserve">
     <value>Вибрация</value>
   </data>
-  <data name="Turkish" xml:space="preserve">
-    <value>На турецком</value>
-  </data>
-  <data name="Uyghur" xml:space="preserve">
-    <value>На уйгурском</value>
-  </data>
-  <data name="UygulamaDili" xml:space="preserve">
-    <value>Язык для приложения</value>
-  </data>
-  <data name="UygulamaDiliniSecin" xml:space="preserve">
-    <value>Выбирите язык для приложения</value>
-  </data>
-  <data name="UygulamaTema" xml:space="preserve">
-    <value>Тема для приложения</value>
-  </data>
-  <data name="UygulamaTemasiniSecin" xml:space="preserve">
-    <value>Выбирите тему для приложения</value>
-  </data>
   <data name="Vakti" xml:space="preserve">
     <value>Вермя: </value>
   </data>
@@ -499,9 +428,6 @@
   </data>
   <data name="Version" xml:space="preserve">
     <value>версия</value>
-  </data>
-  <data name="Uzbek" xml:space="preserve">
-    <value>На узбекском</value>
   </data>
   <data name="WebSayfa" xml:space="preserve">
     <value> Web страница</value>
@@ -521,9 +447,6 @@
   <data name="YayinAkisi" xml:space="preserve">
     <value> Вещание</value>
   </data>
-  <data name="YaziBoyutu" xml:space="preserve">
-    <value>Размер шрифта: </value>
-  </data>
   <data name="Yenileniyor" xml:space="preserve">
     <value>Обновляется</value>
   </data>
@@ -533,8 +456,106 @@
   <data name="Zamaninda" xml:space="preserve">
     <value>Вовремя</value>
   </data>
+  <data name="AciklamaBas" xml:space="preserve">
+    <value>Мусульманин – это имя, которое Аллах дал тем, кто покорился Ему и терпеливо переносит все трудности на Его пути. Это те, которые практикуют истинную религию, ничего не привнося в нее от себя.
+«Чья речь прекраснее, чем речь того, кто призывает к Аллаху, поступает праведно и говорит: «Поистине, я – мусульманин?!» (Фуссилят 41/33). 
+Эта программа предназначена для обеспечения безопасного и быстрого доступа к временам намаза и поста. Для получения более подробной информации о расчете времени и времени поста  читайте статью </value>
+  </data>
+  <data name="AciklamaLinkText" xml:space="preserve">
+    <value>Времена намаза и поста: от экватора до полюсов</value>
+  </data>
   <data name="AciklamaLinkURL" xml:space="preserve">
     <value>https://www.fatva.net/%d0%b2%d1%80%d0%b5%d0%bc%d0%b5%d0%bd%d0%b0-%d0%bd%d0%b0%d0%bc%d0%b0%d0%b7%d0%b0-%d0%b8-%d0%bf%d0%be%d1%81%d1%82%d0%b0-%d0%be%d1%82-%d1%8d%d0%ba%d0%b2%d0%b0%d1%82%d0%be%d1%80%d0%b0-%d0%b4%d0%be-2</value>
+  </data>
+  <data name="AciklamaSon" xml:space="preserve">
+    <value> .</value>
+  </data>
+  <data name="GotoSettings" xml:space="preserve">
+    <value>Пройдите в настройки</value>
+  </data>
+  <data name="UygulamaDiliniSecin" xml:space="preserve">
+    <value>Выбирите язык для приложения</value>
+  </data>
+  <data name="UygulamaDili" xml:space="preserve">
+    <value>Язык для приложения</value>
+  </data>
+  <data name="UygulamaTemasiniSecin" xml:space="preserve">
+    <value>Выбирите тему для приложения</value>
+  </data>
+  <data name="UygulamaTema" xml:space="preserve">
+    <value>Тема для приложения</value>
+  </data>
+  <data name="AcikTema" xml:space="preserve">
+    <value>Дневной режим</value>
+  </data>
+  <data name="KoyuTema" xml:space="preserve">
+    <value>Ночной режим</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>На английском</value>
+  </data>
+  <data name="Turkish" xml:space="preserve">
+    <value>На турецком</value>
+  </data>
+  <data name="Chinese" xml:space="preserve">
+    <value>На китайском</value>
+  </data>
+  <data name="Uyghur" xml:space="preserve">
+    <value>На уйгурском</value>
+  </data>
+  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
+    <value>Устройство не поддерживает компас</value>
+  </data>
+  <data name="AylikTakvimeErisemedi" xml:space="preserve">
+    <value>Не удается получить доступ к ежемесячному календарю. Пожалуйста, проверьте, доступен ли ваш Интернет и активна ли служба определения местоположения!</value>
+  </data>
+  <data name="KaydetVeUygula" xml:space="preserve">
+    <value>Сохранить и применить</value>
+  </data>
+  <data name="KalanSure" xml:space="preserve">
+    <value>Оставшееся время: </value>
+  </data>
+  <data name="AlarmSuresi" xml:space="preserve">
+    <value>Время будильника: </value>
+  </data>
+  <data name="Dakika" xml:space="preserve">
+    <value> минут</value>
+  </data>
+  <data name="YaziBoyutu" xml:space="preserve">
+    <value>Размер шрифта: </value>
+  </data>
+  <data name="BildirimKapatma" xml:space="preserve">
+    <value>Включить закрепленные уведомления</value>
+  </data>
+  <data name="BildirimUyari" xml:space="preserve">
+    <value>Мы рекомендуем не отключать этот параметр. Если его отключить, то будильник не сможет сработать вовремя. Если ваши будильники не звонят, проверьте настройки приложения. В этих настройках в разделе «Другие разрешения» проверьте, что выбрано разрешение «Запуск в фоновом режиме». Убедитесь, что в разделе «Экономия заряда батареи» выбран параметр «Без ограничений». Теперь, если вы хотите проверить эти разрешения, нажмите кнопку ниже.</value>
+  </data>
+  <data name="KaydetVeKapat" xml:space="preserve">
+    <value>Сохранить и закрыть</value>
+  </data>
+  <data name="Arabic" xml:space="preserve">
+    <value>На арабском</value>
+  </data>
+  <data name="Russian" xml:space="preserve">
+    <value>На русском</value>
+  </data>
+  <data name="Deutsch" xml:space="preserve">
+    <value>На немецком</value>
+  </data>
+  <data name="French" xml:space="preserve">
+    <value>На французском</value>
+  </data>
+  <data name="Farsi" xml:space="preserve">
+    <value>На фарси</value>
+  </data>
+  <data name="Azerbaijani" xml:space="preserve">
+    <value>На азербайджанском</value>
+  </data>
+  <data name="Kyrgyz" xml:space="preserve">
+    <value>На кыргызском</value>
+  </data>
+  <data name="Uzbek" xml:space="preserve">
+    <value>На узбекском</value>
   </data>
   <data name="DakikaOnceden" xml:space="preserve">
     <value> минут раньше</value>
@@ -555,19 +576,19 @@
     <value>Обновлять местоположение и время молитв каждый раз, когда приложение открывается</value>
   </data>
   <data name="UygulamaAyarlari" xml:space="preserve">
-	  <value>Настройки приложения</value>
+    <value>Настройки приложения</value>
   </data>
   <data name="Yenile" xml:space="preserve">
-	  <value>Обновить</value>
+    <value>Обновить</value>
   </data>
   <data name="RadyoCal" xml:space="preserve">
-	  <value>Воспроизвести или приостановить радио</value>
+    <value>Воспроизвести или приостановить радио</value>
   </data>
   <data name="Etkin" xml:space="preserve">
-	  <value>Включено</value>
+    <value>Включено</value>
   </data>
   <data name="DevreDisi" xml:space="preserve">
-	  <value>выключено</value>
+    <value>выключено</value>
   </data>
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>Планирование будильников, пожалуйста, подождите</value>
@@ -581,19 +602,25 @@
   <data name="Adres" xml:space="preserve">
     <value>Адрес</value>
   </data>
-  <data name="Durdur" xml:space="preserve">
-    <value>Остановить</value>
-  </data>
   <data name="Oynat" xml:space="preserve">
     <value>Воспроизвести</value>
+  </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>Остановить</value>
   </data>
   <data name="Paylas" xml:space="preserve">
     <value>Делиться</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>Сегодня</value>
+  <data name="TestNotification" xml:space="preserve">
+    <value>Тестовое уведомление</value>
   </data>
-  <data name="BildirimIzniAciklama" xml:space="preserve">
-    <value>Это приложение запрашивает разрешение на отправку напоминаний о времени молитвы. Пожалуйста, включите уведомления в Настройках - Приложения - Календарь Сулеймание - Уведомления.</value>
+  <data name="TestNotificationMessage" xml:space="preserve">
+    <value>Это тестовое уведомление от календаря «Сулеймание». Если вы его видите, значит, уведомления работают!</value>
+  </data>
+  <data name="TestNotificationButton" xml:space="preserve">
+    <value>Тестовое уведомление (30 сек.)</value>
+  </data>
+  <data name="TestNotificationScheduled" xml:space="preserve">
+    <value>Тестовое уведомление запланировано! Вы должны получить его через 30 секунд.</value>
   </data>
 </root>

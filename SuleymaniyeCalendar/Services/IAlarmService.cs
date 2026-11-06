@@ -25,6 +25,16 @@ public interface IAlarmService
     /// <param name="settings">Notification details (title, body, sound).</param>
     void SetAlarm(DateTime alarmTime, int requestCode, NotificationSettings settings);
 
+    /// <summary>Schedules an alarm and completes when the platform accepts it.</summary>
+    Task SetAlarmAsync(DateTime alarmTime, int requestCode, NotificationSettings settings)
+    {
+        SetAlarm(alarmTime, requestCode, settings);
+        return Task.CompletedTask;
+    }
+
+    /// <summary>Checks that the platform can accept alarms before existing alarms are replaced.</summary>
+    void ValidateSchedulingAvailability() { }
+
     /// <summary>
     /// Cancels all scheduled prayer alarms.
     /// </summary>

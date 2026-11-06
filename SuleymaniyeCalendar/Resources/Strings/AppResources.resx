@@ -115,6 +115,18 @@
   <data name="Alarmkurarkenhataolustu" xml:space="preserve">
     <value>An error occurred while setting the alarm</value>
   </data>
+  <data name="AlarmRestoreFailed" xml:space="preserve">
+    <value>The alarm settings were not saved, and previous alarms could not be restored. Please check your alarms and try again.</value>
+  </data>
+  <data name="AlarmSaveFailed" xml:space="preserve">
+    <value>Your alarm settings were not saved. Please check your connection and permissions, then try again.</value>
+  </data>
+  <data name="AlarmPermissionTitle" xml:space="preserve">
+    <value>Exact alarm access needed</value>
+  </data>
+  <data name="AlarmExactPermissionRequired" xml:space="preserve">
+    <value>Allow exact alarms in your device settings to receive reminders at the selected time. Your changes won't be saved until access is allowed.</value>
+  </data>
   <data name="AlarmSound" xml:space="preserve">
     <value>Alarm Ringtone</value>
   </data>

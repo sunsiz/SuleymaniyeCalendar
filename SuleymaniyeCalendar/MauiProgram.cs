@@ -6,6 +6,10 @@ using SuleymaniyeCalendar.Services;
 using SuleymaniyeCalendar.ViewModels;
 using SuleymaniyeCalendar.Views;
 
+#if MAUI_DEVFLOW
+using Microsoft.Maui.DevFlow.Agent;
+#endif
+
 #if ANDROID
 using Microsoft.Maui.Controls.Handlers.Items;
 using Microsoft.Maui.Handlers;
@@ -40,6 +44,10 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 fonts.AddFont("UKIJTuT.ttf", "UyghurFont");
             });
+
+#if MAUI_DEVFLOW
+        builder.AddMauiDevFlowAgent();
+#endif
 
         ConfigurePlatformHandlers();
         RegisterServices(builder.Services);

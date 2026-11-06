@@ -135,6 +135,18 @@
   <data name="Alarmkurarkenhataolustu" xml:space="preserve">
     <value>设置闹钟时出错</value>
   </data>
+  <data name="AlarmRestoreFailed" xml:space="preserve">
+    <value>闹钟设置未保存，且无法恢复之前的闹钟。请检查您的闹钟设置，然后重试。</value>
+  </data>
+  <data name="AlarmSaveFailed" xml:space="preserve">
+    <value>您的闹钟设置未保存。请检查您的连接和权限，然后重试。</value>
+  </data>
+  <data name="AlarmPermissionTitle" xml:space="preserve">
+    <value>需要“精确闹钟”访问权限</value>
+  </data>
+  <data name="AlarmExactPermissionRequired" xml:space="preserve">
+    <value>请在设备设置中允许使用“精确闹钟”，以便在选定时间收到提醒。只有在授予此权限后，您的更改才会保存。</value>
+  </data>
   <data name="AlarmSound" xml:space="preserve">
     <value>闹钟铃声</value>
   </data>
@@ -177,6 +189,12 @@
   <data name="BildirimIzniGerekli" xml:space="preserve">
     <value>计划闹钟需要通知权限。</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>此应用需要通知权限才能向您发送祈祷时间提醒。请在“设置”-“应用”-“苏莱马尼亚日历”-“通知”中启用通知。</value>
+  </data>
+  <data name="BildirimSorunu" xml:space="preserve">
+    <value>如果授予权限后通知仍无法正常工作，您可能需要重置 iOS 通知设置：前往“设置”→“通用”→“传输或还原 iPhone”→“还原”→“还原位置与隐私”。此操作会清除 iOS 系统内部针对通知的限制。</value>
+  </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>提醒时间： </value>
   </data>
@@ -185,6 +203,9 @@
   </data>
   <data name="BoylamFormatsiz" xml:space="preserve">
     <value>经度</value>
+  </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>今天</value>
   </data>
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>今日礼拜时间</value>
@@ -435,9 +456,6 @@
   <data name="Zamaninda" xml:space="preserve">
     <value>准时</value>
   </data>
-  <data name="AciklamaLinkURL" xml:space="preserve">
-    <value>https://www.gulanjingzhidao.com/li-bai-yan-jiu</value>
-  </data>
   <data name="AciklamaBas" xml:space="preserve">
     <value>穆斯林是安拉给那些臣服于安拉并以他的方式忍受一切困难的人的名字。 他们是不屈不挠地实践宗教的人。
 “召人信仰真主，力行善功，并且说：「我确是穆斯林」的人，在言辞方面，有谁比他更优美呢？”（奉绥来特  41/33）
@@ -445,6 +463,9 @@
   </data>
   <data name="AciklamaLinkText" xml:space="preserve">
     <value>礼拜研究</value>
+  </data>
+  <data name="AciklamaLinkURL" xml:space="preserve">
+    <value>https://www.gulanjingzhidao.com/li-bai-yan-jiu</value>
   </data>
   <data name="AciklamaSon" xml:space="preserve">
     <value> 文章。</value>
@@ -458,17 +479,17 @@
   <data name="UygulamaDili" xml:space="preserve">
     <value>应用语言</value>
   </data>
-  <data name="UygulamaTema" xml:space="preserve">
-    <value>应用主题</value>
-  </data>
   <data name="UygulamaTemasiniSecin" xml:space="preserve">
     <value>选择应用主题</value>
   </data>
-  <data name="KoyuTema" xml:space="preserve">
-    <value>夜间模式</value>
+  <data name="UygulamaTema" xml:space="preserve">
+    <value>应用主题</value>
   </data>
   <data name="AcikTema" xml:space="preserve">
     <value>浅色主题</value>
+  </data>
+  <data name="KoyuTema" xml:space="preserve">
+    <value>夜间模式</value>
   </data>
   <data name="English" xml:space="preserve">
     <value>英语</value>
@@ -555,19 +576,19 @@
     <value>每次打开应用程序时刷新位置和礼拜时间</value>
   </data>
   <data name="UygulamaAyarlari" xml:space="preserve">
-	  <value>应用程序设置</value>
+    <value>应用程序设置</value>
   </data>
   <data name="Yenile" xml:space="preserve">
-	  <value>刷新</value>
+    <value>刷新</value>
   </data>
   <data name="RadyoCal" xml:space="preserve">
-	  <value>播放或暂停收音机</value>
+    <value>播放或暂停收音机</value>
   </data>
   <data name="Etkin" xml:space="preserve">
-	  <value>已启用</value>
+    <value>已启用</value>
   </data>
   <data name="DevreDisi" xml:space="preserve">
-	  <value>已禁用</value>
+    <value>已禁用</value>
   </data>
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>正在安排闹钟，请稍候</value>
@@ -590,10 +611,16 @@
   <data name="Paylas" xml:space="preserve">
     <value>分享</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>今天</value>
+  <data name="TestNotification" xml:space="preserve">
+    <value>测试通知</value>
   </data>
-  <data name="BildirimIzniAciklama" xml:space="preserve">
-    <value>此应用需要通知权限才能向您发送祈祷时间提醒。请在“设置”-“应用”-“苏莱马尼亚日历”-“通知”中启用通知。</value>
+  <data name="TestNotificationMessage" xml:space="preserve">
+    <value>这是来自“苏莱曼尼耶日历”（Süleymaniye Calendar）的测试通知。如果您能看到这条消息，说明通知功能正常！</value>
+  </data>
+  <data name="TestNotificationButton" xml:space="preserve">
+    <value>测试通知（30秒）</value>
+  </data>
+  <data name="TestNotificationScheduled" xml:space="preserve">
+    <value>测试通知已安排！您应在 30 秒内收到。</value>
   </data>
 </root>

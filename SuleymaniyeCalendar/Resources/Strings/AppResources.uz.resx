@@ -120,23 +120,6 @@
   <data name="Aci" xml:space="preserve">
     <value>Burchak</value>
   </data>
-  <data name="AciklamaBas" xml:space="preserve">
-    <value>Musulmon – Alloh taologa taslim boʻlgan va Uning yoʻlida barcha qiyinchiliklarga bardosh berganlarga Alloh taolo bergen ismdir. Ular dinda Allohga xolis turgan holda amal qiluvchilardir. 
-“Allohga da'vat qilgan, solih amallar qilgan va: “Men Allohga to‘liq taslim bo‘lganlardan (musulmonlardan)man”, degan kimsadan ham chiroyli so'zlik biri bormi?” (Fussilat 41/33).
-Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uchun mo'ljallangan. Vaqt hisoblari va ro'za vaqtlari haqida batafsil ma'lumot olish uchun bu yerni bosing </value>
-  </data>
-  <data name="AciklamaLinkText" xml:space="preserve">
-    <value>Qur'onda namoz vaqtlari</value>
-  </data>
-  <data name="AciklamaLinkURL" xml:space="preserve">
-    <value>https://www.musulmonlar.com/uronda-namoz-va-tlari</value>
-  </data>
-  <data name="AciklamaSon" xml:space="preserve">
-    <value> Maqolani o'qing.</value>
-  </data>
-  <data name="AcikTema" xml:space="preserve">
-    <value>Ochiq mavzu</value>
-  </data>
   <data name="Aksam" xml:space="preserve">
     <value>Shom</value>
   </data>
@@ -152,23 +135,26 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="Alarmkurarkenhataolustu" xml:space="preserve">
     <value>Signal tayyorlashda xatolik yuz berdi</value>
   </data>
+  <data name="AlarmRestoreFailed" xml:space="preserve">
+    <value>Signal sozlamalari saqlanmadi va avvalgi signallarni tiklab bo‘lmadi. Iltimos, signallaringizni tekshirib ko‘ring va qaytadan urinib ko‘ring.</value>
+  </data>
+  <data name="AlarmSaveFailed" xml:space="preserve">
+    <value>Signal sozlamalaringiz saqlanmadi. Iltimos, ulanish va ruxsatlarni tekshirib ko‘ring, so‘ng qaytadan urinib ko‘ring.</value>
+  </data>
+  <data name="AlarmPermissionTitle" xml:space="preserve">
+    <value>Aniq vaqtli signallarga kirish talab qilinadi</value>
+  </data>
+  <data name="AlarmExactPermissionRequired" xml:space="preserve">
+    <value>Tanlangan vaqtda eslatmalarni qabul qilish uchun qurilma sozlamalarida aniq signallarga (exact alarms) ruxsat bering. Ruxsat berilmaguncha, kiritgan o‘zgarishlaringiz saqlanmaydi.</value>
+  </data>
   <data name="AlarmSound" xml:space="preserve">
     <value>Signal ovozi</value>
-  </data>
-  <data name="AlarmSuresi" xml:space="preserve">
-    <value>Signal muddati: </value>
   </data>
   <data name="AlarmSwitch" xml:space="preserve">
     <value>Signal berish</value>
   </data>
-  <data name="AlarmTekrarlari" xml:space="preserve">
-    <value>Signal ovozining takrorlanish soni: </value>
-  </data>
   <data name="AylikTakvim" xml:space="preserve">
     <value>Oylik taqvim</value>
-  </data>
-  <data name="AylikTakvimeErisemedi" xml:space="preserve">
-    <value>Oylik taqvimga kirish imkoni yo‘q. Iltimos, internetingiz mavjudligi va joylashuv xizmati faolligini tekshiring!</value>
   </data>
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>Oylik taqvim muvaffaqiyatli yangilandi</value>
@@ -181,9 +167,6 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   </data>
   <data name="AylikVeriYenilemeIste" xml:space="preserve">
     <value>Oylik ma'lumotlarni yuklash uchun yangilang</value>
-  </data>
-  <data name="Azerbaijani" xml:space="preserve">
-    <value>Ozarbayjoncha</value>
   </data>
   <data name="BesDakikaOnceden" xml:space="preserve">
     <value>Besh daqiqa oldin</value>
@@ -200,26 +183,17 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="BildiriEtkinIcerik" xml:space="preserve">
     <value> Bildirishnoma yoqilgan.</value>
   </data>
-  <data name="Arabic" xml:space="preserve">
-    <value>Arabcha</value>
-  </data>
   <data name="BildirimGosterSwitch" xml:space="preserve">
     <value>Bildirishnomani ko'rsatish</value>
   </data>
   <data name="BildirimIzniGerekli" xml:space="preserve">
     <value>Signallarni rejalashtirish uchun bildirishnoma ruxsati talab qilinadi.</value>
   </data>
-  <data name="BildirimKapatma" xml:space="preserve">
-    <value>Muqim bildirishnomani yoqish</value>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Ushbu ilova sizga namoz vaqtlari haqida eslatmalarni yuborish uchun bildirishnoma ruxsatiga muhtoj. Iltimos, Sozlamalar - Ilovalar - Sulaymoniya taqvimi - Bildirishnomalar bo'limida bildirishnomalarni yoqing.</value>
   </data>
-  <data name="BildirimNamazVakitleri" xml:space="preserve">
-    <value>Bildirishnomada namoz vaqtlarini ko'rsatish</value>
-  </data>
-  <data name="BildirimNamazVakitleriUyari" xml:space="preserve">
-    <value>Eslatma: kuchga kirishi uchun yarim daqiqa vaqt ketishi mumkin</value>
-  </data>
-  <data name="BildirimUyari" xml:space="preserve">
-    <value>Ushbu sozlamani o'chirmaslikni tavsiya qilamiz. Agar uni o'chirib qo'ysangiz, signallar o'z vaqtida eshitilmasligi mumkin. Agar signallaringiz jiringlamasa, ilova sozlamalarini tekshiring. Ushbu sozlamalarda "Boshqa ruxsatlar" bo'limida "Fonda boshlash" ruxsati tanlanganligini tekshiring. "Batareyani tejash" bo'limida "Cheklovlar yo'q" sozlamasi tanlanganligiga ishonch hosil qiling. Endi siz ushbu ruxsatlarni tekshirmoqchi bo'lsangiz, quyidagi tugmani bosing.</value>
+  <data name="BildirimSorunu" xml:space="preserve">
+    <value>Agar ruxsat berganingizdan keyin ham bildirishnomalar ishlamasa, iOS bildirishnoma sozlamalarini qayta tiklashingiz kerak bo‘lishi mumkin: Sozlamalar → Asosiy → iPhone-ni o‘tkazish yoki qayta tiklash → Qayta tiklash → Joylashuv va maxfiylikni qayta tiklash. Bu iOS tizimidagi bildirishnomalarga oid ichki cheklovlarni olib tashlaydi.</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>Eslatish vaqti: </value>
@@ -230,35 +204,20 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="BoylamFormatsiz" xml:space="preserve">
     <value>Uzunlik</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Bugun</value>
+  </data>
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Bugungi namoz vaqtlari</value>
   </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>Uyg'otuvchi soat</value>
   </data>
-  <data name="Chinese" xml:space="preserve">
-    <value>Xitoycha</value>
-  </data>
   <data name="CihazGPSDesteklemiyor" xml:space="preserve">
     <value>Qurilmangiz GPS-ni qo'llab-quvvatlamaydi</value>
   </data>
-  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
-    <value>Qurilmangiz compasni qo'llab-quvvatlamaydi</value>
-  </data>
   <data name="CihazTitretmeyiDesteklemiyor" xml:space="preserve">
     <value>Qurilmangiz titrashni qo'llab-quvvatlamaydi</value>
-  </data>
-  <data name="Dakika" xml:space="preserve">
-    <value> daqiqa</value>
-  </data>
-  <data name="DakikaOnceden" xml:space="preserve">
-    <value> daqiqa oldin</value>
-  </data>
-  <data name="Deutsch" xml:space="preserve">
-    <value>Nemischa</value>
-  </data>
-  <data name="English" xml:space="preserve">
-    <value>Inglizcha</value>
   </data>
   <data name="EnlemFormatsiz" xml:space="preserve">
     <value>Kenglik</value>
@@ -271,9 +230,6 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   </data>
   <data name="EzanSesi" xml:space="preserve">
     <value>Azon ovozi</value>
-  </data>
-  <data name="Farsi" xml:space="preserve">
-    <value>Forscha</value>
   </data>
   <data name="FecriKazibingirmesinekalanvakit" xml:space="preserve">
     <value>Fajri-kozib (Saharlik) vaqti kirishigacha qolgan muddat: </value>
@@ -303,16 +259,10 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
     <value>Fitrat TV youtube kanali</value>
   </data>
   <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
-      <value>Namoz vaqtlarini rejalashtirish uchun yuklashda xatolik yuz berdi</value>
-    </data>
-  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
-      <value>Namoz eslatmalari 30 kun uchun rejalandi</value>
-    </data>
-  <data name="French" xml:space="preserve">
-    <value>Fransuzcha</value>
+    <value>Namoz vaqtlarini rejalashtirish uchun yuklashda xatolik yuz berdi</value>
   </data>
-  <data name="GotoSettings" xml:space="preserve">
-    <value>Sozlamalarga o'tish</value>
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+    <value>Namoz eslatmalari 30 kun uchun rejalandi</value>
   </data>
   <data name="Hakkinda" xml:space="preserve">
     <value>Haqida</value>
@@ -338,23 +288,11 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="Ikindinincikmasinakalanvakit" xml:space="preserve">
     <value>Asr tugashigacha qolgan muddat: </value>
   </data>
-  <data name="KalanSure" xml:space="preserve">
-    <value>Qolgan muddat: </value>
-  </data>
   <data name="Kapat" xml:space="preserve">
     <value>Yopish</value>
   </data>
   <data name="Kaydet" xml:space="preserve">
     <value>Saqlash</value>
-  </data>
-  <data name="KaydetVeKapat" xml:space="preserve">
-    <value>Saqlash va yopish</value>
-  </data>
-  <data name="KaydetVeUygula" xml:space="preserve">
-    <value>Saqlash va qo'llash</value>
-  </data>
-  <data name="Kere" xml:space="preserve">
-    <value> marta</value>
   </data>
   <data name="Kible" xml:space="preserve">
     <value>Qibla</value>
@@ -383,14 +321,8 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="KonumYenilendi" xml:space="preserve">
     <value>Joylashuv va vaqtlar muvaffaqiyatli yangilandi</value>
   </data>
-  <data name="KoyuTema" xml:space="preserve">
-    <value>Qorong'u tema</value>
-  </data>
   <data name="KusCiviltisi" xml:space="preserve">
     <value>Qushlarning sayrashi</value>
-  </data>
-  <data name="Kyrgyz" xml:space="preserve">
-    <value>Qirg'izcha</value>
   </data>
   <data name="NamazVaktiAlmaHatasi" xml:space="preserve">
     <value>Internetdan namoz vaqtlarini yuklashda xatolik yuz berdi.</value>
@@ -427,9 +359,6 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   </data>
   <data name="RadyoIcinInternet" xml:space="preserve">
     <value>Radioni ijro etish uchun internet talab qilinadi, iltimos, internet ulanganligini tekshiring yoki “Veb-sahifa” havolasini bosish orqali veb-sahifadan tinglashingiz mumkin.</value>
-  </data>
-  <data name="Russian" xml:space="preserve">
-    <value>Ruscha</value>
   </data>
   <data name="SabahSonu" xml:space="preserve">
     <value>Quyosh chiqishi</value>
@@ -491,27 +420,6 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="TitresimSwitch" xml:space="preserve">
     <value>Titrash</value>
   </data>
-  <data name="Turkish" xml:space="preserve">
-    <value>Turkcha</value>
-  </data>
-  <data name="Uyghur" xml:space="preserve">
-    <value>Uyg'urcha</value>
-  </data>
-  <data name="UygulamaDili" xml:space="preserve">
-    <value>Ilova tili</value>
-  </data>
-  <data name="UygulamaDiliniSecin" xml:space="preserve">
-    <value>Ilova tilini tanlang</value>
-  </data>
-  <data name="UygulamaTema" xml:space="preserve">
-    <value>Iilova mavzusi</value>
-  </data>
-  <data name="UygulamaTemasiniSecin" xml:space="preserve">
-    <value>Ilova mavzusini tanlang</value>
-  </data>
-  <data name="Uzbek" xml:space="preserve">
-    <value>O'zbekcha</value>
-  </data>
   <data name="Vakti" xml:space="preserve">
     <value>Vaqti: </value>
   </data>
@@ -539,9 +447,6 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="YayinAkisi" xml:space="preserve">
     <value> Radio ijrosi</value>
   </data>
-  <data name="YaziBoyutu" xml:space="preserve">
-    <value>Shrift hajmi: </value>
-  </data>
   <data name="Yenileniyor" xml:space="preserve">
     <value>Yangilanmoqda</value>
   </data>
@@ -551,23 +456,139 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="Zamaninda" xml:space="preserve">
     <value>Vaqtida</value>
   </data>
+  <data name="AciklamaBas" xml:space="preserve">
+    <value>Musulmon – Alloh taologa taslim boʻlgan va Uning yoʻlida barcha qiyinchiliklarga bardosh berganlarga Alloh taolo bergen ismdir. Ular dinda Allohga xolis turgan holda amal qiluvchilardir. 
+“Allohga da'vat qilgan, solih amallar qilgan va: “Men Allohga to‘liq taslim bo‘lganlardan (musulmonlardan)man”, degan kimsadan ham chiroyli so'zlik biri bormi?” (Fussilat 41/33).
+Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uchun mo'ljallangan. Vaqt hisoblari va ro'za vaqtlari haqida batafsil ma'lumot olish uchun bu yerni bosing </value>
+  </data>
+  <data name="AciklamaLinkText" xml:space="preserve">
+    <value>Qur'onda namoz vaqtlari</value>
+  </data>
+  <data name="AciklamaLinkURL" xml:space="preserve">
+    <value>https://www.musulmonlar.com/uronda-namoz-va-tlari</value>
+  </data>
+  <data name="AciklamaSon" xml:space="preserve">
+    <value> Maqolani o'qing.</value>
+  </data>
+  <data name="GotoSettings" xml:space="preserve">
+    <value>Sozlamalarga o'tish</value>
+  </data>
+  <data name="UygulamaDiliniSecin" xml:space="preserve">
+    <value>Ilova tilini tanlang</value>
+  </data>
+  <data name="UygulamaDili" xml:space="preserve">
+    <value>Ilova tili</value>
+  </data>
+  <data name="UygulamaTemasiniSecin" xml:space="preserve">
+    <value>Ilova mavzusini tanlang</value>
+  </data>
+  <data name="UygulamaTema" xml:space="preserve">
+    <value>Iilova mavzusi</value>
+  </data>
+  <data name="AcikTema" xml:space="preserve">
+    <value>Ochiq mavzu</value>
+  </data>
+  <data name="KoyuTema" xml:space="preserve">
+    <value>Qorong'u tema</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>Inglizcha</value>
+  </data>
+  <data name="Turkish" xml:space="preserve">
+    <value>Turkcha</value>
+  </data>
+  <data name="Chinese" xml:space="preserve">
+    <value>Xitoycha</value>
+  </data>
+  <data name="Uyghur" xml:space="preserve">
+    <value>Uyg'urcha</value>
+  </data>
+  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
+    <value>Qurilmangiz compasni qo'llab-quvvatlamaydi</value>
+  </data>
+  <data name="AylikTakvimeErisemedi" xml:space="preserve">
+    <value>Oylik taqvimga kirish imkoni yo‘q. Iltimos, internetingiz mavjudligi va joylashuv xizmati faolligini tekshiring!</value>
+  </data>
+  <data name="KaydetVeUygula" xml:space="preserve">
+    <value>Saqlash va qo'llash</value>
+  </data>
+  <data name="KalanSure" xml:space="preserve">
+    <value>Qolgan muddat: </value>
+  </data>
+  <data name="AlarmSuresi" xml:space="preserve">
+    <value>Signal muddati: </value>
+  </data>
+  <data name="Dakika" xml:space="preserve">
+    <value> daqiqa</value>
+  </data>
+  <data name="YaziBoyutu" xml:space="preserve">
+    <value>Shrift hajmi: </value>
+  </data>
+  <data name="BildirimKapatma" xml:space="preserve">
+    <value>Muqim bildirishnomani yoqish</value>
+  </data>
+  <data name="BildirimUyari" xml:space="preserve">
+    <value>Ushbu sozlamani o'chirmaslikni tavsiya qilamiz. Agar uni o'chirib qo'ysangiz, signallar o'z vaqtida eshitilmasligi mumkin. Agar signallaringiz jiringlamasa, ilova sozlamalarini tekshiring. Ushbu sozlamalarda "Boshqa ruxsatlar" bo'limida "Fonda boshlash" ruxsati tanlanganligini tekshiring. "Batareyani tejash" bo'limida "Cheklovlar yo'q" sozlamasi tanlanganligiga ishonch hosil qiling. Endi siz ushbu ruxsatlarni tekshirmoqchi bo'lsangiz, quyidagi tugmani bosing.</value>
+  </data>
+  <data name="KaydetVeKapat" xml:space="preserve">
+    <value>Saqlash va yopish</value>
+  </data>
+  <data name="Arabic" xml:space="preserve">
+    <value>Arabcha</value>
+  </data>
+  <data name="Russian" xml:space="preserve">
+    <value>Ruscha</value>
+  </data>
+  <data name="Deutsch" xml:space="preserve">
+    <value>Nemischa</value>
+  </data>
+  <data name="French" xml:space="preserve">
+    <value>Fransuzcha</value>
+  </data>
+  <data name="Farsi" xml:space="preserve">
+    <value>Forscha</value>
+  </data>
+  <data name="Azerbaijani" xml:space="preserve">
+    <value>Ozarbayjoncha</value>
+  </data>
+  <data name="Kyrgyz" xml:space="preserve">
+    <value>Qirg'izcha</value>
+  </data>
+  <data name="Uzbek" xml:space="preserve">
+    <value>O'zbekcha</value>
+  </data>
+  <data name="DakikaOnceden" xml:space="preserve">
+    <value> daqiqa oldin</value>
+  </data>
+  <data name="AlarmTekrarlari" xml:space="preserve">
+    <value>Signal ovozining takrorlanish soni: </value>
+  </data>
+  <data name="Kere" xml:space="preserve">
+    <value> marta</value>
+  </data>
+  <data name="BildirimNamazVakitleri" xml:space="preserve">
+    <value>Bildirishnomada namoz vaqtlarini ko'rsatish</value>
+  </data>
+  <data name="BildirimNamazVakitleriUyari" xml:space="preserve">
+    <value>Eslatma: kuchga kirishi uchun yarim daqiqa vaqt ketishi mumkin</value>
+  </data>
   <data name="HepKonumYenile" xml:space="preserve">
     <value>Ilova har safar ochilganda joylashuv va namoz vaqtlarini yangilang</value>
   </data>
   <data name="UygulamaAyarlari" xml:space="preserve">
-	  <value>Ilova sozlamalari</value>
+    <value>Ilova sozlamalari</value>
   </data>
   <data name="Yenile" xml:space="preserve">
-	  <value>Yangilash</value>
+    <value>Yangilash</value>
   </data>
   <data name="RadyoCal" xml:space="preserve">
-	  <value>Radioni oʻynatish yoki toʻxtatish</value>
+    <value>Radioni oʻynatish yoki toʻxtatish</value>
   </data>
   <data name="Etkin" xml:space="preserve">
-	  <value>Yoqilgan</value>
+    <value>Yoqilgan</value>
   </data>
   <data name="DevreDisi" xml:space="preserve">
-	  <value>O'chirilgan</value>
+    <value>O'chirilgan</value>
   </data>
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>Signallar rejalashtirilmoqda, kuting</value>
@@ -581,19 +602,25 @@ Ushbu dastur namoz va ro'za vaqtlariga bexatar va tezkor kirishni ta'minlash uch
   <data name="Adres" xml:space="preserve">
     <value>Manzil</value>
   </data>
-  <data name="Durdur" xml:space="preserve">
-    <value>Toʻxtatish</value>
-  </data>
   <data name="Oynat" xml:space="preserve">
     <value>Oʻynatish</value>
+  </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>Toʻxtatish</value>
   </data>
   <data name="Paylas" xml:space="preserve">
     <value>Baham ko'ring</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>Bugun</value>
+  <data name="TestNotification" xml:space="preserve">
+    <value>Sinov bildirishnomasi</value>
   </data>
-  <data name="BildirimIzniAciklama" xml:space="preserve">
-    <value>Ushbu ilova sizga namoz vaqtlari haqida eslatmalarni yuborish uchun bildirishnoma ruxsatiga muhtoj. Iltimos, Sozlamalar - Ilovalar - Sulaymoniya taqvimi - Bildirishnomalar bo'limida bildirishnomalarni yoqing.</value>
+  <data name="TestNotificationMessage" xml:space="preserve">
+    <value>Bu — Süleymaniye taqvimidan sinov xabarnomasi. Agar buni ko‘rayotgan bo‘lsangiz, demak, xabarnomalar ishlayapti!</value>
+  </data>
+  <data name="TestNotificationButton" xml:space="preserve">
+    <value>Sinov bildirishnomasi (30 soniya)</value>
+  </data>
+  <data name="TestNotificationScheduled" xml:space="preserve">
+    <value>Sinov bildirishnomasi rejalashtirildi! U sizga 30 soniya ichida yetib kelishi kerak.</value>
   </data>
 </root>

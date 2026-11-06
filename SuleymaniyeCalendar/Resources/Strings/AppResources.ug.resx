@@ -135,6 +135,18 @@
   <data name="Alarmkurarkenhataolustu" xml:space="preserve">
     <value>قوڭغۇراقلارنى تەڭشەۋاتقاندا بىر خاتالىق يۈز بەردى</value>
   </data>
+  <data name="AlarmRestoreFailed" xml:space="preserve">
+    <value>قوڭغۇراق تەڭشەكلىرى ساقلانمىدى، ۋە ئىلگىرىكى قوڭغۇراق تەڭشەكلىرىنى ئەسلىگە كەلتۈرگىلى بولمىدى. قوڭغۇراق تەڭشەكلىرىڭىزنى تەكشۈرۈپ، قايتا سىناپ كۆرۈڭ.</value>
+  </data>
+  <data name="AlarmSaveFailed" xml:space="preserve">
+    <value>قوڭغۇراقلىق سائەت تەڭشەكلىرىڭىز ساقلانمىدى. تور ئۇلىنىشىڭىز ۋە رۇخسەتلىرىڭىزنى تەكشۈرۈپ، ئاندىن قايتا سىناپ كۆرۈڭ.</value>
+  </data>
+  <data name="AlarmPermissionTitle" xml:space="preserve">
+    <value>دەل ۋاقتىدا قوڭغۇراق چىلىش ھوقۇقى لازىم</value>
+  </data>
+  <data name="AlarmExactPermissionRequired" xml:space="preserve">
+    <value>دەل ۋاقىتىدا ئەسكەرتىشلەرنى كۆرسىتىش ئۈچۈن، ئۈسكۈنە تەڭشەكلىرىڭىزدە ئېنىق ۋاقىتلىق ئاگاھلاندۇرۇشلارغا (exact alarms) رۇخسەت قىلىڭ. بۇ رۇخسەت بېرىلمىگۈچە، ئۆزگەرتىشلىرىڭىز ساقلانمايدۇ.</value>
+  </data>
   <data name="AlarmSound" xml:space="preserve">
     <value>قوڭغۇراق ئاۋازى</value>
   </data>
@@ -177,6 +189,12 @@
   <data name="BildirimIzniGerekli" xml:space="preserve">
     <value>ناماز ئەسكەرتكۈچلىرىنى پىلانلاش ئۈچۈن ئۇقتۇرۇش ئىجازىتى لازىم.</value>
   </data>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>بۇ ئەپ سىزگە ناماز ۋاقتى ئەسكەرتىشلىرىنى ئەۋەتىش ئۈچۈن ئۇقتۇرۇش ئىجازىتىگە ئېھتىياجلىق. تەڭشەكلەر - ئەپلەر - سۇلايمانىيە كالېندارى - ئۇقتۇرۇشلاردىن ئۇقتۇرۇشلارنى قوزغىتىڭ.</value>
+  </data>
+  <data name="BildirimSorunu" xml:space="preserve">
+    <value>ئەگەر رۇخسەت بېرىلگەندىن كېيىنمۇ ئۇقتۇرۇشلار يەنىلا ئىشلىمىسە، iOS ئۇقتۇرۇش تەڭشەكلىرىنى قايتا تەڭشەشىڭىز كېرەك بولۇشى مۇمكىن: تەڭشەكلەر → ئادەتتىكى → iPhone نى يۆتكەش ياكى ئەسلىگە كەلتۈرۈش → ئەسلىگە كەلتۈرۈش → ئورۇن ۋە مەخپىيەتلىكنى ئەسلىگە كەلتۈرۈش. بۇ iOS نىڭ ئىچكى ئۇقتۇرۇش توسۇشلىرىنى ئۆچۈرىدۇ.</value>
+  </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>ئەسكەرتىش ۋاقتى: </value>
   </data>
@@ -185,6 +203,9 @@
   </data>
   <data name="BoylamFormatsiz" xml:space="preserve">
     <value>ئۇزۇنلۇق</value>
+  </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>بۈگۈن</value>
   </data>
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>بۈگۈنكى ناماز ۋاقىتلىرى</value>
@@ -435,16 +456,16 @@
   <data name="Zamaninda" xml:space="preserve">
     <value>دەل ۋاقتىدا</value>
   </data>
-  <data name="AciklamaLinkURL" xml:space="preserve">
-    <value>https://www.suleymaniyevakfi.org/ramazan-ve-oruc/namaz-ve-oruc-vakitlerisadece-muslim-olanlar-icin.html</value>
-  </data>
-  <data name="AciklamaLinkText" xml:space="preserve">
-    <value>ناماز ۋە روزا ۋاقىتلىرى (تۈركچە)</value>
-  </data>
   <data name="AciklamaBas" xml:space="preserve">
     <value>مۇسۇلمان ئاللاھقا تەسلىم بولغان ۋە ئۇنىڭ يولىدىكى بارلىق قىيىنچىلىقلارغا بەرداشلىق بەرگەنلەرگە ئاللاھ بەرگەن ئىسىم. ئۇلار  دىننى ئاللاھقا خالىس قىلغان ھالدا ئېتىقاد قىلىدىغانلاردۇر.
 ئاللاھقا دەۋەت قىلغان، ياخشى ئىش قىلغان ۋە: «مەن مۇسۇلمانلاردىنمەن» دېگەن ئادەمدىنمۇ ياخشى سۆزلۈك ئادەم بارمۇ؟(41-سۈرە فۇسسىلەت، 33- ئايەت)
 بۇ پروگرامما ناماز ۋە روزا ۋاقتلىرىغا بىخەتەر ۋە تېز سۈرئەتتە ئېرىشىش ئۈچۈن لايىھەلەنگەن. ناماز ۋاقىتىنى ۋە روزا تۇتۇش ۋاقتىنى ھېسابلاش توغرىسىدىكى تېخىمۇ تەپسىلىي ئۇچۇرلارنى بۇ يەردىكى </value>
+  </data>
+  <data name="AciklamaLinkText" xml:space="preserve">
+    <value>ناماز ۋە روزا ۋاقىتلىرى (تۈركچە)</value>
+  </data>
+  <data name="AciklamaLinkURL" xml:space="preserve">
+    <value>https://www.suleymaniyevakfi.org/ramazan-ve-oruc/namaz-ve-oruc-vakitlerisadece-muslim-olanlar-icin.html</value>
   </data>
   <data name="AciklamaSon" xml:space="preserve">
     <value> ماقالىسىدىن ئوقۇڭ.</value>
@@ -458,17 +479,17 @@
   <data name="UygulamaDili" xml:space="preserve">
     <value>ئەپ تىلى</value>
   </data>
-  <data name="UygulamaTema" xml:space="preserve">
-    <value>ئەپ ئۇسلۇبى</value>
-  </data>
   <data name="UygulamaTemasiniSecin" xml:space="preserve">
     <value>ئەپ ئۇسلۇبىنى تاللاڭ</value>
   </data>
-  <data name="KoyuTema" xml:space="preserve">
-    <value>توق ئۇسلۇب</value>
+  <data name="UygulamaTema" xml:space="preserve">
+    <value>ئەپ ئۇسلۇبى</value>
   </data>
   <data name="AcikTema" xml:space="preserve">
     <value>ئاچ ئۇسلۇب</value>
+  </data>
+  <data name="KoyuTema" xml:space="preserve">
+    <value>توق ئۇسلۇب</value>
   </data>
   <data name="English" xml:space="preserve">
     <value>ئىنگىلىزچە</value>
@@ -555,19 +576,19 @@
     <value>ھەر قېتىم ئەپ ئېچىلغاندا ئورۇن ۋە ناماز ۋاقتىنى يېڭىلاش</value>
   </data>
   <data name="UygulamaAyarlari" xml:space="preserve">
-	  <value>ئەپ تەڭشەكلىرى</value>
+    <value>ئەپ تەڭشەكلىرى</value>
   </data>
   <data name="Yenile" xml:space="preserve">
-	  <value>يېڭىلاش</value>
+    <value>يېڭىلاش</value>
   </data>
   <data name="RadyoCal" xml:space="preserve">
-	  <value>رادىئو قويۇش ياكى توختىتىش</value>
+    <value>رادىئو قويۇش ياكى توختىتىش</value>
   </data>
   <data name="Etkin" xml:space="preserve">
-	  <value>ئوچۇق</value>
+    <value>ئوچۇق</value>
   </data>
   <data name="DevreDisi" xml:space="preserve">
-	  <value>تاقاق</value>
+    <value>تاقاق</value>
   </data>
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>قوڭغۇراقلىق سائەت تەڭشىلىۋاتىدۇ، سەل ساقلاڭ</value>
@@ -581,19 +602,25 @@
   <data name="Adres" xml:space="preserve">
     <value>ئادرېس</value>
   </data>
-  <data name="Durdur" xml:space="preserve">
-    <value>توختىتىش</value>
-  </data>
   <data name="Oynat" xml:space="preserve">
     <value>قويۇش</value>
+  </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>توختىتىش</value>
   </data>
   <data name="Paylas" xml:space="preserve">
     <value>ھەمبەھىرلەش</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>بۈگۈن</value>
+  <data name="TestNotification" xml:space="preserve">
+    <value>سىناق ئۇقتۇرۇشى</value>
   </data>
-  <data name="BildirimIzniAciklama" xml:space="preserve">
-    <value>بۇ ئەپ سىزگە ناماز ۋاقتى ئەسكەرتىشلىرىنى ئەۋەتىش ئۈچۈن ئۇقتۇرۇش ئىجازىتىگە ئېھتىياجلىق. تەڭشەكلەر - ئەپلەر - سۇلايمانىيە كالېندارى - ئۇقتۇرۇشلاردىن ئۇقتۇرۇشلارنى قوزغىتىڭ.</value>
+  <data name="TestNotificationMessage" xml:space="preserve">
+    <value>بۇ «سۇلايمانىيە كالېندارى»دىن كەلگەن سىناق ئۇقتۇرۇشى. ئەگەر بۇنى كۆرۈۋاتقان بولسىڭىز، ئۇقتۇرۇشلار ئىشلەۋاتىدۇ!</value>
+  </data>
+  <data name="TestNotificationButton" xml:space="preserve">
+    <value>سىناق ئۇقتۇرۇشى (30 سېكۇنت)</value>
+  </data>
+  <data name="TestNotificationScheduled" xml:space="preserve">
+    <value>سىناق ئۇقتۇرۇشى پىلانلاندى! ئۇنى 30 سېكۇنت ئىچىدە تاپشۇرۇۋالىسىز.</value>
   </data>
 </root>

@@ -30,14 +30,91 @@ public class NotificationSchedulerService
     // Serializes scheduling runs. The service start, app start, preloader and location refresh can all trigger
     // scheduling at once; interleaved cancel-all/schedule passes used to wipe alarms scheduled by another run.
     private static readonly SemaphoreSlim _scheduleGate = new(1, 1);
+    public async Task CancelAllAlarmsAsync()
+    {
+        await _scheduleGate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (CheckRemindersEnabledAny())
+                return;
+            CancelAllAlarmsCore();
+        }
+        finally
+        {
+            _scheduleGate.Release();
+        }
+    }
+
+    /// <summary>Saves one prayer's settings and replaces its alarms as a serialized operation.</summary>
+    public async Task SavePrayerSettingsAsync(
+        string prayerId, bool enabled, int notificationTime, string? sound, Func<Task<Location?>> getLocationAsync)
+    {
+        await _scheduleGate.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            var enabledKey = prayerId + "Enabled";
+            var timeKey = prayerId + "NotificationTime";
+            var soundKey = prayerId + "AlarmSound";
+            var oldEnabled = Preferences.Get(enabledKey, false);
+            var oldTime = Preferences.Get(timeKey, 0);
+            var oldSound = Preferences.Get(soundKey, "kus");
+            var replacementStarted = false;
+            Location? location = null;
+            try
+            {
+                Preferences.Set(enabledKey, enabled);
+                Preferences.Set(timeKey, notificationTime);
+                if (sound is not null)
+                    Preferences.Set(soundKey, sound);
+
+                if (CheckRemindersEnabledAny())
+                {
+                    location = ValidateLocation(await getLocationAsync().ConfigureAwait(false));
+                    await SetMonthlyAlarmsCoreAsync(location, true, () => replacementStarted = true).ConfigureAwait(false);
+                }
+                else
+                {
+                    replacementStarted = true;
+                    CancelAllAlarmsCore();
+                }
+            }
+            catch (Exception saveException)
+            {
+                Preferences.Set(enabledKey, oldEnabled);
+                Preferences.Set(timeKey, oldTime);
+                Preferences.Set(soundKey, oldSound);
+                if (replacementStarted)
+                {
+                    try
+                    {
+                        if (CheckRemindersEnabledAny())
+                        {
+                            location = ValidateLocation(location ?? await getLocationAsync().ConfigureAwait(false));
+                            await SetMonthlyAlarmsCoreAsync(location, true).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            CancelAllAlarmsCore();
+                        }
+                    }
+                    catch (Exception restoreException)
+                    {
+                        Debug.WriteLine($"Failed to restore previous alarms: {restoreException}");
+                        throw new AlarmSettingsSaveException(true, new AggregateException(saveException, restoreException));
+                    }
+                }
+                throw new AlarmSettingsSaveException(false, saveException);
+            }
+        }
+        finally
+        {
+            _scheduleGate.Release();
+        }
+    }
+
     public async Task SetMonthlyAlarmsAsync(Location location, bool forceReschedule = false)
     {
-        // A (0,0) location means "unknown" (permission denied / GPS off) - never schedule for the Gulf of Guinea
-        if (location is null || (location.Latitude == 0 && location.Longitude == 0))
-        {
-            Debug.WriteLine("Skipping alarm scheduling: invalid location");
-            return;
-        }
+        ValidateLocation(location);
 
         await _scheduleGate.WaitAsync().ConfigureAwait(false);
         try
@@ -50,7 +127,24 @@ public class NotificationSchedulerService
         }
     }
 
-    private async Task SetMonthlyAlarmsCoreAsync(Location location, bool forceReschedule)
+    private static Location ValidateLocation(Location? location)
+    {
+        if (location is null || (location.Latitude == 0 && location.Longitude == 0))
+            throw new InvalidOperationException(AppResources.KonumHatasi);
+        return location;
+    }
+
+    private void CancelAllAlarmsCore()
+    {
+        ClearAlarmCoverage();
+        Preferences.Remove(LastAutoReschedulePreferenceKey);
+        _alarmService.CancelAllAlarms();
+#if ANDROID
+        AlarmRescheduleJob.CancelPeriodic(Android.App.Application.Context);
+#endif
+    }
+
+    private async Task SetMonthlyAlarmsCoreAsync(Location location, bool forceReschedule, Action? onReplacementStarted = null)
     {
         Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Start", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
         
@@ -102,8 +196,8 @@ public class NotificationSchedulerService
 
         if (!remindersEnabled)
         {
-            _alarmService.CancelAllAlarms();
-            ClearAlarmCoverage();
+            onReplacementStarted?.Invoke();
+            CancelAllAlarmsCore();
             return;
         }
 
@@ -128,21 +222,51 @@ public class NotificationSchedulerService
             
             var days = await _repository.EnsureDaysRangeAsync(location, startDate, daysToSchedule).ConfigureAwait(false);
             
-            if (days.Count == 0)
+            if (days.Count != daysToSchedule)
+                throw new InvalidOperationException(AppResources.OtuzGunHatirlaticiHatasi);
+
+            for (var i = 0; i < days.Count; i++)
             {
-                // Keep the existing alarms and do not start the cooldown so the next trigger can retry
-                Debug.WriteLine("❌ No days available for scheduling alarms");
-                return;
+                var day = days[i];
+                if (!TryParseCalendarDate(day.Date, out var date) || date.Date != startDate.AddDays(i))
+                    throw new InvalidOperationException(AppResources.OtuzGunHatirlaticiHatasi);
+
+                ValidateEnabledTime(day.FalseFajr, "falsefajr");
+                ValidateEnabledTime(day.Fajr, "fajr");
+                ValidateEnabledTime(day.Sunrise, "sunrise");
+                ValidateEnabledTime(day.Dhuhr, "dhuhr");
+                ValidateEnabledTime(day.Asr, "asr");
+                ValidateEnabledTime(day.Maghrib, "maghrib");
+                ValidateEnabledTime(day.Isha, "isha");
+                ValidateEnabledTime(day.EndOfIsha, "endofisha");
             }
 
             // Only cancel once new data is in hand: cancelling first left the user with no alarms at all
             // whenever the network/API failed mid-run (e.g. while travelling).
+            _alarmService.ValidateSchedulingAvailability();
+            onReplacementStarted?.Invoke();
+            ClearAlarmCoverage();
+            Preferences.Remove(LastAutoReschedulePreferenceKey);
             _alarmService.CancelAllAlarms();
-            Preferences.Set(LastAutoReschedulePreferenceKey, DateTime.UtcNow.ToString("O"));
 
             int dayCounter = 0;
             int notificationCount = 0;
+            bool schedulingFailed = false;
             DateTime? coverageThrough = null;
+
+            async Task<int> TryScheduleAsync(DateTime date, string? time, DateTime now, string id, string name)
+            {
+                try
+                {
+                    return await SchedulePrayerAlarmIfEnabledAsync(date, time, now, id, name).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    schedulingFailed = true;
+                    Debug.WriteLine($"Alarm scheduling failed for {id} on {date:yyyy-MM-dd}: {ex.Message}");
+                    return 0;
+                }
+            }
 
             foreach (var day in days)
             {
@@ -154,25 +278,14 @@ public class NotificationSchedulerService
                     if (baseDate < DateTime.Today) continue;
 
                     var now = DateTime.Now;
-                    var falseFajrTime = ParseTime(day.FalseFajr);
-                    var fajrTime = ParseTime(day.Fajr);
-                    var sunriseTime = ParseTime(day.Sunrise);
-                    var dhuhrTime = ParseTime(day.Dhuhr);
-                    var asrTime = ParseTime(day.Asr);
-                    var maghribTime = ParseTime(day.Maghrib);
-                    var ishaTime = ParseTime(day.Isha);
-                    var endOfIshaTime = ParseTime(day.EndOfIsha);
-
-                    var isToday = baseDate.Date == DateTime.Today;
-
-                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, falseFajrTime, now, isToday, "falsefajr", AppResources.FecriKazip);
-                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, fajrTime, now, isToday, "fajr", AppResources.FecriSadik);
-                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, sunriseTime, now, isToday, "sunrise", AppResources.SabahSonu);
-                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, dhuhrTime, now, isToday, "dhuhr", AppResources.Ogle);
-                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, asrTime, now, isToday, "asr", AppResources.Ikindi);
-                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, maghribTime, now, isToday, "maghrib", AppResources.Aksam);
-                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, ishaTime, now, isToday, "isha", AppResources.Yatsi);
-                    notificationCount += SchedulePrayerAlarmIfEnabled(baseDate, endOfIshaTime, now, isToday, "endofisha", AppResources.YatsiSonu);
+                    notificationCount += await TryScheduleAsync(baseDate, day.FalseFajr, now, "falsefajr", AppResources.FecriKazip);
+                    notificationCount += await TryScheduleAsync(baseDate, day.Fajr, now, "fajr", AppResources.FecriSadik);
+                    notificationCount += await TryScheduleAsync(baseDate, day.Sunrise, now, "sunrise", AppResources.SabahSonu);
+                    notificationCount += await TryScheduleAsync(baseDate, day.Dhuhr, now, "dhuhr", AppResources.Ogle);
+                    notificationCount += await TryScheduleAsync(baseDate, day.Asr, now, "asr", AppResources.Ikindi);
+                    notificationCount += await TryScheduleAsync(baseDate, day.Maghrib, now, "maghrib", AppResources.Aksam);
+                    notificationCount += await TryScheduleAsync(baseDate, day.Isha, now, "isha", AppResources.Yatsi);
+                    notificationCount += await TryScheduleAsync(baseDate, day.EndOfIsha, now, "endofisha", AppResources.YatsiSonu);
 
                     dayCounter++;
                     coverageThrough = baseDate;
@@ -190,32 +303,43 @@ public class NotificationSchedulerService
                 catch (Exception ex)
                 {
                     Debug.WriteLine($"❌ Error processing day {day.Date}: {ex.Message}");
+                    throw;
                 }
             }
+
+            if (schedulingFailed || dayCounter == 0 || !coverageThrough.HasValue)
+                throw new InvalidOperationException(AppResources.Alarmkurarkenhataolustu);
 
             if (dayCounter > 0 && coverageThrough.HasValue)
             {
                 PersistAlarmCoverage(coverageThrough.Value);
+                Preferences.Set(LastAutoReschedulePreferenceKey, DateTime.UtcNow.ToString("O"));
+#if ANDROID
+                AlarmRescheduleJob.SchedulePeriodic(Android.App.Application.Context);
+#endif
                 Debug.WriteLine($"✅ Alarm scheduling complete: {notificationCount} notifications scheduled through {coverageThrough.Value:dd/MM/yyyy}");
             }
         }
         catch (Exception exception)
         {
             Debug.WriteLine($"❌ SetMonthlyAlarmsAsync failed: {exception.Message}");
+            throw;
         }
 
         Debug.WriteLine("TimeStamp-SetMonthlyAlarms-Finish", DateTime.Now.ToString("MM/dd/yyyy hh:mm:ss.fff tt"));
     }
 
-    private int SchedulePrayerAlarmIfEnabled(DateTime baseDate, TimeSpan prayerTime, DateTime now, bool isToday, string prayerId, string prayerName)
+    private async Task<int> SchedulePrayerAlarmIfEnabledAsync(DateTime baseDate, string? prayerTimeString, DateTime now, string prayerId, string prayerName)
     {
         if (Preferences.Get(prayerId + "Enabled", false))
         {
+            if (!AppConstants.TryParsePrayerTime(prayerTimeString, out var prayerTime))
+                throw new InvalidOperationException(AppResources.OtuzGunHatirlaticiHatasi);
             var notifyTime = Preferences.Get(prayerId + "NotificationTime", 0);
             var alarmTime = baseDate.Add(prayerTime).AddMinutes(-notifyTime);
 
             // If it's today and the time has passed, don't schedule
-            if (isToday && alarmTime <= now) return 0;
+            if (alarmTime <= now) return 0;
 
             // Unique ID generation:
             // Include year to prevent collision across year boundaries (Dec 25 - Jan 24 spanning New Year)
@@ -256,7 +380,7 @@ public class NotificationSchedulerService
                 PrayerTime = actualPrayerTime.ToString("HH:mm")
             };
 
-            _alarmService.SetAlarm(alarmTime, requestCode, settings);
+            await _alarmService.SetAlarmAsync(alarmTime, requestCode, settings).ConfigureAwait(false);
             return 1;
         }
         return 0;
@@ -325,6 +449,10 @@ public class NotificationSchedulerService
         return date != DateTime.MinValue;
     }
 
-    private static TimeSpan ParseTime(string? timeStr) =>
-        AppConstants.ParseTimeSpan(timeStr);
+    private static void ValidateEnabledTime(string? time, string prayerId)
+    {
+        if (Preferences.Get(prayerId + "Enabled", false) &&
+            !AppConstants.TryParsePrayerTime(time, out _))
+            throw new InvalidOperationException(AppResources.OtuzGunHatirlaticiHatasi);
+    }
 }

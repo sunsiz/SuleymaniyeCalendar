@@ -19,7 +19,6 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	private readonly PerformanceService _perf = new();
 	
 	private bool _scheduling;
-	private bool _scheduledOnce;
 	private bool _awaitingPermissionReturn;
 
 	#region Properties
@@ -41,7 +40,6 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		{
 			if (SetProperty(ref _enabled, value))
 			{
-				try { Preferences.Set(PrayerId + "Enabled", value); } catch { }
 				OnPropertyChanged(nameof(ShowAdvancedOptions));
 			}
 		}
@@ -113,8 +111,7 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		get => _notificationTime;
 		set
 		{
-			if (SetProperty(ref _notificationTime, value))
-				Preferences.Set(PrayerId + "NotificationTime", value);
+			SetProperty(ref _notificationTime, value);
 		}
 	}
 
@@ -174,23 +171,13 @@ public partial class PrayerDetailViewModel : BaseViewModel
 	#region Commands
 
 	/// <summary>
-	/// Handles enabled switch toggle - saves preference immediately.
+	/// Updates the staged enabled state.
 	/// </summary>
 	[RelayCommand]
 	public void EnabledSwitchToggled(bool value)
 	{
 		if (IsBusy) return;
 		
-		try 
-		{ 
-			Preferences.Set(PrayerId + "Enabled", value); 
-		} 
-		catch (Exception ex)
-		{
-			Debug.WriteLine($"Failed to save preference {PrayerId}Enabled: {ex.Message}");
-		}
-
-		Debug.WriteLine($"Value Set for {PrayerId}Enabled: {value}");
 		Enabled = value;
 		OnPropertyChanged(nameof(ShowAdvancedOptions));
 	}
@@ -209,16 +196,15 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		
 		try
 		{
-			var success = await SaveAndScheduleInternalAsync().ConfigureAwait(false);
+			var success = await SaveAndScheduleInternalAsync();
 			
 			// Only navigate back if scheduling succeeded or no permission was needed
 			// If user was sent to permission settings, don't navigate - they'll return to this page
 			if (success)
 			{
 				// Brief delay so user perceives progress
-				await Task.Delay(400).ConfigureAwait(false);
-				await MainThread.InvokeOnMainThreadAsync(() => Shell.Current.GoToAsync(".."));
-				_scheduledOnce = true;
+				await Task.Delay(400);
+				await Shell.Current.GoToAsync("..");
 			}
 		}
 		finally
@@ -238,8 +224,17 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		if (!_awaitingPermissionReturn) return;
 		
 		_awaitingPermissionReturn = false;
-		
-		// Retry saving after permission was hopefully granted
+#if ANDROID
+		if (OperatingSystem.IsAndroidVersionAtLeast(31))
+		{
+			var manager = Android.App.Application.Context.GetSystemService(Android.Content.Context.AlarmService) as Android.App.AlarmManager;
+			if (manager is null || !manager.CanScheduleExactAlarms())
+			{
+				Alert(AppResources.AlarmPermissionTitle, AppResources.AlarmExactPermissionRequired);
+				return;
+			}
+		}
+#endif
 		await Save();
 	}
 
@@ -275,20 +270,6 @@ public partial class PrayerDetailViewModel : BaseViewModel
 
 	#endregion
 
-	#region Public Methods
-
-	/// <summary>
-	/// Ensures scheduling occurs (used by page OnDisappearing for system back).
-	/// Avoids overlay and duplicate runs.
-	/// </summary>
-	public void EnsureScheduled()
-	{
-		if (_scheduledOnce || _scheduling) return;
-		_ = SaveAndScheduleInternalAsync();
-	}
-
-	#endregion
-
 	#region Private Methods
 
 	/// <summary>
@@ -305,26 +286,20 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		{
 			using (_perf.StartTimer("PrayerDetail.SaveAndSchedule"))
 			{
-				// Save selected sound preference
-				if (!string.IsNullOrWhiteSpace(PrayerId) && SelectedSound != null)
-				{
-					Preferences.Set(PrayerId + "AlarmSound", SelectedSound.FileName);
-				}
-				
 				// Stop any playing preview
-				await _audioPreview.StopAsync().ConfigureAwait(false);
+				await _audioPreview.StopAsync();
 				await MainThread.InvokeOnMainThreadAsync(() => IsPlaying = false);
 
 				// Platform permission checks
 				#if ANDROID
-				var permissionResult = await CheckAndroidPermissionsAsync();
+				var permissionResult = Enabled ? await CheckAndroidPermissionsAsync() : new PermissionCheckResult(true, false);
 				if (!permissionResult.Success)
 				{
 					_awaitingPermissionReturn = permissionResult.RedirectedToSettings;
 					return false;
 				}
 				#elif __IOS__
-				var permissionResult = await CheckiOSPermissionsAsync();
+				var permissionResult = Enabled ? await CheckiOSPermissionsAsync() : new PermissionCheckResult(true, false);
 				if (!permissionResult.Success)
 				{
 					_awaitingPermissionReturn = permissionResult.RedirectedToSettings;
@@ -332,14 +307,23 @@ public partial class PrayerDetailViewModel : BaseViewModel
 				}
 				#endif
 
-				// Schedule alarms
-				await _dataService.SetMonthlyAlarmsAsync(forceReschedule: true).ConfigureAwait(false);
+				if (string.IsNullOrWhiteSpace(PrayerId))
+					throw new InvalidOperationException(AppResources.OtuzGunHatirlaticiHatasi);
+
+				await _dataService.SavePrayerAlarmSettingsAsync(PrayerId, Enabled, NotificationTime, SelectedSound?.FileName);
 				return true;
 			}
 		}
+		catch (AlarmSettingsSaveException ex)
+		{
+			Debug.WriteLine($"Alarm settings save failed: {ex}");
+			Alert(AppResources.SorunCikti, ex.RestoreFailed ? AppResources.AlarmRestoreFailed : AppResources.AlarmSaveFailed);
+			return false;
+		}
 		catch (Exception ex)
 		{
-			Alert(AppResources.SorunCikti, ex.Message);
+			Debug.WriteLine($"Alarm settings save failed: {ex}");
+			Alert(AppResources.SorunCikti, AppResources.AlarmSaveFailed);
 			return false;
 		}
 		finally
@@ -366,13 +350,20 @@ public partial class PrayerDetailViewModel : BaseViewModel
 			if (OperatingSystem.IsAndroidVersionAtLeast(31))
 			{
 				var am = (Android.App.AlarmManager?)Android.App.Application.Context.GetSystemService(Android.Content.Context.AlarmService);
-				if (am != null && !am.CanScheduleExactAlarms())
+				if (am is null)
+					throw new InvalidOperationException("Android alarm service is unavailable.");
+				if (!am.CanScheduleExactAlarms())
 				{
+					var page = GetMainPage();
+					if (page is null)
+						throw new InvalidOperationException("Main page is unavailable.");
+					if (!await page.DisplayAlert(AppResources.AlarmPermissionTitle, AppResources.AlarmExactPermissionRequired,
+						AppResources.GotoSettings, AppResources.Kapat))
+						return new PermissionCheckResult(false, false);
 					var intent = new Android.Content.Intent(Android.Provider.Settings.ActionRequestScheduleExactAlarm);
 					intent.SetData(Android.Net.Uri.Parse($"package:{Android.App.Application.Context.PackageName}"));
 					intent.AddFlags(Android.Content.ActivityFlags.NewTask);
 					Android.App.Application.Context.StartActivity(intent);
-					_scheduling = false;
 					return new PermissionCheckResult(Success: false, RedirectedToSettings: true);
 				}
 			}
@@ -406,12 +397,10 @@ public partial class PrayerDetailViewModel : BaseViewModel
 						if (shouldOpenSettings)
 						{
 							OpenAndroidNotificationSettings();
-							_scheduling = false;
 							return new PermissionCheckResult(Success: false, RedirectedToSettings: true);
 						}
 						
 						ShowToast(AppResources.BildirimIzniGerekli);
-						_scheduling = false;
 						return new PermissionCheckResult(Success: false, RedirectedToSettings: false);
 					}
 				}
@@ -420,8 +409,7 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		catch (Exception ex)
 		{
 			Debug.WriteLine($"Permission checks failed: {ex.Message}");
-			_scheduling = false;
-			return new PermissionCheckResult(Success: false, RedirectedToSettings: false);
+			throw;
 		}
 		
 		return new PermissionCheckResult(Success: true, RedirectedToSettings: false);
@@ -455,6 +443,7 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		catch (Exception ex)
 		{
 			Debug.WriteLine($"Failed to open notification settings: {ex.Message}");
+			throw;
 		}
 	}
 	#endif
@@ -502,12 +491,10 @@ public partial class PrayerDetailViewModel : BaseViewModel
 					if (shouldOpenSettings)
 					{
 						OpeniOSAppSettings();
-						_scheduling = false;
 						return new PermissionCheckResult(Success: false, RedirectedToSettings: true);
 					}
 					
 					ShowToast(AppResources.BildirimIzniGerekli);
-					_scheduling = false;
 					return new PermissionCheckResult(Success: false, RedirectedToSettings: false);
 				}
 			}
@@ -515,8 +502,7 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		catch (Exception ex)
 		{
 			Debug.WriteLine($"iOS permission checks failed: {ex.Message}");
-			_scheduling = false;
-			return new PermissionCheckResult(Success: false, RedirectedToSettings: false);
+			throw;
 		}
 		
 		return new PermissionCheckResult(Success: true, RedirectedToSettings: false);
@@ -537,6 +523,7 @@ public partial class PrayerDetailViewModel : BaseViewModel
 		catch (Exception ex)
 		{
 			Debug.WriteLine($"Failed to open iOS settings: {ex.Message}");
+			throw;
 		}
 	}
 	#endif

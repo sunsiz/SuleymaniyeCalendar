@@ -143,6 +143,20 @@ public class MainActivity : MauiAppCompatActivity
     {
         base.OnResume();
         ApplyStatusBarColor();
+        if (Shell.Current?.CurrentPage is SuleymaniyeCalendar.Views.PrayerDetailPage page)
+        {
+            MainThread.BeginInvokeOnMainThread(async () =>
+            {
+                try
+                {
+                    await page.ResumeAfterPermissionSettingsAsync();
+                }
+                catch (Exception ex)
+                {
+                    Android.Util.Log.Error(nameof(MainActivity), $"Permission return failed: {ex}");
+                }
+            });
+        }
     }
 
     void ApplyStatusBarColor()
