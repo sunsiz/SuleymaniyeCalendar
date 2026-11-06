@@ -130,6 +130,7 @@
                                         AutomationProperties.IsInAccessibleTree="True"
                                         Style="{StaticResource BodyLargeStyle}"
                                         Text="{Binding RemainingTime}"
+                                        TextColor="{AppThemeBinding Light={StaticResource Primary95}, Dark={StaticResource OnSurfaceColorDark}}"
                                         VerticalOptions="Center" />
                                 </Grid>
                             </Border>

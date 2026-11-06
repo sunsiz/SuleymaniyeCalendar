@@ -53,10 +53,8 @@ public partial class PrayerDetailPage : ContentPage
 		}
 	}
 
-	protected override void OnDisappearing()
+	public Task ResumeAfterPermissionSettingsAsync()
 	{
-		base.OnDisappearing();
-		// Ensure scheduling happens once (no overlay for system back to avoid duplicate flashes)
-		_viewModel.EnsureScheduled();
+		return _viewModel.OnPageResumedAsync();
 	}
 }

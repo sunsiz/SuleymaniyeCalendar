@@ -6,6 +6,7 @@ using Android.Util;
 using AndroidX.Core.App;
 using SuleymaniyeCalendar.Resources.Strings;
 using SuleymaniyeCalendar.Services;
+using SuleymaniyeCalendar.Helpers;
 using Application = Android.App.Application;
 
 namespace SuleymaniyeCalendar
@@ -41,7 +42,8 @@ namespace SuleymaniyeCalendar
 		private Action? _runnable;
 		private int _updateCounter;
 		private DateTime _lastRescheduleAttemptUtc = DateTime.MinValue;
-		private DateTime _lastKnownDate = DateTime.Today; // Track date for midnight crossing detection
+		private DateTime _lastKnownDate = DateTime.MinValue;
+		private bool _dateRefreshPending;
 		private string? _lastNotificationTitle; // Cache last successful notification title to avoid "Refreshing" stuck state
 		
 		/// <summary>
@@ -75,6 +77,14 @@ namespace SuleymaniyeCalendar
 			return null;
 		}
 
+		public void ValidateSchedulingAvailability()
+		{
+			var manager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager
+				?? throw new InvalidOperationException(AppResources.Alarmkurarkenhataolustu);
+			if (Build.VERSION.SdkInt >= BuildVersionCodes.S && !manager.CanScheduleExactAlarms())
+				throw new InvalidOperationException(AppResources.Alarmkurarkenhataolustu);
+		}
+
 		public void SetAlarm(DateTime alarmTime, int requestCode, NotificationSettings settings)
 		{
 			var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
@@ -92,7 +102,11 @@ namespace SuleymaniyeCalendar
                 PendingIntentFlags.UpdateCurrent | PendingIntentFlags.Immutable);
 
             var alarmManager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager;
-            if (alarmManager == null || pendingIntent == null) return;
+            if (alarmManager == null || pendingIntent == null)
+                throw new InvalidOperationException(AppResources.Alarmkurarkenhataolustu);
+
+            if (Build.VERSION.SdkInt >= BuildVersionCodes.S && !alarmManager.CanScheduleExactAlarms())
+                throw new InvalidOperationException(AppResources.Alarmkurarkenhataolustu);
             
             // Convert to UTC milliseconds
             long triggerMillis = (long)(alarmTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)).TotalMilliseconds;
@@ -110,15 +124,17 @@ namespace SuleymaniyeCalendar
             }
             catch (Exception ex)
             {
-                // Log or handle the exception as needed
-                Android.Util.Log.Error("AlarmForegroundService", $"Failed to set alarm: {ex}");
+                // Permission revoked between the check and the call
+                Log.Warn(nameof(AlarmForegroundService), $"Exact alarm denied: {ex.Message}");
+                throw;
             }
         }
 
 		public void CancelAllAlarms()
 		{
 			var alarmManager = Application.Context.GetSystemService(Context.AlarmService) as AlarmManager;
-			if (alarmManager == null) return;
+			if (alarmManager == null)
+				throw new InvalidOperationException(AppResources.Alarmkurarkenhataolustu);
 
 			var intent = new Intent(Application.Context, typeof(AlarmNotificationReceiver));
 
@@ -229,10 +245,10 @@ namespace SuleymaniyeCalendar
 
 				// Check for date change (midnight crossing)
 				var today = DateTime.Today;
-				if (today != _lastKnownDate)
+				if (today != _lastKnownDate && !_dateRefreshPending)
 				{
 					System.Diagnostics.Debug.WriteLine($"[AlarmForegroundService] Date changed from {_lastKnownDate:yyyy-MM-dd} to {today:yyyy-MM-dd} - refreshing data");
-					_lastKnownDate = today;
+					_dateRefreshPending = true;
 
 					// Refresh calendar data for the new day
 					_ = Task.Run(async () =>
@@ -243,15 +259,20 @@ namespace SuleymaniyeCalendar
 							if (dataService != null)
 							{
 								var cal = await dataService.GetTodayPrayerTimesAsync().ConfigureAwait(false);
-								if (cal != null)
+								if (cal != null && AppConstants.ParseCalendarDate(cal.Date).Date == today)
 								{
 									dataService.calendar = cal;
+									_handler?.Post(() => _lastKnownDate = today);
 								}
 							}
 						}
 						catch (Exception ex)
 						{
 							System.Diagnostics.Debug.WriteLine($"[AlarmForegroundService] Date change refresh failed: {ex.Message}");
+						}
+						finally
+						{
+							_handler?.Post(() => _dateRefreshPending = false);
 						}
 					});
 				}
@@ -347,6 +368,8 @@ namespace SuleymaniyeCalendar
 						LockscreenVisibility = NotificationVisibility.Public
 					};
 					_notificationManager?.CreateNotificationChannel(channel);
+					if (_notificationManager is not null)
+						_channel = channel;
 				}
 
 				var builder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
@@ -405,6 +428,8 @@ namespace SuleymaniyeCalendar
 				System.Diagnostics.Debug.WriteLine("[AlarmForegroundService] Calendar is null, using cached notification title");
 				return _lastNotificationTitle ?? AppResources.Yenileniyor;
 			}
+			if (AppConstants.ParseCalendarDate(calendar.Date).Date != DateTime.Today)
+				return AppResources.Yenileniyor;
 
 			var currentTime = DateTime.Now.TimeOfDay;
 			
@@ -445,9 +470,9 @@ namespace SuleymaniyeCalendar
 			}
 			catch (Exception exception)
 			{
-				System.Diagnostics.Debug.WriteLine($"GetFormattedRemainingTime exception: {exception.Message}. Location: {calendar.Latitude}, {calendar.Longitude}");
-				Log.Error("GetFormattedRemainingTime", $"GetFormattedRemainingTime exception: {exception.Message}. Location: {calendar.Latitude}, {calendar.Longitude}");
-				
+				// System.Diagnostics.Debug.WriteLine($"GetFormattedRemainingTime exception: {exception.Message}. Location: {calendar.Latitude}, {calendar.Longitude}");
+				// Log.Error("GetFormattedRemainingTime", $"GetFormattedRemainingTime exception: {exception.Message}. Location: {calendar.Latitude}, {calendar.Longitude}");
+				System.Diagnostics.Debug.WriteLine($"GetFormattedRemainingTime exception: {exception.Message}");
 				// Return cached title if available, otherwise show a generic message
 				return _lastNotificationTitle ?? AppResources.KonumIzniIcerik;
 			}
@@ -457,7 +482,8 @@ namespace SuleymaniyeCalendar
 		{
 			var dataService = GetDataService();
 			var calendar = dataService?.calendar;
-            if (calendar == null) return string.Empty;
+            if (calendar == null || AppConstants.ParseCalendarDate(calendar.Date).Date != DateTime.Today)
+				return string.Empty;
 			
 			return $"{AppResources.FecriKazip}: {calendar.FalseFajr}\n" +
 				   $"{AppResources.FecriSadik}: {calendar.Fajr}\n" +

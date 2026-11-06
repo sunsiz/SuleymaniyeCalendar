@@ -112,20 +112,21 @@ public class AlarmNotificationReceiver : BroadcastReceiver
         var contentPi = PendingIntent.GetActivity(context, 0, openAppIntent, piFlags);
 
         // Localized texts (same as old AlarmReceiver helpers)
-        string title = name switch
+        string localizedName = prayerId switch
         {
-            "Fecri Kazip" => Resources.Strings.AppResources.FecriKazip + " " + Resources.Strings.AppResources.Alarmi,
-            "Fecri Sadık" => Resources.Strings.AppResources.FecriSadik + " " + Resources.Strings.AppResources.Alarmi,
-            "Sabah Sonu"  => Resources.Strings.AppResources.SabahSonu + " " + Resources.Strings.AppResources.Alarmi,
-            "Öğle"        => Resources.Strings.AppResources.Ogle + " " + Resources.Strings.AppResources.Alarmi,
-            "İkindi"      => Resources.Strings.AppResources.Ikindi + " " + Resources.Strings.AppResources.Alarmi,
-            "Akşam"       => Resources.Strings.AppResources.Aksam + " " + Resources.Strings.AppResources.Alarmi,
-            "Yatsı"       => Resources.Strings.AppResources.Yatsi + " " + Resources.Strings.AppResources.Alarmi,
-            "Yatsı Sonu"  => Resources.Strings.AppResources.YatsiSonu + " " + Resources.Strings.AppResources.Alarmi,
-            _             => Resources.Strings.AppResources.Alarmi
+            "falsefajr" => Resources.Strings.AppResources.FecriKazip,
+            "fajr" => Resources.Strings.AppResources.FecriSadik,
+            "sunrise" => Resources.Strings.AppResources.SabahSonu,
+            "dhuhr" => Resources.Strings.AppResources.Ogle,
+            "asr" => Resources.Strings.AppResources.Ikindi,
+            "maghrib" => Resources.Strings.AppResources.Aksam,
+            "isha" => Resources.Strings.AppResources.Yatsi,
+            "endofisha" => Resources.Strings.AppResources.YatsiSonu,
+            _ => name
         };
 
-        var content = $"{name} {Resources.Strings.AppResources.Vakti} {timeStr}";
+        var title = $"{localizedName} {Resources.Strings.AppResources.Alarmi}";
+        var content = $"{localizedName} {Resources.Strings.AppResources.Vakti} {timeStr}";
 
         // Use unique notification ID per prayer so simultaneous alarms don't overwrite each other
         int notificationId = GenerateNotificationId(prayerId);

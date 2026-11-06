@@ -91,6 +91,15 @@ public static class AppConstants
             : TimeSpan.Zero;
     }
 
+    /// <summary>Parses a prayer time without treating invalid input as midnight.</summary>
+    public static bool TryParsePrayerTime(string? timeString, out TimeSpan time)
+    {
+        string[] formats = [@"h\:mm", @"hh\:mm", @"h\:mm\:ss", @"hh\:mm\:ss"];
+        return TimeSpan.TryParseExact(timeString?.Trim(), formats, CultureInfo.InvariantCulture, out time)
+            && time >= TimeSpan.Zero
+            && time < TimeSpan.FromDays(1);
+    }
+
     #endregion
 
     #region Numeric Parsing

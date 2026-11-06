@@ -85,8 +85,7 @@ public class NotificationService
             // Parse notification trigger time using InvariantCulture for consistent HH:mm parsing
             if (!TimeSpan.TryParse(notificationTime, System.Globalization.CultureInfo.InvariantCulture, out var time))
             {
-                Debug.WriteLine($"❌ Invalid notification time format: {notificationTime}");
-                return;
+                throw new FormatException($"Invalid notification time format: {notificationTime}");
             }
 
             // The time passed is already the notification trigger time (offset-adjusted)
@@ -97,8 +96,7 @@ public class NotificationService
             var scheduledDateTime = targetDate.Add(triggerTime);
             if (scheduledDateTime <= DateTime.Now)
             {
-                Debug.WriteLine($"⚠️ Notification time in past: {prayerName} at {scheduledDateTime:yyyy-MM-dd HH:mm} (now: {DateTime.Now:HH:mm})");
-                return;
+                throw new InvalidOperationException($"Notification time is in the past: {scheduledDateTime:yyyy-MM-dd HH:mm}");
             }
             
             // Use actual prayer time for display if provided, otherwise calculate from notification time
@@ -192,6 +190,7 @@ public class NotificationService
         {
             Debug.WriteLine($"❌ Notification scheduling failed: {ex.Message}");
             Debug.WriteLine($"   Stack trace: {ex.StackTrace}");
+            throw;
         }
     }
 

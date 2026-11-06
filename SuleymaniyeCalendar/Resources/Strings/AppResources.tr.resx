@@ -124,7 +124,7 @@
     <value>Akşam</value>
   </data>
   <data name="Aksamincikmasnakalanvakit" xml:space="preserve">
-    <value>Yatsı'ya kalan süre: </value>
+    <value>Yatsı Namazına Kalan Süre: </value>
   </data>
   <data name="AlarmHatasi" xml:space="preserve">
     <value>Alarm çalarken bir sorun oluştu, detaylar</value>
@@ -134,6 +134,18 @@
   </data>
   <data name="Alarmkurarkenhataolustu" xml:space="preserve">
     <value>Alarm kurarken bir hata oluştu</value>
+  </data>
+  <data name="AlarmRestoreFailed" xml:space="preserve">
+    <value>Alarm ayarları kaydedilemedi ve önceki alarmlar geri yüklenemedi. Lütfen alarmlarınızı kontrol edip tekrar deneyin.</value>
+  </data>
+  <data name="AlarmSaveFailed" xml:space="preserve">
+    <value>Alarm ayarlarınız kaydedilemedi. Lütfen bağlantınızı ve izinleri kontrol edip tekrar deneyin.</value>
+  </data>
+  <data name="AlarmPermissionTitle" xml:space="preserve">
+    <value>Kesin alarm izni gerekli</value>
+  </data>
+  <data name="AlarmExactPermissionRequired" xml:space="preserve">
+    <value>Hatırlatıcıları seçilen saatte almak için cihaz ayarlarında kesin alarmlara izin verin. İzin verilene kadar değişiklikleriniz kaydedilmez.</value>
   </data>
   <data name="AlarmSound" xml:space="preserve">
     <value>Alarm Sesi</value>
@@ -220,16 +232,16 @@
     <value>Ezan Sesi</value>
   </data>
   <data name="FecriKazibingirmesinekalanvakit" xml:space="preserve">
-    <value>Seher ve Sahur Başlaması'na kalan süre: </value>
+    <value>Sahur Başlangıcına Kalan Süre: </value>
   </data>
   <data name="FecriKazip" xml:space="preserve">
-    <value>Seher Vakti</value>
+    <value>Sahur Vakti</value>
   </data>
   <data name="FecriSadik" xml:space="preserve">
     <value>Sabah Namazı</value>
   </data>
   <data name="FecriSadikakalanvakit" xml:space="preserve">
-    <value>Fecr-i Sâdık (Sahur bitimi)ne kalan süre: </value>
+    <value>Oruç ve Sabah Namazı Başlangıcına Kalan Süre: </value>
   </data>
   <data name="FitratinSesi" xml:space="preserve">
     <value>Radyo Fıtrat - Fıtrat'ın Sesi</value>
@@ -274,7 +286,7 @@
     <value>İkindi</value>
   </data>
   <data name="Ikindinincikmasinakalanvakit" xml:space="preserve">
-    <value>Akşam'a kalan süre: </value>
+    <value>Akşam Namazına Kalan Süre: </value>
   </data>
   <data name="Kapat" xml:space="preserve">
     <value>Kapat</value>
@@ -319,10 +331,10 @@
     <value>Öğle</value>
   </data>
   <data name="Oglenincikmasinakalanvakit" xml:space="preserve">
-    <value>İkindi'ye kalan süre: </value>
+    <value>İkindi Namazına Kalan Süre: </value>
   </data>
   <data name="Ogleningirmesinekalanvakit" xml:space="preserve">
-    <value>Öğle'ye kalan süre: </value>
+    <value>Öğle Namazına Kalan Süre: </value>
   </data>
   <data name="OnBesDakikaOnceden" xml:space="preserve">
     <value>15 dakika önceden</value>
@@ -352,7 +364,7 @@
     <value>Sabah Namazı Sonu</value>
   </data>
   <data name="SabahSonunakalanvakit" xml:space="preserve">
-    <value>Sabah Namazı Sonu'na kalan süre: </value>
+    <value>Sabah Namazı Sonuna Kalan Süre: </value>
   </data>
   <data name="Sehir" xml:space="preserve">
     <value>Şehir</value>
@@ -424,10 +436,10 @@
     <value>Yatsı</value>
   </data>
   <data name="Yatsinincikmasinakalanvakit" xml:space="preserve">
-    <value>Yatsı Sonu'na kalan süre: </value>
+    <value>Yatsı Namazı Sonuna Kalan Süre: </value>
   </data>
   <data name="Yatsininciktigindangecenvakit" xml:space="preserve">
-    <value>Yatsı'nın çıkmasından bu yana: </value>
+    <value>Yatsı Namazının Çıkmasından Bu Yana: </value>
   </data>
   <data name="YatsiSonu" xml:space="preserve">
     <value>Yatsı Sonu</value>

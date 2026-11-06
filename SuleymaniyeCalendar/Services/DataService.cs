@@ -115,12 +115,23 @@ public class DataService
 
     public async Task SetMonthlyAlarmsAsync(bool forceReschedule = false)
     {
-        var location = await GetCurrentLocationAsync(false);
-        if (location != null)
+        if (!_scheduler.CheckRemindersEnabledAny())
         {
-            await _scheduler.SetMonthlyAlarmsAsync(location, forceReschedule);
+            await _scheduler.CancelAllAlarmsAsync().ConfigureAwait(false);
+            return;
         }
+
+        var location = await GetCurrentLocationAsync(false);
+        if (location is null)
+            throw new InvalidOperationException(AppResources.KonumHatasi);
+
+        await _scheduler.SetMonthlyAlarmsAsync(location, forceReschedule);
     }
+
+    /// <summary>Saves alarm settings while coordinating with background scheduling.</summary>
+    public Task SavePrayerAlarmSettingsAsync(string prayerId, bool enabled, int notificationTime, string? sound)
+        => _scheduler.SavePrayerSettingsAsync(prayerId, enabled, notificationTime, sound,
+            () => GetCurrentLocationAsync(false));
 
     public List<Prayer> BuildPrayersFromCalendar(Calendar calendar)
     {

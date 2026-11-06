@@ -12,6 +12,7 @@ namespace SuleymaniyeCalendar;
     Intent.ActionTimeChanged,
     Intent.ActionTimezoneChanged,
     Intent.ActionMyPackageReplaced,
+    "android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED",
     Intent.ActionUserUnlocked })]
 public class BootReceiver : BroadcastReceiver
 {
@@ -20,7 +21,8 @@ public class BootReceiver : BroadcastReceiver
         Intent.ActionBootCompleted,
         Intent.ActionTimeChanged,
         Intent.ActionTimezoneChanged,
-        Intent.ActionMyPackageReplaced
+        Intent.ActionMyPackageReplaced,
+        "android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED",
     };
 
     public override void OnReceive(Context? context, Intent? intent)
@@ -30,7 +32,7 @@ public class BootReceiver : BroadcastReceiver
 
         if (IsRescheduleAction(action))
         {
-            // AlarmRescheduleJobIntentService.Enqueue(context, action);
+            AlarmRescheduleJob.Schedule(context);
             TryStartForegroundService(context, action);
             return;
         }
@@ -69,7 +71,7 @@ public class BootReceiver : BroadcastReceiver
         }
 
         Preferences.Set(AlarmForegroundService.PendingForegroundRestartPreferenceKey, false);
-        StartForegroundService(context, sourceAction);
+        StartForegroundService(context, "notification_restart");
     }
 
     private static void ResumePendingForegroundStart(Context context, string sourceAction)
@@ -92,7 +94,8 @@ public class BootReceiver : BroadcastReceiver
         }
 
         Preferences.Set(AlarmForegroundService.PendingForegroundRestartPreferenceKey, false);
-        StartForegroundService(context, sourceAction);
+        AlarmRescheduleJob.Schedule(context);
+        StartForegroundService(context, "notification_restart");
     }
 
     private static bool IsUserUnlocked(Context context)

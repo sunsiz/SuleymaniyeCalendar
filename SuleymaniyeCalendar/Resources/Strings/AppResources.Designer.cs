@@ -143,6 +143,15 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow exact alarms in your device settings to receive reminders at the selected time. Your changes won&apos;t be saved until access is allowed..
+        /// </summary>
+        internal static string AlarmExactPermissionRequired {
+            get {
+                return ResourceManager.GetString("AlarmExactPermissionRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Problem occurred while the alarm plays. Details.
         /// </summary>
         internal static string AlarmHatasi {
@@ -175,6 +184,33 @@ namespace SuleymaniyeCalendar.Resources.Strings {
         internal static string AlarmlarPlanlaniyor {
             get {
                 return ResourceManager.GetString("AlarmlarPlanlaniyor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exact alarm access needed.
+        /// </summary>
+        internal static string AlarmPermissionTitle {
+            get {
+                return ResourceManager.GetString("AlarmPermissionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The alarm settings were not saved, and previous alarms could not be restored. Please check your alarms and try again..
+        /// </summary>
+        internal static string AlarmRestoreFailed {
+            get {
+                return ResourceManager.GetString("AlarmRestoreFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your alarm settings were not saved. Please check your connection and permissions, then try again..
+        /// </summary>
+        internal static string AlarmSaveFailed {
+            get {
+                return ResourceManager.GetString("AlarmSaveFailed", resourceCulture);
             }
         }
         

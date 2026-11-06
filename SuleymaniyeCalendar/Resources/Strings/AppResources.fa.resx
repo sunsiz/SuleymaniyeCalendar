@@ -120,20 +120,6 @@
   <data name="Aci" xml:space="preserve">
     <value>زاویه</value>
   </data>
-  <data name="AciklamaBas" xml:space="preserve">
-    <value>مسلمان نامی است که خداوند به کسانی می دهد که تسلیم خدا شوند و در راه او همه سختی ها را تحمل کنند. آنها کسانی هستند که بدون خم شدن به دین عمل می کنند. 
-و كيست‏ خوشگفتارتر از آن كس كه به سوى خدا دعوت نمايد و كار نيك كند و گويد من [در برابر خدا] از تسليم‏شدگانم (فصلت 33)
-این برنامه برای دسترسی ایمن و سریع به اوقات نماز و روزه طراحی شده است. برای اطلاعات بیشتر در مورد محاسبات زمان و زمان روزه داری اینجا را کلیک کنید </value>
-  </data>
-  <data name="AciklamaLinkText" xml:space="preserve">
-    <value>اوقات نماز</value>
-  </data>
-  <data name="AciklamaSon" xml:space="preserve">
-    <value> نوشته بخوانید.</value>
-  </data>
-  <data name="AcikTema" xml:space="preserve">
-    <value>موضوع باز</value>
-  </data>
   <data name="Aksam" xml:space="preserve">
     <value>شام</value>
   </data>
@@ -149,23 +135,26 @@
   <data name="Alarmkurarkenhataolustu" xml:space="preserve">
     <value>هنگام تنظیم  زنگ هشدار خطایی روی داد</value>
   </data>
+  <data name="AlarmRestoreFailed" xml:space="preserve">
+    <value>تنظیمات هشدارها ذخیره نشدند و هشدارهای قبلی نیز قابل بازیابی نبودند. لطفاً هشدارهای خود را بررسی کرده و دوباره تلاش کنید.</value>
+  </data>
+  <data name="AlarmSaveFailed" xml:space="preserve">
+    <value>تنظیمات هشدار شما ذخیره نشد. لطفاً اتصال و دسترسی‌های خود را بررسی کنید و سپس دوباره تلاش نمایید.</value>
+  </data>
+  <data name="AlarmPermissionTitle" xml:space="preserve">
+    <value>دسترسی به تنظیم هشدارهای دقیق مورد نیاز است</value>
+  </data>
+  <data name="AlarmExactPermissionRequired" xml:space="preserve">
+    <value>برای دریافت یادآوری‌ها در زمان انتخاب‌شده، در تنظیمات دستگاه خود اجازه استفاده از «هشدارهای دقیق» (Exact Alarms) را بدهید. تا زمانی که این دسترسی داده نشود، تغییرات شما ذخیره نخواهند شد.</value>
+  </data>
   <data name="AlarmSound" xml:space="preserve">
     <value>صدای زنگ هشدار</value>
-  </data>
-  <data name="AlarmSuresi" xml:space="preserve">
-    <value>مدت زمان زنگ هشدار: </value>
   </data>
   <data name="AlarmSwitch" xml:space="preserve">
     <value>زنگ هشدار به صدا درآر</value>
   </data>
-  <data name="Arabic" xml:space="preserve">
-    <value>عربی</value>
-  </data>
   <data name="AylikTakvim" xml:space="preserve">
     <value>تقویم ماهانه</value>
-  </data>
-  <data name="AylikTakvimeErisemedi" xml:space="preserve">
-    <value>دسترسی به تقویم ماهانه امکان پذیر نیست، لطفاً بررسی کنید که آیا اینترنت شما در دسترس است و سرویس مکان فعال است یا خیر!</value>
   </data>
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>تقویم ماهانه با موفقیت تجدید شد</value>
@@ -200,11 +189,11 @@
   <data name="BildirimIzniGerekli" xml:space="preserve">
     <value>برای برنامه‌ریزی هشدارها، مجوز اعلان لازم است.</value>
   </data>
-  <data name="BildirimKapatma" xml:space="preserve">
-    <value>هشدار چسبنده را فعال کنید</value>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>این برنامه برای ارسال یادآوری زمان نماز به مجوز اعلان نیاز دارد. لطفاً اعلان‌ها را در تنظیمات - برنامه‌ها - تقویم سلیمانیه - اعلان‌ها فعال کنید.</value>
   </data>
-  <data name="BildirimUyari" xml:space="preserve">
-    <value>توصیه می کنیم این تنظیم را خاموش نکنید. اگر آن را غیرفعال کنید، ممکن است زنگ هشدار به موقع به صدا در نیاید. اگر آلارم های شما زنگ نمی زند، لطفاً تنظیمات برنامه را بررسی کنید. در این تنظیمات، در بخش «مجوزهای دیگر»، بررسی کنید که مجوز «شروع در پس‌زمینه» انتخاب شده باشد. مطمئن شوید که تنظیمات «بدون محدودیت» در بخش «صرفه جویی در باتری» انتخاب شده است. حالا اگر می خواهید این مجوزها را بررسی کنید، روی دکمه زیر کلیک کنید.</value>
+  <data name="BildirimSorunu" xml:space="preserve">
+    <value>اگر پس از اعطای مجوز، اعلان‌ها همچنان کار نمی‌کنند، ممکن است لازم باشد تنظیمات اعلان‌های iOS را بازنشانی کنید: Settings → General → Transfer or Reset iPhone → Reset → Reset Location &amp; Privacy. این کار محدودیت‌های داخلی iOS برای اعلان‌ها را پاک می‌کند.</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>زمان یادآوری: </value>
@@ -215,6 +204,9 @@
   <data name="BoylamFormatsiz" xml:space="preserve">
     <value>عرض جغرافیایی</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>امروز</value>
+  </data>
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>اوقات نماز امروز</value>
   </data>
@@ -224,14 +216,8 @@
   <data name="CihazGPSDesteklemiyor" xml:space="preserve">
     <value>دستگاه از GPS پشتیبانی نمی کند</value>
   </data>
-  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
-    <value>دستگاه شما از قطب نما پشتیبانی نمی کند</value>
-  </data>
   <data name="CihazTitretmeyiDesteklemiyor" xml:space="preserve">
     <value>دستگاه شما از لرزش پشتیبانی نمی کند</value>
-  </data>
-  <data name="Dakika" xml:space="preserve">
-    <value> دقیقه</value>
   </data>
   <data name="EnlemFormatsiz" xml:space="preserve">
     <value>عرض جغرافیایی</value>
@@ -273,13 +259,10 @@
     <value>کانال یوتیوب تی وی فطرت</value>
   </data>
   <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
-      <value>بارگیری زمان نماز برای برنامه‌ریزی ناموفق بود</value>
-    </data>
+    <value>بارگیری زمان نماز برای برنامه‌ریزی ناموفق بود</value>
+  </data>
   <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
-      <value>یادآوری‌های نماز برای 30 روز برنامه‌ریزی شده‌اند</value>
-    </data>
-  <data name="GotoSettings" xml:space="preserve">
-    <value>به تنظیمات بروید</value>
+    <value>یادآوری‌های نماز برای 30 روز برنامه‌ریزی شده‌اند</value>
   </data>
   <data name="Hakkinda" xml:space="preserve">
     <value>درباره</value>
@@ -305,20 +288,11 @@
   <data name="Ikindinincikmasinakalanvakit" xml:space="preserve">
     <value>زمان باقی مانده تا پایان بعدازظهر: </value>
   </data>
-  <data name="KalanSure" xml:space="preserve">
-    <value>زمان باقی مانده: </value>
-  </data>
   <data name="Kapat" xml:space="preserve">
     <value>بسته بکنید</value>
   </data>
   <data name="Kaydet" xml:space="preserve">
     <value>قید بکند</value>
-  </data>
-  <data name="KaydetVeKapat" xml:space="preserve">
-    <value>ذخیره کن و ببند</value>
-  </data>
-  <data name="KaydetVeUygula" xml:space="preserve">
-    <value>ذخیره و تطبیق  کنید</value>
   </data>
   <data name="Kible" xml:space="preserve">
     <value>قبله</value>
@@ -346,9 +320,6 @@
   </data>
   <data name="KonumYenilendi" xml:space="preserve">
     <value>مکان و زمان با موفقیت به روز شد</value>
-  </data>
-  <data name="KoyuTema" xml:space="preserve">
-    <value>موضوع تاریک</value>
   </data>
   <data name="KusCiviltisi" xml:space="preserve">
     <value>صدای جیر جیر پرنده</value>
@@ -449,24 +420,6 @@
   <data name="TitresimSwitch" xml:space="preserve">
     <value>لرزش</value>
   </data>
-  <data name="Turkish" xml:space="preserve">
-    <value>ترکی</value>
-  </data>
-  <data name="Uyghur" xml:space="preserve">
-    <value>اویغوری</value>
-  </data>
-  <data name="UygulamaDili" xml:space="preserve">
-    <value>زبان برنامه</value>
-  </data>
-  <data name="UygulamaDiliniSecin" xml:space="preserve">
-    <value>زبان برنامه را انتخاب کنید</value>
-  </data>
-  <data name="UygulamaTema" xml:space="preserve">
-    <value>تم برنامه</value>
-  </data>
-  <data name="UygulamaTemasiniSecin" xml:space="preserve">
-    <value>موضوع  برنامه را انتخاب کنید</value>
-  </data>
   <data name="Vakti" xml:space="preserve">
     <value>زمان: </value>
   </data>
@@ -494,9 +447,6 @@
   <data name="YayinAkisi" xml:space="preserve">
     <value> برنامه پخش</value>
   </data>
-  <data name="YaziBoyutu" xml:space="preserve">
-    <value>اندازه فونت: </value>
-  </data>
   <data name="Yenileniyor" xml:space="preserve">
     <value>در حال بروز  شدن</value>
   </data>
@@ -506,35 +456,106 @@
   <data name="Zamaninda" xml:space="preserve">
     <value>به موقع</value>
   </data>
-  <data name="Azerbaijani" xml:space="preserve">
-    <value>آذری</value>
+  <data name="AciklamaBas" xml:space="preserve">
+    <value>مسلمان نامی است که خداوند به کسانی می دهد که تسلیم خدا شوند و در راه او همه سختی ها را تحمل کنند. آنها کسانی هستند که بدون خم شدن به دین عمل می کنند. 
+و كيست‏ خوشگفتارتر از آن كس كه به سوى خدا دعوت نمايد و كار نيك كند و گويد من [در برابر خدا] از تسليم‏شدگانم (فصلت 33)
+این برنامه برای دسترسی ایمن و سریع به اوقات نماز و روزه طراحی شده است. برای اطلاعات بیشتر در مورد محاسبات زمان و زمان روزه داری اینجا را کلیک کنید </value>
   </data>
-  <data name="Chinese" xml:space="preserve">
-    <value>چینایی</value>
+  <data name="AciklamaLinkText" xml:space="preserve">
+    <value>اوقات نماز</value>
   </data>
-  <data name="Deutsch" xml:space="preserve">
-    <value>آلمانی</value>
+  <data name="AciklamaLinkURL" xml:space="preserve">
+    <value>https://www.dinwefetrat.com/%d8%a7%d9%88%d9%82%d8%a7%d8%aa-%d9%86%d9%85%d8%a7%d8%b2-%d8%af%d8%b1-%d9%82%d8%b1%d8%a2%d9%86-3</value>
+  </data>
+  <data name="AciklamaSon" xml:space="preserve">
+    <value> نوشته بخوانید.</value>
+  </data>
+  <data name="GotoSettings" xml:space="preserve">
+    <value>به تنظیمات بروید</value>
+  </data>
+  <data name="UygulamaDiliniSecin" xml:space="preserve">
+    <value>زبان برنامه را انتخاب کنید</value>
+  </data>
+  <data name="UygulamaDili" xml:space="preserve">
+    <value>زبان برنامه</value>
+  </data>
+  <data name="UygulamaTemasiniSecin" xml:space="preserve">
+    <value>موضوع  برنامه را انتخاب کنید</value>
+  </data>
+  <data name="UygulamaTema" xml:space="preserve">
+    <value>تم برنامه</value>
+  </data>
+  <data name="AcikTema" xml:space="preserve">
+    <value>موضوع باز</value>
+  </data>
+  <data name="KoyuTema" xml:space="preserve">
+    <value>موضوع تاریک</value>
   </data>
   <data name="English" xml:space="preserve">
     <value>انگلیسی</value>
   </data>
-  <data name="Farsi" xml:space="preserve">
-    <value>فارسی</value>
+  <data name="Turkish" xml:space="preserve">
+    <value>ترکی</value>
   </data>
-  <data name="French" xml:space="preserve">
-    <value>فرانسایی</value>
+  <data name="Chinese" xml:space="preserve">
+    <value>چینایی</value>
+  </data>
+  <data name="Uyghur" xml:space="preserve">
+    <value>اویغوری</value>
+  </data>
+  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
+    <value>دستگاه شما از قطب نما پشتیبانی نمی کند</value>
+  </data>
+  <data name="AylikTakvimeErisemedi" xml:space="preserve">
+    <value>دسترسی به تقویم ماهانه امکان پذیر نیست، لطفاً بررسی کنید که آیا اینترنت شما در دسترس است و سرویس مکان فعال است یا خیر!</value>
+  </data>
+  <data name="KaydetVeUygula" xml:space="preserve">
+    <value>ذخیره و تطبیق  کنید</value>
+  </data>
+  <data name="KalanSure" xml:space="preserve">
+    <value>زمان باقی مانده: </value>
+  </data>
+  <data name="AlarmSuresi" xml:space="preserve">
+    <value>مدت زمان زنگ هشدار: </value>
+  </data>
+  <data name="Dakika" xml:space="preserve">
+    <value> دقیقه</value>
+  </data>
+  <data name="YaziBoyutu" xml:space="preserve">
+    <value>اندازه فونت: </value>
+  </data>
+  <data name="BildirimKapatma" xml:space="preserve">
+    <value>هشدار چسبنده را فعال کنید</value>
+  </data>
+  <data name="BildirimUyari" xml:space="preserve">
+    <value>توصیه می کنیم این تنظیم را خاموش نکنید. اگر آن را غیرفعال کنید، ممکن است زنگ هشدار به موقع به صدا در نیاید. اگر آلارم های شما زنگ نمی زند، لطفاً تنظیمات برنامه را بررسی کنید. در این تنظیمات، در بخش «مجوزهای دیگر»، بررسی کنید که مجوز «شروع در پس‌زمینه» انتخاب شده باشد. مطمئن شوید که تنظیمات «بدون محدودیت» در بخش «صرفه جویی در باتری» انتخاب شده است. حالا اگر می خواهید این مجوزها را بررسی کنید، روی دکمه زیر کلیک کنید.</value>
+  </data>
+  <data name="KaydetVeKapat" xml:space="preserve">
+    <value>ذخیره کن و ببند</value>
+  </data>
+  <data name="Arabic" xml:space="preserve">
+    <value>عربی</value>
   </data>
   <data name="Russian" xml:space="preserve">
     <value>روسی</value>
   </data>
-  <data name="Uzbek" xml:space="preserve">
-    <value>اوزبکی</value>
+  <data name="Deutsch" xml:space="preserve">
+    <value>آلمانی</value>
+  </data>
+  <data name="French" xml:space="preserve">
+    <value>فرانسایی</value>
+  </data>
+  <data name="Farsi" xml:space="preserve">
+    <value>فارسی</value>
+  </data>
+  <data name="Azerbaijani" xml:space="preserve">
+    <value>آذری</value>
   </data>
   <data name="Kyrgyz" xml:space="preserve">
     <value>قرگزی</value>
   </data>
-  <data name="AciklamaLinkURL" xml:space="preserve">
-    <value>https://www.dinwefetrat.com/%d8%a7%d9%88%d9%82%d8%a7%d8%aa-%d9%86%d9%85%d8%a7%d8%b2-%d8%af%d8%b1-%d9%82%d8%b1%d8%a2%d9%86-3</value>
+  <data name="Uzbek" xml:space="preserve">
+    <value>اوزبکی</value>
   </data>
   <data name="DakikaOnceden" xml:space="preserve">
     <value> دقیقه قبل</value>
@@ -555,19 +576,19 @@
     <value>هر بار که برنامه باز می شود مکان و زمان نماز را به روز کنید</value>
   </data>
   <data name="UygulamaAyarlari" xml:space="preserve">
-	  <value>تنظیمات برنامه</value>
+    <value>تنظیمات برنامه</value>
   </data>
   <data name="Yenile" xml:space="preserve">
-	  <value>تازه کردن</value>
+    <value>تازه کردن</value>
   </data>
   <data name="RadyoCal" xml:space="preserve">
-	  <value>پخش یا مکث رادیو</value>
+    <value>پخش یا مکث رادیو</value>
   </data>
   <data name="Etkin" xml:space="preserve">
-	  <value>فعال</value>
+    <value>فعال</value>
   </data>
   <data name="DevreDisi" xml:space="preserve">
-	  <value>غیر فعال</value>
+    <value>غیر فعال</value>
   </data>
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>در حال برنامه‌ریزی هشدارها، لطفاً صبر کنید</value>
@@ -581,19 +602,25 @@
   <data name="Adres" xml:space="preserve">
     <value>آدرس</value>
   </data>
-  <data name="Durdur" xml:space="preserve">
-    <value>توقف</value>
-  </data>
   <data name="Oynat" xml:space="preserve">
     <value>پخش</value>
+  </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>توقف</value>
   </data>
   <data name="Paylas" xml:space="preserve">
     <value>اشتراک گذاری</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>امروز</value>
+  <data name="TestNotification" xml:space="preserve">
+    <value>اعلان آزمایشی</value>
   </data>
-  <data name="BildirimIzniAciklama" xml:space="preserve">
-    <value>این برنامه برای ارسال یادآوری زمان نماز به مجوز اعلان نیاز دارد. لطفاً اعلان‌ها را در تنظیمات - برنامه‌ها - تقویم سلیمانیه - اعلان‌ها فعال کنید.</value>
+  <data name="TestNotificationMessage" xml:space="preserve">
+    <value>این یک اعلان آزمایشی از «تقویم سلیمانیه» است. اگر این پیام را می‌بینید، یعنی سیستم اعلان‌ها به‌درستی کار می‌کند!</value>
+  </data>
+  <data name="TestNotificationButton" xml:space="preserve">
+    <value>اعلان آزمایشی (۳۰ ثانیه)</value>
+  </data>
+  <data name="TestNotificationScheduled" xml:space="preserve">
+    <value>اعلان آزمایشی زمان‌بندی شد! باید تا ۳۰ ثانیه دیگر آن را دریافت کنید.</value>
   </data>
 </root>

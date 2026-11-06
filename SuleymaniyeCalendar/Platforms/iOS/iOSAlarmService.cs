@@ -25,8 +25,7 @@ public class iOSAlarmService : IAlarmService
         // Get the custom sound from settings
         var soundName = settings.Sound;
         
-        // Fire-and-forget with proper error handling
-        _ = Task.Run(async () => 
+        _ = Task.Run(async () =>
         {
             try
             {
@@ -40,11 +39,23 @@ public class iOSAlarmService : IAlarmService
                     soundName          // Custom alarm sound
                 ).ConfigureAwait(false);
             }
+
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"iOS notification scheduling failed for {prayerName}: {ex.Message}");
             }
         });
+    }
+
+    public Task SetAlarmAsync(DateTime alarmTime, int requestCode, NotificationSettings settings)
+    {
+        return NotificationService.SchedulePrayerNotificationAsync(
+            settings.PrayerName,
+            alarmTime.ToString("HH:mm"),
+            0,
+            alarmTime.Date,
+            settings.PrayerTime,
+            settings.Sound);
     }
 
     public void CancelAllAlarms()

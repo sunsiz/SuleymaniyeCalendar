@@ -123,7 +123,7 @@ public class LocationService
             // cached lookup (alarms, widget, notification) use wrong prayer times.
             if (!usedDefaultFallback && location != null && location.Latitude != 0 && location.Longitude != 0)
             {
-                Debug.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
+                //Debug.WriteLine($"Latitude: {location.Latitude}, Longitude: {location.Longitude}, Altitude: {location.Altitude}");
                 Preferences.Set("LastLatitude", location.Latitude);
                 Preferences.Set("LastLongitude", location.Longitude);
                 Preferences.Set("LastAltitude", location.Altitude ?? 0);

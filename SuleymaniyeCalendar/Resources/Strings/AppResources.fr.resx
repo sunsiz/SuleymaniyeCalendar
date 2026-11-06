@@ -117,21 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="AciklamaBas" xml:space="preserve">
-    <value>Les personnes qui se soumettent à Allah et font tout ce qu'elles peuvent pour se conformer aux instructions divines sont appelées «musulmans». Parmi les caractéristiques des musulmans, il y a le fait qu'ils appliquent les règles de la religion telles qu'elles sont, sans aucune addition ni soustraction. «Et qui profère plus belles paroles que celui qui appelle à Allah, fait bonne œuvre et dit: « Je suis du nombre des Musulmans ? » (FUSSILAT 41:33)
-Cette application est conçue pour fournir un accès sûr et rapide aux heures de prière et de jeûne. Pour des informations plus détaillées sur les calculs des temps de la prière, lisez l'article </value>
-  </data>
-  <data name="AciklamaLinkURL" xml:space="preserve">
-    <value>https://www.islametmusulmans.com/2017/06/30/les-horaires-de-la-priere-2</value>
-  </data>
-  <data name="AciklamaLinkText" xml:space="preserve">
-    <value>Les horaires de la prière</value>
-  </data>
-  <data name="AciklamaSon" xml:space="preserve">
-    <value> .</value>
-  </data>
-  <data name="AcikTema" xml:space="preserve">
-    <value>Thème claire</value>
+  <data name="Aci" xml:space="preserve">
+    <value>l' angle</value>
   </data>
   <data name="Aksam" xml:space="preserve">
     <value>Maghreb</value>
@@ -148,23 +135,26 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="Alarmkurarkenhataolustu" xml:space="preserve">
     <value>Une erreur s'est produite lors du réglage de l'alarme</value>
   </data>
+  <data name="AlarmRestoreFailed" xml:space="preserve">
+    <value>Les paramètres d’alarme n’ont pas été enregistrés et les alarmes précédentes n’ont pas pu être restaurées. Veuillez vérifier vos alarmes et réessayer.</value>
+  </data>
+  <data name="AlarmSaveFailed" xml:space="preserve">
+    <value>Vos paramètres d’alarme n’ont pas été enregistrés. Veuillez vérifier votre connexion ainsi que vos autorisations, puis réessayez.</value>
+  </data>
+  <data name="AlarmPermissionTitle" xml:space="preserve">
+    <value>Accès aux alarmes exactes requis</value>
+  </data>
+  <data name="AlarmExactPermissionRequired" xml:space="preserve">
+    <value>Autorisez les alarmes précises dans les paramètres de votre appareil afin de recevoir des rappels à l’heure choisie. Vos modifications ne seront pas enregistrées tant que cet accès n’aura pas été autorisé.</value>
+  </data>
   <data name="AlarmSound" xml:space="preserve">
     <value>Son d'alarme</value>
-  </data>
-  <data name="AlarmSuresi" xml:space="preserve">
-    <value>Durée de l'alarme : </value>
   </data>
   <data name="AlarmSwitch" xml:space="preserve">
     <value>Activer le son de l'alarme</value>
   </data>
-  <data name="Arabic" xml:space="preserve">
-    <value>Arabe</value>
-  </data>
   <data name="AylikTakvim" xml:space="preserve">
     <value>Temps mensuel</value>
-  </data>
-  <data name="AylikTakvimeErisemedi" xml:space="preserve">
-    <value>Impossible d'accéder au calendrier mensuel, veuillez vérifier qu'internet est accessible et que le service de localisation est actif !</value>
   </data>
   <data name="AylikTakvimYenilendi" xml:space="preserve">
     <value>Les horaires de prière mensuels ont été mis à jour avec succès</value>
@@ -177,9 +167,6 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   </data>
   <data name="AylikVeriYenilemeIste" xml:space="preserve">
     <value>Veuillez actualiser pour charger les données mensuelles</value>
-  </data>
-  <data name="Azerbaijani" xml:space="preserve">
-    <value>Azerbaïdjanais</value>
   </data>
   <data name="BesDakikaOnceden" xml:space="preserve">
     <value>5 minutes à l'avance</value>
@@ -202,11 +189,11 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="BildirimIzniGerekli" xml:space="preserve">
     <value>L’autorisation de notifications est requise pour programmer des alarmes.</value>
   </data>
-  <data name="BildirimKapatma" xml:space="preserve">
-    <value>Activez la notification collante</value>
+  <data name="BildirimIzniAciklama" xml:space="preserve">
+    <value>Cette application nécessite l'autorisation d'activer les notifications pour vous envoyer des rappels d'heures de prière. Veuillez activer les notifications dans Paramètres &gt; Applications &gt; Calendrier Suleymaniye &gt; Notifications.</value>
   </data>
-  <data name="BildirimUyari" xml:space="preserve">
-    <value>Nous vous recommandons de ne pas désactiver ce paramètre. Si vous le désactivez, les alarmes peuvent ne pas sonner à l'heure. Si vos alarmes ne sonnent pas, veuillez vérifier les paramètres de l'application. Dans ces paramètres, dans la section "Autres autorisations", vérifiez que l'autorisation "Démarrer en arrière-plan" est sélectionnée. Assurez-vous que le paramètre "Aucune restriction" est sélectionné dans la section "Économiseur de batterie". Maintenant, si vous souhaitez vérifier ces autorisations, cliquez sur le bouton ci-dessous.</value>
+  <data name="BildirimSorunu" xml:space="preserve">
+    <value>Si les notifications ne fonctionnent toujours pas après avoir accordé l’autorisation, il peut être nécessaire de réinitialiser les réglages de notification d’iOS : Réglages → Général → Transférer ou réinitialiser l’iPhone → Réinitialiser → Réinitialiser localisation et confidentialité. Cette opération supprime les blocages internes aux notifications dans iOS.</value>
   </data>
   <data name="BildirmeZamani" xml:space="preserve">
     <value>Heure de rappel: </value>
@@ -217,32 +204,20 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="BoylamFormatsiz" xml:space="preserve">
     <value>Longitude</value>
   </data>
+  <data name="Bugun" xml:space="preserve">
+    <value>Aujourd'hui</value>
+  </data>
   <data name="BugunkuNamazVakitleri" xml:space="preserve">
     <value>Horaires de prière d'aujourd'hui</value>
   </data>
   <data name="CalarSaat" xml:space="preserve">
     <value>Alarme</value>
   </data>
-  <data name="Chinese" xml:space="preserve">
-    <value>Chinois</value>
-  </data>
   <data name="CihazGPSDesteklemiyor" xml:space="preserve">
     <value>Votre appareil ne prend pas en charge le GPS</value>
   </data>
-  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
-    <value>Votre appareil ne prend pas en charge la boussole</value>
-  </data>
   <data name="CihazTitretmeyiDesteklemiyor" xml:space="preserve">
     <value>Votre appareil ne supporte pas les vibrations</value>
-  </data>
-  <data name="Dakika" xml:space="preserve">
-    <value> minutes</value>
-  </data>
-  <data name="Deutsch" xml:space="preserve">
-    <value>Allemagne</value>
-  </data>
-  <data name="English" xml:space="preserve">
-    <value>Anglais</value>
   </data>
   <data name="EnlemFormatsiz" xml:space="preserve">
     <value>Latitude</value>
@@ -255,9 +230,6 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   </data>
   <data name="EzanSesi" xml:space="preserve">
     <value>Azan (La Mecque)</value>
-  </data>
-  <data name="Farsi" xml:space="preserve">
-    <value>Persan</value>
   </data>
   <data name="FecriKazibingirmesinekalanvakit" xml:space="preserve">
     <value>Temps restant pour le début du Suhoor: </value>
@@ -287,16 +259,10 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
     <value>Fitrat TV YouTube</value>
   </data>
   <data name="OtuzGunHatirlaticiHatasi" xml:space="preserve">
-      <value>Impossible de charger les horaires de prière pour la planification</value>
-    </data>
-  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
-      <value>Rappels de prière planifiés pour 30 jours</value>
-    </data>
-  <data name="French" xml:space="preserve">
-    <value>Français</value>
+    <value>Impossible de charger les horaires de prière pour la planification</value>
   </data>
-  <data name="GotoSettings" xml:space="preserve">
-    <value>Aller aux paramètres</value>
+  <data name="OtuzGunHatirlaticiPlanlandi" xml:space="preserve">
+    <value>Rappels de prière planifiés pour 30 jours</value>
   </data>
   <data name="Hakkinda" xml:space="preserve">
     <value>À propos</value>
@@ -322,20 +288,11 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="Ikindinincikmasinakalanvakit" xml:space="preserve">
     <value>Temps restant pour finir l’Asr: </value>
   </data>
-  <data name="KalanSure" xml:space="preserve">
-    <value>le temps restant : </value>
-  </data>
   <data name="Kapat" xml:space="preserve">
     <value>Fermer</value>
   </data>
   <data name="Kaydet" xml:space="preserve">
     <value>Enregistrer</value>
-  </data>
-  <data name="KaydetVeKapat" xml:space="preserve">
-    <value>Enregistrer et fermer</value>
-  </data>
-  <data name="KaydetVeUygula" xml:space="preserve">
-    <value>Enregistrer et appliquer</value>
   </data>
   <data name="Kible" xml:space="preserve">
     <value>Qibla</value>
@@ -364,14 +321,8 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="KonumYenilendi" xml:space="preserve">
     <value>Emplacement et horaires mis à jour avec succès</value>
   </data>
-  <data name="KoyuTema" xml:space="preserve">
-    <value>Thème sombre</value>
-  </data>
   <data name="KusCiviltisi" xml:space="preserve">
     <value>Piaulement</value>
-  </data>
-  <data name="Kyrgyz" xml:space="preserve">
-    <value>Kirghize</value>
   </data>
   <data name="NamazVaktiAlmaHatasi" xml:space="preserve">
     <value>Une erreur s'est produite lors de la récupération des horaires de prière sur Internet.</value>
@@ -408,9 +359,6 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   </data>
   <data name="RadyoIcinInternet" xml:space="preserve">
     <value>Internet est nécessaire pour écouter la radio, veuillez vérifier la connexion Internet, ou vous pouvez écouter à partir du site Web en cliquant sur le lien "site Web".</value>
-  </data>
-  <data name="Russian" xml:space="preserve">
-    <value>Russe</value>
   </data>
   <data name="SabahSonu" xml:space="preserve">
     <value>Fin du Fajr</value>
@@ -472,27 +420,6 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="TitresimSwitch" xml:space="preserve">
     <value>Remuer</value>
   </data>
-  <data name="Turkish" xml:space="preserve">
-    <value>Turc</value>
-  </data>
-  <data name="Uyghur" xml:space="preserve">
-    <value>Ouïghour</value>
-  </data>
-  <data name="UygulamaDili" xml:space="preserve">
-    <value>Langue de l'application</value>
-  </data>
-  <data name="UygulamaDiliniSecin" xml:space="preserve">
-    <value>Choisissez la langue de l'application</value>
-  </data>
-  <data name="UygulamaTema" xml:space="preserve">
-    <value>Apparence de l'application</value>
-  </data>
-  <data name="UygulamaTemasiniSecin" xml:space="preserve">
-    <value>Choisissez l'apparence de l'application</value>
-  </data>
-  <data name="Uzbek" xml:space="preserve">
-    <value>Ouzbek</value>
-  </data>
   <data name="Vakti" xml:space="preserve">
     <value>le temps : </value>
   </data>
@@ -520,9 +447,6 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="YayinAkisi" xml:space="preserve">
     <value> Calendrier de diffusion</value>
   </data>
-  <data name="YaziBoyutu" xml:space="preserve">
-    <value>Taille de police: </value>
-  </data>
   <data name="Yenileniyor" xml:space="preserve">
     <value>En cours de renouvellement</value>
   </data>
@@ -532,8 +456,105 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="Zamaninda" xml:space="preserve">
     <value>En temps voulu</value>
   </data>
-  <data name="Aci" xml:space="preserve">
-    <value>l' angle</value>
+  <data name="AciklamaBas" xml:space="preserve">
+    <value>Les personnes qui se soumettent à Allah et font tout ce qu'elles peuvent pour se conformer aux instructions divines sont appelées «musulmans». Parmi les caractéristiques des musulmans, il y a le fait qu'ils appliquent les règles de la religion telles qu'elles sont, sans aucune addition ni soustraction. «Et qui profère plus belles paroles que celui qui appelle à Allah, fait bonne œuvre et dit: « Je suis du nombre des Musulmans ? » (FUSSILAT 41:33)
+Cette application est conçue pour fournir un accès sûr et rapide aux heures de prière et de jeûne. Pour des informations plus détaillées sur les calculs des temps de la prière, lisez l'article </value>
+  </data>
+  <data name="AciklamaLinkText" xml:space="preserve">
+    <value>Les horaires de la prière</value>
+  </data>
+  <data name="AciklamaLinkURL" xml:space="preserve">
+    <value>https://www.islametmusulmans.com/2017/06/30/les-horaires-de-la-priere-2</value>
+  </data>
+  <data name="AciklamaSon" xml:space="preserve">
+    <value> .</value>
+  </data>
+  <data name="GotoSettings" xml:space="preserve">
+    <value>Aller aux paramètres</value>
+  </data>
+  <data name="UygulamaDiliniSecin" xml:space="preserve">
+    <value>Choisissez la langue de l'application</value>
+  </data>
+  <data name="UygulamaDili" xml:space="preserve">
+    <value>Langue de l'application</value>
+  </data>
+  <data name="UygulamaTemasiniSecin" xml:space="preserve">
+    <value>Choisissez l'apparence de l'application</value>
+  </data>
+  <data name="UygulamaTema" xml:space="preserve">
+    <value>Apparence de l'application</value>
+  </data>
+  <data name="AcikTema" xml:space="preserve">
+    <value>Thème claire</value>
+  </data>
+  <data name="KoyuTema" xml:space="preserve">
+    <value>Thème sombre</value>
+  </data>
+  <data name="English" xml:space="preserve">
+    <value>Anglais</value>
+  </data>
+  <data name="Turkish" xml:space="preserve">
+    <value>Turc</value>
+  </data>
+  <data name="Chinese" xml:space="preserve">
+    <value>Chinois</value>
+  </data>
+  <data name="Uyghur" xml:space="preserve">
+    <value>Ouïghour</value>
+  </data>
+  <data name="CihazPusulaDesteklemiyor" xml:space="preserve">
+    <value>Votre appareil ne prend pas en charge la boussole</value>
+  </data>
+  <data name="AylikTakvimeErisemedi" xml:space="preserve">
+    <value>Impossible d'accéder au calendrier mensuel, veuillez vérifier qu'internet est accessible et que le service de localisation est actif !</value>
+  </data>
+  <data name="KaydetVeUygula" xml:space="preserve">
+    <value>Enregistrer et appliquer</value>
+  </data>
+  <data name="KalanSure" xml:space="preserve">
+    <value>le temps restant : </value>
+  </data>
+  <data name="AlarmSuresi" xml:space="preserve">
+    <value>Durée de l'alarme : </value>
+  </data>
+  <data name="Dakika" xml:space="preserve">
+    <value> minutes</value>
+  </data>
+  <data name="YaziBoyutu" xml:space="preserve">
+    <value>Taille de police: </value>
+  </data>
+  <data name="BildirimKapatma" xml:space="preserve">
+    <value>Activez la notification collante</value>
+  </data>
+  <data name="BildirimUyari" xml:space="preserve">
+    <value>Nous vous recommandons de ne pas désactiver ce paramètre. Si vous le désactivez, les alarmes peuvent ne pas sonner à l'heure. Si vos alarmes ne sonnent pas, veuillez vérifier les paramètres de l'application. Dans ces paramètres, dans la section "Autres autorisations", vérifiez que l'autorisation "Démarrer en arrière-plan" est sélectionnée. Assurez-vous que le paramètre "Aucune restriction" est sélectionné dans la section "Économiseur de batterie". Maintenant, si vous souhaitez vérifier ces autorisations, cliquez sur le bouton ci-dessous.</value>
+  </data>
+  <data name="KaydetVeKapat" xml:space="preserve">
+    <value>Enregistrer et fermer</value>
+  </data>
+  <data name="Arabic" xml:space="preserve">
+    <value>Arabe</value>
+  </data>
+  <data name="Russian" xml:space="preserve">
+    <value>Russe</value>
+  </data>
+  <data name="Deutsch" xml:space="preserve">
+    <value>Allemagne</value>
+  </data>
+  <data name="French" xml:space="preserve">
+    <value>Français</value>
+  </data>
+  <data name="Farsi" xml:space="preserve">
+    <value>Persan</value>
+  </data>
+  <data name="Azerbaijani" xml:space="preserve">
+    <value>Azerbaïdjanais</value>
+  </data>
+  <data name="Kyrgyz" xml:space="preserve">
+    <value>Kirghize</value>
+  </data>
+  <data name="Uzbek" xml:space="preserve">
+    <value>Ouzbek</value>
   </data>
   <data name="DakikaOnceden" xml:space="preserve">
     <value> minutes à l'avance</value>
@@ -554,19 +575,19 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
     <value>Actualisez l'emplacement et les heures de prière à chaque ouverture de l'application</value>
   </data>
   <data name="UygulamaAyarlari" xml:space="preserve">
-	  <value>Paramètres de l'application</value>
+    <value>Paramètres de l'application</value>
   </data>
   <data name="Yenile" xml:space="preserve">
-	  <value>Rafraîchir</value>
+    <value>Rafraîchir</value>
   </data>
   <data name="RadyoCal" xml:space="preserve">
-	  <value>Écouter ou mettre en pause la radio</value>
+    <value>Écouter ou mettre en pause la radio</value>
   </data>
   <data name="Etkin" xml:space="preserve">
-	  <value>Activé</value>
+    <value>Activé</value>
   </data>
   <data name="DevreDisi" xml:space="preserve">
-	  <value>Désactivé</value>
+    <value>Désactivé</value>
   </data>
   <data name="AlarmlarPlanlaniyor" xml:space="preserve">
     <value>Programmation des alarmes, veuillez patienter</value>
@@ -580,19 +601,25 @@ Cette application est conçue pour fournir un accès sûr et rapide aux heures d
   <data name="Adres" xml:space="preserve">
     <value>Adresse</value>
   </data>
-  <data name="Durdur" xml:space="preserve">
-    <value>Arrêt</value>
-  </data>
   <data name="Oynat" xml:space="preserve">
     <value>Lecture</value>
+  </data>
+  <data name="Durdur" xml:space="preserve">
+    <value>Arrêt</value>
   </data>
   <data name="Paylas" xml:space="preserve">
     <value>Partager</value>
   </data>
-  <data name="Bugun" xml:space="preserve">
-    <value>Aujourd'hui</value>
+  <data name="TestNotification" xml:space="preserve">
+    <value>Notification de test</value>
   </data>
-  <data name="BildirimIzniAciklama" xml:space="preserve">
-    <value>Cette application nécessite l'autorisation d'activer les notifications pour vous envoyer des rappels d'heures de prière. Veuillez activer les notifications dans Paramètres &gt; Applications &gt; Calendrier Suleymaniye &gt; Notifications.</value>
+  <data name="TestNotificationMessage" xml:space="preserve">
+    <value>Ceci est une notification de test provenant du Calendrier Süleymaniye. Si vous voyez ce message, c'est que les notifications fonctionnent !</value>
+  </data>
+  <data name="TestNotificationButton" xml:space="preserve">
+    <value>Notification de test (30 s)</value>
+  </data>
+  <data name="TestNotificationScheduled" xml:space="preserve">
+    <value>Notification de test programmée ! Vous devriez la recevoir dans 30 secondes.</value>
   </data>
 </root>
