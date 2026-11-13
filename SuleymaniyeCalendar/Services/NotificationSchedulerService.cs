@@ -163,6 +163,14 @@ public class NotificationSchedulerService
             Debug.WriteLine($"❌ Failed to set culture in NotificationSchedulerService: {ex.Message}");
         }
         
+        // Cancel stale alarms even when old coverage would otherwise skip rescheduling.
+        if (!CheckRemindersEnabledAny())
+        {
+            onReplacementStarted?.Invoke();
+            CancelAllAlarmsCore();
+            return;
+        }
+
         // Check if we need to reschedule
         if (!forceReschedule)
         {
@@ -190,16 +198,6 @@ public class NotificationSchedulerService
         }
 
         // Preferences.Set(LastAutoReschedulePreferenceKey, DateTime.UtcNow.ToString("O"));
-
-        // Check if any reminders are enabled
-        bool remindersEnabled = CheckRemindersEnabledAny();
-
-        if (!remindersEnabled)
-        {
-            onReplacementStarted?.Invoke();
-            CancelAllAlarmsCore();
-            return;
-        }
 
         // // Cancel existing alarms to ensure a clean slate (handles disabled prayers or changed times)
         // // On Android this might be expensive, but ensures consistency.

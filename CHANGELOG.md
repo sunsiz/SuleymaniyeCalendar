@@ -10,6 +10,7 @@
 - Request Android alarm recovery independently of the optional foreground notification, including after reboot, time changes, app updates, and exact-alarm permission grants. Add periodic background renewal.
 - Await iOS local notification scheduling and report scheduling failures.
 - Use prayer IDs to select localized Android alarm titles.
+- Ignore Android alarm broadcasts for disabled reminders and cancel stale alarms even when coverage is still recorded.
 
 ### Other changes
 
@@ -19,6 +20,9 @@
 - Add localized guidance for alarm permission and save failures.
 - Align test dependencies with the app and add prayer-time validation and alarm synchronization tests.
 - Remove the Android `BATTERY_STATS` permission and stop logging location coordinates.
+- Enable R8 shrinking for Release Android builds (`AndroidLinkTool=r8`, with trimming limited to SDK bindings) and request private-member obfuscation for Google Play code-optimization vitals. Obfuscation takes effect with Microsoft.Android.Sdk 36.1.118 or later.
+- Preserve Java fields accessible through JNI while using R8 on affected Android SDK versions.
+- Update Android Material Components to 1.14.0 to pick up upstream edge-to-edge fixes.
 
 ## Project history
 

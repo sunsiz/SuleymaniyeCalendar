@@ -58,6 +58,19 @@ public class AlarmSettingsSynchronizationTests
     }
 
     [TestMethod]
+    public async Task SetMonthlyAlarmsAsync_AllRemindersDisabled_CancelsDespiteFutureCoverage()
+    {
+        Preferences.Set("LastAlarmDate", DateTime.Today.AddDays(20).ToString("O"));
+        Preferences.Set("LastAutoRescheduleUtc", DateTime.UtcNow.ToString("O"));
+
+        await _scheduler.SetMonthlyAlarmsAsync(new Location(41, 29));
+
+        _alarm.Verify(service => service.CancelAllAlarms(), Times.Once);
+        Assert.IsFalse(Preferences.ContainsKey("LastAlarmDate"));
+        Assert.IsFalse(Preferences.ContainsKey("LastAutoRescheduleUtc"));
+    }
+
+    [TestMethod]
     public async Task SavePrayerSettingsAsync_LocationFailure_RollsBackWithoutCancellingExistingAlarms()
     {
         var exception = await Assert.ThrowsAsync<AlarmSettingsSaveException>(

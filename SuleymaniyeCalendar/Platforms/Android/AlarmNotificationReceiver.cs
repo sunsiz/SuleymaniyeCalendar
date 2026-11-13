@@ -75,8 +75,21 @@ public class AlarmNotificationReceiver : BroadcastReceiver
                 "Akşam"       => "maghrib",
                 "Yatsı"       => "isha",
                 "Yatsı Sonu"  => "endofisha",
-                _              => "asr" // fallback
+                _              => string.Empty
             };
+        }
+
+        if (string.IsNullOrEmpty(prayerId))
+        {
+            Android.Util.Log.Warn(nameof(AlarmNotificationReceiver), "Ignoring an alarm with an unknown prayer.");
+            return;
+        }
+
+        // A previously scheduled broadcast can still arrive after the reminder is disabled.
+        if (!Preferences.Get(prayerId + "Enabled", false))
+        {
+            Android.Util.Log.Info(nameof(AlarmNotificationReceiver), $"Ignoring disabled reminder: {prayerId}");
+            return;
         }
 
         // Prefer sound from Intent (set at schedule time), fall back to Preferences
